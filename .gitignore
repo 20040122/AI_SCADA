@@ -1,3 +1,59 @@
+# 默认忽略所有隐藏文件
 .*
 !.gitignore
-!.github
+!.github/
+!.github/**
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# IDE / 编辑器
+.vscode/
+.idea/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 环境变量
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# 日志
+*.log
+logs/
+
+# 数据集
+data/
+datasets/
+
+# 模型与训练结果
+models/
+checkpoints/
+outputs/
+runs/
+wandb/
+*.pt
+*.pth
+*.ckpt
+*.pkl
+
+# 临时文件
+tmp/
+temp/
+
+# 压缩包
+*.zip
+*.tar
+*.tar.gz
+*.rar
