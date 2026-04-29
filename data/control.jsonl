@@ -6,8 +6,8 @@
 {"displayName":"指示灯","image":"symbols/test/wangj/指示灯.json","width":30,"height":30}
 {"displayName":"参数值","image":"symbols/test/wangj/参数值.json","width":60,"height":20}
 {"displayName":"进度条","image":"symbols/test/ljTest/charts/circleProgress/progress-fc.json","width":250,"height":219}
-{"displayName":"启动按钮","image":"symbols/demo/KUKA/下行控制按钮.json","width":101.85063,"height":101.85063}
-{"displayName":"急停按钮","image":"symbols/demo/KUKA/下行控制按钮.json","width":101.85063,"height":101.85063}
+{"displayName":"启动按钮","image":"symbols/demo/KUKA/下行控制按钮.json","width":30,"height":30}
+{"displayName":"急停按钮","image":"symbols/demo/KUKA/下行控制按钮.json","width":30,"height":30}
 
 {"displayName":"arm3","image":"symbols/demo/KUKA/arm3.json","width":176.96761,"height":176.96761}
 {"displayName":"arm2","image":"symbols/demo/KUKA/arm2.json","width":509.31274,"height":146.33114}
