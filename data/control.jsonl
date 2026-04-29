@@ -9,7 +9,7 @@
 {"displayName":"启动按钮","image":"symbols/demo/KUKA/下行控制按钮.json","width":30,"height":30}
 {"displayName":"急停按钮","image":"symbols/demo/KUKA/下行控制按钮.json","width":30,"height":30}
 
-{"displayName":"arm3","image":"symbols/demo/KUKA/arm3.json","width":176.96761,"height":176.96761}
+{"displayName":"机械臂3","image":"symbols/demo/KUKA/arm3.json","width":500,"height":500}
 {"displayName":"arm2","image":"symbols/demo/KUKA/arm2.json","width":509.31274,"height":146.33114}
 {"displayName":"arm1","image":"symbols/demo/KUKA/arm1.json","width":126.57477,"height":536.4359}
 {"displayName":"table","image":"symbols/ht/ui/table.json","width":828.53954,"height":300}
