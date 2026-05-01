@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "canva",
+  "title": "Canva",
+  "type": "object",
+  "required": ["v", "p", "a", "d", "contentRect"],
+  "properties": {
+    "v": {
+      "type": "string",
+      "description": "版本号"
+    },
+    "p": {
+      "type": "object",
+      "required": ["layers", "autoAdjustIndex", "hierarchicalRendering"],
+      "properties": {
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "visible", "selectable", "movable", "editable"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "visible": {
+                "type": "boolean"
+              },
+              "selectable": {
+                "type": "boolean"
+              },
+              "movable": {
+                "type": "boolean"
+              },
+              "editable": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "autoAdjustIndex": {
+          "type": "boolean"
+        },
+        "hierarchicalRendering": {
+          "type": "boolean"
+        }
+      }
+    },
+    "a": {
+      "type": "object",
+      "required": ["width", "fitContent", "rectSelectable", "pannable", "zoomable", "height"],
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "fitContent": {
+          "type": "boolean"
+        },
+        "rectSelectable": {
+          "type": "boolean"
+        },
+        "pannable": {
+          "type": "boolean"
+        },
+        "zoomable": {
+          "type": "boolean"
+        },
+        "height": {
+          "type": "number"
+        }
+      }
+    },
+    "d": {
+      "type": "array",
+      "description": "数据数组，元素类型任意"
+    },
+    "contentRect": {
+      "type": "object",
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
