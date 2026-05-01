@@ -33,9 +33,6 @@ Thumbs.db
 *.log
 logs/
 
-# 数据集
-data/
-datasets/
 
 # 模型与训练结果
 models/
