@@ -1,13 +1,13 @@
 export interface Canva {
 	v: string;
 	p: {
-		layers: {
+		layers: [{
 			name: string;
 			visible: boolean;
 			selectable: boolean;
 			movable: boolean;
 			editable: boolean;
-		}[];
+		}];
 		autoAdjustIndex: boolean;
 		hierarchicalRendering: boolean;
 	};
