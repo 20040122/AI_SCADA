@@ -57,7 +57,7 @@
 {"displayName":"多折线图","image":"symbols/公共资源/HTDD/charts/lineCharts/Line2.json","width":560,"height":376}
 {"displayName":"阶梯图","image":"symbols/公共资源/HTDD/charts/lineCharts/StepLine1.json","width":560,"height":376}
 {"displayName":"多阶梯图","image":"symbols/公共资源/HTDD/charts/lineCharts/StepLine2.json","width":560,"height":376}
-{"displayName":"number-pane","image":"symbols/公共资源/HTDD/digitalNum/digitalNum.json","width":210"height":20}
+{"displayName":"number-pane","image":"symbols/公共资源/HTDD/digitalNum/digitalNum.json","width":210,"height":20}
 {"displayName":"告警绑定（警告标识（可输入文本））","image":"symbols/公共资源/HTDD/lights/告警绑定.json","width":100,"height":100}
 {"displayName":"Light","image":"symbols/公共资源/HTDD/lights/Light.json","width":30,"height":30}
 {"displayName":"交通信号灯","image":"symbols/公共资源/HTDD/lights/TrafficLight.json","width":40,"height":95}
