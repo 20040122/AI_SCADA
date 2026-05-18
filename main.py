@@ -8,13 +8,13 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="deepseek-v4-pro",
+    model=os.environ.get('DEEPSEEK_MODEL'),
     messages=[
         {"role": "system", "content": "You are a helpful assistant"},
-        {"role": "user", "content": "model id？"},
+        {"role": "user", "content": "你是什么模型？"},
     ],
     stream=False,
-    reasoning_effort="high",
+    reasoning_effort="max",
     extra_body={"thinking": {"type": "enabled"}}
 )
 

@@ -24,46 +24,7 @@
       "i": 17092,
       "p": {
         "displayName": "高低温试验箱",
-        "dataBindings": {
-          "a": {
-            "status.testType": {
-              "key": "direct-367563",
-              "text": "试验类型 [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 试验类型",
-              "path": "direct,937,13805,367563"
-            },
-            "humidity.val": {
-              "key": "direct-367565",
-              "text": "湿度测量值 (%) [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 湿度测量值 (%)",
-              "path": "direct,937,13805,367565"
-            },
-            "temperature.val": {
-              "key": "direct-367564",
-              "text": "温度测量值 (℃) [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 温度测量值 (℃)",
-              "path": "direct,937,13805,367564"
-            },
-            "temperature.set": {
-              "key": "direct-367569",
-              "text": "温度设定值 (℃) [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 温度设定值 (℃)",
-              "path": "direct,937,13805,367569"
-            },
-            "humidity.set": {
-              "key": "direct-367570",
-              "text": "湿度设定值 (%) [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 湿度设定值 (%)",
-              "path": "direct,937,13805,367570"
-            },
-            "status.run": {
-              "key": "direct-367566",
-              "text": "运行 [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 运行",
-              "path": "direct,937,13805,367566"
-            }
-          }
-        },
+        
         "image": "symbols/_public/devices/高低温试验箱.json",
         "position": {
           "x": 251.9795,
@@ -76,16 +37,6 @@
       "i": 17093,
       "p": {
         "displayName": "下行控制",
-        "dataBindings": {
-          "a": {
-            "param": {
-              "key": "direct-367569",
-              "text": "温度设定值 (℃) [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 温度设定值 (℃)",
-              "path": "direct,937,13805,367569"
-            }
-          }
-        },
         "image": "symbols/test/wangj/下行控制.json",
         "position": {
           "x": 588.02895,
@@ -100,16 +51,6 @@
       "i": 17094,
       "p": {
         "displayName": "下行控制",
-        "dataBindings": {
-          "a": {
-            "param": {
-              "key": "direct-367570",
-              "text": "湿度设定值 (%) [高低温箱#1]",
-              "tooltip": "项目: fw的测试项目<br>区域: 组态测试<br>设备: 高低温箱#1<br>参数: 湿度设定值 (%)",
-              "path": "direct,937,13805,367570"
-            }
-          }
-        },
         "image": "symbols/test/wangj/下行控制.json",
         "position": {
           "x": 588.02895,
