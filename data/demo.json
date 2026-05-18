@@ -1,0 +1,70 @@
+{
+  "v": "8.0.5",
+  "p": {
+    "layers": [
+      {
+        "name": "0",
+        "visible": true,
+        "selectable": true,
+        "movable": true,
+        "editable": true
+      }
+    ],
+    "autoAdjustIndex": true,
+    "hierarchicalRendering": true
+  },
+  "a": {
+    "fitContent": true,
+    "zoomable": false,
+    "pannable": false
+  },
+  "d": [
+    {
+      "c": "ht.Node",
+      "i": 17092,
+      "p": {
+        "displayName": "高低温试验箱",
+        
+        "image": "symbols/_public/devices/高低温试验箱.json",
+        "position": {
+          "x": 251.9795,
+          "y": 402.09825
+        }
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17093,
+      "p": {
+        "displayName": "下行控制",
+        "image": "symbols/test/wangj/下行控制.json",
+        "position": {
+          "x": 588.02895,
+          "y": 295.75073
+        },
+        "width": 172.0989,
+        "height": 39.72317
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17094,
+      "p": {
+        "displayName": "下行控制",
+        "image": "symbols/test/wangj/下行控制.json",
+        "position": {
+          "x": 588.02895,
+          "y": 357.67566
+        },
+        "width": 172.0989,
+        "height": 39.72317
+      }
+    }
+  ],
+  "contentRect": {
+    "x": 1.9795,
+    "y": 2.09825,
+    "width": 672.0989,
+    "height": 800
+  }
+}
