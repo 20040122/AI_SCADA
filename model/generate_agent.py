@@ -6,17 +6,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
+
 load_dotenv(".env.local")
 GENERATE_PROMPT = """\
-你是画布JSON生成器。
+你是JSON生成器。
 ## 画布模板
 {canva_json}
 ## 可用控件
 {controls_jsonl}
-## 用户需求
-{user_query}
 ## 生成规则
-1. 输出必须是合法 JSON，不要输出任何解释、Markdown 或代码块
+1. 输出必须是合法JSON,不要输出任何解释、Markdown或代码块
 2. JSON 顶层结构必须包含 v、p、a、d 四个字段
 3. v 固定为 "8.0.5"
 4. p 从画布模板复制，保持 layers、autoAdjustIndex、hierarchicalRendering 等字段
@@ -43,12 +42,12 @@ GENERATE_PROMPT = """\
       "x": 252,
       "y": 402
     }}
-12. 控制类控件放在右侧，纵向排列，x 约为 588，y 间距约 60
+12. 控制类控件放在右侧,纵向排列,x 约为 588,y 间距约 60
 13. position 的 x/y 表示控件中心点坐标
-14. 如果控件模板中提供 width、height，可以复制到该节点的 p 中；否则不要编造
-15. 不要输出 contentRect，程序会自动计算
+14. 如果控件模板中提供 width、height,可以复制到该节点的 p 中；否则不要编造
+15. 不要输出 contentRect,程序会自动计算
 ## 输出格式
-只输出如下结构的合法 JSON：
+只输出如下结构的合法 JSON
 {{
   "v": "8.0.5",
   "p": {{
@@ -91,6 +90,32 @@ class GenerateResult:
     p: dict
     a: dict = field(default_factory=dict)
     d: list[dict] = field(default_factory=list)
+    contentRect: dict = field(default_factory=dict)
+
+
+def calc_content_rect(nodes: list[dict]) -> dict:
+    if not nodes:
+        return {"x": 0, "y": 0, "width": 0, "height": 0}
+    min_x = float("inf")
+    min_y = float("inf")
+    max_x = float("-inf")
+    max_y = float("-inf")
+    for n in nodes:
+        pos = n.get("p", {}).get("position", {})
+        cx, cy = pos.get("x", 0), pos.get("y", 0)
+        w = n.get("p", {}).get("width", 0)
+        h = n.get("p", {}).get("height", 0)
+        half_w, half_h = w / 2, h / 2
+        min_x = min(min_x, cx - half_w)
+        min_y = min(min_y, cy - half_h)
+        max_x = max(max_x, cx + half_w)
+        max_y = max(max_y, cy + half_h)
+    return {
+        "x": round(min_x, 5),
+        "y": round(min_y, 5),
+        "width": round(max_x - min_x, 5),
+        "height": round(max_y - min_y, 5),
+    }
 
 
 def generate_canvas(query: str, controls: list[dict]) -> GenerateResult:
@@ -99,7 +124,6 @@ def generate_canvas(query: str, controls: list[dict]) -> GenerateResult:
     prompt = GENERATE_PROMPT.format(
         canva_json=canvas_template,
         controls_jsonl=controls_jsonl,
-        user_query=query,
     )
     response = _client.chat.completions.create(
         model=_MODEL,
@@ -108,16 +132,18 @@ def generate_canvas(query: str, controls: list[dict]) -> GenerateResult:
             {"role": "user", "content": query},
         ],
         stream=False,
-        reasoning_effort="high",
+        reasoning_effort="low",
         response_format={"type": "json_object"},
         extra_body={"thinking": {"type": "enabled"}},
     )
     data = json.loads(response.choices[0].message.content)
+    nodes = data.get("d", [])
     return GenerateResult(
         v=data["v"],
         p=data["p"],
         a=data.get("a", {}),
-        d=data.get("d", []),
+        d=nodes,
+        contentRect=calc_content_rect(nodes),
     )
 
 if __name__ == "__main__":
@@ -140,4 +166,8 @@ if __name__ == "__main__":
             if kw in results:
                 all_controls.append(results[kw]["metadata"])
     result = generate_canvas(query, all_controls)
-    print(json.dumps(result.__dict__, ensure_ascii=False, indent=2))
+    output_dir = Path(__file__).resolve().parent.parent / "output"
+    output_dir.mkdir(exist_ok=True)
+    output_path = output_dir / "canvas.json"
+    output_path.write_text(json.dumps(result.__dict__, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"已保存到 {output_path}")

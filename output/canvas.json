@@ -1,0 +1,57 @@
+{
+  "v": "8.0.5",
+  "p": {
+    "layers": [
+      {
+        "name": "0",
+        "visible": true,
+        "selectable": true,
+        "movable": true,
+        "editable": true
+      }
+    ],
+    "autoAdjustIndex": true,
+    "hierarchicalRendering": true
+  },
+  "a": {
+    "fitContent": true,
+    "zoomable": false,
+    "pannable": false
+  },
+  "d": [
+    {
+      "c": "ht.Node",
+      "i": 17092,
+      "p": {
+        "displayName": "急停按钮",
+        "image": "symbols/demo/KUKA/下行控制按钮.json",
+        "width": 30,
+        "height": 30,
+        "position": {
+          "x": 588,
+          "y": 402
+        }
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17093,
+      "p": {
+        "displayName": "急停按钮",
+        "image": "symbols/demo/KUKA/下行控制按钮.json",
+        "width": 30,
+        "height": 30,
+        "position": {
+          "x": 588,
+          "y": 462
+        }
+      }
+    }
+  ],
+  "contentRect": {
+    "x": 573.0,
+    "y": 387.0,
+    "width": 30.0,
+    "height": 90.0
+  }
+}

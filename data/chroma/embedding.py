@@ -1,6 +1,7 @@
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+from pathlib import Path
 
-MODEL_NAME = "BAAI/bge-small-zh-v1.5"
+MODEL_NAME = str(Path(__file__).resolve().parents[2] / "model" / "bge-small-zh-v1.5")
 
 _ef = None
 
