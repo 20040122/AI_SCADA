@@ -1,19 +1,16 @@
 import warnings
 warnings.simplefilter("ignore")
-
 import json
 import os
 from dataclasses import dataclass, field
-
 from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv(".env.local")
-
 INTENT_PROMPT = """\
-提取需要检索的控件关键词
-用户需求: {query}
-输出格式(JSON):
+提取控件关键词
+需求: {query}
+输出(JSON):
 {{
   "queries": ["关键词1", "关键词2", ...],
   "controls": [
@@ -26,7 +23,6 @@ _client = OpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
     base_url="https://api.deepseek.com",
 )
-
 _MODEL = os.environ.get("DEEPSEEK_MODEL")
 
 
@@ -50,7 +46,7 @@ def analyze_intent(query: str) -> IntentResult:
             {"role": "user", "content": query},
         ],
         stream=False,
-        reasoning_effort="max",
+        reasoning_effort="low",
         response_format={"type": "json_object"},
         extra_body={"thinking": {"type": "enabled"}},
     )
