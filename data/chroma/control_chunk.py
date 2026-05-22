@@ -21,12 +21,13 @@ def _load_controls() -> list[dict]:
 
 
 def _build_document(item: dict) -> str:
-    return DOCUMENT_TEMPLATE.format(
+    content = DOCUMENT_TEMPLATE.format(
         displayName=item["displayName"],
         width=item.get("width") or 0,
         height=item.get("height") or 0,
         image=item["image"],
     )
+    return QUERY_PREFIX + content
 
 
 def _build_metadata(item: dict) -> dict:
@@ -62,9 +63,12 @@ def seed(client: chromadb.ClientAPI) -> None:
     collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
 
 
+QUERY_PREFIX = "为这个句子生成表示以用于检索相关文章："
+
 def query(client: chromadb.ClientAPI, query_text: str, n_results: int = 10) -> dict:
     collection = get_collection(client)
-    return collection.query(query_texts=[query_text], n_results=n_results)
+    prefixed_query = QUERY_PREFIX + query_text
+    return collection.query(query_texts=[prefixed_query], n_results=n_results)
 
 
 class ControlChunk:
@@ -78,7 +82,8 @@ class ControlChunk:
         seed(self._client)
 
     def query(self, query_text: str, n_results: int = 10) -> dict:
-        return query(self._client, query_text, n_results)
+        prefixed_query = QUERY_PREFIX + query_text
+        return query(self._client, prefixed_query, n_results)
 
     def get_raw_controls(self) -> list[dict]:
         return _load_controls()
