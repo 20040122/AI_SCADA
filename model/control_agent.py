@@ -7,6 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import json
 import logging
 import os
+from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -44,6 +45,7 @@ EXTRACT_PROMPT = """\
 _client = OpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
     base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+    timeout=50.0,
 )
 _MODEL = os.environ.get("DEEPSEEK_MODEL")
 
@@ -55,90 +57,121 @@ class ControlIntent:
 
 
 @dataclass
+class ControlCandidate:
+    displayName: str
+    image: str
+    width: float
+    height: float
+    similarity: float
+    source: str
+
+
+@dataclass
+class KeywordResult:
+    keyword: str
+    count: int
+    candidates: list[ControlCandidate] = field(default_factory=list)
+
+
+@dataclass
 class ControlAgentResult:
-    controls: list[dict] = field(default_factory=list)
+    keywords: list[KeywordResult] = field(default_factory=list)
     missed: list[str] = field(default_factory=list)
 
 
 class ControlAgent:
-    def __init__(self):
-        self._db = MaterialDB()
+    def __init__(self, db: Optional[MaterialDB] = None):
+        self._db = db or MaterialDB()
         self._db.init_db()
         self._control_names = ControlChunk().get_raw_controls()
         self._control_names_str = "、".join(c["displayName"] for c in self._control_names)
 
     def process_query(self, query: str) -> ControlAgentResult:
-        self._db.clear_query_results()
-        logger.info("🔍 ControlAgent 流程")
+        logger.info("向量检索流程")
         logger.info("━" * 40)
-        logger.info("📝 用户输入: %s", query)
 
-        control_intents = self._extract_controls(query)
-        intent_str = ", ".join(f"{c.name}x{c.count}" for c in control_intents)
-        logger.info("🤖 LLM提取: %s", intent_str)
+        control_intents, cache_hit = self._extract_controls(query)
+        if cache_hit:
+            logger.info("🤖 LLM提取: %s (缓存命中)", ", ".join(f"{c.name}x{c.count}" for c in control_intents))
+        else:
+            logger.info("🤖 LLM提取: %s", ", ".join(f"{c.name}x{c.count}" for c in control_intents))
 
         keywords = [c.name for c in control_intents]
         count_map = {c.name: c.count for c in control_intents}
         search_results = search_controls_with_threshold(keywords)
-        matched_controls: list[dict] = []
-        matched_names: set[str] = set()
+        keyword_results: list[KeywordResult] = []
         missed: list[str] = []
 
         logger.info("━" * 40)
-        for keyword, result in search_results.items():
-            name = result["metadata"]["displayName"]
-            sim = result["similarity"]
-            if result["matched"]:
-                count = count_map.get(keyword, 1)
-                if result["metadata"]["displayName"] not in matched_names:
-                    logger.info("🔎 向量检索 \"%s\": ✅ %s  (sim=%.4f, ≥0.55)", keyword, name, sim)
-                    meta = result["metadata"]
-                    for _ in range(count):
-                        matched_controls.append(meta)
-                    matched_names.add(meta["displayName"])
-                else:
-                    logger.info("🔎 向量检索 \"%s\": ⏭️ %s  (已匹配, 跳过)", keyword, name)
-            else:
-                logger.info("🔎 向量检索 \"%s\": ❌ %s  (sim=%.4f, <0.55)", keyword, name, sim)
+        for keyword, candidates in search_results.items():
+            count = count_map.get(keyword, 1)
+            all_candidates: list[ControlCandidate] = []
+
+            vector_hit = False
+            for c in candidates:
+                meta = c["metadata"]
+                sim = c["similarity"]
+                if c["matched"]:
+                    vector_hit = True
+                all_candidates.append(ControlCandidate(
+                    displayName=meta.get("displayName", ""),
+                    image=meta.get("image", ""),
+                    width=meta.get("width") or 0,
+                    height=meta.get("height") or 0,
+                    similarity=sim,
+                    source=c["source"],
+                ))
+
+            if not vector_hit:
+                logger.info("🔎 向量检索 \"%s\": ❌ 无命中 (sim < 0.55)", keyword)
                 db_results = self._db.search_by_name(keyword)
                 if db_results:
-                    count = count_map.get(keyword, 1)
-                    matched_in_db = []
                     for item in db_results:
-                        if item["displayName"] not in matched_names:
-                            matched_in_db.append(item["displayName"])
-                            for _ in range(count):
-                                matched_controls.append(item)
-                            matched_names.add(item["displayName"])
-                    if matched_in_db:
-                        logger.info("💾 SQLite兜底 \"%s\": ✅ %s", keyword, ", ".join(matched_in_db))
-                    else:
-                        logger.info("💾 SQLite兜底 \"%s\": ⏭️ (已匹配, 跳过)", keyword)
+                        logger.info("💾 SQLite兜底 \"%s\": ✅ %s", keyword, item["displayName"])
+                        all_candidates.append(ControlCandidate(
+                            displayName=item.get("displayName", ""),
+                            image=item.get("image", ""),
+                            width=item.get("width") or 0,
+                            height=item.get("height") or 0,
+                            similarity=0.0,
+                            source="sqlite",
+                        ))
                 else:
                     logger.info("💾 SQLite兜底 \"%s\": ❌ 无结果", keyword)
                     if keyword not in missed:
                         missed.append(keyword)
+            else:
+                matched_names = [c.displayName for c in all_candidates if c.similarity >= 0.55]
+                logger.info("🔎 向量检索 \"%s\": ✅ %s", keyword, ", ".join(matched_names))
+
+            seen = set()
+            unique_candidates = []
+            for c in all_candidates:
+                if c.displayName not in seen:
+                    unique_candidates.append(c)
+                    seen.add(c.displayName)
+
+            keyword_results.append(KeywordResult(
+                keyword=keyword,
+                count=count,
+                candidates=unique_candidates[:5],
+            ))
 
         logger.info("━" * 40)
-        control_summary = ", ".join(
-            f"{name}x{matched_controls.count(next(c for c in matched_controls if c['displayName'] == name))}"
-            for name in matched_names
-        )
-        logger.info("✅ 匹配 %d 个控件: %s", len(matched_controls), ", ".join(
-            f"{n}x{sum(1 for c in matched_controls if c['displayName'] == n)}"
-            for n in matched_names
-        ))
+        total = sum(len(kr.candidates) for kr in keyword_results)
+        logger.info("✅ 返回 %d 个关键词, %d 个候选项", len(keyword_results), total)
         if missed:
             logger.info("❌ 未命中: %s", ", ".join(missed))
 
-        result = ControlAgentResult(
-            controls=matched_controls,
+        return ControlAgentResult(
+            keywords=keyword_results,
             missed=missed,
         )
-        self._db.save_query_result(query, matched_controls)
-        return result
 
-    def _extract_controls(self, query: str) -> list[ControlIntent]:
+    def _extract_controls(self, query: str) -> Tuple[List[ControlIntent], bool]:
+        cached = _extract_controls_cached(query, self._control_names_str)
+        if cached is not None:
+            return [ControlIntent(name=c[0], count=c[1]) for c in cached], True
         prompt = EXTRACT_PROMPT.format(control_names=self._control_names_str)
         response = _client.chat.completions.create(
             model=_MODEL,
@@ -152,18 +185,38 @@ class ControlAgent:
             extra_body={"thinking": {"type": "enabled"}},
         )
         data = json.loads(response.choices[0].message.content)
-        return [ControlIntent(**c) for c in data.get("controls", [])]
+        intents = [ControlIntent(**c) for c in data.get("controls", [])]
+        _extract_cache[(query, self._control_names_str)] = [
+            (c.name, c.count) for c in intents
+        ]
+        return intents, False
+
+
+_extract_cache: dict = {}
+
+
+def _extract_controls_cached(query: str, control_names_str: str) -> Optional[List[Tuple[str, int]]]:
+    key = (query, control_names_str)
+    if key in _extract_cache:
+        return _extract_cache[key]
+    return None
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     agent = ControlAgent()
-    query = input("AI检索: ")
-    result = agent.process_query(query)
+    while True:
+        try:
+            query = input("\nAI检索 (q退出): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if not query or query.lower() == "q":
+            break
+        result = agent.process_query(query)
 
-    print(f"\n匹配到的控件 ({len(result.controls)}):")
-    for ctrl in result.controls:
-        print(f"  {ctrl['displayName']} | {ctrl.get('image', '')} | "
-              f"{ctrl.get('width', 0)}x{ctrl.get('height', 0)}")
-    if result.missed:
-        print(f"\n未命中的检索词: {result.missed}")
+        for kr in result.keywords:
+            print(f"\n  [{kr.keyword}] x{kr.count} ({len(kr.candidates)} 候选)")
+            for c in kr.candidates:
+                print(f"    {c.displayName} | sim={c.similarity:.4f} | src={c.source}")
+        if result.missed:
+            print(f"\n未命中的检索词: {result.missed}")

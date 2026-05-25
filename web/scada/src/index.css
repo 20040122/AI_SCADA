@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #1a2135;
+  --bg2: #212b40;
+  --bg3: #283248;
+  --bg4: #151c2c;
+  --panel: #1c2438;
+  --border: #263348;
+  --border2: #334d6e;
+  --accent: #4db8d4;
+  --accent2: #2e8fa8;
+  --accentglow: rgba(77, 184, 212, 0.2);
+  --teal: #3ecfb8;
+  --warn: #e8a840;
+  --error: #e05555;
+  --success: #3ecf7a;
+  --blue2: #5bb8e8;
+  --text: #b8cce4;
+  --text2: #7090b4;
+  --text3: #3a5068;
+  --mono: "JetBrains Mono", monospace;
+  --sans: "Noto Sans SC", sans-serif;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--bg4);
+  font-family: var(--sans);
+  color: var(--text);
+}
+
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.notify {
+  position: fixed;
+  top: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-size: 11px;
+  color: var(--text);
+  font-family: var(--mono);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.notify.show { opacity: 1; }
+.notify.s { border-color: var(--success); color: var(--success); }
+.notify.w { border-color: var(--warn); color: var(--warn); }
+.notify.e { border-color: var(--error); color: var(--error); }
