@@ -437,21 +437,12 @@ def _scale_to_canvas(nodes: list[dict], canvas_w: int, canvas_h: int) -> list[di
     if rect["width"] <= 0 or rect["height"] <= 0:
         return nodes
 
+    max_scale = 2.0
     needed_w = rect["width"] + margin * 2
     needed_h = rect["height"] + margin * 2
-    scale_x = canvas_w / needed_w if needed_w > canvas_w else 1.0
-    scale_y = canvas_h / needed_h if needed_h > canvas_h else 1.0
-    scale = min(scale_x, scale_y)
-
-    if scale >= 1.0:
-        offset_x = -rect["x"] + margin if rect["x"] < margin else 0
-        offset_y = -rect["y"] + margin if rect["y"] < margin else 0
-        if offset_x == 0 and offset_y == 0:
-            return nodes
-        for n in nodes:
-            n["x"] = round(n["x"] + offset_x)
-            n["y"] = round(n["y"] + offset_y)
-        return nodes
+    scale_x = canvas_w / needed_w
+    scale_y = canvas_h / needed_h
+    scale = min(scale_x, scale_y, max_scale)
 
     new_w = canvas_w - margin * 2
     new_h = canvas_h - margin * 2
@@ -731,7 +722,7 @@ class CanvasAgent:
         canvas_width: int = 800,
         canvas_height: int = 800,
     ) -> CanvasResult:
-        logger.info("📐 Agent自动布局")
+        logger.info("自动布局流程")
         logger.info("━" * 40)
         logger.info("📐 画布尺寸: %dx%d", canvas_width, canvas_height)
         logger.info("📦 控件数量: %d", len(controls))
@@ -751,7 +742,7 @@ class CanvasAgent:
             logger.info("  %s: %d个控件 %s", z.name, len(z.controls), z.controls)
 
         logger.info("━" * 40)
-        logger.info("📍 Step3+4: 计算坐标")
+        logger.info("📍 Step3: 计算坐标")
         nodes = _compute_coordinates(skeleton, controls, canvas_width, canvas_height)
 
         total = len(controls)
@@ -765,13 +756,13 @@ class CanvasAgent:
             logger.info("  %s → (%d, %d)", n["displayName"], n["x"], n["y"])
 
         logger.info("━" * 40)
-        logger.info("🔍 Step5: 质量检测")
+        logger.info("🔍 Step4: 质量检测")
         issues = _quality_check(nodes, skeleton.connections, canvas_width, canvas_height)
         for issue in issues:
             logger.info("  [%s] %s: %s", issue.severity, issue.issue_type, issue.message)
 
         logger.info("━" * 40)
-        logger.info("✅ Step6: 组装JSON & Schema校验")
+        logger.info("✅ Step5: 组装JSON & Schema校验")
         d_nodes = []
         for idx, n in enumerate(nodes):
             node_dict: dict = {
@@ -822,40 +813,53 @@ class CanvasAgent:
 
 
 if __name__ == "__main__":
-    import argparse
-
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     from data.material_db import MaterialDB
-
-    parser = argparse.ArgumentParser(description="CanvasAgent 自动布局")
-    parser.add_argument("query", help="布局需求描述")
-    parser.add_argument("-W", "--width", type=int, default=800, help="画布宽度 (默认 800)")
-    parser.add_argument("-H", "--height", type=int, default=800, help="画布高度 (默认 800)")
-    args = parser.parse_args()
 
     db = MaterialDB()
     db.init_db()
     agent = CanvasAgent()
 
-    controls = db.list_query_results(args.query)
-    if not controls:
-        raise ValueError(f"未找到与查询 '{args.query}' 匹配的控件")
+    while True:
+        try:
+            query = input("\n布局 (q退出): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if not query or query.lower() == "q":
+            break
 
-    result = agent.layout(
-        query=args.query,
-        controls=controls,
-        canvas_width=args.width,
-        canvas_height=args.height,
-    )
+        controls = db.list_query_results(query)
+        if not controls:
+            controls = db.search_query_results_by_name(query)
+        if not controls:
+            print(f"未找到与查询 '{query}' 匹配的控件，请先运行 control_agent.py 检索")
+            continue
 
-    output_dir = Path(__file__).resolve().parent.parent / "output"
-    output_dir.mkdir(exist_ok=True)
-    output_path = output_dir / "canvas.json"
-    output_path.write_text(
-        json.dumps(result.json_data, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    print(f"\n已保存到 {output_path}")
-    print(f"质量检测: {len(result.quality_issues)} 个问题")
-    for issue in result.quality_issues:
-        print(f"  [{issue.severity}] {issue.issue_type}: {issue.message}")
+        try:
+            w_input = input("画布宽度 (默认800): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        canvas_w = int(w_input) if w_input else 800
+
+        try:
+            h_input = input("画布高度 (默认800): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        canvas_h = int(h_input) if h_input else 800
+
+        result = agent.layout(
+            query=query, controls=controls,
+            canvas_width=canvas_w, canvas_height=canvas_h,
+        )
+
+        output_dir = Path(__file__).resolve().parent.parent / "output"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "canvas.json"
+        output_path.write_text(
+            json.dumps(result.json_data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        print(f"\n已保存到 {output_path}")
+        print(f"质量检测: {len(result.quality_issues)} 个问题")
+        for issue in result.quality_issues:
+            print(f"  [{issue.severity}] {issue.issue_type}: {issue.message}")
