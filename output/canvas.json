@@ -14,7 +14,10 @@
     "hierarchicalRendering": true
   },
   "a": {
+    "width": 100,
+    "height": 100,
     "fitContent": true,
+    "rectSelectable": false,
     "zoomable": false,
     "pannable": false
   },
@@ -23,21 +26,21 @@
       "c": "ht.Node",
       "i": 17092,
       "p": {
-        "displayName": "高低温试验箱",
-        "image": "symbols/_public/devices/高低温试验箱.json",
+        "displayName": "单折线图",
+        "image": "symbols/公共资源/HTDD/charts/lineCharts/Line1.json",
         "position": {
-          "x": 960,
-          "y": 540
+          "x": 280,
+          "y": 188
         },
-        "width": 642.9,
-        "height": 1028.6
+        "width": 560.0,
+        "height": 376.0
       }
     }
   ],
   "contentRect": {
-    "x": 638.55,
-    "y": 25.7,
-    "width": 642.9,
-    "height": 1028.6
+    "x": 0.0,
+    "y": 0.0,
+    "width": 560.0,
+    "height": 376.0
   }
 }
