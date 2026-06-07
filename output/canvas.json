@@ -14,7 +14,10 @@
     "hierarchicalRendering": true
   },
   "a": {
+    "width": 1920,
+    "height": 1080,
     "fitContent": true,
+    "rectSelectable": false,
     "zoomable": false,
     "pannable": false
   },
@@ -26,18 +29,102 @@
         "displayName": "高低温试验箱",
         "image": "symbols/_public/devices/高低温试验箱.json",
         "position": {
-          "x": 960,
-          "y": 540
+          "x": 462,
+          "y": 569
         },
-        "width": 642.9,
-        "height": 1028.6
+        "width": 500.0,
+        "height": 800.0
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17093,
+      "p": {
+        "displayName": "数值显示2-小",
+        "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+        "position": {
+          "x": 1143,
+          "y": 37
+        },
+        "width": 78.0,
+        "height": 24.0
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17094,
+      "p": {
+        "displayName": "启动按钮",
+        "image": "symbols/demo/KUKA/下行控制按钮.json",
+        "position": {
+          "x": 1116,
+          "y": 92
+        },
+        "width": 30.0,
+        "height": 30.0
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17095,
+      "p": {
+        "displayName": "急停按钮",
+        "image": "symbols/demo/KUKA/下行控制按钮.json",
+        "position": {
+          "x": 1116,
+          "y": 150
+        },
+        "width": 30.0,
+        "height": 30.0
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17096,
+      "p": {
+        "displayName": "单折线图",
+        "image": "symbols/公共资源/HTDD/charts/lineCharts/Line1.json",
+        "position": {
+          "x": 1423,
+          "y": 727
+        },
+        "width": 560.0,
+        "height": 376.0
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17097,
+      "p": {
+        "displayName": "参数值",
+        "image": "symbols/test/wangj/参数值.json",
+        "position": {
+          "x": 1133,
+          "y": 980
+        },
+        "width": 60.0,
+        "height": 20.0
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 17098,
+      "p": {
+        "displayName": "运行状态指示灯",
+        "image": "symbols/现场控制系统/样式修改/状态灯.json",
+        "position": {
+          "x": 1119,
+          "y": 1035
+        },
+        "width": 37.0,
+        "height": 37.0
       }
     }
   ],
   "contentRect": {
-    "x": 638.55,
-    "y": 25.7,
-    "width": 642.9,
-    "height": 1028.6
+    "x": 212.0,
+    "y": 25.0,
+    "width": 1491.0,
+    "height": 1028.5
   }
 }

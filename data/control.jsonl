@@ -10,7 +10,7 @@
 {"displayName":"机械臂末端","image":"symbols/demo/KUKA/arm3.json","width":500,"height":500}
 {"displayName":"机械臂大臂","image":"symbols/demo/KUKA/arm2.json","width":1439,"height":1439}
 {"displayName":"机械臂小臂","image":"symbols/demo/KUKA/arm1.json","width":378,"height":1602}
-{"displayName":"table","image":"symbols/ht/ui/table.json","width":828.53954,"height":300}
+{"displayName":"表格","image":"symbols/ht/ui/table.json","width":828.53954,"height":300}
 {"displayName":"table源码分析","image":"symbols/test/ljTest/table源码分析.json","width":500,"height":213}
 {"displayName":"table机床","image":"symbols/机加工自动化生产线/table.json","width":420,"height":300}
 {"displayName":"图表使用绑定","image":"symbols/机加工自动化生产线/chartUseBinding.json","width":420,"height":280}
@@ -164,4 +164,3 @@
 {"displayName":"回油单向阀","image":"assets/现场控制系统/设备图片/回油单向阀.png","width":65,"height":35}
 {"displayName":"压力传感器","image":"assets/现场控制系统/设备图片/压力传感器.png","width":25,"height":45}
 {"displayName":"溢流阀","image":"assets/现场控制系统/设备图片/溢流阀.png","width":64,"height":50}
-{"displayName":"title-bg","image":"assets/XX装备生产线/titleBg2.png","width":1905,"height":93}

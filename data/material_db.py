@@ -1,8 +1,11 @@
 import json
+import logging
 import sqlite3
 import threading
 from pathlib import Path
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).resolve().parent / "material.db"
 CONTROL_JSONL = Path(__file__).resolve().parent / "control.jsonl"
@@ -68,10 +71,17 @@ class MaterialDB:
             return
         lines = CONTROL_JSONL.read_text(encoding="utf-8").strip().splitlines()
         items = [json.loads(line) for line in lines]
+
         existing = {row["displayName"] for row in self.list_all()}
-        new_items = [item for item in items if item["displayName"] not in existing]
-        if new_items:
-            self.batch_add(new_items, source="local")
+        jsonl_names = {item["displayName"] for item in items}
+
+        stale_names = existing - jsonl_names
+        for name in stale_names:
+            self.delete(name)
+        if stale_names:
+            logger.info("SQLite 移除 %d 个已删除控件", len(stale_names))
+
+        self.batch_add(items, source="local")
 
     def add(self, item: dict, source: str = "local") -> None:
         with self._lock:

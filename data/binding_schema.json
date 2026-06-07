@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "binding",
+  "title": "BindingItem",
+  "description": "绑点项，描述控件属性与 PLC 变量的映射关系",
+  "type": "object",
+  "required": ["controlId", "property", "variable"],
+  "properties": {
+    "controlId": {
+      "type": "string",
+      "description": "控件 ID，引用 control 中的 d 数组元素"
+    },
+    "property": {
+      "type": "string",
+      "enum": ["status", "value", "visible", "color", "text", "enabled"],
+      "description": "控件绑定属性"
+    },
+    "variable": {
+      "type": "string",
+      "description": "PLC 变量名"
+    },
+    "dataType": {
+      "type": "string",
+      "enum": ["bool", "int16", "int32", "float", "string"],
+      "description": "变量数据类型"
+    },
+    "registerAddress": {
+      "type": "string",
+      "description": "寄存器地址"
+    }
+  },
+  "additionalProperties": false
+}
