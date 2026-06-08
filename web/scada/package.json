@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf node_modules/.vite node_modules/.tmp dist",
+    "predev": "npm run clean",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
