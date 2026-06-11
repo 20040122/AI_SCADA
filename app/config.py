@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     port: int = 8000
     debug: bool = False
 
-    model_config = {"env_file": ".env.local", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": ".env.local", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 
 settings = Settings()

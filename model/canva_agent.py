@@ -1,8 +1,6 @@
-import sys
-import warnings
-warnings.simplefilter("ignore")
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from __future__ import annotations
+
+import asyncio
 import json
 import logging
 import math
@@ -10,13 +8,20 @@ import os
 import random
 import re
 from dataclasses import dataclass
+from typing import Optional
 from pathlib import Path
+
 import jsonschema
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import AsyncOpenAI
+
+from data.material_db import MaterialDB
+
 logger = logging.getLogger(__name__)
+
 load_dotenv(".env.local")
-_client = OpenAI(
+
+_client = AsyncOpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
     base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
 )
@@ -318,7 +323,7 @@ def _sanitize_connections(connections: list[dict], controls: list[dict]) -> list
     return clean
 
 
-def _extract_layout_requirements(
+async def _extract_layout_requirements(
     query: str, controls: list[dict], canvas_w: int, canvas_h: int
 ) -> LayoutRequirement:
     heuristic = _classify_controls(controls)
@@ -332,7 +337,7 @@ def _extract_layout_requirements(
         logger.warning("未配置 DEEPSEEK_MODEL，使用本地启发式布局分类")
     else:
         try:
-            response = _client.chat.completions.create(
+            response = await _client.chat.completions.create(
                 model=_MODEL,
                 messages=[
                     {"role": "system", "content": prompt},
@@ -674,7 +679,7 @@ def _force_directed_layout(
     return nodes
 
 
-def _refine_layout_with_llm(
+async def _refine_layout_with_llm(
     nodes: list[dict], canvas_w: int, canvas_h: int
 ) -> list[dict]:
     if not _MODEL:
@@ -688,7 +693,7 @@ def _refine_layout_with_llm(
         layout_json=layout_json,
     )
     try:
-        response = _client.chat.completions.create(
+        response = await _client.chat.completions.create(
             model=_MODEL,
             messages=[
                 {"role": "system", "content": prompt},
@@ -848,8 +853,10 @@ def _compute_overlap_ratio(n1: dict, n2: dict) -> float:
     return overlap_area / smaller
 
 
-def _schema_validate(json_data: dict) -> list[str]:
-    schema_text = _SCHEMA_PATH.read_text(encoding="utf-8")
+async def _schema_validate(json_data: dict) -> list[str]:
+    schema_text = await asyncio.to_thread(
+        lambda: _SCHEMA_PATH.read_text(encoding="utf-8")
+    )
     schema = json.loads(schema_text)
     try:
         jsonschema.validate(instance=json_data, schema=schema)
@@ -888,7 +895,7 @@ def _parse_count_from_text(text: str) -> int:
     return 1
 
 
-def _extract_query_intents(query: str, material_db) -> list[QueryIntent]:
+async def _extract_query_intents(query: str, material_db) -> list[QueryIntent]:
     intents: list[QueryIntent] = []
 
     def add_intent(keyword: str, count: int = 1) -> None:
@@ -905,7 +912,7 @@ def _extract_query_intents(query: str, material_db) -> list[QueryIntent]:
         intents[:] = [intent for intent in intents if intent.keyword not in keyword]
         intents.append(QueryIntent(keyword=keyword, count=max(1, count)))
 
-    controls = material_db.list_all()
+    controls = await material_db.list_all()
     names = sorted(
         (row["displayName"] for row in controls if row.get("displayName")),
         key=len,
@@ -933,8 +940,9 @@ def _extract_query_intents(query: str, material_db) -> list[QueryIntent]:
     return intents
 
 
-def _extract_query_keywords(query: str, material_db) -> list[str]:
-    return [intent.keyword for intent in _extract_query_intents(query, material_db)]
+async def _extract_query_keywords(query: str, material_db) -> list[str]:
+    intents = await _extract_query_intents(query, material_db)
+    return [intent.keyword for intent in intents]
 
 
 def _select_top_controls(rows: list[dict], keyword: str, count: int) -> list[dict]:
@@ -979,20 +987,20 @@ def _dedupe_controls(controls: list[dict]) -> list[dict]:
     return result
 
 
-def _load_controls_from_query_results(query: str, material_db) -> tuple[list[dict], list[str]]:
-    controls = material_db.list_query_results(query)
+async def _load_controls_from_query_results(query: str, material_db) -> tuple[list[dict], list[str]]:
+    controls = await material_db.list_query_results(query)
     if controls:
         return controls, []
 
-    controls = material_db.search_query_results_by_name(query)
+    controls = await material_db.search_query_results_by_name(query)
     if controls:
         return _select_top_controls(controls, query, 1), [query]
 
-    intents = _extract_query_intents(query, material_db)
+    intents = await _extract_query_intents(query, material_db)
     matched: list[dict] = []
     matched_keywords: list[str] = []
     for intent in intents:
-        rows = material_db.search_query_results_by_name(intent.keyword)
+        rows = await material_db.search_query_results_by_name(intent.keyword)
         if not rows:
             continue
         matched.extend(_select_top_controls(rows, intent.keyword, intent.count))
@@ -1002,13 +1010,20 @@ def _load_controls_from_query_results(query: str, material_db) -> tuple[list[dic
 
 
 class CanvasAgent:
-    def layout(
+    def __init__(self, db: Optional[MaterialDB] = None):
+        self._db = db
+
+    async def layout(
         self,
         query: str,
-        controls: list[dict],
+        controls: Optional[list[dict]] = None,
         canvas_width: int = 800,
         canvas_height: int = 800,
     ) -> CanvasResult:
+        if controls is None:
+            if self._db is None:
+                raise ValueError("controls 未提供且 CanvasAgent 未注入 material_db")
+            controls, _ = await _load_controls_from_query_results(query, self._db)
         logger.info("自动布局流程")
         logger.info("━" * 40)
         logger.info("📐 画布尺寸: %dx%d", canvas_width, canvas_height)
@@ -1016,7 +1031,7 @@ class CanvasAgent:
 
         logger.info("━" * 40)
         logger.info("🔍 Step1: 提取布局需求")
-        requirement = _extract_layout_requirements(query, controls, canvas_width, canvas_height)
+        requirement = await _extract_layout_requirements(query, controls, canvas_width, canvas_height)
         logger.info("  主设备: %s", requirement.main_devices)
         logger.info("  控制类: %s", requirement.auxiliary_controls)
         logger.info("  显示类: %s", requirement.display_controls)
@@ -1035,7 +1050,7 @@ class CanvasAgent:
         total = len(controls)
         if total > 20:
             logger.info("  元素数量>%d，使用力导向布局+LLM微调", 20)
-            nodes = _refine_layout_with_llm(nodes, canvas_width, canvas_height)
+            nodes = await _refine_layout_with_llm(nodes, canvas_width, canvas_height)
 
         nodes = _scale_to_canvas(nodes, canvas_width, canvas_height)
 
@@ -1088,7 +1103,7 @@ class CanvasAgent:
             "contentRect": content_rect,
         }
 
-        errors = _schema_validate(json_data)
+        errors = await _schema_validate(json_data)
         if errors:
             logger.warning("  Schema校验问题: %s", errors)
             issues.extend(
@@ -1109,63 +1124,3 @@ class CanvasAgent:
             quality_issues=issues,
             skeleton=skeleton,
         )
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-    from data.material_db import MaterialDB
-
-    db = MaterialDB()
-    db.init_db()
-    agent = CanvasAgent()
-
-    while True:
-        try:
-            query = input("\n布局 (q退出): ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-        if not query or query.lower() == "q":
-            break
-
-        controls, matched_keywords = _load_controls_from_query_results(query, db)
-        if not controls:
-            keywords = _extract_query_keywords(query, db)
-            if keywords:
-                print(
-                    f"已从输入中提取关键词 {keywords}，但 query_results 表中没有匹配控件；"
-                    "请先在控件检索页保存这些控件结果"
-                )
-            else:
-                print(f"未能从查询 '{query}' 中提取可用于 query_results 的控件关键词")
-            continue
-        if matched_keywords:
-            print(f"按关键词从 query_results 命中: {', '.join(matched_keywords)}")
-
-        try:
-            w_input = input("画布宽度 (默认800): ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-        canvas_w = int(w_input) if w_input else 800
-
-        try:
-            h_input = input("画布高度 (默认800): ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-        canvas_h = int(h_input) if h_input else 800
-
-        result = agent.layout(
-            query=query, controls=controls,
-            canvas_width=canvas_w, canvas_height=canvas_h,
-        )
-
-        output_dir = Path(__file__).resolve().parent.parent / "output"
-        output_dir.mkdir(exist_ok=True)
-        output_path = output_dir / "canvas.json"
-        output_path.write_text(
-            json.dumps(result.json_data, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-        print(f"\n已保存到 {output_path}")
-        print(f"质量检测: {len(result.quality_issues)} 个问题")
-        for issue in result.quality_issues:
-            print(f"  [{issue.severity}] {issue.issue_type}: {issue.message}")

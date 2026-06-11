@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Optional
+from typing import Any, Optional, List
 from pydantic import BaseModel, Field
 
 
@@ -43,7 +43,7 @@ class SaveQueryResultRequest(BaseModel):
 
 class CanvasLayoutRequest(BaseModel):
     query: str
-    controls: list[ControlItem]
+    controls: Optional[List[ControlItem]] = None
     canvas_width: int = 800
     canvas_height: int = 800
 

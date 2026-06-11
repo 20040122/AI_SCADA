@@ -1,26 +1,27 @@
 from fastapi import APIRouter, Depends
+
+from app.deps import get_canvas_agent
 from app.schemas import (
+    ApiResponse,
     CanvasLayoutRequest,
     CanvasLayoutResponse,
-    QualityIssueResponse,
     LayoutZoneResponse,
+    QualityIssueResponse,
     RefineRequest,
     RefineResponse,
-    ApiResponse,
 )
-from app.deps import get_canvas_agent
-from model.canva_agent import CanvasAgent, _refine_layout_with_llm, _schema_validate
+from model.canva_agent import CanvasAgent, _refine_layout_with_llm
 
 router = APIRouter(prefix="/api/canvas", tags=["canvas"])
 
 
 @router.post("/layout", response_model=ApiResponse)
-def canvas_layout(
+async def canvas_layout(
     req: CanvasLayoutRequest,
     agent: CanvasAgent = Depends(get_canvas_agent),
 ):
-    controls = [c.model_dump() for c in req.controls]
-    result = agent.layout(
+    controls = [c.model_dump() for c in req.controls] if req.controls else None
+    result = await agent.layout(
         query=req.query,
         controls=controls,
         canvas_width=req.canvas_width,
@@ -56,7 +57,7 @@ def canvas_layout(
 
 
 @router.post("/refine", response_model=ApiResponse)
-def canvas_refine(req: RefineRequest):
-    refined = _refine_layout_with_llm(req.nodes, req.canvas_width, req.canvas_height)
+async def canvas_refine(req: RefineRequest):
+    refined = await _refine_layout_with_llm(req.nodes, req.canvas_width, req.canvas_height)
     resp = RefineResponse(nodes=refined)
     return ApiResponse(data=resp.model_dump())
