@@ -2,6 +2,7 @@ import TitleBar from "./components/layout/TitleBar";
 import MainTabs from "./components/tabs/MainTabs";
 import StatusBar from "./components/layout/StatusBar";
 import AssetAgentPage from "./components/asset/AssetAgentPage";
+import LayoutAgentPage from "./components/layout-agent/LayoutAgentPage";
 import { useAssetStore } from "./stores/assetStore";
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -29,7 +30,7 @@ export default function App() {
       <div className="flex-1 overflow-hidden relative">
         {activeTab === "asset" && <AssetAgentPage />}
         {activeTab === "schema" && <PlaceholderPage title="R-01 Schema规则库" />}
-        {activeTab === "layout" && <PlaceholderPage title="R-03 AI自动布局" />}
+        {activeTab === "layout" && <LayoutAgentPage />}
         {activeTab === "refine" && <PlaceholderPage title="R-04 人机协同微调" />}
         {activeTab === "binding" && <PlaceholderPage title="R-05 智能数据绑点" />}
         {activeTab === "docs" && <PlaceholderPage title="需求文档" />}

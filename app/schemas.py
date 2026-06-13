@@ -69,6 +69,7 @@ class CanvasLayoutResponse(BaseModel):
     content_rect: dict[str, float]
     quality_issues: list[QualityIssueResponse]
     zones: list[LayoutZoneResponse]
+    missing_controls: list[str] = []
 
 
 class RefineRequest(BaseModel):

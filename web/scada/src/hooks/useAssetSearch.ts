@@ -33,17 +33,7 @@ export function useAssetSearch() {
 
       setPipelineStep(2, "done");
 
-      const hasSqlite = result.keywords.some((kr) =>
-        kr.candidates.some((c) => c.source === "sqlite")
-      );
-      if (hasSqlite) {
-        setPipelineStep(3, "run");
-        setPipelineStep(3, "done");
-      } else {
-        setPipelineStep(3, "skip");
-      }
-
-      setPipelineStep(4, "wait");
+      setPipelineStep(3, "wait");
 
       setKeywordResults(result.keywords);
       setMissedKeywords(result.missed);
@@ -62,8 +52,7 @@ export function useAssetSearch() {
     } catch (e) {
       setPipelineStep(1, "done");
       setPipelineStep(2, "done");
-      setPipelineStep(3, "skip");
-      setPipelineStep(4, "done");
+      setPipelineStep(3, "done");
 
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);

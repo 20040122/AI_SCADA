@@ -1,7 +1,7 @@
 import { useAssetStore } from "../../stores/assetStore";
 
 export default function StatusBar() {
-  const { keywordResults, materialLib, isLoading, error } = useAssetStore();
+  const { keywordResults, isLoading, error } = useAssetStore();
 
   const status = error
     ? `错误: ${error}`

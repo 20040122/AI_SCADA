@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from fastapi import APIRouter, Depends
 
 from app.deps import get_canvas_agent
@@ -27,6 +30,13 @@ async def canvas_layout(
         canvas_width=req.canvas_width,
         canvas_height=req.canvas_height,
     )
+
+    output_path = Path(__file__).resolve().parent.parent.parent / "output" / "canvas.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(result.json_data, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
     issues = [
         QualityIssueResponse(
             severity=i.severity,
@@ -52,6 +62,7 @@ async def canvas_layout(
         content_rect=result.content_rect,
         quality_issues=issues,
         zones=zones,
+        missing_controls=result.missing_controls,
     )
     return ApiResponse(data=resp.model_dump())
 
