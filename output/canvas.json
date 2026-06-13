@@ -15,7 +15,7 @@
   },
   "a": {
     "width": 1920,
-    "height": 1022,
+    "height": 1077,
     "fitContent": true,
     "rectSelectable": false,
     "zoomable": false,
@@ -29,8 +29,8 @@
         "displayName": "高低温试验箱",
         "image": "symbols/_public/devices/高低温试验箱.json",
         "position": {
-          "x": 960,
-          "y": 400
+          "x": 323,
+          "y": 538
         },
         "width": 500.0,
         "height": 800.0
@@ -40,14 +40,14 @@
       "c": "ht.Node",
       "i": 17093,
       "p": {
-        "displayName": "高低温试验箱",
-        "image": "symbols/_public/devices/高低温试验箱.json",
+        "displayName": "急停按钮",
+        "image": "symbols/demo/KUKA/下行控制按钮.json",
         "position": {
-          "x": 960,
-          "y": 622
+          "x": 1878,
+          "y": 509
         },
-        "width": 500.0,
-        "height": 800.0
+        "width": 30.0,
+        "height": 30.0
       }
     },
     {
@@ -57,8 +57,8 @@
         "displayName": "急停按钮",
         "image": "symbols/demo/KUKA/下行控制按钮.json",
         "position": {
-          "x": 986,
-          "y": 304
+          "x": 1878,
+          "y": 568
         },
         "width": 30.0,
         "height": 30.0
@@ -66,9 +66,9 @@
     }
   ],
   "contentRect": {
-    "x": 710.0,
-    "y": 0.0,
-    "width": 500.0,
-    "height": 1022.0
+    "x": 73.0,
+    "y": 138.0,
+    "width": 1820.0,
+    "height": 800.0
   }
 }

@@ -15,6 +15,15 @@ const INITIAL_WORKFLOW: WorkflowStep[] = [
   { id: 3, name: "质检验证", detail: "重叠/溢出/Schema 规则校验", status: "wait" },
 ];
 
+function hashColor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 50%, 55%)`;
+}
+
 function extractNodesFromJsonData(jsonData: LayoutJsonData | null): CanvasNode[] {
   if (!jsonData?.d) return [];
   return jsonData.d.map((n, idx) => ({
@@ -25,6 +34,7 @@ function extractNodesFromJsonData(jsonData: LayoutJsonData | null): CanvasNode[]
     y: n.p.position.y,
     width: n.p.width || 60,
     height: n.p.height || 40,
+    color: hashColor(n.p.displayName),
   }));
 }
 

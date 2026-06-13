@@ -1,15 +1,6 @@
 import { useLayoutStore } from "../../stores/layoutStore";
 import type { CanvasNode } from "../../types/layout";
-import { useEffect, useState, useRef } from "react";
-
-function hashColor(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const hue = Math.abs(hash) % 360;
-  return `hsl(${hue}, 50%, 55%)`;
-}
+import { memo, useEffect, useState, useRef } from "react";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   wait: { label: "等待", cls: "bg-[rgba(58,80,104,0.3)] text-[var(--text3)]" },
@@ -27,30 +18,33 @@ const ZONE_COLORS = [
   "rgba(184,138,232,0.06)",
 ];
 
-function CanvasWidget({ node, scale, offsetX, offsetY }: {
+const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY }: {
   node: CanvasNode;
   scale: number;
   offsetX: number;
   offsetY: number;
 }) {
-  const color = hashColor(node.displayName);
+  const x = offsetX + node.x * scale;
+  const y = offsetY + node.y * scale;
+  const w = node.width * scale;
+  const h = node.height * scale;
 
   return (
     <div
       className="absolute cursor-pointer transition-all duration-200 hover:z-10 hover:shadow-[0_0_0_2px_var(--accent)] select-none"
       style={{
-        left: offsetX + node.x * scale,
-        top: offsetY + node.y * scale,
-        width: node.width * scale,
-        height: node.height * scale,
-        background: `linear-gradient(135deg, ${color}22, ${color}11)`,
-        border: `1px solid ${color}66`,
+        transform: `translate(${x}px, ${y}px)`,
+        width: w,
+        height: h,
+        backgroundColor: `${node.color}22`,
+        border: `1px solid ${node.color}66`,
         borderRadius: "2px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
+        willChange: "transform",
       }}
     >
       <span
@@ -66,9 +60,9 @@ function CanvasWidget({ node, scale, offsetX, offsetY }: {
       </span>
     </div>
   );
-}
+});
 
-function ZoneOverlay({ zone, index, scale, offsetX, offsetY }: {
+const ZoneOverlay = memo(function ZoneOverlay({ zone, index, scale, offsetX, offsetY }: {
   zone: { x: number; y: number; width: number; height: number; name: string };
   index: number;
   scale: number;
@@ -76,14 +70,17 @@ function ZoneOverlay({ zone, index, scale, offsetX, offsetY }: {
   offsetY: number;
 }) {
   const color = ZONE_COLORS[index % ZONE_COLORS.length];
+  const zx = offsetX + zone.x * scale;
+  const zy = offsetY + zone.y * scale;
+  const zw = zone.width * scale;
+  const zh = zone.height * scale;
   return (
     <div
       className="absolute pointer-events-none"
       style={{
-        left: offsetX + zone.x * scale,
-        top: offsetY + zone.y * scale,
-        width: zone.width * scale,
-        height: zone.height * scale,
+        transform: `translate(${zx}px, ${zy}px)`,
+        width: zw,
+        height: zh,
         background: color,
         border: "1px dashed rgba(77,184,212,0.15)",
         borderRadius: "3px",
@@ -97,7 +94,7 @@ function ZoneOverlay({ zone, index, scale, offsetX, offsetY }: {
       </span>
     </div>
   );
-}
+});
 
 function WorkflowSteps() {
   const { workflow } = useLayoutStore();
@@ -194,7 +191,7 @@ export default function CenterPanel() {
   );
 }
 
-function CanvasContent({ nodes, zones, canvasW, canvasH }: {
+const CanvasContent = memo(function CanvasContent({ nodes, zones, canvasW, canvasH }: {
   nodes: CanvasNode[];
   zones: { x: number; y: number; width: number; height: number; name: string }[];
   canvasW: number;
@@ -216,9 +213,9 @@ function CanvasContent({ nodes, zones, canvasW, canvasH }: {
       )}
     </ResizableCanvas>
   );
-}
+});
 
-function ResizableCanvas({
+const ResizableCanvas = memo(function ResizableCanvas({
   targetW,
   targetH,
   margin,
@@ -264,4 +261,4 @@ function ResizableCanvas({
       {children(scale, offsetX, offsetY)}
     </div>
   );
-}
+});
