@@ -1,48 +1,34 @@
-import sys
-import warnings
-warnings.simplefilter("ignore")
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
+from __future__ import annotations
 import json
 import logging
 import os
-from typing import List, Optional, Tuple
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Optional
 from dotenv import load_dotenv
-from openai import OpenAI
-
+from openai import AsyncOpenAI
 from data.material_db import MaterialDB
-from data.chroma import ControlChunk
 from model.search_service import search_controls_with_threshold
-
 logger = logging.getLogger(__name__)
-
 load_dotenv(".env.local")
 
 EXTRACT_PROMPT = """\
 你是工业SCADA控件检索专家。从用户的自然语言描述中提取所需的控件关键词及数量。
-
 控件库中可用的控件名称列表：
 {control_names}
-
 提取要求：
 1. 从用户描述中提取控件关键词，关键词必须优先从上方列表中选取
 2. 若用户描述的控件不在列表中，提取最接近的关键词用于模糊检索
 3. 若用户未指定数量则默认为1
-
 示例：
 用户: 2个指示灯和1个水泵
-输出: {{"controls": [{{"name": "指示灯", "count": 2}}, {{"name": "水泵", "count": 1}}]}}
-
+输出: {{"controls": [{{"name": "指示灯", "count": 1}}, {{"name": "水泵", "count": 1}}]}}
 用户: 组态画面需要显示温度和压力
 输出: {{"controls": [{{"name": "仪表盘", "count": 1}}, {{"name": "参数值", "count": 2}}]}}
-
 输出JSON:
 {{"controls": [{{"name": "关键词", "count": 数量}}]}}
 """
-
-_client = OpenAI(
+_client = AsyncOpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
     base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
     timeout=50.0,
@@ -82,27 +68,25 @@ class ControlAgentResult:
 class ControlAgent:
     def __init__(self, db: Optional[MaterialDB] = None):
         self._db = db or MaterialDB()
-        self._db.init_db()
-        self._control_names = ControlChunk().get_raw_controls()
+
+    async def init(self) -> None:
+        await self._db.init_db()
+        from data.chroma import ControlChunk
+        chunk = ControlChunk()
+        self._control_names = chunk.get_raw_controls()
         self._control_names_str = "、".join(c["displayName"] for c in self._control_names)
 
-    def process_query(self, query: str) -> ControlAgentResult:
-        logger.info("向量检索流程")
-        logger.info("━" * 40)
-
-        control_intents, cache_hit = self._extract_controls(query)
-        if cache_hit:
-            logger.info("🤖 LLM提取: %s (缓存命中)", ", ".join(f"{c.name}x{c.count}" for c in control_intents))
-        else:
-            logger.info("🤖 LLM提取: %s", ", ".join(f"{c.name}x{c.count}" for c in control_intents))
+    async def process_query(self, query: str) -> ControlAgentResult:
+        control_intents, cache_hit = await self._extract_controls(query)
+        cache_tag = " (缓存命中)" if cache_hit else ""
+        logger.info("LLM提取: %s%s", ", ".join(f"{c.name}x{c.count}" for c in control_intents), cache_tag)
 
         keywords = [c.name for c in control_intents]
         count_map = {c.name: c.count for c in control_intents}
-        search_results = search_controls_with_threshold(keywords)
+        search_results = await search_controls_with_threshold(keywords)
         keyword_results: list[KeywordResult] = []
         missed: list[str] = []
 
-        logger.info("━" * 40)
         for keyword, candidates in search_results.items():
             count = count_map.get(keyword, 1)
             all_candidates: list[ControlCandidate] = []
@@ -123,11 +107,11 @@ class ControlAgent:
                 ))
 
             if not vector_hit:
-                logger.info("🔎 向量检索 \"%s\": ❌ 无命中 (sim < 0.55)", keyword)
-                db_results = self._db.search_by_name(keyword)
+                logger.debug("向量检索 \"%s\": 无命中 (sim < 0.55)", keyword)
+                db_results = await self._db.search_by_name(keyword)
                 if db_results:
                     for item in db_results:
-                        logger.info("💾 SQLite兜底 \"%s\": ✅ %s", keyword, item["displayName"])
+                        logger.debug("SQLite兜底 \"%s\": %s", keyword, item["displayName"])
                         all_candidates.append(ControlCandidate(
                             displayName=item.get("displayName", ""),
                             image=item.get("image", ""),
@@ -136,13 +120,15 @@ class ControlAgent:
                             similarity=0.0,
                             source="sqlite",
                         ))
+                    sqlite_names = [d.get("displayName", "") for d in db_results]
+                    logger.info("检索 \"%s\": 向量未命中, SQLite兜底 %s", keyword, ", ".join(sqlite_names))
                 else:
-                    logger.info("💾 SQLite兜底 \"%s\": ❌ 无结果", keyword)
+                    logger.info("检索 \"%s\": 无结果", keyword)
                     if keyword not in missed:
                         missed.append(keyword)
             else:
                 matched_names = [c.displayName for c in all_candidates if c.similarity >= 0.55]
-                logger.info("🔎 向量检索 \"%s\": ✅ %s", keyword, ", ".join(matched_names))
+                logger.info("检索 \"%s\": %s", keyword, ", ".join(matched_names))
 
             seen = set()
             unique_candidates = []
@@ -157,23 +143,22 @@ class ControlAgent:
                 candidates=unique_candidates[:5],
             ))
 
-        logger.info("━" * 40)
         total = sum(len(kr.candidates) for kr in keyword_results)
-        logger.info("✅ 返回 %d 个关键词, %d 个候选项", len(keyword_results), total)
+        logger.info("返回 %d 个关键词, %d 个候选项", len(keyword_results), total)
         if missed:
-            logger.info("❌ 未命中: %s", ", ".join(missed))
+            logger.info("未命中: %s", ", ".join(missed))
 
         return ControlAgentResult(
             keywords=keyword_results,
             missed=missed,
         )
 
-    def _extract_controls(self, query: str) -> Tuple[List[ControlIntent], bool]:
+    async def _extract_controls(self, query: str) -> tuple[list[ControlIntent], bool]:
         cached = _extract_controls_cached(query, self._control_names_str)
         if cached is not None:
             return [ControlIntent(name=c[0], count=c[1]) for c in cached], True
         prompt = EXTRACT_PROMPT.format(control_names=self._control_names_str)
-        response = _client.chat.completions.create(
+        response = await _client.chat.completions.create(
             model=_MODEL,
             messages=[
                 {"role": "system", "content": prompt},
@@ -191,32 +176,10 @@ class ControlAgent:
         ]
         return intents, False
 
-
 _extract_cache: dict = {}
 
-
-def _extract_controls_cached(query: str, control_names_str: str) -> Optional[List[Tuple[str, int]]]:
+def _extract_controls_cached(query: str, control_names_str: str) -> Optional[list[tuple[str, int]]]:
     key = (query, control_names_str)
     if key in _extract_cache:
         return _extract_cache[key]
     return None
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-    agent = ControlAgent()
-    while True:
-        try:
-            query = input("\nAI检索 (q退出): ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-        if not query or query.lower() == "q":
-            break
-        result = agent.process_query(query)
-
-        for kr in result.keywords:
-            print(f"\n  [{kr.keyword}] x{kr.count} ({len(kr.candidates)} 候选)")
-            for c in kr.candidates:
-                print(f"    {c.displayName} | sim={c.similarity:.4f} | src={c.source}")
-        if result.missed:
-            print(f"\n未命中的检索词: {result.missed}")

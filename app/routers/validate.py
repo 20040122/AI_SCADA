@@ -1,27 +1,37 @@
+from __future__ import annotations
+
+import asyncio
 import json
 from pathlib import Path
+
+import jsonschema
 from fastapi import APIRouter
-from app.schemas import ValidateRequest, ValidateResponse, ValidationErrorItem, ApiResponse
+
 from app.config import settings
+from app.schemas import ApiResponse, ValidateRequest, ValidateResponse, ValidationErrorItem
 
 router = APIRouter(prefix="/api/validate", tags=["validate"])
 
 _schema_cache = None
+_schema_cache_lock = asyncio.Lock()
 
 
-def _load_schema() -> dict:
+async def _load_schema() -> dict:
     global _schema_cache
     if _schema_cache is None:
-        schema_path = Path(settings.schema_path)
-        _schema_cache = json.loads(schema_path.read_text(encoding="utf-8"))
+        async with _schema_cache_lock:
+            if _schema_cache is None:
+                schema_path = Path(settings.schema_path)
+                text = await asyncio.to_thread(
+                    lambda: schema_path.read_text(encoding="utf-8")
+                )
+                _schema_cache = json.loads(text)
     return _schema_cache
 
 
 @router.post("", response_model=ApiResponse)
-def validate_json(req: ValidateRequest):
-    import jsonschema
-
-    schema = _load_schema()
+async def validate_json(req: ValidateRequest):
+    schema = await _load_schema()
     validator = jsonschema.Draft7Validator(schema)
     errors = list(validator.iter_errors(req.json_data))
 

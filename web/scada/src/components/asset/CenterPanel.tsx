@@ -69,7 +69,7 @@ export default function CenterPanel() {
       .then(() => {
         decrementKeywordCount(keywordStr);
         refreshQueryResults();
-        setPipelineStep(4, "done");
+        setPipelineStep(3, "done");
         notify(`${displayName} 已入库`, "s");
       })
       .catch(() => {

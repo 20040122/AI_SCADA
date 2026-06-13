@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import type {
-  ControlCandidate,
   KeywordResult,
   MaterialItem,
   PipelineStep,
@@ -57,15 +56,7 @@ export const useAssetStore = create<AssetStore>((set) => ({
 
   keywordResults: [],
   setKeywordResults: (results) => set({ keywordResults: results }),
-  removeCandidate: (keyword, displayName) =>
-    set((s) => ({
-      keywordResults: s.keywordResults.map((kr) =>
-        kr.keyword === keyword
-          ? { ...kr, candidates: kr.candidates.filter((c) => c.displayName !== displayName) }
-          : kr
-      ),
-    })),
-  removeKeyword: (keyword) =>
+  removeKeyword: (keyword: string) =>
     set((s) => ({
       keywordResults: s.keywordResults.filter((kr) => kr.keyword !== keyword),
     })),

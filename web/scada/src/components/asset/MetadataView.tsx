@@ -53,16 +53,6 @@ export default function MetadataView({ asset }: { asset: MaterialItem | null }) 
 }`}
         </div>
       </div>
-
-      <div className="mt-2 pt-2 border-t border-[var(--border)]">
-        <div className="text-[10px] text-[var(--text3)] font-mono mb-1 tracking-[0.5px]">
-          验收标准
-        </div>
-        <div className="text-[11px] text-[var(--text2)] leading-[1.8]">
-          <div>✓ 检索结果匹配</div>
-          <div>✓ 通过质检</div>
-        </div>
-      </div>
     </div>
   );
 }

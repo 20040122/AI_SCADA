@@ -66,3 +66,11 @@ html, body, #root {
 .notify.s { border-color: var(--success); color: var(--success); }
 .notify.w { border-color: var(--warn); color: var(--warn); }
 .notify.e { border-color: var(--error); color: var(--error); }
+
+@keyframes flowdash {
+  to { stroke-dashoffset: -16; }
+}
+.flow-anim {
+  stroke-dasharray: 7 4;
+  animation: flowdash 0.9s linear infinite;
+}
