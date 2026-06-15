@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import APIRouter, Depends
@@ -31,7 +32,8 @@ async def canvas_layout(
         canvas_height=req.canvas_height,
     )
 
-    output_path = Path(__file__).resolve().parent.parent.parent / "output" / "canvas.json"
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    output_path = Path(__file__).resolve().parent.parent.parent / "output" / f"canvas_{ts}.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
         json.dumps(result.json_data, ensure_ascii=False, indent=2), encoding="utf-8"

@@ -54,3 +54,5 @@ temp/
 *.tar
 *.tar.gz
 *.rar
+
+output/

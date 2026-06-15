@@ -8,6 +8,7 @@ import random
 import re
 import sys
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Optional
 from pathlib import Path
 import jsonschema
@@ -27,51 +28,9 @@ _client = AsyncOpenAI(
 )
 _MODEL = os.environ.get("DEEPSEEK_MODEL")
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "data" / "canvas_schema.json"
+_SCHEMA_CACHE: dict | None = None
 
 
-EXTRACT_HINTS_PROMPT = """\
-SCADA 组态意图提取器。从用户描述中提取明确表达的布局偏好。
-
-可用控件：
-{controls_info}
-
-可选 region 枚举：
-- left, right, top, bottom, center
-- left_top, right_top, left_bottom, right_bottom
-
-规则：
-1. 只能使用上面列出的控件名称，不得编造
-2. 仅当用户明确表达了位置意图时才输出（如"右上角"、"靠左"、"放在中间"等）
-3. placement_hints 中每个对象包含 target（控件名）和 region（方位）
-
-只输出 JSON，不要解释：
-{{
-  "placement_hints": [
-    {{"target": "", "region": "left"}}
-  ]
-}}
-"""
-
-FALLBACK_EXTRACT_PROMPT = """\
-SCADA 组态语义分析器。根据用户描述，为每个控件分配布局位置。
-要求：
-1. 只能使用query_results中的displayName,不得编造名称。
-2. placements: 为每个控件分配一个region，表示其应放置的方向区域。
-   可选 region 枚举：
-   - left, right, top, bottom, center
-   - left_top, right_top, left_bottom, right_bottom
-3. placement_hints 表示用户明确表达的布局意图，只能使用上述 region 枚举。
-4. 只有当用户明确表达了位置意图时才输出 placement_hints。
-只输出 JSON,不要解释:
-{{
-  "placements": [
-    {{"target": "", "region": "left"}}
-  ],
-  "placement_hints": [
-    {{"target": "", "region": "left"}}
-  ]
-}}
-"""
 
 EXTRACT_CONTROLS_PROMPT = """\
 SCADA 控件检索器。从用户描述中提取需要的控件名称和数量。
@@ -96,35 +55,47 @@ width={canvas_width}, height={canvas_height}
 {layout_json}
 硬性约束：
 1. 不得新增、删除、重命名节点。
-2. 不得修改 displayName、image、width、height。
+2. 不得修改 displayName、node_id、image、width、height。
 3. 所有节点必须完整位于画布内。
 4. 尽量避免重叠。
 5. 各控件保持在原有大致区域（左上/上/右上/左/中/右/左下/下/右下），微调时避免跨区域大幅移动。
 6. x、y 必须是整数。
 只输出 JSON,不要解释:
-{{"nodes":[{{"displayName":"","image":"","width":0,"height":0,"x":0,"y":0}}]}}
+{{"nodes":[{{"node_id":"","displayName":"","image":"","width":0,"height":0,"x":0,"y":0}}]}}
 """
 
-DSL_PROMPT = """\
-SCADA 控制流图生成器。根据用户描述和可用控件，生成 Mermaid flowchart DSL。
-方向选择：画布 {canvas_width}x{canvas_height}，width>=height时用LR，否则用TB。
 
-可用控件（仅使用这些名称作为节点label）：
-{controls_list}
+UNIFIED_LAYOUT_PROMPT = """\
+SCADA 组态语义分析器。根据用户描述，同时完成以下三项任务：
 
-已知用户位置意图（仅供参考，可在flowchart中体现）：
-{hints_text}
+可用控件：
+{controls_info}
+
+画布尺寸：{canvas_width}x{canvas_height}
+方向选择：width>=height时推荐LR，否则推荐TB。
+
+任务1 - placement_hints：仅当用户明确表达了位置意图时才输出（如"右上角"、"靠左"、"放在中间"等）。
+任务2 - flow_dsl：生成 Mermaid flowchart DSL 表示控件间流程/控制关系。
+  - 节点格式 id[label]，label 必须是上面列出的完整控件名（含后缀 _1, _2 等）
+  - 主流程 -->，控制/调节关系 -.->  虚线箭头
+  - 用 direction LR 或 TB 声明方向
+任务3 - placements：为每个控件分配一个 region，兜底布局需要。
+  可选 region 枚举：
+  - left, right, top, bottom, center
+  - left_top, right_top, left_bottom, right_bottom
 
 规则：
-1. 节点格式为 id[label]，label 必须是上面列出的控件 displayName，id 使用英文或拼音缩写
-2. 主流程使用 -->（实线箭头）
-3. 控制/调节关系使用 -.->（虚线箭头）
-4. 只包含可用控件列表中的名称，不得编造
-5. 用 direction LR 或 TB 声明方向
+1. 只能使用上面列出的控件名称，不得编造
+2. flow_dsl 中名称必须与可用控件列表完全一致
+3. placement_hints 仅当用户明确表达了位置意图时才输出
+4. 允许 flow_dsl 为空字符串（无法推导流程时）
 
-只输出 Mermaid flowchart，不要任何解释：
-flowchart LR
-    ...
+只输出 JSON，不要解释：
+{{
+  "placement_hints": [{{"target": "", "region": "left"}}],
+  "flow_dsl": "flowchart LR\\n    A[label1] --> B[label2]",
+  "placements": [{{"target": "", "region": "left"}}]
+}}
 """
 
 
@@ -208,6 +179,13 @@ class LayoutRequirement:
 
 
 @dataclass
+class LayoutIntents:
+    hints: list[PlacementHint]
+    flow_dsl: str
+    requirement: LayoutRequirement | None = None
+
+
+@dataclass
 class LayoutZone:
     name: str
     x: float
@@ -271,6 +249,21 @@ def _extract_placement_hints_from_query(query: str, controls: list[dict]) -> lis
     return hints
 
 
+def _expand_hints_to_node_ids(hints: list[PlacementHint], controls: list[dict]) -> list[PlacementHint]:
+    dn_to_ids: dict[str, list[str]] = {}
+    for c in controls:
+        dn = c["displayName"]
+        nid = c["node_id"]
+        dn_to_ids.setdefault(dn, []).append(nid)
+
+    expanded: list[PlacementHint] = []
+    for hint in hints:
+        ids = dn_to_ids.get(hint.target, [hint.target])
+        for nid in ids:
+            expanded.append(PlacementHint(target=nid, region=hint.region))
+    return expanded
+
+
 def _sanitize_placement_hints(hints: list[dict], controls: list[dict]) -> list[PlacementHint]:
     all_names = {c["displayName"] for c in controls}
     clean: list[PlacementHint] = []
@@ -327,88 +320,28 @@ def _build_requirement_from_data(
     )
 
 
-async def _extract_layout_requirements(
+async def _extract_layout_intents(
     query: str, controls: list[dict], canvas_w: int, canvas_h: int
-) -> LayoutRequirement:
+) -> LayoutIntents:
     controls_info = "\n".join(
-        f"- {c['displayName']} (宽{c.get('width',0)}x高{c.get('height',0)})"
+        f"- {c['node_id']} (原名{c['displayName']}, 宽{c.get('width',0)}x高{c.get('height',0)})"
         for c in controls
     )
-    prompt = FALLBACK_EXTRACT_PROMPT.format(controls_info=controls_info)
-    data: dict = {}
-    if not _MODEL:
-        logger.warning("未配置 DEEPSEEK_MODEL，使用本地尺寸兜底布局")
-    else:
-        try:
-            response = await _client.chat.completions.create(
-                model=_MODEL,
-                messages=[
-                    {"role": "system", "content": prompt},
-                    {"role": "user", "content": query},
-                ],
-                stream=False,
-                reasoning_effort="low",
-                response_format={"type": "json_object"},
-                extra_body={"thinking": {"type": "enabled"}},
-            )
-            data = json.loads(response.choices[0].message.content)
-        except Exception as exc:
-            logger.warning("布局需求抽取失败，使用本地尺寸兜底: %s", exc)
-    data["_source_query"] = query
-
-    return _build_requirement_from_data(data, controls, canvas_w, canvas_h)
-
-
-async def _extract_hints_only(query: str, controls: list[dict]) -> list[PlacementHint]:
-    controls_info = "\n".join(
-        f"- {c['displayName']} (宽{c.get('width',0)}x高{c.get('height',0)})"
-        for c in controls
+    prompt = UNIFIED_LAYOUT_PROMPT.format(
+        controls_info=controls_info,
+        canvas_width=canvas_w,
+        canvas_height=canvas_h,
     )
-    prompt = EXTRACT_HINTS_PROMPT.format(controls_info=controls_info)
-    hints: list[PlacementHint] = []
+
+    local_hints = _extract_placement_hints_from_query(query, controls)
+
     if not _MODEL:
-        logger.warning("未配置 DEEPSEEK_MODEL，使用本地正则提取 hints")
-    else:
-        try:
-            response = await _client.chat.completions.create(
-                model=_MODEL,
-                messages=[
-                    {"role": "system", "content": prompt},
-                    {"role": "user", "content": query},
-                ],
-                stream=False,
-                reasoning_effort="low",
-                response_format={"type": "json_object"},
-                extra_body={"thinking": {"type": "enabled"}},
-            )
-            data = json.loads(response.choices[0].message.content)
-            hints = _sanitize_placement_hints(data.get("placement_hints", []), controls)
-        except Exception as exc:
-            logger.warning("hints 提取失败，使用本地正则兜底: %s", exc)
+        logger.warning("未配置 DEEPSEEK_MODEL，使用本地规则兜底")
+        return LayoutIntents(
+            hints=_expand_hints_to_node_ids(local_hints, controls),
+            flow_dsl="",
+        )
 
-    if not hints:
-        hints = _extract_placement_hints_from_query(query, controls)
-    return hints
-
-
-async def _generate_flow_dsl(
-    query: str,
-    controls: list[dict],
-    hints: list[PlacementHint],
-    cw: int,
-    ch: int,
-) -> str:
-    controls_list = "\n".join(f"- {c['displayName']}" for c in controls)
-    hints_text = " ".join(f"{h.target}放{h.region}" for h in hints) if hints else "无"
-    prompt = DSL_PROMPT.format(
-        canvas_width=cw,
-        canvas_height=ch,
-        controls_list=controls_list,
-        hints_text=hints_text,
-    )
-    if not _MODEL:
-        logger.warning("未配置 DEEPSEEK_MODEL，跳过 DSL 生成")
-        return ""
     try:
         response = await _client.chat.completions.create(
             model=_MODEL,
@@ -417,15 +350,30 @@ async def _generate_flow_dsl(
                 {"role": "user", "content": query},
             ],
             stream=False,
-            reasoning_effort="low",
-            response_format={"type": "text"},
+            reasoning_effort="medium",
+            response_format={"type": "json_object"},
             extra_body={"thinking": {"type": "enabled"}},
         )
-        content = response.choices[0].message.content
-        return content.strip() if content else ""
+        data = json.loads(response.choices[0].message.content)
     except Exception as exc:
-        logger.warning("DSL 生成失败: %s", exc)
-        return ""
+        logger.warning("统一意图抽取失败，使用本地规则兜底: %s", exc)
+        return LayoutIntents(
+            hints=_expand_hints_to_node_ids(local_hints, controls),
+            flow_dsl="",
+        )
+
+    hints = _sanitize_placement_hints(data.get("placement_hints", []), controls)
+    if not hints:
+        hints = local_hints
+    hints = _expand_hints_to_node_ids(hints, controls)
+
+    flow_dsl = data.get("flow_dsl") or ""
+
+    requirement = _build_requirement_from_data(
+        {**data, "_source_query": query}, controls, canvas_w, canvas_h
+    )
+
+    return LayoutIntents(hints=hints, flow_dsl=flow_dsl, requirement=requirement)
 
 
 _NODE_RE = re.compile(
@@ -502,11 +450,11 @@ def _parse_flow_dsl(dsl: str, controls: list[dict]) -> FlowGraph | None:
     if not all_nodes:
         return None
 
-    name_set = {c["displayName"] for c in controls}
+    node_id_set = {c["node_id"] for c in controls}
     for node in list(all_nodes.values()):
-        if node.label in name_set:
+        if node.label in node_id_set:
             continue
-        best = _fuzzy_match_label(node.label, name_set)
+        best = _fuzzy_match_label(node.label, node_id_set)
         if best:
             node.label = best
 
@@ -675,15 +623,15 @@ def _resolve_zone_overlaps(zones: list[LayoutZone], cw: int, ch: int, gap: float
 def _apply_layout_constraints(requirement: LayoutRequirement, region_map: dict[str, str]) -> list[LayoutZone]:
     cw = requirement.canvas_width
     ch = requirement.canvas_height
-    ctrl_map = {c["displayName"]: c for c in requirement.controls}
+    ctrl_map = {c["node_id"]: c for c in requirement.controls}
 
     region_groups: dict[str, list[str]] = {}
     for ctrl in requirement.controls:
-        name = ctrl["displayName"]
-        region = region_map.get(name, "center")
+        nid = ctrl["node_id"]
+        region = region_map.get(nid, "center")
         if region not in region_groups:
             region_groups[region] = []
-        region_groups[region].append(name)
+        region_groups[region].append(nid)
 
     for region in region_groups:
         region_groups[region] = _sort_controls_for_region(region_groups[region], region_map)
@@ -730,7 +678,7 @@ def _compute_coordinates(
     canvas_w: int,
     canvas_h: int,
 ) -> list[dict]:
-    ctrl_map = {c["displayName"]: c for c in controls}
+    ctrl_map = {c["node_id"]: c for c in controls}
     total = len(controls)
 
     if total > 20:
@@ -769,6 +717,7 @@ def _compute_coordinates(
             cursor_y = start_y
             for ctrl, (w, h) in zip(zone_ctrls, sizes):
                 nodes.append({
+                    "node_id": ctrl["node_id"],
                     "displayName": ctrl["displayName"],
                     "image": ctrl.get("image", ""),
                     "width": w,
@@ -810,6 +759,7 @@ def _compute_coordinates(
                 for ctrl in col:
                     h = ctrl.get("height") or 0
                     nodes.append({
+                        "node_id": ctrl["node_id"],
                         "displayName": ctrl["displayName"],
                         "image": ctrl.get("image", ""),
                         "width": ctrl.get("width", 0),
@@ -843,6 +793,23 @@ def _scale_to_canvas(nodes: list[dict], canvas_w: int, canvas_h: int) -> list[di
     for n in nodes:
         n["x"] = round(margin + (n["x"] - rect["x"]) * scale + (new_w - rect["width"] * scale) / 2)
         n["y"] = round(margin + (n["y"] - rect["y"]) * scale + (new_h - rect["height"] * scale) / 2)
+
+    max_w = canvas_w - margin * 2
+    max_h = canvas_h - margin * 2
+    for n in nodes:
+        w = n.get("width") or 0
+        h = n.get("height") or 0
+        if w <= 0 or h <= 0:
+            continue
+        size_scale = 1.0
+        if w > max_w:
+            size_scale = min(size_scale, max_w / w)
+        if h > max_h:
+            size_scale = min(size_scale, max_h / h)
+        if size_scale < 1.0:
+            n["width"] = round(w * size_scale)
+            n["height"] = round(h * size_scale)
+
     _clamp_nodes_to_canvas(nodes, canvas_w, canvas_h)
     return nodes
 
@@ -866,7 +833,7 @@ def _force_directed_layout(
     canvas_h: int,
     iterations: int = 100,
 ) -> list[dict]:
-    all_names = [c["displayName"] for c in controls]
+    all_ids = [c["node_id"] for c in controls]
     rng = random.Random(0)
 
     positions: dict[str, list[float]] = {}
@@ -875,25 +842,25 @@ def _force_directed_layout(
         zx = zone.x + zone.width / 2
         zy = zone.y + zone.height / 2
         zone_center[zone.name] = [zx, zy]
-        for name in zone.controls:
-            if name not in positions:
-                positions[name] = [zx + rng.uniform(-30, 30), zy + rng.uniform(-30, 30)]
+        for nid in zone.controls:
+            if nid not in positions:
+                positions[nid] = [zx + rng.uniform(-30, 30), zy + rng.uniform(-30, 30)]
 
-    for name in all_names:
-        if name not in positions:
-            positions[name] = [canvas_w / 2 + rng.uniform(-50, 50), canvas_h / 2 + rng.uniform(-50, 50)]
+    for nid in all_ids:
+        if nid not in positions:
+            positions[nid] = [canvas_w / 2 + rng.uniform(-50, 50), canvas_h / 2 + rng.uniform(-50, 50)]
 
     repulsion_k = 5000.0
     zone_attract_k = 0.02
     dampening = 0.9
 
-    velocities: dict[str, list[float]] = {n: [0.0, 0.0] for n in all_names}
+    velocities: dict[str, list[float]] = {n: [0.0, 0.0] for n in all_ids}
 
     for _ in range(iterations):
-        forces: dict[str, list[float]] = {n: [0.0, 0.0] for n in all_names}
+        forces: dict[str, list[float]] = {n: [0.0, 0.0] for n in all_ids}
 
-        for i, n1 in enumerate(all_names):
-            for j, n2 in enumerate(all_names):
+        for i, n1 in enumerate(all_ids):
+            for j, n2 in enumerate(all_ids):
                 if i >= j:
                     continue
                 dx = positions[n1][0] - positions[n2][0]
@@ -910,31 +877,32 @@ def _force_directed_layout(
         for zone in skeleton.zones:
             zx = zone_center[zone.name][0]
             zy = zone_center[zone.name][1]
-            for name in zone.controls:
-                if name in forces:
-                    dx = zx - positions[name][0]
-                    dy = zy - positions[name][1]
-                    forces[name][0] += zone_attract_k * dx
-                    forces[name][1] += zone_attract_k * dy
+            for nid in zone.controls:
+                if nid in forces:
+                    dx = zx - positions[nid][0]
+                    dy = zy - positions[nid][1]
+                    forces[nid][0] += zone_attract_k * dx
+                    forces[nid][1] += zone_attract_k * dy
 
-        for name in all_names:
-            velocities[name][0] = (velocities[name][0] + forces[name][0]) * dampening
-            velocities[name][1] = (velocities[name][1] + forces[name][1]) * dampening
-            positions[name][0] += velocities[name][0]
-            positions[name][1] += velocities[name][1]
-            positions[name][0] = max(50, min(canvas_w - 50, positions[name][0]))
-            positions[name][1] = max(50, min(canvas_h - 50, positions[name][1]))
+        for nid in all_ids:
+            velocities[nid][0] = (velocities[nid][0] + forces[nid][0]) * dampening
+            velocities[nid][1] = (velocities[nid][1] + forces[nid][1]) * dampening
+            positions[nid][0] += velocities[nid][0]
+            positions[nid][1] += velocities[nid][1]
+            positions[nid][0] = max(50, min(canvas_w - 50, positions[nid][0]))
+            positions[nid][1] = max(50, min(canvas_h - 50, positions[nid][1]))
 
-    for name in all_names:
-        positions[name][0] = round(positions[name][0])
-        positions[name][1] = round(positions[name][1])
+    for nid in all_ids:
+        positions[nid][0] = round(positions[nid][0])
+        positions[nid][1] = round(positions[nid][1])
 
     nodes = []
     for c in controls:
-        name = c["displayName"]
-        pos = positions.get(name, [canvas_w / 2, canvas_h / 2])
+        nid = c["node_id"]
+        pos = positions.get(nid, [canvas_w / 2, canvas_h / 2])
         nodes.append({
-            "displayName": name,
+            "node_id": nid,
+            "displayName": c["displayName"],
             "image": c.get("image", ""),
             "width": c.get("width", 0),
             "height": c.get("height", 0),
@@ -985,15 +953,32 @@ def _merge_refined_nodes(
     if not isinstance(refined, list):
         return original
 
-    refined_by_name = {
-        n.get("displayName"): n
-        for n in refined
-        if isinstance(n, dict) and n.get("displayName")
-    }
+    refined_by_node_id: dict[str, dict] = {}
+    refined_by_dn: dict[str, list[dict]] = {}
+    for n in refined:
+        if isinstance(n, dict):
+            nid = n.get("node_id")
+            if nid:
+                refined_by_node_id[nid] = n
+            dn = n.get("displayName")
+            if dn:
+                refined_by_dn.setdefault(dn, []).append(n)
+
     result: list[dict] = []
+    dn_idx: dict[str, int] = {}
     for node in original:
         merged = dict(node)
-        refined_node = refined_by_name.get(node["displayName"], {})
+        nid = node.get("node_id", "")
+        dn = node["displayName"]
+
+        if nid and nid in refined_by_node_id:
+            refined_node = refined_by_node_id[nid]
+        else:
+            idx = dn_idx.get(dn, 0)
+            dn_idx[dn] = idx + 1
+            refined_list = refined_by_dn.get(dn, [])
+            refined_node = refined_list[idx] if idx < len(refined_list) else {}
+
         try:
             merged["x"] = round(float(refined_node.get("x", node["x"])))
             merged["y"] = round(float(refined_node.get("y", node["y"])))
@@ -1044,7 +1029,7 @@ def _quality_check(nodes: list[dict], canvas_w: int = 0, canvas_h: int = 0) -> l
                     severity="warning",
                     issue_type="overlap",
                     message=f"控件 {n1['displayName']} 与 {n2['displayName']} 重叠率 {overlap:.1%}",
-                    controls=[n1["displayName"], n2["displayName"]],
+                    controls=[n1.get("node_id", n1["displayName"]), n2.get("node_id", n2["displayName"])],
                 ))
 
     if canvas_w > 0 and canvas_h > 0:
@@ -1065,7 +1050,7 @@ def _quality_check(nodes: list[dict], canvas_w: int = 0, canvas_h: int = 0) -> l
                     severity="error",
                     issue_type="overflow",
                     message=f"控件 {n['displayName']} 超出画布边界 ({canvas_w}x{canvas_h}): {'; '.join(overflow_parts)}",
-                    controls=[n["displayName"]],
+                    controls=[n.get("node_id", n["displayName"])],
                 ))
 
     return issues
@@ -1097,11 +1082,16 @@ def _compute_overlap_ratio(n1: dict, n2: dict) -> float:
     return overlap_area / smaller
 
 
+def _get_schema() -> dict:
+    global _SCHEMA_CACHE
+    if _SCHEMA_CACHE is None:
+        _SCHEMA_CACHE = json.loads(_SCHEMA_PATH.read_text(encoding="utf-8"))
+    assert _SCHEMA_CACHE is not None
+    return _SCHEMA_CACHE
+
+
 async def _schema_validate(json_data: dict) -> list[str]:
-    schema_text = await asyncio.to_thread(
-        lambda: _SCHEMA_PATH.read_text(encoding="utf-8")
-    )
-    schema = json.loads(schema_text)
+    schema = _get_schema()
     try:
         jsonschema.validate(instance=json_data, schema=schema)
         return []
@@ -1145,7 +1135,7 @@ def _dedupe_controls(controls: list[dict]) -> list[dict]:
     for ctrl in controls:
         name = ctrl.get("displayName")
         instance = ctrl.get("_instance_index")
-        key = (name, instance) if instance else name
+        key = (name, instance) if instance is not None else name
         if not name or key in seen:
             continue
         seen.add(key)
@@ -1241,26 +1231,40 @@ class CanvasAgent:
                 raise ValueError("controls 未提供且 CanvasAgent 未注入 material_db")
             controls, _, missing_controls = await _load_controls_from_query_results(query, self._db)
         controls = _dedupe_controls(controls)
+        if not controls:
+            logger.info("无可用控件，早停返回")
+            return CanvasResult(
+                json_data={"v": "8.0.5", "p": {}, "a": {"width": canvas_width, "height": canvas_height}, "d": [], "contentRect": {}},
+                content_rect={"x": 0, "y": 0, "width": 0, "height": 0},
+                quality_issues=[QualityIssue(severity="warning", issue_type="empty", message="无可用控件", controls=[])],
+                skeleton=LayoutSkeleton(zones=[]),
+                missing_controls=missing_controls,
+            )
+
+        for ctrl in controls:
+            idx = ctrl.get("_instance_index")
+            ctrl["node_id"] = f"{ctrl['displayName']}_{idx}" if idx is not None else ctrl["displayName"]
+
         logger.info("自动布局流程")
         logger.info("━" * 40)
         logger.info("📐 画布尺寸: %dx%d", canvas_width, canvas_height)
         logger.info("📦 控件数量: %d", len(controls))
 
+        # ── Step0: 一次性抽取全部布局意图 ──
         logger.info("━" * 40)
-        logger.info("🔍 Step0.5: 提取用户意图 hints")
-        step1_hints = await _extract_hints_only(query, controls)
+        logger.info("🔍 Step0: 统一抽取布局意图 (hints + DSL + placements)")
+        intents = await _extract_layout_intents(query, controls, canvas_width, canvas_height)
+        step1_hints = intents.hints
         logger.info("  hints: %s", [(h.target, h.region) for h in step1_hints])
 
-        logger.info("━" * 40)
-        logger.info("🕸 Step0.6: 生成 Mermaid 控制流图")
-        flow_dsl = await _generate_flow_dsl(query, controls, step1_hints, canvas_width, canvas_height)
+        # ── 尝试解析 DSL ──
         flow_graph: FlowGraph | None = None
         region_map: dict[str, str] = {}
 
-        if flow_dsl:
-            logger.info("  DSL:\n%s", flow_dsl)
+        if intents.flow_dsl:
+            logger.info("  DSL:\n%s", intents.flow_dsl)
             try:
-                flow_graph = _parse_flow_dsl(flow_dsl, controls)
+                flow_graph = _parse_flow_dsl(intents.flow_dsl, controls)
                 if flow_graph and flow_graph.nodes:
                     region_map = _graph_to_region_map(flow_graph, step1_hints)
                     logger.info("  DSL 解析成功: direction=%s, nodes=%d, edges=%d",
@@ -1272,12 +1276,14 @@ class CanvasAgent:
                 logger.warning("  DSL 解析失败: %s，降级到传统流程", exc)
                 flow_graph = None
         else:
-            logger.warning("  DSL 生成失败，降级到传统流程")
+            logger.warning("  DSL 为空，降级到传统流程")
 
         if flow_graph is None:
-            logger.info("━" * 40)
-            logger.info("🔍 Step1(Fallback): 提取布局需求")
-            requirement = await _extract_layout_requirements(query, controls, canvas_width, canvas_height)
+            requirement = intents.requirement or _build_requirement_from_data(
+                {"_source_query": query}, controls, canvas_width, canvas_height
+            )
+            requirement.placements = _expand_hints_to_node_ids(requirement.placements, controls)
+            requirement.placement_hints = _expand_hints_to_node_ids(requirement.placement_hints, controls)
             region_map = {p.target: p.region for p in requirement.placements}
             for h in requirement.placement_hints:
                 region_map[h.target] = h.region
@@ -1310,7 +1316,7 @@ class CanvasAgent:
         nodes = _scale_to_canvas(nodes, canvas_width, canvas_height)
 
         for n in nodes:
-            logger.info("  %s → (%d, %d)", n["displayName"], n["x"], n["y"])
+            logger.info("  %s (%s) → (%d, %d)", n["displayName"], n.get("node_id", ""), n["x"], n["y"])
 
         logger.info("━" * 40)
         logger.info("🔍 Step4: 质量检测")
@@ -1407,7 +1413,8 @@ def _cli() -> None:
         return await agent.layout(query=query, canvas_width=canvas_w, canvas_height=canvas_h)
 
     result = asyncio.run(run())
-    output_path = Path(__file__).resolve().parent.parent / "output" / "canvas.json"
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    output_path = Path(__file__).resolve().parent.parent / "output" / f"canvas_{ts}.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(result.json_data, ensure_ascii=False, indent=2), encoding="utf-8")
     logger.info("已保存到 %s", output_path)
