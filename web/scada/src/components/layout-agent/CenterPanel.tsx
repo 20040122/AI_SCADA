@@ -24,10 +24,10 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY 
   offsetX: number;
   offsetY: number;
 }) {
-  const x = offsetX + node.x * scale;
-  const y = offsetY + node.y * scale;
   const w = node.width * scale;
   const h = node.height * scale;
+  const x = offsetX + (node.x - node.width / 2) * scale;
+  const y = offsetY + (node.y - node.height / 2) * scale;
 
   return (
     <div
