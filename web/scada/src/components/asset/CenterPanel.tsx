@@ -35,10 +35,6 @@ export default function CenterPanel() {
     return () => { mounted = false; };
   }, [setQueryResults]);
 
-  useEffect(() => {
-    refreshQueryResults();
-  }, [keywordResults, refreshQueryResults]);
-
   const handleClear = () => {
     clearQueryResults()
       .then(() => {
@@ -67,8 +63,8 @@ export default function CenterPanel() {
 
     saveQueryResults(query, controls)
       .then(() => {
-        decrementKeywordCount(keywordStr);
         refreshQueryResults();
+        decrementKeywordCount(keywordStr);
         setPipelineStep(3, "done");
         notify(`${displayName} 已入库`, "s");
       })

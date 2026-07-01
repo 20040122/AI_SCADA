@@ -15,13 +15,25 @@ const INITIAL_WORKFLOW: WorkflowStep[] = [
   { id: 3, name: "质检验证", detail: "重叠/溢出/Schema 规则校验", status: "wait" },
 ];
 
+function hslToHex(h: number, s: number, l: number): string {
+  s /= 100;
+  l /= 100;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
 function hashColor(name: string): string {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
   const hue = Math.abs(hash) % 360;
-  return `hsl(${hue}, 50%, 55%)`;
+  return hslToHex(hue, 65, 55);
 }
 
 function extractNodesFromJsonData(jsonData: LayoutJsonData | null): CanvasNode[] {
@@ -71,8 +83,8 @@ interface LayoutStore {
 
 export const useLayoutStore = create<LayoutStore>((set) => ({
   query: "",
-  canvasWidth: 1920,
-  canvasHeight: 1022,
+  canvasWidth: 1000,
+  canvasHeight: 800,
 
   jsonData: null,
   zones: [],

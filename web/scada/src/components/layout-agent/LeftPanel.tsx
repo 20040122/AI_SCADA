@@ -98,7 +98,7 @@ export default function LeftPanel() {
             className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
             rows={4}
             style={{ minHeight: "72px", lineHeight: 1.5 }}
-            placeholder="如：冷却水循环系统，2台水泵、4个阀门、出口压力传感器、流量计，右侧放显示仪表..."
+            placeholder="如：冷却水循环系统，2台水泵、4个阀门、出口压力传感器、流量计，右侧放显示仪表"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />

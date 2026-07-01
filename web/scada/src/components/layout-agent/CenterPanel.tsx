@@ -9,14 +9,17 @@ const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   skip: { label: "跳过", cls: "bg-[rgba(58,80,104,0.3)] text-[var(--text3)]" },
 };
 
-const ZONE_COLORS = [
-  "rgba(77,184,212,0.06)",
-  "rgba(62,184,143,0.06)",
-  "rgba(232,168,64,0.06)",
-  "rgba(91,184,232,0.06)",
-  "rgba(224,85,85,0.06)",
-  "rgba(184,138,232,0.06)",
-];
+const MIN_ZOOM = 0.35;
+const MAX_ZOOM = 2;
+const DEFAULT_READABLE_ZOOM = 0.72;
+
+function clampZoom(value: number) {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
+}
+
+function formatZoom(scale: number) {
+  return `${Math.round(scale * 100)}%`;
+}
 
 const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY }: {
   node: CanvasNode;
@@ -28,69 +31,41 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY 
   const h = node.height * scale;
   const x = offsetX + (node.x - node.width / 2) * scale;
   const y = offsetY + (node.y - node.height / 2) * scale;
+  const fontSize = Math.min(13, Math.max(9, 11 * scale));
+  const compact = w < 88 || h < 44;
 
   return (
     <div
-      className="absolute cursor-pointer transition-all duration-200 hover:z-10 hover:shadow-[0_0_0_2px_var(--accent)] select-none"
+      className="absolute cursor-pointer transition-all duration-200 hover:z-10 select-none"
       style={{
         transform: `translate(${x}px, ${y}px)`,
         width: w,
         height: h,
-        backgroundColor: `${node.color}22`,
-        border: `1px solid ${node.color}66`,
-        borderRadius: "2px",
+        background: `linear-gradient(180deg, ${node.color}66 0%, ${node.color}33 100%)`,
+        border: `1px solid ${node.color}cc`,
+        borderRadius: `${Math.max(4, 6 * scale)}px`,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
         willChange: "transform",
+        boxShadow: "0 8px 18px rgba(15,23,42,0.08)",
       }}
     >
       <span
-        className="font-mono text-center whitespace-nowrap overflow-hidden text-ellipsis"
+        className="font-mono text-center whitespace-nowrap overflow-hidden text-ellipsis rounded-full"
         style={{
-          fontSize: `${Math.max(7, 10 * scale)}px`,
-          color: "#c8d6e5",
-          maxWidth: "90%",
+          fontSize: `${fontSize}px`,
+          color: "#0f172a",
+          maxWidth: compact ? "96%" : "88%",
           lineHeight: 1.3,
+          padding: compact ? "1px 5px" : "2px 8px",
+          background: "rgba(255,255,255,0.78)",
+          boxShadow: "0 1px 2px rgba(15,23,42,0.08)",
         }}
       >
         {node.displayName}
-      </span>
-    </div>
-  );
-});
-
-const ZoneOverlay = memo(function ZoneOverlay({ zone, index, scale, offsetX, offsetY }: {
-  zone: { x: number; y: number; width: number; height: number; name: string };
-  index: number;
-  scale: number;
-  offsetX: number;
-  offsetY: number;
-}) {
-  const color = ZONE_COLORS[index % ZONE_COLORS.length];
-  const zx = offsetX + zone.x * scale;
-  const zy = offsetY + zone.y * scale;
-  const zw = zone.width * scale;
-  const zh = zone.height * scale;
-  return (
-    <div
-      className="absolute pointer-events-none"
-      style={{
-        transform: `translate(${zx}px, ${zy}px)`,
-        width: zw,
-        height: zh,
-        background: color,
-        border: "1px dashed rgba(77,184,212,0.15)",
-        borderRadius: "3px",
-      }}
-    >
-      <span
-        className="absolute text-[8px] font-mono text-[var(--text3)] opacity-30"
-        style={{ top: 2, left: 4 }}
-      >
-        {zone.name}
       </span>
     </div>
   );
@@ -130,7 +105,7 @@ function WorkflowSteps() {
 }
 
 export default function CenterPanel() {
-  const { nodes, zones, jsonData } = useLayoutStore();
+  const { nodes, jsonData } = useLayoutStore();
   const hasResult = nodes.length > 0;
 
   const canvasW = jsonData?.a?.width || 0;
@@ -155,23 +130,17 @@ export default function CenterPanel() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 relative overflow-hidden" style={{ background: "#f5f6f8" }}>
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)",
-            backgroundSize: "30px 30px",
-          }}
-        />
-
+      <div
+        className="flex-1 min-h-0 relative overflow-hidden"
+        style={{ background: "linear-gradient(180deg, #eef3f9 0%, #e8edf5 100%)" }}
+      >
         {hasResult && canvasW > 0 && canvasH > 0 && (
-          <CanvasContent nodes={nodes} zones={zones} canvasW={canvasW} canvasH={canvasH} />
+          <CanvasContent nodes={nodes} canvasW={canvasW} canvasH={canvasH} />
         )}
 
         {!hasResult && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
+            <div className="text-center rounded-[18px] border border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.72)] shadow-[0_14px_40px_rgba(15,23,42,0.08)] px-8 py-7">
               <div className="text-[36px] opacity-20 mb-2">🎨</div>
               <div className="text-[11px] text-[var(--text3)] font-mono">
                 输入场景描述后点击「生成布局」
@@ -191,21 +160,17 @@ export default function CenterPanel() {
   );
 }
 
-const CanvasContent = memo(function CanvasContent({ nodes, zones, canvasW, canvasH }: {
+const CanvasContent = memo(function CanvasContent({ nodes, canvasW, canvasH }: {
   nodes: CanvasNode[];
-  zones: { x: number; y: number; width: number; height: number; name: string }[];
   canvasW: number;
   canvasH: number;
 }) {
-  const MARGIN = 24;
+  const MARGIN = 36;
 
   return (
     <ResizableCanvas targetW={canvasW} targetH={canvasH} margin={MARGIN}>
       {(scale, offsetX, offsetY) => (
         <>
-          {zones.map((zone, i) => (
-            <ZoneOverlay key={zone.name} zone={zone} index={i} scale={scale} offsetX={offsetX} offsetY={offsetY} />
-          ))}
           {nodes.map((node) => (
             <CanvasWidget key={node.id} node={node} scale={scale} offsetX={offsetX} offsetY={offsetY} />
           ))}
@@ -227,7 +192,10 @@ const ResizableCanvas = memo(function ResizableCanvas({
   children: (scale: number, offsetX: number, offsetY: number) => React.ReactNode;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState({ w: 0, h: 0 });
+  const [zoomMode, setZoomMode] = useState<"smart" | "fit" | "actual" | "manual">("smart");
+  const [manualZoom, setManualZoom] = useState(1);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -245,20 +213,158 @@ const ResizableCanvas = memo(function ResizableCanvas({
     return () => ro.disconnect();
   }, []);
 
-  const containerW = dims.w - margin * 2;
-  const containerH = dims.h - margin * 2;
-  const scaleX = targetW > 0 ? containerW / targetW : 1;
-  const scaleY = targetH > 0 ? containerH / targetH : 1;
-  const scale = Math.min(scaleX, scaleY);
+  const containerW = Math.max(0, dims.w - margin * 2);
+  const containerH = Math.max(0, dims.h - margin * 2);
+  const fitScaleX = targetW > 0 ? containerW / targetW : 1;
+  const fitScaleY = targetH > 0 ? containerH / targetH : 1;
+  const fitScale = Number.isFinite(Math.min(fitScaleX, fitScaleY)) && Math.min(fitScaleX, fitScaleY) > 0
+    ? Math.max(0.05, Math.min(fitScaleX, fitScaleY))
+    : 1;
+  const smartScale = clampZoom(Math.min(1, Math.max(fitScale, DEFAULT_READABLE_ZOOM)));
+  const scale = zoomMode === "fit"
+    ? fitScale
+    : zoomMode === "actual"
+      ? 1
+      : zoomMode === "manual"
+        ? clampZoom(manualZoom)
+        : smartScale;
 
   const scaledW = targetW * scale;
   const scaledH = targetH * scale;
-  const offsetX = margin + (containerW - scaledW) / 2;
-  const offsetY = margin + (containerH - scaledH) / 2;
+  const innerW = Math.max(scaledW + margin * 2, dims.w);
+  const innerH = Math.max(scaledH + margin * 2, dims.h);
+  const offsetX = Math.max((innerW - scaledW) / 2, margin);
+  const offsetY = Math.max((innerH - scaledH) / 2, margin);
+  const hintScrollable = zoomMode === "smart" && smartScale > fitScale + 0.04;
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || !dims.w || !dims.h) return;
+    const frame = requestAnimationFrame(() => {
+      viewport.scrollLeft = Math.max(0, (innerW - dims.w) / 2);
+      viewport.scrollTop = Math.max(0, (innerH - dims.h) / 2);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [dims.h, dims.w, innerH, innerW, scale]);
+
+  const updateManualZoom = (nextZoom: number) => {
+    setZoomMode("manual");
+    setManualZoom(clampZoom(nextZoom));
+  };
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
-      {children(scale, offsetX, offsetY)}
+    <div className="absolute inset-0 flex flex-col overflow-hidden">
+      <div className="shrink-0 px-4 py-3 border-b border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.64)] backdrop-blur-[10px]">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] tracking-[0.14em] uppercase text-[var(--text3)] font-mono">
+            Preview
+          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <button
+              className="w-7 h-7 rounded-[8px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[14px] text-[var(--text2)] cursor-pointer transition-[0.15s] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)] disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => updateManualZoom(scale - 0.12)}
+              disabled={scale <= MIN_ZOOM}
+              type="button"
+            >
+              -
+            </button>
+            <span className="w-[52px] text-center text-[11px] text-[var(--text)] font-mono">
+              {formatZoom(scale)}
+            </span>
+            <button
+              className="w-7 h-7 rounded-[8px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[14px] text-[var(--text2)] cursor-pointer transition-[0.15s] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)] disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => updateManualZoom(scale + 0.12)}
+              disabled={scale >= MAX_ZOOM}
+              type="button"
+            >
+              +
+            </button>
+            <button
+              className={`px-[10px] h-7 rounded-[8px] border text-[10px] font-mono cursor-pointer transition-[0.15s] ${
+                zoomMode === "fit"
+                  ? "border-[rgba(77,184,212,0.4)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)]"
+                  : "border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[var(--text3)] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)]"
+              }`}
+              onClick={() => setZoomMode("fit")}
+              type="button"
+            >
+              适配
+            </button>
+            <button
+              className={`px-[10px] h-7 rounded-[8px] border text-[10px] font-mono cursor-pointer transition-[0.15s] ${
+                zoomMode === "actual"
+                  ? "border-[rgba(77,184,212,0.4)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)]"
+                  : "border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[var(--text3)] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)]"
+              }`}
+              onClick={() => setZoomMode("actual")}
+              type="button"
+            >
+              1:1
+            </button>
+          </div>
+        </div>
+        <div className="mt-2 flex items-center justify-between gap-3 text-[10px] font-mono">
+          <span className="text-[var(--text3)]">
+            {hintScrollable
+              ? "已优先保证可读性，可滚动查看完整画布"
+              : zoomMode === "fit"
+                ? "已缩放至完整画布"
+                : zoomMode === "actual"
+                  ? "按 1:1 显示，可滚动查看细节"
+                  : zoomMode === "manual"
+                    ? "手动缩放中，可滚动查看细节"
+                    : "当前画布已基本完整展示"}
+          </span>
+          <button
+            className={`px-[10px] h-6 rounded-[999px] border text-[10px] cursor-pointer transition-[0.15s] ${
+              zoomMode === "smart"
+                ? "border-[rgba(77,184,212,0.4)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)]"
+                : "border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.72)] text-[var(--text3)] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)]"
+            }`}
+            onClick={() => setZoomMode("smart")}
+            type="button"
+          >
+            清晰优先
+          </button>
+        </div>
+      </div>
+
+      <div ref={containerRef} className="relative flex-1 min-h-0 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at top, rgba(255,255,255,0.75), rgba(255,255,255,0) 55%), linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px)",
+            backgroundSize: "auto, 28px 28px, 28px 28px",
+          }}
+        />
+        <div ref={viewportRef} className="absolute inset-0 overflow-auto">
+          <div className="relative min-w-full min-h-full" style={{ width: innerW, height: innerH }}>
+            <div
+              className="absolute overflow-hidden"
+              style={{
+                transform: `translate(${offsetX}px, ${offsetY}px)`,
+                width: scaledW,
+                height: scaledH,
+                borderRadius: "18px",
+                border: "1px solid rgba(148,163,184,0.24)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)",
+                boxShadow: "0 24px 48px rgba(15,23,42,0.14)",
+              }}
+            >
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px)",
+                  backgroundSize: `${Math.max(20, 36 * scale)}px ${Math.max(20, 36 * scale)}px`,
+                }}
+              />
+            </div>
+            {children(scale, offsetX, offsetY)}
+          </div>
+        </div>
+      </div>
     </div>
   );
 });
