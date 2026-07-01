@@ -53,6 +53,14 @@ def _build_id(item: dict) -> str:
     return "control_{}".format(item["displayName"])
 
 
+def _dedupe_controls(controls: list[dict]) -> list[dict]:
+    """按 ID 去重，保留最后一个出现的条目（防止 JSONL 中 displayName 重复导致 ChromaDB ID 冲突）。"""
+    seen: dict[str, dict] = {}
+    for item in controls:
+        seen[_build_id(item)] = item
+    return list(seen.values())
+
+
 def _compute_file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -67,7 +75,7 @@ def get_collection(client: chromadb.ClientAPI) -> chromadb.Collection:
 
 
 def seed(client: chromadb.ClientAPI) -> None:
-    controls = _load_controls()
+    controls = _dedupe_controls(_load_controls())
     ids = [_build_id(item) for item in controls]
     documents = [_build_document(item) for item in controls]
     metadatas = [_build_metadata(item) for item in controls]
@@ -119,7 +127,7 @@ class ControlChunk:
         self._observer: Optional[Observer] = None
 
     def seed(self) -> None:
-        controls = _load_controls(self._jsonl_path)
+        controls = _dedupe_controls(_load_controls(self._jsonl_path))
         ids = [_build_id(item) for item in controls]
         documents = [_build_document(item) for item in controls]
         metadatas = [_build_metadata(item) for item in controls]
@@ -128,7 +136,7 @@ class ControlChunk:
         collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
 
     def reseed(self) -> None:
-        controls = _load_controls(self._jsonl_path)
+        controls = _dedupe_controls(_load_controls(self._jsonl_path))
         ids = [_build_id(item) for item in controls]
         documents = [_build_document(item) for item in controls]
         metadatas = [_build_metadata(item) for item in controls]

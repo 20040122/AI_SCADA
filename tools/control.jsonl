@@ -136,11 +136,6 @@
 {"displayName":"堰门","image":"symbols/demo/water treatment/堰门.json","width":100,"height":117}
 {"displayName":"喷射器","image":"symbols/demo/water treatment/喷射器.json","width":130,"height":100}
 {"displayName":"门","image":"symbols/demo/water treatment/门.json","width":100,"height":117}
-{"displayName":"氮气罐","image":"symbols/Agent/氮气罐.json","width":160,"height":240}
-{"displayName":"阀门","image":"symbols/Agent/阀门.json","width":64,"height":64}
-{"displayName":"管道","image":"symbols/Agent/管道.json","width":100,"height":5}
-{"displayName":"空气罐","image":"symbols/Agent/空气罐.json","width":160,"height":240}
-{"displayName":"流量计","image":"symbols/Agent/流量计.json","width":32,"height":44}
 {"displayName":"水滴","image":"symbols/demo/water treatment/水滴.json","width":35,"height":52}
 {"displayName":"超声波液位计","image":"symbols/demo/water treatment/超声波液位计.json","width":60,"height":60}
 {"displayName":"dev-519","image":"symbols/_public/basic/devStatus.json","width":250.5658,"height":85.21917}
@@ -169,3 +164,8 @@
 {"displayName":"回油单向阀","image":"assets/现场控制系统/设备图片/回油单向阀.png","width":65,"height":35}
 {"displayName":"压力传感器","image":"assets/现场控制系统/设备图片/压力传感器.png","width":25,"height":45}
 {"displayName":"溢流阀","image":"assets/现场控制系统/设备图片/溢流阀.png","width":64,"height":50}
+{"displayName":"氮气罐","image":"symbols/Agent/氮气罐.json","width":160,"height":240}
+{"displayName":"阀门","image":"symbols/Agent/阀门.json","width":64,"height":64}
+{"displayName":"管道","image":"symbols/Agent/管道.json","width":100,"height":5}
+{"displayName":"空气罐","image":"symbols/Agent/空气罐.json","width":160,"height":240}
+{"displayName":"流量计","image":"symbols/Agent/流量计.json","width":32,"height":44}

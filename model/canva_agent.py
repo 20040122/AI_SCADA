@@ -20,7 +20,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 _project_root = Path(__file__).resolve().parent.parent
 if str(_project_root) not in sys.path:
     sys.path.insert(0, str(_project_root))
-from data.material_db import MaterialDB
+from data.sqlite.material_db import MaterialDB
 logger = logging.getLogger(__name__)
 load_dotenv(".env.local")
 
@@ -48,7 +48,7 @@ async def _call_llm(client, model, messages, **kwargs):
     )
 
 
-_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "data" / "canvas_schema.json"
+_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "data" / "schema" / "canvas_schema.json"
 _SCHEMA_CACHE: dict | None = None
 
 

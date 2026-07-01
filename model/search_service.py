@@ -1,16 +1,27 @@
 from __future__ import annotations
 
 import asyncio
+from typing import Optional
 
 from data.chroma import ControlChunk
 
-_chunk = ControlChunk()
+_chunk: Optional[ControlChunk] = None
 SIMILARITY_THRESHOLD = 0.55
+
+
+def set_control_chunk(chunk: ControlChunk) -> None:
+    global _chunk
+    _chunk = chunk
 
 
 async def search_controls_with_threshold(
     keywords: list[str], n_results: int = 5
 ) -> dict[str, list[dict]]:
+    global _chunk
+    if _chunk is None:
+        _chunk = ControlChunk()
+    _chunk.check_and_reseed()
+
     results: dict[str, list[dict]] = {}
 
     for keyword in keywords:

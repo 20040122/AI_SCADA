@@ -4,7 +4,8 @@ from typing import Optional
 
 from app.config import settings
 from data.chroma import ControlChunk
-from data.material_db import MaterialDB
+from data.sqlite.material_db import MaterialDB
+from model import search_service as search_svc
 from model.canva_agent import CanvasAgent
 from model.control_agent import ControlAgent
 
@@ -28,8 +29,9 @@ async def init_resources() -> None:
     _canvas_agent = CanvasAgent(db=db)
 
     _chroma_watcher = ControlChunk(control_jsonl_path=settings.control_jsonl_path)
-    _chroma_watcher.check_and_reseed()
+    _chroma_watcher.reseed()
     _chroma_watcher.start_watcher()
+    search_svc.set_control_chunk(_chroma_watcher)
 
 
 async def close_resources() -> None:

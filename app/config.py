@@ -7,9 +7,9 @@ class Settings(BaseSettings):
     deepseek_base_url: str = "https://api.deepseek.com"
     deepseek_model: str = "deepseek-v4-flash"
 
-    db_path: str = str(Path(__file__).resolve().parent.parent / "data" / "material.db")
+    db_path: str = str(Path(__file__).resolve().parent.parent / "data" / "sqlite" / "material.db")
     chroma_dir: str = str(Path(__file__).resolve().parent.parent / "data" / "chroma" / "db")
-    schema_path: str = str(Path(__file__).resolve().parent.parent / "data" / "canvas_schema.json")
+    schema_path: str = str(Path(__file__).resolve().parent.parent / "data" / "schema" / "canvas_schema.json")
     control_jsonl_path: str = str(Path(__file__).resolve().parent.parent / "data" / "control.jsonl")
 
     host: str = "0.0.0.0"

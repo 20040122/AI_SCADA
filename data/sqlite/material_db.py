@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from pathlib import Path
@@ -10,7 +11,7 @@ import aiosqlite
 logger = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).resolve().parent / "material.db"
-CONTROL_JSONL = Path(__file__).resolve().parent / "control.jsonl"
+CONTROL_JSONL = Path(__file__).resolve().parent.parent / "control.jsonl"
 
 _CREATE_TABLE_SQL = """\
 CREATE TABLE IF NOT EXISTS controls (
@@ -42,6 +43,19 @@ class MaterialDB:
     def __init__(self, db_path: Optional[str] = None):
         self._db_path = db_path or str(DB_PATH)
         self._conn: Optional[aiosqlite.Connection] = None
+        self._jsonl_hash = self._compute_jsonl_hash()
+
+    def _compute_jsonl_hash(self) -> str:
+        if not CONTROL_JSONL.exists():
+            return ""
+        return hashlib.sha256(CONTROL_JSONL.read_bytes()).hexdigest()
+
+    async def sync_if_needed(self) -> None:
+        current_hash = self._compute_jsonl_hash()
+        if current_hash and current_hash != self._jsonl_hash:
+            logger.info("control.jsonl 已变更，同步 SQLite...")
+            await self._seed_from_jsonl()
+            self._jsonl_hash = current_hash
 
     async def _get_conn(self) -> aiosqlite.Connection:
         if self._conn is None:
