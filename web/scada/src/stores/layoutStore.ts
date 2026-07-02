@@ -68,6 +68,7 @@ interface LayoutStore {
   error: string | null;
 
   controls: ControlSpec[];
+  fileName: string;
 
   setQuery: (q: string) => void;
   setCanvasWidth: (w: number) => void;
@@ -99,6 +100,7 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
   error: null,
 
   controls: [],
+  fileName: "",
 
   setQuery: (q) => set({ query: q }),
   setCanvasWidth: (w) => set({ canvasWidth: w }),
@@ -112,6 +114,7 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       qualityIssues: res.quality_issues,
       missingControls: res.missing_controls,
       nodes: extractNodesFromJsonData(res.json_data),
+      fileName: res.file_name,
     }),
 
   setWorkflowStep: (id, status) =>
@@ -130,6 +133,7 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       qualityIssues: [],
       missingControls: [],
       nodes: [],
+      fileName: "",
     }),
 
   setIsLoading: (v) => set({ isLoading: v }),

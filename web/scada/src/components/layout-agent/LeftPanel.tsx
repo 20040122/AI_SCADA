@@ -2,6 +2,7 @@ import { useLayoutStore } from "../../stores/layoutStore";
 import { useAssetStore } from "../../stores/assetStore";
 import { generateLayout } from "../../api/layout";
 import { notify } from "../../utils/notification";
+import { WorkflowSteps } from "./CenterPanel";
 
 export default function LeftPanel() {
   const {
@@ -17,7 +18,6 @@ export default function LeftPanel() {
     clearCanvas,
     setIsLoading,
     setError,
-    qualityIssues,
     workflow,
   } = useLayoutStore();
 
@@ -49,12 +49,19 @@ export default function LeftPanel() {
       setLayoutResult(result);
       setWorkflowStep(3, "done");
 
-      const errCount = result.quality_issues.filter((q) => q.severity === "error").length;
-      const warnCount = result.quality_issues.filter((q) => q.severity === "warning").length;
       const nodeCount = result.json_data.d?.length || 0;
+      const missingCount = result.missing_controls.length || 0;
+      const warnCount = result.quality_issues.filter((q) => q.severity === "warning").length;
+      const errCount = result.quality_issues.filter((q) => q.severity === "error").length;
 
-      if (errCount > 0) {
+      if (nodeCount === 0 && missingCount === 0) {
+        notify("未生成控件，请检查场景描述或先入库控件", "w");
+      } else if (nodeCount === 0 && missingCount > 0) {
+        notify(`未找到可用控件：${result.missing_controls.join(", ")}`, "w");
+      } else if (errCount > 0) {
         notify(`${nodeCount} 个控件, ${errCount} 项不合格, ${warnCount} 项警告`, "w");
+      } else if (missingCount > 0) {
+        notify(`${nodeCount} 个控件生成完成，未找到 ${missingCount} 个控件`, "w");
       } else {
         notify(`${nodeCount} 个控件生成成功`, "s");
       }
@@ -163,33 +170,11 @@ export default function LeftPanel() {
           </button>
         </div>
 
-        <div className="text-[10px] text-[var(--text3)] font-mono mt-3 mb-2 tracking-[1px] uppercase">
-          质检结果
-        </div>
-        <div className="bg-[var(--bg3)] border border-[var(--border)] rounded-[5px] p-[12px] mb-3">
-          {qualityIssues.length === 0 ? (
-            <div className="text-[11px] text-[var(--text3)]">等待生成...</div>
-          ) : (
-            <div className="flex flex-col gap-1">
-              {qualityIssues.map((qc, i) => (
-                <div key={i} className="text-[11px] flex items-center gap-2">
-                  <span
-                    className={
-                      qc.severity === "error"
-                        ? "text-[var(--error)]"
-                        : qc.severity === "warning"
-                          ? "text-[var(--warn)]"
-                          : "text-[var(--success)]"
-                    }
-                  >
-                    {qc.severity === "error" ? "✗" : qc.severity === "warning" ? "⚠" : "✓"}
-                  </span>
-                  <span className="text-[var(--text2)]">{qc.issue_type}</span>
-                  <span className="text-[var(--text3)] text-[9px]">— {qc.message}</span>
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="mt-auto">
+          <div className="text-[10px] text-[var(--text3)] font-mono mb-2 tracking-[1px] uppercase">
+            Agent 流程
+          </div>
+          <WorkflowSteps />
         </div>
       </div>
     </div>

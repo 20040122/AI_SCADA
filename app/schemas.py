@@ -70,6 +70,7 @@ class CanvasLayoutResponse(BaseModel):
     quality_issues: list[QualityIssueResponse]
     zones: list[LayoutZoneResponse]
     missing_controls: list[str] = []
+    file_name: str = ""
 
 
 class RefineRequest(BaseModel):

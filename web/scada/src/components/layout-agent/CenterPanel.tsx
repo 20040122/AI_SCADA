@@ -1,6 +1,7 @@
 import { useLayoutStore } from "../../stores/layoutStore";
 import type { CanvasNode } from "../../types/layout";
 import { memo, useEffect, useState, useRef } from "react";
+import { toPngUrl } from "../../utils/assetPreview";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   wait: { label: "等待", cls: "bg-[rgba(58,80,104,0.3)] text-[var(--text3)]" },
@@ -33,6 +34,9 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY 
   const y = offsetY + (node.y - node.height / 2) * scale;
   const fontSize = Math.min(13, Math.max(9, 11 * scale));
   const compact = w < 88 || h < 44;
+  const [imgError, setImgError] = useState(false);
+  const previewUrl = node.image ? toPngUrl(node.image) : "";
+  const hasPreview = !!(previewUrl && !imgError);
 
   return (
     <div
@@ -41,8 +45,8 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY 
         transform: `translate(${x}px, ${y}px)`,
         width: w,
         height: h,
-        background: `linear-gradient(180deg, ${node.color}66 0%, ${node.color}33 100%)`,
-        border: `1px solid ${node.color}cc`,
+        background: hasPreview ? "transparent" : `linear-gradient(180deg, ${node.color}66 0%, ${node.color}33 100%)`,
+        border: hasPreview ? "none" : `1px solid ${node.color}cc`,
         borderRadius: `${Math.max(4, 6 * scale)}px`,
         display: "flex",
         flexDirection: "column",
@@ -50,11 +54,20 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY 
         justifyContent: "center",
         overflow: "hidden",
         willChange: "transform",
-        boxShadow: "0 8px 18px rgba(15,23,42,0.08)",
+        boxShadow: hasPreview ? "none" : "0 8px 18px rgba(15,23,42,0.08)",
       }}
     >
+      {hasPreview && (
+        <img
+          src={previewUrl}
+          alt={node.displayName}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ objectFit: "contain", padding: Math.max(2, 4 * scale) }}
+          onError={() => setImgError(true)}
+        />
+      )}
       <span
-        className="font-mono text-center whitespace-nowrap overflow-hidden text-ellipsis rounded-full"
+        className="font-mono text-center whitespace-nowrap overflow-hidden text-ellipsis rounded-full relative"
         style={{
           fontSize: `${fontSize}px`,
           color: "#0f172a",
@@ -71,25 +84,22 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY 
   );
 });
 
-function WorkflowSteps() {
+export function WorkflowSteps() {
   const { workflow } = useLayoutStore();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-col gap-1">
       {workflow.map((step) => {
         const status = STATUS_MAP[step.status];
         return (
           <div
             key={step.id}
-            className="flex gap-2 items-start p-[7px] bg-[var(--bg3)] border border-[var(--border)] rounded-[4px] flex-1"
+            className="flex items-center gap-2 p-[6px_8px] bg-[var(--bg3)] border border-[var(--border)] rounded-[4px]"
           >
-            <div className="w-5 h-5 rounded-full bg-[rgba(77,184,212,0.1)] border border-[var(--accent2)] text-[var(--accent)] text-[9px] font-mono flex items-center justify-center shrink-0 mt-px">
+            <div className="w-5 h-5 rounded-full bg-[rgba(77,184,212,0.1)] border border-[var(--accent2)] text-[var(--accent)] text-[9px] font-mono flex items-center justify-center shrink-0">
               {step.id}
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-[11px] text-[var(--text)] mb-[2px]">{step.name}</div>
-              <div className="text-[9px] text-[var(--text3)] font-mono">{step.detail}</div>
-            </div>
+            <span className="flex-1 text-[11px] text-[var(--text)]">{step.name}</span>
             <span
               className={`text-[9px] px-[6px] py-[2px] rounded-[2px] font-mono shrink-0 ${
                 step.status === "run" ? "animate-[pulse_1.5s_infinite]" : ""
@@ -148,13 +158,6 @@ export default function CenterPanel() {
             </div>
           </div>
         )}
-      </div>
-
-      <div className="border-t border-[var(--border)] p-[8px_12px] bg-[var(--bg2)] shrink-0">
-        <div className="text-[10px] text-[var(--text3)] font-mono mb-1 tracking-[1px] uppercase">
-          Agent 流程
-        </div>
-        <WorkflowSteps />
       </div>
     </div>
   );
@@ -235,8 +238,6 @@ const ResizableCanvas = memo(function ResizableCanvas({
   const innerH = Math.max(scaledH + margin * 2, dims.h);
   const offsetX = Math.max((innerW - scaledW) / 2, margin);
   const offsetY = Math.max((innerH - scaledH) / 2, margin);
-  const hintScrollable = zoomMode === "smart" && smartScale > fitScale + 0.04;
-
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport || !dims.w || !dims.h) return;
@@ -303,41 +304,9 @@ const ResizableCanvas = memo(function ResizableCanvas({
             </button>
           </div>
         </div>
-        <div className="mt-2 flex items-center justify-between gap-3 text-[10px] font-mono">
-          <span className="text-[var(--text3)]">
-            {hintScrollable
-              ? "已优先保证可读性，可滚动查看完整画布"
-              : zoomMode === "fit"
-                ? "已缩放至完整画布"
-                : zoomMode === "actual"
-                  ? "按 1:1 显示，可滚动查看细节"
-                  : zoomMode === "manual"
-                    ? "手动缩放中，可滚动查看细节"
-                    : "当前画布已基本完整展示"}
-          </span>
-          <button
-            className={`px-[10px] h-6 rounded-[999px] border text-[10px] cursor-pointer transition-[0.15s] ${
-              zoomMode === "smart"
-                ? "border-[rgba(77,184,212,0.4)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)]"
-                : "border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.72)] text-[var(--text3)] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)]"
-            }`}
-            onClick={() => setZoomMode("smart")}
-            type="button"
-          >
-            清晰优先
-          </button>
-        </div>
       </div>
 
       <div ref={containerRef} className="relative flex-1 min-h-0 overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at top, rgba(255,255,255,0.75), rgba(255,255,255,0) 55%), linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px)",
-            backgroundSize: "auto, 28px 28px, 28px 28px",
-          }}
-        />
         <div ref={viewportRef} className="absolute inset-0 overflow-auto">
           <div className="relative min-w-full min-h-full" style={{ width: innerW, height: innerH }}>
             <div
@@ -352,14 +321,6 @@ const ResizableCanvas = memo(function ResizableCanvas({
                 boxShadow: "0 24px 48px rgba(15,23,42,0.14)",
               }}
             >
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px)",
-                  backgroundSize: `${Math.max(20, 36 * scale)}px ${Math.max(20, 36 * scale)}px`,
-                }}
-              />
             </div>
             {children(scale, offsetX, offsetY)}
           </div>

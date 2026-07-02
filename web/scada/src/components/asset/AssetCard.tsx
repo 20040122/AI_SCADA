@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { ControlCandidate, ControlItem, MaterialItem } from "../../types/asset";
+import { toPngUrl } from "../../utils/assetPreview";
 
 const TYPE_COLORS: Record<string, string> = {
   泵: "#4db8d4",
@@ -52,29 +54,37 @@ export default function AssetCard({
   isSearchResult?: boolean;
   candidate?: ControlCandidate;
 }) {
+  const [imgError, setImgError] = useState(false);
   const initial = item.displayName.charAt(0);
   const color = getInitialColor(item.displayName);
+  const previewUrl = toPngUrl(item.image);
 
   return (
     <div
       className={`
         bg-[var(--bg3)] border border-[var(--border)] rounded-[4px] p-[10px] text-center
-        cursor-pointer transition-all duration-150 relative
+        cursor-pointer transition-all duration-150 relative h-[128px]
         hover:border-[var(--accent2)] hover:-translate-y-[1px]
         ${isSearchResult ? "border-dashed border-[var(--teal)]" : ""}
       `}
       onClick={onClick}
     >
-      <div
-        className="text-[26px] mb-1 leading-none"
-        style={{ filter: "drop-shadow(0 0 6px rgba(77,184,212,0.35))" }}
-      >
-        <div
-          className="w-10 h-10 rounded-full mx-auto flex items-center justify-center text-lg font-semibold"
-          style={{ background: `${color}22`, color, border: `1px solid ${color}44` }}
-        >
-          {initial}
-        </div>
+      <div className="h-[72px] flex items-center justify-center mb-1 overflow-hidden">
+        {!imgError && previewUrl ? (
+          <img
+            src={previewUrl}
+            alt={item.displayName}
+            className="max-w-full max-h-full object-contain"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-semibold shrink-0"
+            style={{ background: `${color}22`, color, border: `1px solid ${color}44` }}
+          >
+            {initial}
+          </div>
+        )}
       </div>
       <div
         className="text-[9px] text-[var(--text2)] font-mono truncate"

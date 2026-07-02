@@ -68,6 +68,7 @@ export interface LayoutGenerateResponse {
   quality_issues: QualityIssue[];
   zones: LayoutZone[];
   missing_controls: string[];
+  file_name: string;
 }
 
 export interface RefineRequest {

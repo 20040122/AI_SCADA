@@ -1,9 +1,32 @@
+import { useState } from "react";
 import { useLayoutStore } from "../../stores/layoutStore";
+import { uploadToSystem } from "../../api/layout";
 import { colorJson } from "../../utils/jsonColor";
 
 export default function RightPanel() {
-  const { jsonData, zones, missingControls, nodes } = useLayoutStore();
-  const hasResult = nodes.length > 0;
+  const { jsonData, zones, missingControls, nodes, fileName } = useLayoutStore();
+  const hasJson = jsonData !== null;
+  const hasNodes = nodes.length > 0;
+  const [uploading, setUploading] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState<string | null>(null);
+  const [uploadErr, setUploadErr] = useState(false);
+
+  const handleUpload = async () => {
+    if (!jsonData || !fileName) return;
+    setUploading(true);
+    setUploadMsg(null);
+    setUploadErr(false);
+    try {
+      await uploadToSystem(jsonData, fileName);
+      setUploadMsg("已插入系统");
+      setUploadErr(false);
+    } catch (e) {
+      setUploadMsg(e instanceof Error ? e.message : "上传失败");
+      setUploadErr(true);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const jsonStr = jsonData
     ? JSON.stringify(jsonData, null, 2)
@@ -20,13 +43,34 @@ export default function RightPanel() {
           className="bg-[var(--bg4)] border border-[var(--border)] rounded-[4px] p-[10px_12px] font-mono text-[9px] leading-[1.7] text-[var(--text2)] overflow-auto mb-3 whitespace-pre"
           style={{ maxHeight: "280px" }}
           dangerouslySetInnerHTML={{
-            __html: hasResult
+            __html: hasJson
               ? colorJson(jsonStr)
               : '<span style="color:var(--text3);font-style:italic">// 生成后显示</span>',
           }}
         />
 
-        {hasResult && zones.length > 0 && (
+        {hasJson && (
+          <div className="mb-3">
+            <button
+              className="w-full px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-50"
+              onClick={handleUpload}
+              disabled={uploading}
+            >
+              {uploading ? "插入中..." : "插入系统"}
+            </button>
+            {uploadMsg && (
+              <div
+                className={`mt-2 text-[10px] font-mono text-center ${
+                  uploadErr ? "text-[var(--warn)]" : "text-[var(--accent)]"
+                }`}
+              >
+                {uploadMsg}
+              </div>
+            )}
+          </div>
+        )}
+
+        {hasNodes && zones.length > 0 && (
           <>
             <div className="text-[10px] text-[var(--text3)] font-mono mt-3 mb-2 tracking-[1px] uppercase">
               📐 分区布局
@@ -42,7 +86,7 @@ export default function RightPanel() {
           </>
         )}
 
-        {hasResult && missingControls.length > 0 && (
+        {missingControls.length > 0 && (
           <>
             <div className="text-[10px] text-[var(--text3)] font-mono mt-3 mb-2 tracking-[1px] uppercase text-[var(--warn)]">
               ⚠ 未找到控件

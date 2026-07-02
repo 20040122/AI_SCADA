@@ -33,7 +33,8 @@ async def canvas_layout(
     )
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-    output_path = Path(__file__).resolve().parent.parent.parent / "output" / f"canvas_{ts}.json"
+    file_name = f"canvas_{ts}.json"
+    output_path = Path(__file__).resolve().parent.parent.parent / "output" / file_name
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(
         json.dumps(result.json_data, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -65,6 +66,7 @@ async def canvas_layout(
         quality_issues=issues,
         zones=zones,
         missing_controls=result.missing_controls,
+        file_name=file_name,
     )
     return ApiResponse(data=resp.model_dump())
 
