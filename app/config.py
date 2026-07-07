@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     chroma_dir: str = str(Path(__file__).resolve().parent.parent / "data" / "chroma" / "db")
     schema_path: str = str(Path(__file__).resolve().parent.parent / "data" / "schema" / "canvas_schema.json")
     control_jsonl_path: str = str(Path(__file__).resolve().parent.parent / "data" / "control.jsonl")
+    layout_config_path: str = str(Path(__file__).resolve().parent.parent / "data" / "layout_config.json")
 
     host: str = "0.0.0.0"
     port: int = 8000

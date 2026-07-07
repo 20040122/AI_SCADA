@@ -1,0 +1,382 @@
+[
+  {
+    "c": "ht.Node",
+    "i": 17092,
+    "p": {
+      "displayName": "高低温试验箱",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 222.4,
+        "y": 212.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 1
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17093,
+    "p": {
+      "displayName": "高低温试验箱2",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 591.2,
+        "y": 212.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 2
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17094,
+    "p": {
+      "displayName": "高低温试验箱3",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 960,
+        "y": 212.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 3
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17095,
+    "p": {
+      "displayName": "高低温试验箱4",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1328.8,
+        "y": 212.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 4
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17096,
+    "p": {
+      "displayName": "高低温试验箱5",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1697.6,
+        "y": 212.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 5
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17097,
+    "p": {
+      "displayName": "高低温试验箱6",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 222.4,
+        "y": 447.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 6
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17098,
+    "p": {
+      "displayName": "高低温试验箱7",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 591.2,
+        "y": 447.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 7
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17099,
+    "p": {
+      "displayName": "高低温试验箱8",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 960,
+        "y": 447.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 8
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17100,
+    "p": {
+      "displayName": "高低温试验箱9",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1328.8,
+        "y": 447.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 9
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17101,
+    "p": {
+      "displayName": "高低温试验箱10",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1697.6,
+        "y": 447.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 10
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17102,
+    "p": {
+      "displayName": "高低温试验箱11",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 222.4,
+        "y": 682.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 11
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17103,
+    "p": {
+      "displayName": "高低温试验箱12",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 591.2,
+        "y": 682.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 12
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17104,
+    "p": {
+      "displayName": "高低温试验箱13",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 960,
+        "y": 682.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 13
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17105,
+    "p": {
+      "displayName": "高低温试验箱14",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1328.8,
+        "y": 682.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 14
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17106,
+    "p": {
+      "displayName": "高低温试验箱15",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1697.6,
+        "y": 682.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 15
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17107,
+    "p": {
+      "displayName": "高低温试验箱16",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 222.4,
+        "y": 917.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 16
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17108,
+    "p": {
+      "displayName": "高低温试验箱17",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 591.2,
+        "y": 917.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 17
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17109,
+    "p": {
+      "displayName": "高低温试验箱18",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 960,
+        "y": 917.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17110,
+    "p": {
+      "displayName": "高低温试验箱19",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1328.8,
+        "y": 917.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 19
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17111,
+    "p": {
+      "displayName": "高低温试验箱20",
+      "image": "symbols/zdk18s/devices/高低温试验箱.json",
+      "position": {
+        "x": 1697.6,
+        "y": 917.5
+      },
+      "width": 104.81,
+      "height": 167.7
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "chamber",
+      "layout.instance": 20
+    }
+  }
+]
