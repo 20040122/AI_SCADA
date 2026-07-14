@@ -1,4 +1,4 @@
-import type { CanvasNode } from "../../types/layout";
+import type { CanvasNode, DecorationNode } from "../../types/layout";
 import { memo, useEffect, useState, useRef } from "react";
 import { toPngUrl } from "../../utils/assetPreview";
 
@@ -110,8 +110,65 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY,
   );
 });
 
-const CanvasContent = memo(function CanvasContent({ nodes, canvasW, canvasH, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom }: {
+const DecorationImage = memo(function DecorationImage({ node, scale, offsetX, offsetY }: {
+  node: DecorationNode;
+  scale: number;
+  offsetX: number;
+  offsetY: number;
+}) {
+  const w = node.width * scale;
+  const h = node.height * scale;
+  const x = offsetX + (node.x - node.width / 2) * scale;
+  const y = offsetY + (node.y - node.height / 2) * scale;
+  const url = node.image ? toPngUrl(node.image) : "";
+
+  return (
+    <div
+      className="absolute pointer-events-none"
+      style={{ transform: `translate(${x}px, ${y}px)`, width: w, height: h }}
+    >
+      {url && <img src={url} alt="" className="w-full h-full" style={{ objectFit: "contain" }} />}
+    </div>
+  );
+});
+
+const DecorationText = memo(function DecorationText({ node, scale, offsetX, offsetY }: {
+  node: DecorationNode;
+  scale: number;
+  offsetX: number;
+  offsetY: number;
+}) {
+  const w = node.width * scale;
+  const h = node.height * scale;
+  const x = offsetX + (node.x - node.width / 2) * scale;
+  const y = offsetY + (node.y - node.height / 2) * scale;
+  const fontSize = node.fontSize ? `${parseFloat(node.fontSize) * scale}px` : undefined;
+
+  return (
+    <div
+      className="absolute pointer-events-none flex"
+      style={{
+        transform: `translate(${x}px, ${y}px)`,
+        width: w,
+        height: h,
+        color: node.color || "rgb(255,255,255)",
+        fontSize: fontSize || `${14 * scale}px`,
+        fontWeight: node.fontWeight || "bold",
+        textAlign: (node.textAlign as any) || "center",
+        opacity: node.opacity ?? 1,
+        alignItems: node.verticalAlign === "top" ? "flex-start" : "center",
+        justifyContent: "center",
+        lineHeight: 1.3,
+      }}
+    >
+      {node.text}
+    </div>
+  );
+});
+
+const CanvasContent = memo(function CanvasContent({ nodes, decorations, canvasW, canvasH, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom }: {
   nodes: CanvasNode[];
+  decorations: DecorationNode[];
   canvasW: number;
   canvasH: number;
   selectedNodeId?: string | null;
@@ -125,6 +182,13 @@ const CanvasContent = memo(function CanvasContent({ nodes, canvasW, canvasH, sel
     <ResizableCanvas targetW={canvasW} targetH={canvasH} margin={MARGIN} defaultReadableZoom={defaultReadableZoom}>
       {(scale, offsetX, offsetY) => (
         <>
+          {decorations.map((d, i) =>
+            d.type === "image" ? (
+              <DecorationImage key={`deco-img-${i}`} node={d} scale={scale} offsetX={offsetX} offsetY={offsetY} />
+            ) : (
+              <DecorationText key={`deco-txt-${i}`} node={d} scale={scale} offsetX={offsetX} offsetY={offsetY} />
+            )
+          )}
           {nodes.map((node) => (
             <CanvasWidget
               key={node.id}
@@ -294,6 +358,7 @@ const ResizableCanvas = memo(function ResizableCanvas({
 
 export interface AgentCanvasProps {
   nodes: CanvasNode[];
+  decorations?: DecorationNode[];
   canvasWidth: number;
   canvasHeight: number;
   title: string;
@@ -306,7 +371,7 @@ export interface AgentCanvasProps {
 }
 
 export default function AgentCanvas(props: AgentCanvasProps) {
-  const { nodes, canvasWidth, canvasHeight, title, emptyText, emptyIcon, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom } = props;
+  const { nodes, decorations = [], canvasWidth, canvasHeight, title, emptyText, emptyIcon, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom } = props;
   const hasResult = nodes.length > 0;
 
   return (
@@ -329,6 +394,7 @@ export default function AgentCanvas(props: AgentCanvasProps) {
         {hasResult && canvasWidth > 0 && canvasHeight > 0 && (
           <CanvasContent
             nodes={nodes}
+            decorations={decorations}
             canvasW={canvasWidth}
             canvasH={canvasHeight}
             selectedNodeId={selectedNodeId}

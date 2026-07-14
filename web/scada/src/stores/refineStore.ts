@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import type { CanvasNode, LayoutJsonData, LayoutNodeData } from "../types/layout";
 import type { JsonPatchOp, RefineMessage, RefineHistoryItem } from "../types/refine";
-import { extractNodesFromJsonData } from "../utils/layoutNodes";
+import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes";
+import type { DecorationNode } from "../types/layout";
 
 interface PatchSnapshot {
   canvasNode: CanvasNode;
@@ -44,6 +45,7 @@ function applyOpImmutable(obj: LayoutJsonData, op: JsonPatchOp): LayoutJsonData 
 
 interface RefineStore {
   workingNodes: CanvasNode[];
+  decorations: DecorationNode[];
   workingJson: LayoutJsonData | null;
   canvasWidth: number;
   canvasHeight: number;
@@ -71,9 +73,10 @@ function nextMsgId() {
 
 export const useRefineStore = create<RefineStore>((set, get) => ({
   workingNodes: [],
+  decorations: [],
   workingJson: null,
-  canvasWidth: 1000,
-  canvasHeight: 800,
+  canvasWidth: 1920,
+  canvasHeight: 1080,
   selectedNodeId: null,
   messages: [],
   history: [],
@@ -82,6 +85,7 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
   loadFromLayoutData: (nodes, width, height, layoutJson) => {
     set({
       workingNodes: nodes.map((n) => ({ ...n })),
+      decorations: extractDecorationsFromJsonData(layoutJson ?? null),
       workingJson: layoutJson ? JSON.parse(JSON.stringify(layoutJson)) : null,
       canvasWidth: width,
       canvasHeight: height,
@@ -178,10 +182,12 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
 
       const removed = findJsonIndex(newJson, nodeId) < 0;
       const newNodes = extractNodesFromJsonData(newJson);
+      const newDecorations = extractDecorationsFromJsonData(newJson);
 
       if (removed) {
         return {
           workingNodes: newNodes,
+          decorations: newDecorations,
           workingJson: newJson,
           lastSnapshot: snapshot,
           selectedNodeId: null,
@@ -189,6 +195,7 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
       }
       return {
         workingNodes: newNodes,
+        decorations: newDecorations,
         workingJson: newJson,
         lastSnapshot: snapshot,
       };
@@ -217,6 +224,7 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
         }
       }
       const newNodes = extractNodesFromJsonData(newJson);
+      const newDecorations = extractDecorationsFromJsonData(newJson);
 
       const msgs = state.messages.map((m) =>
         m.canAccept && !m.accepted && !m.rejected
@@ -225,6 +233,7 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
       );
       return {
         workingNodes: newNodes,
+        decorations: newDecorations,
         workingJson: newJson,
         lastSnapshot: null,
         messages: msgs,
@@ -269,6 +278,7 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
   clearCanvas: () =>
     set({
       workingNodes: [],
+      decorations: [],
       workingJson: null,
       selectedNodeId: null,
       messages: [],

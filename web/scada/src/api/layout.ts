@@ -5,6 +5,7 @@ export function generateLayout(req: LayoutGenerateRequest): Promise<LayoutGenera
   return post<LayoutGenerateResponse>("/api/canvas/layout", {
     query: req.query,
     controls: req.controls,
+    title: req.title,
     canvas_width: req.canvasWidth,
     canvas_height: req.canvasHeight,
   });

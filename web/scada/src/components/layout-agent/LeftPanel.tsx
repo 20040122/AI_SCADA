@@ -2,14 +2,17 @@ import { useLayoutStore } from "../../stores/layoutStore";
 import { useAssetStore } from "../../stores/assetStore";
 import { generateLayout } from "../../api/layout";
 import { notify } from "../../utils/notification";
+import { extractNodesFromJsonData } from "../../utils/layoutNodes";
 import { WorkflowSteps } from "./CenterPanel";
 
 export default function LeftPanel() {
   const {
     query,
+    title,
     canvasWidth,
     canvasHeight,
     setQuery,
+    setTitle,
     setCanvasWidth,
     setCanvasHeight,
     setLayoutResult,
@@ -28,6 +31,10 @@ export default function LeftPanel() {
       notify("请输入场景描述", "w");
       return;
     }
+    if (!title.trim()) {
+      notify("请输入画面标题", "w");
+      return;
+    }
 
     resetWorkflow();
     setIsLoading(true);
@@ -42,6 +49,7 @@ export default function LeftPanel() {
         query: query.trim(),
         canvasWidth,
         canvasHeight,
+        title: title.trim(),
       });
 
       setWorkflowStep(2, "done");
@@ -49,7 +57,7 @@ export default function LeftPanel() {
       setLayoutResult(result);
       setWorkflowStep(3, "done");
 
-      const nodeCount = result.json_data.d?.length || 0;
+      const nodeCount = extractNodesFromJsonData(result.json_data).length;
       const missingCount = result.missing_controls.length || 0;
       const warnCount = result.quality_issues.filter((q) => q.severity === "warning").length;
       const errCount = result.quality_issues.filter((q) => q.severity === "error").length;
@@ -108,6 +116,18 @@ export default function LeftPanel() {
             placeholder="如：冷却水循环系统，2台水泵、4个阀门、出口压力传感器、流量计，右侧放显示仪表"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
+            画面标题
+          </label>
+          <input
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            placeholder="如：冷却水循环系统"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
 

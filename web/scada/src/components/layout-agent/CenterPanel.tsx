@@ -39,7 +39,7 @@ export function WorkflowSteps() {
 }
 
 export default function CenterPanel() {
-  const { nodes, jsonData } = useLayoutStore();
+  const { nodes, decorations, jsonData } = useLayoutStore();
   const hasResult = nodes.length > 0;
 
   const canvasW = jsonData?.a?.width || 0;
@@ -49,6 +49,7 @@ export default function CenterPanel() {
     <AgentCanvas
       title={hasResult ? `画布预览 (${canvasW}×${canvasH})` : '画布预览'}
       nodes={nodes}
+      decorations={decorations}
       canvasWidth={canvasW}
       canvasHeight={canvasH}
       emptyText="输入场景描述后点击「生成布局」"

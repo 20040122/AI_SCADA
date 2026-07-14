@@ -43,9 +43,10 @@ class SaveQueryResultRequest(BaseModel):
 
 class CanvasLayoutRequest(BaseModel):
     query: str
+    title: str
     controls: Optional[List[ControlItem]] = None
-    canvas_width: int = 800
-    canvas_height: int = 800
+    canvas_width: int = 1920
+    canvas_height: int = 1080
 
 
 class QualityIssueResponse(BaseModel):

@@ -6,6 +6,7 @@ import { notify } from "../../utils/notification";
 export default function CenterPanel() {
   const {
     workingNodes,
+    decorations,
     canvasWidth,
     canvasHeight,
     selectedNodeId,
@@ -44,6 +45,7 @@ export default function CenterPanel() {
       <AgentCanvas
         title="组态画布"
         nodes={workingNodes}
+        decorations={decorations}
         canvasWidth={canvasWidth}
         canvasHeight={canvasHeight}
         emptyText="请先在布局 Agent 生成画布"

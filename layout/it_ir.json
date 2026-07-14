@@ -2,52 +2,29 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group_pump",
+        "id": "group_air_tanks",
         "region": "center",
         "unit": {
           "root": {
-            "id": "pump",
-            "deviceType": "水泵",
+            "id": "tank",
+            "deviceType": "空气罐",
             "role": "root"
           },
           "attachments": [
             {
-              "id": "pipe",
-              "deviceType": "管道",
-              "role": "pipe",
-              "relativeTo": "pump",
-              "side": "bottom"
+              "id": "flowmeter",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "tank",
+              "side": "right"
             }
           ]
         },
-        "count": 1
-      },
-      {
-        "id": "group_airtank",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "airtank",
-            "deviceType": "空气罐",
-            "role": "root"
-          },
-          "attachments": []
-        },
-        "count": 1
+        "count": 2,
+        "arrangement": "horizontal",
+        "gapHint": "normal"
       }
     ],
-    "connections": [
-      {
-        "id": "c1",
-        "source": {
-          "group": "group_pump",
-          "node": "pipe"
-        },
-        "target": {
-          "group": "group_airtank",
-          "node": "airtank"
-        }
-      }
-    ]
+    "connections": []
   }
 }

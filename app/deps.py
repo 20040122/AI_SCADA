@@ -6,17 +6,17 @@ from app.config import settings
 from data.chroma import ControlChunk
 from data.sqlite.material_db import MaterialDB
 from model import search_service as search_svc
-from model.canva_agent import CanvasAgent
 from model.control_agent import ControlAgent
+from model.layout_agent import LayoutAgent
 
 _control_agent: Optional[ControlAgent] = None
-_canvas_agent: Optional[CanvasAgent] = None
+_layout_agent: Optional[LayoutAgent] = None
 _material_db: Optional[MaterialDB] = None
 _chroma_watcher: Optional[ControlChunk] = None
 
 
 async def init_resources() -> None:
-    global _material_db, _control_agent, _canvas_agent, _chroma_watcher
+    global _material_db, _control_agent, _layout_agent, _chroma_watcher
 
     db = MaterialDB()
     await db.init_db()
@@ -26,7 +26,7 @@ async def init_resources() -> None:
     await agent.init()
     _control_agent = agent
 
-    _canvas_agent = CanvasAgent(db=db)
+    _layout_agent = LayoutAgent(db=db)
 
     _chroma_watcher = ControlChunk(control_jsonl_path=settings.control_jsonl_path)
     _chroma_watcher.reseed()
@@ -48,9 +48,9 @@ def get_control_agent() -> ControlAgent:
     return _control_agent
 
 
-def get_canvas_agent() -> CanvasAgent:
-    assert _canvas_agent is not None, "CanvasAgent not initialized (call init_resources first)"
-    return _canvas_agent
+def get_layout_agent() -> LayoutAgent:
+    assert _layout_agent is not None, "LayoutAgent not initialized (call init_resources first)"
+    return _layout_agent
 
 
 def get_material_db() -> MaterialDB:
