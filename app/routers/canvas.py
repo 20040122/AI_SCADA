@@ -3,9 +3,9 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
-from app.deps import get_layout_agent
+from app.deps import get_layout_agent, get_refine_agent
 from app.schemas import (
     ApiResponse,
     CanvasLayoutRequest,
@@ -13,8 +13,13 @@ from app.schemas import (
     RefineRequest,
     RefineResponse,
 )
-from model.canva_agent import _refine_layout_with_llm
 from model.layout_agent import LayoutAgent
+from model.refine_agent import (
+    RefineAgent,
+    RefineInputError,
+    RefineModelError,
+    RefineUnavailableError,
+)
 
 router = APIRouter(prefix="/api/canvas", tags=["canvas"])
 
@@ -54,7 +59,22 @@ async def canvas_layout(
 
 
 @router.post("/refine", response_model=ApiResponse)
-async def canvas_refine(req: RefineRequest):
-    refined = await _refine_layout_with_llm(req.nodes, req.canvas_width, req.canvas_height)
-    resp = RefineResponse(nodes=refined)
-    return ApiResponse(data=resp.model_dump())
+async def canvas_refine(
+    req: RefineRequest,
+    agent: RefineAgent = Depends(get_refine_agent),
+):
+    try:
+        result = await agent.refine(
+            req.instruction,
+            req.json_data,
+            req.selected_node_i,
+        )
+    except RefineInputError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RefineUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except RefineModelError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    resp = RefineResponse(patch=result.patch, message=result.message)
+    return ApiResponse(data=resp.model_dump(exclude_none=True))

@@ -13,9 +13,9 @@ export function generateLayout(req: LayoutGenerateRequest): Promise<LayoutGenera
 
 export function refineLayout(req: RefineRequest): Promise<RefineResponse> {
   return post<RefineResponse>("/api/canvas/refine", {
-    nodes: req.nodes,
-    canvas_width: req.canvasWidth,
-    canvas_height: req.canvasHeight,
+    instruction: req.instruction,
+    json_data: req.jsonData,
+    selected_node_i: req.selectedNodeI,
   });
 }
 

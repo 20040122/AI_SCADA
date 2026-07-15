@@ -6,15 +6,15 @@
       "displayName": "空气罐",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 454,
+        "x": 188.5,
         "y": 565
       },
       "width": 160,
       "height": 240
     },
     "a": {
-      "layout.group": "group_air_tanks",
-      "layout.node": "tank",
+      "layout.group": "group_01",
+      "layout.node": "root",
       "layout.instance": 1
     }
   },
@@ -22,18 +22,18 @@
     "c": "ht.Node",
     "i": 17093,
     "p": {
-      "displayName": "流量计",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "管道",
+      "image": "symbols/Agent/管道.json",
       "position": {
-        "x": 599,
+        "x": 368.5,
         "y": 565
       },
-      "width": 50,
-      "height": 68.75
+      "width": 120,
+      "height": 30
     },
     "a": {
-      "layout.group": "group_air_tanks",
-      "layout.node": "flowmeter",
+      "layout.group": "group_01",
+      "layout.node": "pipe",
       "layout.instance": 1
     }
   },
@@ -44,15 +44,15 @@
       "displayName": "空气罐2",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 1376,
+        "x": 649.5,
         "y": 565
       },
       "width": 160,
       "height": 240
     },
     "a": {
-      "layout.group": "group_air_tanks",
-      "layout.node": "tank",
+      "layout.group": "group_01",
+      "layout.node": "root",
       "layout.instance": 2
     }
   },
@@ -60,19 +60,95 @@
     "c": "ht.Node",
     "i": 17095,
     "p": {
-      "displayName": "流量计2",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "管道2",
+      "image": "symbols/Agent/管道.json",
       "position": {
-        "x": 1521,
+        "x": 829.5,
         "y": 565
       },
-      "width": 50,
-      "height": 68.75
+      "width": 120,
+      "height": 30
     },
     "a": {
-      "layout.group": "group_air_tanks",
-      "layout.node": "flowmeter",
+      "layout.group": "group_01",
+      "layout.node": "pipe",
       "layout.instance": 2
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17096,
+    "p": {
+      "displayName": "空气罐3",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 1110.5,
+        "y": 565
+      },
+      "width": 160,
+      "height": 240
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "root",
+      "layout.instance": 3
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17097,
+    "p": {
+      "displayName": "管道3",
+      "image": "symbols/Agent/管道.json",
+      "position": {
+        "x": 1290.5,
+        "y": 565
+      },
+      "width": 120,
+      "height": 30
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "pipe",
+      "layout.instance": 3
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17098,
+    "p": {
+      "displayName": "空气罐4",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 1571.5,
+        "y": 565
+      },
+      "width": 160,
+      "height": 240
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "root",
+      "layout.instance": 4
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17099,
+    "p": {
+      "displayName": "管道4",
+      "image": "symbols/Agent/管道.json",
+      "position": {
+        "x": 1751.5,
+        "y": 565
+      },
+      "width": 120,
+      "height": 30
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "pipe",
+      "layout.instance": 4
     }
   }
 ]

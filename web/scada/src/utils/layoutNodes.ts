@@ -26,7 +26,7 @@ export function extractNodesFromJsonData(jsonData: LayoutJsonData | null): Canva
   return jsonData.d
     .filter((n) => n.a?.["layout.node"] != null && n.p?.position)
     .map((n, idx) => ({
-      id: `node-${n.i || idx}`,
+      id: `node-${n.i ?? idx}`,
       displayName: n.p.displayName || "",
       image: n.p.image || "",
       x: n.p.position!.x,

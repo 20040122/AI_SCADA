@@ -13,10 +13,14 @@ export default function CenterPanel() {
     setSelectedNodeId,
     moveNode,
     loadFromLayoutData,
+    isRefining,
+    pendingPatch,
   } = useRefineStore();
 
   const layoutNodes = useLayoutStore((s) => s.nodes);
   const layoutJson = useLayoutStore((s) => s.jsonData);
+  const layoutFileName = useLayoutStore((s) => s.fileName);
+  const locked = isRefining || pendingPatch !== null;
 
   const handleSelectNode = (id: string) => {
     setSelectedNodeId(id);
@@ -27,12 +31,13 @@ export default function CenterPanel() {
   };
 
   const handleLoadFromLayout = () => {
-    if (layoutNodes.length > 0 && layoutJson) {
+    if (layoutNodes.length > 0 && layoutJson && layoutFileName) {
       loadFromLayoutData(
         layoutNodes,
         layoutJson?.a?.width || 1000,
         layoutJson?.a?.height || 800,
-        layoutJson
+        layoutJson,
+        layoutFileName
       );
       notify("已加载布局 Agent 画布", "s");
     } else {
@@ -52,7 +57,7 @@ export default function CenterPanel() {
         emptyIcon="🎨"
         selectedNodeId={selectedNodeId}
         onSelectNode={handleSelectNode}
-        onMoveNode={moveNode}
+        onMoveNode={locked ? undefined : moveNode}
         defaultReadableZoom={0.55}
       />
       {workingNodes.length > 0 && (
@@ -63,8 +68,9 @@ export default function CenterPanel() {
           </div>
           {layoutNodes.length > 0 && (
             <button
-              className="text-[9px] px-[8px] py-[2px] rounded-[3px] border border-[var(--border2)] bg-[var(--bg3)] text-[var(--text3)] font-mono cursor-pointer transition-[0.15s] hover:border-[var(--accent2)] hover:text-[var(--accent)]"
+              className="text-[9px] px-[8px] py-[2px] rounded-[3px] border border-[var(--border2)] bg-[var(--bg3)] text-[var(--text3)] font-mono cursor-pointer transition-[0.15s] hover:border-[var(--accent2)] hover:text-[var(--accent)] disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={handleLoadFromLayout}
+              disabled={locked || !layoutFileName}
             >
               重新加载布局
             </button>

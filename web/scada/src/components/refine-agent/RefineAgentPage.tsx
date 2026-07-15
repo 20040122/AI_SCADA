@@ -7,18 +7,41 @@ import RightPanel from "./RightPanel";
 export default function RefineAgentPage() {
   const layoutNodes = useLayoutStore((s) => s.nodes);
   const layoutJson = useLayoutStore((s) => s.jsonData);
-  const { workingNodes, loadFromLayoutData } = useRefineStore();
+  const layoutFileName = useLayoutStore((s) => s.fileName);
+  const {
+    workingJson,
+    sourceFileName,
+    isRefining,
+    pendingPatch,
+    loadFromLayoutData,
+  } = useRefineStore();
 
   useEffect(() => {
-    if (layoutNodes.length > 0 && workingNodes.length === 0) {
-      loadFromLayoutData(
-        layoutNodes,
-        layoutJson?.a?.width || 1000,
-        layoutJson?.a?.height || 800,
-        layoutJson
-      );
-    }
-  }, []);
+    if (
+      !layoutJson ||
+      !layoutFileName ||
+      isRefining ||
+      pendingPatch !== null ||
+      (workingJson !== null && sourceFileName === layoutFileName)
+    ) return;
+
+    loadFromLayoutData(
+      layoutNodes,
+      layoutJson.a?.width || 1000,
+      layoutJson.a?.height || 800,
+      layoutJson,
+      layoutFileName
+    );
+  }, [
+    isRefining,
+    layoutFileName,
+    layoutJson,
+    layoutNodes,
+    loadFromLayoutData,
+    pendingPatch,
+    sourceFileName,
+    workingJson,
+  ]);
 
   return (
     <div className="flex flex-1 h-full overflow-hidden">

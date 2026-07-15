@@ -1,3 +1,5 @@
+import type { JsonPatchOp } from "./refine";
+
 export interface ControlSpec {
   displayName: string;
   image?: string;
@@ -92,13 +94,14 @@ export interface LayoutGenerateResponse {
 }
 
 export interface RefineRequest {
-  nodes: LayoutNodeData[];
-  canvasWidth: number;
-  canvasHeight: number;
+  instruction: string;
+  jsonData: LayoutJsonData;
+  selectedNodeI?: number;
 }
 
 export interface RefineResponse {
-  nodes: LayoutNodeData[];
+  patch: JsonPatchOp[];
+  message: string;
 }
 
 export interface WorkflowStep {

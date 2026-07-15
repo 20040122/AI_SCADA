@@ -1,6 +1,8 @@
 from __future__ import annotations
-from typing import Any, Optional, List
-from pydantic import BaseModel, Field
+
+from typing import Any, List, Literal, Optional
+
+from pydantic import BaseModel, ConfigDict, StrictInt
 
 
 class ControlItem(BaseModel):
@@ -74,14 +76,23 @@ class CanvasLayoutResponse(BaseModel):
     file_name: str = ""
 
 
+class JsonPatchOperation(BaseModel):
+    op: Literal["add", "replace", "remove"]
+    path: str
+    value: Any = None
+
+
 class RefineRequest(BaseModel):
-    nodes: list[dict[str, Any]]
-    canvas_width: int
-    canvas_height: int
+    model_config = ConfigDict(extra="forbid")
+
+    instruction: str
+    json_data: dict[str, Any]
+    selected_node_i: Optional[StrictInt] = None
 
 
 class RefineResponse(BaseModel):
-    nodes: list[dict[str, Any]]
+    patch: list[JsonPatchOperation]
+    message: str
 
 
 class BindingVariable(BaseModel):
