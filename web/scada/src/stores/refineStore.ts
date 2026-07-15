@@ -1,12 +1,14 @@
 import { create } from "zustand";
-import type { CanvasNode, LayoutJsonData, LayoutNodeData } from "../types/layout";
+import type { CanvasNode, LayoutJsonData } from "../types/layout";
 import type { JsonPatchOp, RefineMessage, RefineHistoryItem } from "../types/refine";
 import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes";
 import type { DecorationNode } from "../types/layout";
 
-interface PatchSnapshot {
-  canvasNode: CanvasNode;
-  layoutNode?: LayoutNodeData | null;
+interface PendingPatch {
+  messageId: string;
+  jsonSnapshot: LayoutJsonData;
+  selectedNodeId: string | null;
+  patch: JsonPatchOp[];
 }
 
 function nodeIdToI(nodeId: string): number {
@@ -19,88 +21,109 @@ function findJsonIndex(json: LayoutJsonData | null, nodeId: string): number {
   return json.d.findIndex((n) => n.i === ni);
 }
 
+function cloneLayout(json: LayoutJsonData): LayoutJsonData {
+  return JSON.parse(JSON.stringify(json)) as LayoutJsonData;
+}
+
 function applyOpImmutable(obj: LayoutJsonData, op: JsonPatchOp): LayoutJsonData {
   const parts = op.path.split("/").filter(Boolean);
   if (parts.length === 0) {
     if (op.op === "remove") return { ...obj, d: [] };
     return obj;
   }
-  const clone: any = { ...obj, d: [...obj.d] };
-  let cur: any = clone;
+  const clone = { ...obj, d: [...obj.d] };
+  let cur: Record<string, unknown> | unknown[] = clone as unknown as Record<string, unknown>;
   for (let i = 0; i < parts.length - 1; i++) {
     const key = parts[i];
-    const next = cur[key];
-    cur[key] = Array.isArray(next) ? [...next] : { ...next };
-    cur = cur[key];
+    const next: unknown = Array.isArray(cur) ? cur[Number(key)] : cur[key];
+    if (next === null || typeof next !== "object") return obj;
+    const nextClone: Record<string, unknown> | unknown[] = Array.isArray(next)
+      ? [...next]
+      : { ...(next as Record<string, unknown>) };
+    if (Array.isArray(cur)) cur[Number(key)] = nextClone;
+    else cur[key] = nextClone;
+    cur = nextClone;
   }
   const lastKey = parts[parts.length - 1];
-  if (op.op === "remove") {
-    if (Array.isArray(cur)) cur.splice(parseInt(lastKey), 1);
-    else delete cur[lastKey];
+  if (Array.isArray(cur)) {
+    const index = Number(lastKey);
+    if (!Number.isInteger(index)) return obj;
+    if (op.op === "remove") cur.splice(index, 1);
+    else cur[index] = op.value;
+  } else if (op.op === "remove") {
+    delete cur[lastKey];
   } else {
     cur[lastKey] = op.value;
   }
-  return clone as LayoutJsonData;
+  return clone;
 }
 
 interface RefineStore {
   workingNodes: CanvasNode[];
   decorations: DecorationNode[];
   workingJson: LayoutJsonData | null;
+  sourceFileName: string | null;
   canvasWidth: number;
   canvasHeight: number;
   selectedNodeId: string | null;
   messages: RefineMessage[];
   history: RefineHistoryItem[];
-  lastSnapshot: PatchSnapshot | null;
+  isRefining: boolean;
+  pendingPatch: PendingPatch | null;
 
-  loadFromLayoutData: (nodes: CanvasNode[], width: number, height: number, layoutJson?: LayoutJsonData | null) => void;
+  loadFromLayoutData: (
+    nodes: CanvasNode[],
+    width: number,
+    height: number,
+    layoutJson: LayoutJsonData | null,
+    sourceFileName: string
+  ) => void;
   setSelectedNodeId: (id: string | null) => void;
   moveNode: (id: string, x: number, y: number) => void;
   addMessage: (msg: RefineMessage) => void;
-  addHistory: (item: RefineHistoryItem) => void;
-  appendPatchMessage: (userText: string, patch: JsonPatchOp[], patchStr: string, msgId: string) => void;
-  applyPatch: (patch: JsonPatchOp[]) => void;
-  rejectLastPatch: () => void;
-  acceptLastPatch: () => void;
+  setRefining: (value: boolean) => void;
+  applyPatch: (patch: JsonPatchOp[], messageId: string) => void;
+  acceptPatch: (messageId: string) => void;
+  rejectPatch: (messageId: string) => void;
   clearCanvas: () => void;
 }
 
-let msgCounter = 0;
-function nextMsgId() {
-  return `refine-msg-${++msgCounter}`;
-}
-
-export const useRefineStore = create<RefineStore>((set, get) => ({
+export const useRefineStore = create<RefineStore>((set) => ({
   workingNodes: [],
   decorations: [],
   workingJson: null,
+  sourceFileName: null,
   canvasWidth: 1920,
   canvasHeight: 1080,
   selectedNodeId: null,
   messages: [],
   history: [],
-  lastSnapshot: null,
+  isRefining: false,
+  pendingPatch: null,
 
-  loadFromLayoutData: (nodes, width, height, layoutJson) => {
+  loadFromLayoutData: (nodes, width, height, layoutJson, sourceFileName) => {
+    const workingJson = layoutJson ? cloneLayout(layoutJson) : null;
     set({
       workingNodes: nodes.map((n) => ({ ...n })),
-      decorations: extractDecorationsFromJsonData(layoutJson ?? null),
-      workingJson: layoutJson ? JSON.parse(JSON.stringify(layoutJson)) : null,
+      decorations: extractDecorationsFromJsonData(workingJson),
+      workingJson,
+      sourceFileName: sourceFileName || null,
       canvasWidth: width,
       canvasHeight: height,
       selectedNodeId: null,
       messages: [],
       history: [],
-      lastSnapshot: null,
+      isRefining: false,
+      pendingPatch: null,
     });
-    msgCounter = 0;
   },
 
   setSelectedNodeId: (id) => set({ selectedNodeId: id }),
 
   moveNode: (id, x, y) => {
     set((state) => {
+      if (state.isRefining || state.pendingPatch) return state;
+
       const newNodes = state.workingNodes.map((n) =>
         n.id === id ? { ...n, x, y } : n
       );
@@ -123,154 +146,89 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
   },
 
   addMessage: (msg) => set((s) => ({ messages: [...s.messages, msg] })),
-  addHistory: (item) => set((s) => ({ history: [item, ...s.history] })),
+  setRefining: (value) => set({ isRefining: value }),
 
-  appendPatchMessage: (userText, patch, patchStr, msgId) => {
-    const state = get();
-    const w = state.workingNodes.find((n) => n.id === state.selectedNodeId);
-    const ctx = w
-      ? `已选中 <strong>${w.displayName}</strong>，当前坐标 x:${w.x} y:${w.y} w:${w.width} h:${w.height}。`
-      : "";
-
-    const aiMsg: RefineMessage = {
-      id: msgId || nextMsgId(),
-      role: "ai",
-      content: ctx + `AI 已生成 JSON Patch：`,
-      patch,
-      patchStr,
-      canAccept: true,
-      accepted: false,
-      rejected: false,
-    };
-
-    const userMsg: RefineMessage = {
-      id: nextMsgId(),
-      role: "user",
-      content: userText,
-    };
-
-    set((s) => ({
-      messages: [...s.messages, userMsg, aiMsg],
-    }));
-  },
-
-  applyPatch: (patch) => {
+  applyPatch: (patch, messageId) => {
     set((state) => {
-      const nodeId = state.selectedNodeId;
-      if (!nodeId || !state.workingJson) return state;
+      if (!state.workingJson || patch.length === 0 || state.pendingPatch) return state;
 
-      const jsonIdx = findJsonIndex(state.workingJson, nodeId);
-
-      const canvasNode = state.workingNodes.find((n) => n.id === nodeId);
-      const layoutNode = jsonIdx >= 0 ? state.workingJson.d[jsonIdx] : null;
-      const snapshot: PatchSnapshot | null = canvasNode
-        ? {
-            canvasNode: { ...canvasNode },
-            layoutNode: layoutNode
-              ? {
-                  ...layoutNode,
-                  p: { ...layoutNode.p, position: { ...layoutNode.p.position } },
-                }
-              : null,
-          }
-        : null;
+      const jsonSnapshot = cloneLayout(state.workingJson);
+      const selectedNodeId = state.selectedNodeId;
 
       let newJson = state.workingJson;
       for (const op of patch) {
         newJson = applyOpImmutable(newJson, op);
       }
 
-      const removed = findJsonIndex(newJson, nodeId) < 0;
       const newNodes = extractNodesFromJsonData(newJson);
       const newDecorations = extractDecorationsFromJsonData(newJson);
-
-      if (removed) {
-        return {
-          workingNodes: newNodes,
-          decorations: newDecorations,
-          workingJson: newJson,
-          lastSnapshot: snapshot,
-          selectedNodeId: null,
-        };
-      }
       return {
         workingNodes: newNodes,
         decorations: newDecorations,
         workingJson: newJson,
-        lastSnapshot: snapshot,
+        selectedNodeId:
+          selectedNodeId && newNodes.some((node) => node.id === selectedNodeId)
+            ? selectedNodeId
+            : null,
+        pendingPatch: {
+          messageId,
+          jsonSnapshot,
+          selectedNodeId,
+          patch,
+        },
       };
     });
   },
 
-  rejectLastPatch: () => {
+  acceptPatch: (messageId) => {
     set((state) => {
-      if (!state.lastSnapshot) return state;
-      const snap = state.lastSnapshot;
-      const snapI = snap.layoutNode?.i;
+      if (!state.pendingPatch || state.pendingPatch.messageId !== messageId) return state;
 
-      let newJson = state.workingJson;
-      if (newJson && snap.layoutNode) {
-        const idx = newJson.d.findIndex((n) => n.i === snapI);
-        if (idx >= 0) {
-          newJson = {
-            ...newJson,
-            d: newJson.d.map((n, i) => (i === idx ? { ...snap.layoutNode! } : n)),
-          };
-        } else {
-          newJson = {
-            ...newJson,
-            d: [...newJson.d, { ...snap.layoutNode! }],
-          };
-        }
-      }
-      const newNodes = extractNodesFromJsonData(newJson);
-      const newDecorations = extractDecorationsFromJsonData(newJson);
-
-      const msgs = state.messages.map((m) =>
-        m.canAccept && !m.accepted && !m.rejected
-          ? { ...m, rejected: true, canAccept: false }
-          : m
+      const messages = state.messages.map((message) =>
+        message.id === messageId
+          ? { ...message, accepted: true, canAccept: false }
+          : message
       );
-      return {
-        workingNodes: newNodes,
-        decorations: newDecorations,
-        workingJson: newJson,
-        lastSnapshot: null,
-        messages: msgs,
-        selectedNodeId: state.selectedNodeId || snap.canvasNode.id,
+      const historyItem: RefineHistoryItem = {
+        description: "微调操作",
+        patch: JSON.stringify(state.pendingPatch.patch),
+        timestamp: new Date().toLocaleTimeString("zh", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
-    });
-  },
-
-  acceptLastPatch: () => {
-    set((state) => {
-      const msgs = state.messages.map((m) =>
-        m.canAccept && !m.accepted && !m.rejected
-          ? { ...m, accepted: true, canAccept: false }
-          : m
-      );
-      const historyItem: RefineHistoryItem = state.lastSnapshot
-        ? {
-            description: `调整 ${state.lastSnapshot.canvasNode.displayName}`,
-            patch: JSON.stringify(msgs.find((m) => m.accepted)?.patch || []),
-            timestamp: new Date().toLocaleTimeString("zh", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          }
-        : {
-            description: "微调操作",
-            patch: "",
-            timestamp: new Date().toLocaleTimeString("zh", {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          };
 
       return {
-        lastSnapshot: null,
-        messages: msgs,
+        messages,
         history: [historyItem, ...state.history],
+        pendingPatch: null,
+      };
+    });
+  },
+
+  rejectPatch: (messageId) => {
+    set((state) => {
+      if (!state.pendingPatch || state.pendingPatch.messageId !== messageId) return state;
+
+      const snapshot = state.pendingPatch;
+      const workingJson = cloneLayout(snapshot.jsonSnapshot);
+      const workingNodes = extractNodesFromJsonData(workingJson);
+      const decorations = extractDecorationsFromJsonData(workingJson);
+      const messages = state.messages.map((message) =>
+        message.id === messageId
+          ? { ...message, rejected: true, canAccept: false }
+          : message
+      );
+      return {
+        workingNodes,
+        decorations,
+        workingJson,
+        selectedNodeId:
+          snapshot.selectedNodeId && workingNodes.some((node) => node.id === snapshot.selectedNodeId)
+            ? snapshot.selectedNodeId
+            : null,
+        messages,
+        pendingPatch: null,
       };
     });
   },
@@ -280,9 +238,11 @@ export const useRefineStore = create<RefineStore>((set, get) => ({
       workingNodes: [],
       decorations: [],
       workingJson: null,
+      sourceFileName: null,
       selectedNodeId: null,
       messages: [],
       history: [],
-      lastSnapshot: null,
+      isRefining: false,
+      pendingPatch: null,
     }),
 }));

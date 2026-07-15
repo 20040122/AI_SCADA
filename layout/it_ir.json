@@ -2,25 +2,25 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group_air_tanks",
+        "id": "group_01",
         "region": "center",
         "unit": {
           "root": {
-            "id": "tank",
+            "id": "root",
             "deviceType": "空气罐",
             "role": "root"
           },
           "attachments": [
             {
-              "id": "flowmeter",
-              "deviceType": "流量计",
-              "role": "meter",
-              "relativeTo": "tank",
+              "id": "pipe",
+              "deviceType": "管道",
+              "role": "pipe",
+              "relativeTo": "root",
               "side": "right"
             }
           ]
         },
-        "count": 2,
+        "count": 4,
         "arrangement": "horizontal",
         "gapHint": "normal"
       }
