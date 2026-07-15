@@ -8,11 +8,11 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
+  { id: "schema", icon: "📋", label: "Schema 校验", badge: true },
   { id: "asset", icon: "🎨", label: "控件 Agent", badge: true },
   { id: "layout", icon: "⚡", label: "布局 Agent ", badge: true },
   { id: "refine", icon: "🤝", label: "微调 Agent", badge: true },
   { id: "binding", icon: "🔗", label: "绑点 Agent", badge: true },
-  { id: "schema", icon: "📋", label: "Schema 校验", badge: true },
 ];
 
 export default function MainTabs() {

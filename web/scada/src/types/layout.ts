@@ -10,6 +10,7 @@ export interface LayoutGenerateRequest {
   controls?: ControlSpec[];
   canvasWidth: number;
   canvasHeight: number;
+  title: string;
 }
 
 export interface QualityIssue {
@@ -39,12 +40,31 @@ export interface LayoutNodeData {
   c: string;
   i: number;
   p: {
-    displayName: string;
+    displayName?: string;
     image?: string;
-    position: { x: number; y: number };
+    position?: { x: number; y: number };
     width?: number;
     height?: number;
   };
+  s?: Record<string, unknown>;
+  a?: Record<string, unknown>;
+}
+
+export interface DecorationNode {
+  type: "image" | "text";
+  image?: string;
+  text?: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  displayName?: string;
+  color?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  textAlign?: string;
+  opacity?: number;
+  verticalAlign?: string;
 }
 
 export interface LayoutJsonData {
@@ -68,6 +88,7 @@ export interface LayoutGenerateResponse {
   quality_issues: QualityIssue[];
   zones: LayoutZone[];
   missing_controls: string[];
+  file_name: string;
 }
 
 export interface RefineRequest {
@@ -95,4 +116,5 @@ export interface CanvasNode {
   y: number;
   width: number;
   height: number;
+  color: string;
 }

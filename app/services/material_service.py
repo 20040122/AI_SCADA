@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from data.material_db import MaterialDB
+from data.sqlite.material_db import MaterialDB
 
 
 class MaterialService:

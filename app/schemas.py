@@ -43,9 +43,10 @@ class SaveQueryResultRequest(BaseModel):
 
 class CanvasLayoutRequest(BaseModel):
     query: str
+    title: str
     controls: Optional[List[ControlItem]] = None
-    canvas_width: int = 800
-    canvas_height: int = 800
+    canvas_width: int = 1920
+    canvas_height: int = 1080
 
 
 class QualityIssueResponse(BaseModel):
@@ -70,6 +71,7 @@ class CanvasLayoutResponse(BaseModel):
     quality_issues: list[QualityIssueResponse]
     zones: list[LayoutZoneResponse]
     missing_controls: list[str] = []
+    file_name: str = ""
 
 
 class RefineRequest(BaseModel):

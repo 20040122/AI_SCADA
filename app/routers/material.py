@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.deps import get_material_db
 from app.schemas import ApiResponse, MaterialItem, MaterialListResponse, SaveQueryResultRequest
 from app.services.material_service import MaterialService
-from data.material_db import MaterialDB
+from data.sqlite.material_db import MaterialDB
 
 router = APIRouter(prefix="/api/material", tags=["material"])
 

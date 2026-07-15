@@ -1,0 +1,78 @@
+[
+  {
+    "c": "ht.Node",
+    "i": 17092,
+    "p": {
+      "displayName": "空气罐",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 454,
+        "y": 565
+      },
+      "width": 160,
+      "height": 240
+    },
+    "a": {
+      "layout.group": "group_air_tanks",
+      "layout.node": "tank",
+      "layout.instance": 1
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17093,
+    "p": {
+      "displayName": "流量计",
+      "image": "symbols/Agent/流量计.json",
+      "position": {
+        "x": 599,
+        "y": 565
+      },
+      "width": 50,
+      "height": 68.75
+    },
+    "a": {
+      "layout.group": "group_air_tanks",
+      "layout.node": "flowmeter",
+      "layout.instance": 1
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17094,
+    "p": {
+      "displayName": "空气罐2",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 1376,
+        "y": 565
+      },
+      "width": 160,
+      "height": 240
+    },
+    "a": {
+      "layout.group": "group_air_tanks",
+      "layout.node": "tank",
+      "layout.instance": 2
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17095,
+    "p": {
+      "displayName": "流量计2",
+      "image": "symbols/Agent/流量计.json",
+      "position": {
+        "x": 1521,
+        "y": 565
+      },
+      "width": 50,
+      "height": 68.75
+    },
+    "a": {
+      "layout.group": "group_air_tanks",
+      "layout.node": "flowmeter",
+      "layout.instance": 2
+    }
+  }
+]

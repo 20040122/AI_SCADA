@@ -1,3 +1,6 @@
+import os
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from pathlib import Path
 
@@ -9,5 +12,5 @@ _ef = None
 def get_embedding_function() -> SentenceTransformerEmbeddingFunction:
     global _ef
     if _ef is None:
-        _ef = SentenceTransformerEmbeddingFunction(model_name=MODEL_NAME)
+        _ef = SentenceTransformerEmbeddingFunction(model_name=MODEL_NAME, local_files_only=True)
     return _ef

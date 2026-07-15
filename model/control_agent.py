@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
-from data.material_db import MaterialDB
+from data.sqlite.material_db import MaterialDB
 from model.search_service import search_controls_with_threshold
 logger = logging.getLogger(__name__)
 load_dotenv(".env.local")
@@ -108,6 +108,7 @@ class ControlAgent:
 
             if not vector_hit:
                 logger.debug("向量检索 \"%s\": 无命中 (sim < 0.55)", keyword)
+                await self._db.sync_if_needed()
                 db_results = await self._db.search_by_name(keyword)
                 if db_results:
                     for item in db_results:

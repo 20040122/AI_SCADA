@@ -1,0 +1,208 @@
+{
+  "v": "8.0.5",
+  "p": {
+    "layers": [
+      {
+        "name": "0",
+        "visible": true,
+        "selectable": true,
+        "movable": true,
+        "editable": true
+      }
+    ],
+    "autoAdjustIndex": true,
+    "hierarchicalRendering": true
+  },
+  "a": {
+    "width": 1920,
+    "height": 1080,
+    "fitContent": true,
+    "rectSelectable": false,
+    "zoomable": false,
+    "pannable": false,
+    "onPostDeserialize": "__ht__function(json, dm, view) { function getTag(d) { return d.getTag ? d.getTag() : d.p && d.p('tag'); } function getAnchor(d) { if (d.getAnchor) return d.getAnchor(); return d.p ? d.p('anchor') : null; } function removeOldGridItems(ownerId) { const removes = []; dm.each(function(d) { if (d && d.a && d.a('_grid.owner') === ownerId) removes.push(d); }); removes.forEach(function(d) { dm.remove(d); }); } function layoutGrid(grid) { if (!grid) return; const ownerId = grid.getId ? grid.getId() : grid.getId; removeOldGridItems(ownerId); const items = grid.a('grid.content') || []; const col = Number(grid.a('grid.col')) || 1; const rowAttr = Number(grid.a('grid.row')); const row = rowAttr > 0 ? rowAttr : Math.ceil(items.length / col); const gap = Number(grid.a('grid.gap')) || 0; const w = grid.getWidth(); const h = grid.getHeight(); const pos = grid.getPosition(); const anchor = getAnchor(grid) || { x: 0.5, y: 0.5 }; const ax = anchor.x == null ? 0.5 : anchor.x; const ay = anchor.y == null ? 0.5 : anchor.y; const left = pos.x - w * ax; const top = pos.y - h * ay; const cellW = (w - gap * (col - 1)) / col; const cellH = (h - gap * (row - 1)) / row; items.forEach(function(item, index) { if (!item || !item.image) return; const r = Math.floor(index / col); const c = index % col; if (r >= row) return; const cellX = left + c * (cellW + gap); const cellY = top + r * (cellH + gap); const origin = item.origin || {}; const node = new ht.Node(); node.setDisplayName(item.displayName || item.name || ''); node.setImage(item.image); const finalW = Number(item.width) || Number(origin.width) || 160; const finalH = Number(item.height) || Number(origin.height) || 240; node.setWidth(finalW); node.setHeight(finalH); node.setPosition(cellX + cellW / 2, cellY + cellH / 2); node.s('2d.movable', false); node.s('2d.editable', false); node.a('_grid.owner', ownerId); node.a('_grid.index', index); node.a('_grid.origin', origin); dm.add(node); }); } dm.each(function(d) { if (getTag(d) === 'grid') layoutGrid(d); }); }"
+  },
+  "d": [
+    {
+      "c": "ht.Node",
+      "i": 15679,
+      "p": {
+        "displayName": "container",
+        "anchor": {
+          "x": 0,
+          "y": 0
+        },
+        "width": 1920,
+        "height": 1080
+      },
+      "s": {
+        "shape": "rect",
+        "shape.background": "",
+        "shape.border.color": "#979797",
+        "2d.movable": false,
+        "2d.editable": false,
+        "2d.selectable": false
+      },
+      "a": {
+        "font": "bold 30px sans-serif, Arial"
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 15680,
+      "p": {
+        "displayName": "画面背景.png",
+        "image": "assets/Agent/画面背景.jpg",
+        "position": {
+          "x": 960,
+          "y": 540
+        },
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 15681,
+      "p": {
+        "displayName": "标题栏",
+        "image": "assets/Agent/标题栏.png",
+        "position": {
+          "x": 967.5,
+          "y": 46.5
+        },
+        "width": 1905,
+        "height": 93
+      }
+    },
+    {
+      "c": "ht.Text",
+      "i": 15682,
+      "p": {
+        "position": {
+          "x": 960,
+          "y": 37
+        },
+        "width": 500,
+        "height": 60,
+        "tall": 20
+      },
+      "s": {
+        "text": "供气系统",
+        "type": "text",
+        "text.align": "center",
+        "text.color": "rgb(255,255,255)",
+        "opacity": 1,
+        "text.font": "bold 40px arial, sans-serif",
+        "layout.v": "top"
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 15683,
+      "p": {
+        "displayName": "gridLayout",
+        "tag": "grid",
+        "image": "symbols/Agent/gridLayout.json",
+        "position": {
+          "x": 960,
+          "y": 114
+        },
+        "anchor": {
+          "x": 0.5,
+          "y": 0
+        },
+        "width": 1800,
+        "height": 900
+      },
+      "s": {
+        "layout.v": "topbottom",
+        "layout.h": "leftright"
+      },
+      "a": {
+        "grid.row": "1",
+        "grid.col": 2,
+        "grid.gap": 48,
+        "grid.content": [
+          {
+            "displayName": "氮气罐",
+            "image": "symbols/Agent/氮气罐.json",
+            "fit": "contain",
+            "origin": {
+              "x": 368,
+              "y": 633,
+              "width": 160,
+              "height": 240
+            }
+          },
+          {
+            "displayName": "氮气罐2",
+            "image": "symbols/Agent/氮气罐.json",
+            "fit": "contain",
+            "origin": {
+              "x": 568,
+              "y": 633,
+              "width": 160,
+              "height": 240
+            }
+          }
+        ]
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 15684,
+      "p": {
+        "displayName": "氮气罐",
+        "image": "symbols/Agent/氮气罐.json",
+        "position": {
+          "x": 498,
+          "y": 564
+        },
+        "width": 160,
+        "height": 240
+      },
+      "a": {
+        "_grid.owner": 16384,
+        "_grid.index": 0,
+        "_grid.origin": {
+          "x": 368,
+          "y": 633,
+          "width": 160,
+          "height": 240
+        }
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 15685,
+      "p": {
+        "displayName": "氮气罐2",
+        "image": "symbols/Agent/氮气罐.json",
+        "position": {
+          "x": 1422,
+          "y": 564
+        },
+        "width": 160,
+        "height": 240
+      },
+      "a": {
+        "_grid.owner": 16384,
+        "_grid.index": 1,
+        "_grid.origin": {
+          "x": 568,
+          "y": 633,
+          "width": 160,
+          "height": 240
+        }
+      }
+    }
+  ],
+  "modified": "Sun Jul 05 2026 14:50:36 GMT+0800 (中国标准时间)",
+  "contentRect": {
+    "x": 0,
+    "y": 0,
+    "width": 1920,
+    "height": 1080
+  }
+}

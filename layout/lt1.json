@@ -1,0 +1,107 @@
+{
+  "v": "8.0.5",
+  "p": {
+    "layers": [
+      {
+        "name": "0",
+        "visible": true,
+        "selectable": true,
+        "movable": true,
+        "editable": true
+      }
+    ],
+    "autoAdjustIndex": true,
+    "hierarchicalRendering": true
+  },
+  "a": {
+    "width": 1920,
+    "height": 1080,
+    "fitContent": true,
+    "rectSelectable": false,
+    "zoomable": false,
+    "pannable": false
+  },
+  "d": [
+    {
+      "c": "ht.Node",
+      "i": 20395,
+      "p": {
+        "displayName": "container",
+        "anchor": {
+          "x": 0,
+          "y": 0
+        },
+        "width": 1920,
+        "height": 1080
+      },
+      "s": {
+        "shape": "rect",
+        "shape.background": "",
+        "shape.border.color": "#979797",
+        "2d.movable": false,
+        "2d.editable": false,
+        "2d.selectable": false
+      },
+      "a": {
+        "font": "bold 30px sans-serif, Arial"
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 20396,
+      "p": {
+        "displayName": "画面背景.png",
+        "image": "assets/Agent/画面背景.jpg",
+        "position": {
+          "x": 960,
+          "y": 540
+        },
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "c": "ht.Node",
+      "i": 20397,
+      "p": {
+        "displayName": "标题栏",
+        "image": "assets/Agent/标题栏.png",
+        "position": {
+          "x": 967.5,
+          "y": 46.5
+        },
+        "width": 1905,
+        "height": 93
+      }
+    },
+    {
+      "c": "ht.Text",
+      "i": 20398,
+      "p": {
+        "position": {
+          "x": 960,
+          "y": 37
+        },
+        "width": 500,
+        "height": 60,
+        "tall": 20
+      },
+      "s": {
+        "text": "测试系统",
+        "type": "text",
+        "text.align": "center",
+        "text.color": "rgb(255,255,255)",
+        "opacity": 1,
+        "text.font": "bold 40px arial, sans-serif",
+        "layout.v": "top"
+      }
+    }
+  ],
+  "modified": "Sun Jul 05 2026 10:00:38 GMT+0800 (中国标准时间)",
+  "contentRect": {
+    "x": 0,
+    "y": 0,
+    "width": 1920,
+    "height": 1080
+  }
+}

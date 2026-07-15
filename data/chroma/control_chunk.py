@@ -53,6 +53,14 @@ def _build_id(item: dict) -> str:
     return "control_{}".format(item["displayName"])
 
 
+def _dedupe_controls(controls: list[dict]) -> list[dict]:
+    """按 ID 去重，保留最后一个出现的条目（防止 JSONL 中 displayName 重复导致 ChromaDB ID 冲突）。"""
+    seen: dict[str, dict] = {}
+    for item in controls:
+        seen[_build_id(item)] = item
+    return list(seen.values())
+
+
 def _compute_file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -62,12 +70,22 @@ def get_collection(client: chromadb.ClientAPI) -> chromadb.Collection:
     return client.get_or_create_collection(
         name=COLLECTION_NAME,
         embedding_function=ef,
-        metadata={"hnsw:space": "cosine"},
+        metadata={
+            "hnsw:space": "cosine",
+            "hnsw:construction_ef": 200,
+            "hnsw:M": 32,
+            "hnsw:search_ef": 100,
+        },
     )
 
 
 def seed(client: chromadb.ClientAPI) -> None:
-    controls = _load_controls()
+    try:
+        client.delete_collection(COLLECTION_NAME)
+    except Exception:
+        pass
+
+    controls = _dedupe_controls(_load_controls())
     ids = [_build_id(item) for item in controls]
     documents = [_build_document(item) for item in controls]
     metadatas = [_build_metadata(item) for item in controls]
@@ -119,7 +137,12 @@ class ControlChunk:
         self._observer: Optional[Observer] = None
 
     def seed(self) -> None:
-        controls = _load_controls(self._jsonl_path)
+        try:
+            self._client.delete_collection(COLLECTION_NAME)
+        except Exception:
+            pass
+
+        controls = _dedupe_controls(_load_controls(self._jsonl_path))
         ids = [_build_id(item) for item in controls]
         documents = [_build_document(item) for item in controls]
         metadatas = [_build_metadata(item) for item in controls]
@@ -128,21 +151,17 @@ class ControlChunk:
         collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
 
     def reseed(self) -> None:
-        controls = _load_controls(self._jsonl_path)
+        try:
+            self._client.delete_collection(COLLECTION_NAME)
+        except Exception:
+            pass
+
+        controls = _dedupe_controls(_load_controls(self._jsonl_path))
         ids = [_build_id(item) for item in controls]
         documents = [_build_document(item) for item in controls]
         metadatas = [_build_metadata(item) for item in controls]
 
         collection = get_collection(self._client)
-
-        existing_ids = collection.get(include=[])["ids"]
-        new_id_set = set(ids)
-        stale_ids = [eid for eid in existing_ids if eid not in new_id_set]
-
-        if stale_ids:
-            collection.delete(ids=stale_ids)
-            logger.info("ChromaDB 移除 %d 个已删除控件", len(stale_ids))
-
         collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
         self._file_hash = _compute_file_hash(self._jsonl_path)
         logger.info("ChromaDB 全量同步完成（%d 个控件）", len(controls))

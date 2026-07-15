@@ -2,13 +2,17 @@ import { useLayoutStore } from "../../stores/layoutStore";
 import { useAssetStore } from "../../stores/assetStore";
 import { generateLayout } from "../../api/layout";
 import { notify } from "../../utils/notification";
+import { extractNodesFromJsonData } from "../../utils/layoutNodes";
+import { WorkflowSteps } from "./CenterPanel";
 
 export default function LeftPanel() {
   const {
     query,
+    title,
     canvasWidth,
     canvasHeight,
     setQuery,
+    setTitle,
     setCanvasWidth,
     setCanvasHeight,
     setLayoutResult,
@@ -17,7 +21,6 @@ export default function LeftPanel() {
     clearCanvas,
     setIsLoading,
     setError,
-    qualityIssues,
     workflow,
   } = useLayoutStore();
 
@@ -26,6 +29,10 @@ export default function LeftPanel() {
   const handleGenerate = async () => {
     if (!query.trim()) {
       notify("请输入场景描述", "w");
+      return;
+    }
+    if (!title.trim()) {
+      notify("请输入画面标题", "w");
       return;
     }
 
@@ -42,6 +49,7 @@ export default function LeftPanel() {
         query: query.trim(),
         canvasWidth,
         canvasHeight,
+        title: title.trim(),
       });
 
       setWorkflowStep(2, "done");
@@ -49,12 +57,19 @@ export default function LeftPanel() {
       setLayoutResult(result);
       setWorkflowStep(3, "done");
 
-      const errCount = result.quality_issues.filter((q) => q.severity === "error").length;
+      const nodeCount = extractNodesFromJsonData(result.json_data).length;
+      const missingCount = result.missing_controls.length || 0;
       const warnCount = result.quality_issues.filter((q) => q.severity === "warning").length;
-      const nodeCount = result.json_data.d?.length || 0;
+      const errCount = result.quality_issues.filter((q) => q.severity === "error").length;
 
-      if (errCount > 0) {
+      if (nodeCount === 0 && missingCount === 0) {
+        notify("未生成控件，请检查场景描述或先入库控件", "w");
+      } else if (nodeCount === 0 && missingCount > 0) {
+        notify(`未找到可用控件：${result.missing_controls.join(", ")}`, "w");
+      } else if (errCount > 0) {
         notify(`${nodeCount} 个控件, ${errCount} 项不合格, ${warnCount} 项警告`, "w");
+      } else if (missingCount > 0) {
+        notify(`${nodeCount} 个控件生成完成，未找到 ${missingCount} 个控件`, "w");
       } else {
         notify(`${nodeCount} 个控件生成成功`, "s");
       }
@@ -98,9 +113,21 @@ export default function LeftPanel() {
             className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
             rows={4}
             style={{ minHeight: "72px", lineHeight: 1.5 }}
-            placeholder="如：冷却水循环系统，2台水泵、4个阀门、出口压力传感器、流量计，右侧放显示仪表..."
+            placeholder="如：冷却水循环系统，2台水泵、4个阀门、出口压力传感器、流量计，右侧放显示仪表"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
+            画面标题
+          </label>
+          <input
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            placeholder="如：冷却水循环系统"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
 
@@ -163,33 +190,11 @@ export default function LeftPanel() {
           </button>
         </div>
 
-        <div className="text-[10px] text-[var(--text3)] font-mono mt-3 mb-2 tracking-[1px] uppercase">
-          质检结果
-        </div>
-        <div className="bg-[var(--bg3)] border border-[var(--border)] rounded-[5px] p-[12px] mb-3">
-          {qualityIssues.length === 0 ? (
-            <div className="text-[11px] text-[var(--text3)]">等待生成...</div>
-          ) : (
-            <div className="flex flex-col gap-1">
-              {qualityIssues.map((qc, i) => (
-                <div key={i} className="text-[11px] flex items-center gap-2">
-                  <span
-                    className={
-                      qc.severity === "error"
-                        ? "text-[var(--error)]"
-                        : qc.severity === "warning"
-                          ? "text-[var(--warn)]"
-                          : "text-[var(--success)]"
-                    }
-                  >
-                    {qc.severity === "error" ? "✗" : qc.severity === "warning" ? "⚠" : "✓"}
-                  </span>
-                  <span className="text-[var(--text2)]">{qc.issue_type}</span>
-                  <span className="text-[var(--text3)] text-[9px]">— {qc.message}</span>
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="mt-auto">
+          <div className="text-[10px] text-[var(--text3)] font-mono mb-2 tracking-[1px] uppercase">
+            Agent 流程
+          </div>
+          <WorkflowSteps />
         </div>
       </div>
     </div>

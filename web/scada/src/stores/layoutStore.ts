@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type {
   CanvasNode,
+  DecorationNode,
   LayoutGenerateResponse,
   LayoutJsonData,
   LayoutZone,
@@ -8,6 +9,7 @@ import type {
   WorkflowStep,
   ControlSpec,
 } from "../types/layout";
+import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes";
 
 const INITIAL_WORKFLOW: WorkflowStep[] = [
   { id: 1, name: "LLM 解析", detail: "从场景描述提取设备类型、数量、关系", status: "wait" },
@@ -15,21 +17,9 @@ const INITIAL_WORKFLOW: WorkflowStep[] = [
   { id: 3, name: "质检验证", detail: "重叠/溢出/Schema 规则校验", status: "wait" },
 ];
 
-function extractNodesFromJsonData(jsonData: LayoutJsonData | null): CanvasNode[] {
-  if (!jsonData?.d) return [];
-  return jsonData.d.map((n, idx) => ({
-    id: `node-${n.i || idx}`,
-    displayName: n.p.displayName,
-    image: n.p.image || "",
-    x: n.p.position.x,
-    y: n.p.position.y,
-    width: n.p.width || 60,
-    height: n.p.height || 40,
-  }));
-}
-
 interface LayoutStore {
   query: string;
+  title: string;
   canvasWidth: number;
   canvasHeight: number;
 
@@ -39,6 +29,7 @@ interface LayoutStore {
   missingControls: string[];
 
   nodes: CanvasNode[];
+  decorations: DecorationNode[];
 
   workflow: WorkflowStep[];
 
@@ -46,8 +37,10 @@ interface LayoutStore {
   error: string | null;
 
   controls: ControlSpec[];
+  fileName: string;
 
   setQuery: (q: string) => void;
+  setTitle: (t: string) => void;
   setCanvasWidth: (w: number) => void;
   setCanvasHeight: (h: number) => void;
   setControls: (c: ControlSpec[]) => void;
@@ -61,8 +54,9 @@ interface LayoutStore {
 
 export const useLayoutStore = create<LayoutStore>((set) => ({
   query: "",
+  title: "",
   canvasWidth: 1920,
-  canvasHeight: 1022,
+  canvasHeight: 1080,
 
   jsonData: null,
   zones: [],
@@ -70,6 +64,7 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
   missingControls: [],
 
   nodes: [],
+  decorations: [],
 
   workflow: INITIAL_WORKFLOW.map((s) => ({ ...s })),
 
@@ -77,8 +72,10 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
   error: null,
 
   controls: [],
+  fileName: "",
 
   setQuery: (q) => set({ query: q }),
+  setTitle: (t) => set({ title: t }),
   setCanvasWidth: (w) => set({ canvasWidth: w }),
   setCanvasHeight: (h) => set({ canvasHeight: h }),
   setControls: (c) => set({ controls: c }),
@@ -90,6 +87,8 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       qualityIssues: res.quality_issues,
       missingControls: res.missing_controls,
       nodes: extractNodesFromJsonData(res.json_data),
+      decorations: extractDecorationsFromJsonData(res.json_data),
+      fileName: res.file_name,
     }),
 
   setWorkflowStep: (id, status) =>
@@ -108,6 +107,8 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       qualityIssues: [],
       missingControls: [],
       nodes: [],
+      decorations: [],
+      fileName: "",
     }),
 
   setIsLoading: (v) => set({ isLoading: v }),

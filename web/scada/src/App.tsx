@@ -3,6 +3,7 @@ import MainTabs from "./components/tabs/MainTabs";
 import StatusBar from "./components/layout/StatusBar";
 import AssetAgentPage from "./components/asset/AssetAgentPage";
 import LayoutAgentPage from "./components/layout-agent/LayoutAgentPage";
+import RefineAgentPage from "./components/refine-agent/RefineAgentPage";
 import { useAssetStore } from "./stores/assetStore";
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -31,7 +32,7 @@ export default function App() {
         {activeTab === "asset" && <AssetAgentPage />}
         {activeTab === "schema" && <PlaceholderPage title="R-01 Schema规则库" />}
         {activeTab === "layout" && <LayoutAgentPage />}
-        {activeTab === "refine" && <PlaceholderPage title="R-04 人机协同微调" />}
+        {activeTab === "refine" && <RefineAgentPage />}
         {activeTab === "binding" && <PlaceholderPage title="R-05 智能数据绑点" />}
         {activeTab === "docs" && <PlaceholderPage title="需求文档" />}
       </div>
