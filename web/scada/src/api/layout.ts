@@ -23,7 +23,7 @@ const HMI_UPLOAD_URL = "http://daoscada.local/hmi-ui/upload/";
 
 export async function uploadToSystem(jsonData: LayoutJsonData, fileName: string): Promise<void> {
   const formData = new FormData();
-  formData.append("path", `displays/Agent/${fileName}`);
+  formData.append("path", `displays/dutzcm/${fileName}`);
   formData.append("content", JSON.stringify(jsonData, null, 2));
 
   const res = await fetch(HMI_UPLOAD_URL, {

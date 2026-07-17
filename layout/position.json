@@ -6,11 +6,11 @@
       "displayName": "空气罐",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 188.5,
-        "y": 565
+        "x": 345.33,
+        "y": 290.84
       },
-      "width": 160,
-      "height": 240
+      "width": 104.47,
+      "height": 156.71
     },
     "a": {
       "layout.group": "group_01",
@@ -22,18 +22,18 @@
     "c": "ht.Node",
     "i": 17093,
     "p": {
-      "displayName": "管道",
-      "image": "symbols/Agent/管道.json",
+      "displayName": "阀门开关",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
       "position": {
-        "x": 368.5,
-        "y": 565
+        "x": 345.33,
+        "y": 160.25
       },
-      "width": 120,
-      "height": 30
+      "width": 52.24,
+      "height": 52.24
     },
     "a": {
       "layout.group": "group_01",
-      "layout.node": "pipe",
+      "layout.node": "valve",
       "layout.instance": 1
     }
   },
@@ -44,11 +44,11 @@
       "displayName": "空气罐2",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 649.5,
-        "y": 565
+        "x": 960,
+        "y": 290.84
       },
-      "width": 160,
-      "height": 240
+      "width": 104.47,
+      "height": 156.71
     },
     "a": {
       "layout.group": "group_01",
@@ -60,18 +60,18 @@
     "c": "ht.Node",
     "i": 17095,
     "p": {
-      "displayName": "管道2",
-      "image": "symbols/Agent/管道.json",
+      "displayName": "阀门开关2",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
       "position": {
-        "x": 829.5,
-        "y": 565
+        "x": 960,
+        "y": 160.25
       },
-      "width": 120,
-      "height": 30
+      "width": 52.24,
+      "height": 52.24
     },
     "a": {
       "layout.group": "group_01",
-      "layout.node": "pipe",
+      "layout.node": "valve",
       "layout.instance": 2
     }
   },
@@ -82,11 +82,11 @@
       "displayName": "空气罐3",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 1110.5,
-        "y": 565
+        "x": 1574.67,
+        "y": 290.84
       },
-      "width": 160,
-      "height": 240
+      "width": 104.47,
+      "height": 156.71
     },
     "a": {
       "layout.group": "group_01",
@@ -98,18 +98,18 @@
     "c": "ht.Node",
     "i": 17097,
     "p": {
-      "displayName": "管道3",
-      "image": "symbols/Agent/管道.json",
+      "displayName": "阀门开关3",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
       "position": {
-        "x": 1290.5,
-        "y": 565
+        "x": 1574.67,
+        "y": 160.25
       },
-      "width": 120,
-      "height": 30
+      "width": 52.24,
+      "height": 52.24
     },
     "a": {
       "layout.group": "group_01",
-      "layout.node": "pipe",
+      "layout.node": "valve",
       "layout.instance": 3
     }
   },
@@ -120,11 +120,11 @@
       "displayName": "空气罐4",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 1571.5,
-        "y": 565
+        "x": 345.33,
+        "y": 604.18
       },
-      "width": 160,
-      "height": 240
+      "width": 104.47,
+      "height": 156.71
     },
     "a": {
       "layout.group": "group_01",
@@ -136,19 +136,209 @@
     "c": "ht.Node",
     "i": 17099,
     "p": {
-      "displayName": "管道4",
-      "image": "symbols/Agent/管道.json",
+      "displayName": "阀门开关4",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
       "position": {
-        "x": 1751.5,
-        "y": 565
+        "x": 345.33,
+        "y": 473.59
       },
-      "width": 120,
-      "height": 30
+      "width": 52.24,
+      "height": 52.24
     },
     "a": {
       "layout.group": "group_01",
-      "layout.node": "pipe",
+      "layout.node": "valve",
       "layout.instance": 4
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17100,
+    "p": {
+      "displayName": "空气罐5",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 960,
+        "y": 604.18
+      },
+      "width": 104.47,
+      "height": 156.71
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "root",
+      "layout.instance": 5
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17101,
+    "p": {
+      "displayName": "阀门开关5",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "position": {
+        "x": 960,
+        "y": 473.59
+      },
+      "width": 52.24,
+      "height": 52.24
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "valve",
+      "layout.instance": 5
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17102,
+    "p": {
+      "displayName": "空气罐6",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 1574.67,
+        "y": 604.18
+      },
+      "width": 104.47,
+      "height": 156.71
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "root",
+      "layout.instance": 6
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17103,
+    "p": {
+      "displayName": "阀门开关6",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "position": {
+        "x": 1574.67,
+        "y": 473.59
+      },
+      "width": 52.24,
+      "height": 52.24
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "valve",
+      "layout.instance": 6
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17104,
+    "p": {
+      "displayName": "空气罐7",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 345.33,
+        "y": 917.51
+      },
+      "width": 104.47,
+      "height": 156.71
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "root",
+      "layout.instance": 7
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17105,
+    "p": {
+      "displayName": "阀门开关7",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "position": {
+        "x": 345.33,
+        "y": 786.92
+      },
+      "width": 52.24,
+      "height": 52.24
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "valve",
+      "layout.instance": 7
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17106,
+    "p": {
+      "displayName": "空气罐8",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 960,
+        "y": 917.51
+      },
+      "width": 104.47,
+      "height": 156.71
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "root",
+      "layout.instance": 8
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17107,
+    "p": {
+      "displayName": "阀门开关8",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "position": {
+        "x": 960,
+        "y": 786.92
+      },
+      "width": 52.24,
+      "height": 52.24
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "valve",
+      "layout.instance": 8
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17108,
+    "p": {
+      "displayName": "空气罐9",
+      "image": "symbols/Agent/空气罐.json",
+      "position": {
+        "x": 1574.67,
+        "y": 917.51
+      },
+      "width": 104.47,
+      "height": 156.71
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "root",
+      "layout.instance": 9
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17109,
+    "p": {
+      "displayName": "阀门开关9",
+      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "position": {
+        "x": 1574.67,
+        "y": 786.92
+      },
+      "width": 52.24,
+      "height": 52.24
+    },
+    "a": {
+      "layout.group": "group_01",
+      "layout.node": "valve",
+      "layout.instance": 9
     }
   }
 ]

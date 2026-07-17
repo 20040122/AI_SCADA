@@ -129,6 +129,7 @@ class BindingMatchResponse(BaseModel):
 
 
 class ValidateRequest(BaseModel):
+    category: Literal["control", "canvas", "layout", "binding"]
     json_data: dict[str, Any]
 
 
@@ -140,7 +141,9 @@ class ValidationErrorItem(BaseModel):
 
 class ValidateResponse(BaseModel):
     valid: bool
+    summary: str = ""
     errors: list[ValidationErrorItem] = []
+    warnings: list[ValidationErrorItem] = []
 
 
 class MaterialItem(BaseModel):

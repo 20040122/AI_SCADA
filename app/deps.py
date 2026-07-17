@@ -9,16 +9,18 @@ from model import search_service as search_svc
 from model.control_agent import ControlAgent
 from model.layout_agent import LayoutAgent
 from model.refine_agent import RefineAgent
+from model.validate_agent import ValidateAgent
 
 _control_agent: Optional[ControlAgent] = None
 _layout_agent: Optional[LayoutAgent] = None
 _refine_agent: Optional[RefineAgent] = None
+_validate_agent: Optional[ValidateAgent] = None
 _material_db: Optional[MaterialDB] = None
 _chroma_watcher: Optional[ControlChunk] = None
 
 
 async def init_resources() -> None:
-    global _material_db, _control_agent, _layout_agent, _refine_agent, _chroma_watcher
+    global _material_db, _control_agent, _layout_agent, _refine_agent, _validate_agent, _chroma_watcher
 
     db = MaterialDB()
     await db.init_db()
@@ -30,6 +32,7 @@ async def init_resources() -> None:
 
     _layout_agent = LayoutAgent(db=db)
     _refine_agent = RefineAgent()
+    _validate_agent = ValidateAgent()
 
     _chroma_watcher = ControlChunk(control_jsonl_path=settings.control_jsonl_path)
     _chroma_watcher.reseed()
@@ -59,6 +62,11 @@ def get_layout_agent() -> LayoutAgent:
 def get_refine_agent() -> RefineAgent:
     assert _refine_agent is not None, "RefineAgent not initialized (call init_resources first)"
     return _refine_agent
+
+
+def get_validate_agent() -> ValidateAgent:
+    assert _validate_agent is not None, "ValidateAgent not initialized (call init_resources first)"
+    return _validate_agent
 
 
 def get_material_db() -> MaterialDB:
