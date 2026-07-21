@@ -3,18 +3,18 @@
     "c": "ht.Node",
     "i": 17092,
     "p": {
-      "displayName": "空气罐",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷却塔",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 345.33,
-        "y": 290.84
+        "x": 262.67,
+        "y": 251.67
       },
-      "width": 104.47,
-      "height": 156.71
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
+      "layout.group": "group_towers",
+      "layout.node": "tower",
       "layout.instance": 1
     }
   },
@@ -22,18 +22,18 @@
     "c": "ht.Node",
     "i": 17093,
     "p": {
-      "displayName": "阀门开关",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "displayName": "冷却泵",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 345.33,
-        "y": 160.25
+        "x": 452.67,
+        "y": 251.67
       },
-      "width": 52.24,
-      "height": 52.24
+      "width": 120,
+      "height": 96.67
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
+      "layout.group": "group_towers",
+      "layout.node": "pump_att",
       "layout.instance": 1
     }
   },
@@ -41,18 +41,18 @@
     "c": "ht.Node",
     "i": 17094,
     "p": {
-      "displayName": "空气罐2",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷却塔2",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 960,
-        "y": 290.84
+        "x": 262.67,
+        "y": 565
       },
-      "width": 104.47,
-      "height": 156.71
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
+      "layout.group": "group_towers",
+      "layout.node": "tower",
       "layout.instance": 2
     }
   },
@@ -60,18 +60,18 @@
     "c": "ht.Node",
     "i": 17095,
     "p": {
-      "displayName": "阀门开关2",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "displayName": "冷却泵2",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 960,
-        "y": 160.25
+        "x": 452.67,
+        "y": 565
       },
-      "width": 52.24,
-      "height": 52.24
+      "width": 120,
+      "height": 96.67
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
+      "layout.group": "group_towers",
+      "layout.node": "pump_att",
       "layout.instance": 2
     }
   },
@@ -79,18 +79,18 @@
     "c": "ht.Node",
     "i": 17096,
     "p": {
-      "displayName": "空气罐3",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷却塔3",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 1574.67,
-        "y": 290.84
+        "x": 262.67,
+        "y": 878.33
       },
-      "width": 104.47,
-      "height": 156.71
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
+      "layout.group": "group_towers",
+      "layout.node": "tower",
       "layout.instance": 3
     }
   },
@@ -98,18 +98,18 @@
     "c": "ht.Node",
     "i": 17097,
     "p": {
-      "displayName": "阀门开关3",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "displayName": "冷却泵3",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 1574.67,
-        "y": 160.25
+        "x": 452.67,
+        "y": 878.33
       },
-      "width": 52.24,
-      "height": 52.24
+      "width": 120,
+      "height": 96.67
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
+      "layout.group": "group_towers",
+      "layout.node": "pump_att",
       "layout.instance": 3
     }
   },
@@ -117,228 +117,133 @@
     "c": "ht.Node",
     "i": 17098,
     "p": {
-      "displayName": "空气罐4",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷水机",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 345.33,
-        "y": 604.18
+        "x": 960,
+        "y": 251.67
       },
-      "width": 104.47,
-      "height": 156.71
+      "width": 156.71,
+      "height": 235.07
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
-      "layout.instance": 4
+      "layout.group": "group_chillers",
+      "layout.node": "chiller",
+      "layout.instance": 1
     }
   },
   {
     "c": "ht.Node",
     "i": 17099,
     "p": {
-      "displayName": "阀门开关4",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "displayName": "冷水机2",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 345.33,
-        "y": 473.59
+        "x": 960,
+        "y": 565
       },
-      "width": 52.24,
-      "height": 52.24
+      "width": 156.71,
+      "height": 235.07
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
-      "layout.instance": 4
+      "layout.group": "group_chillers",
+      "layout.node": "chiller",
+      "layout.instance": 2
     }
   },
   {
     "c": "ht.Node",
     "i": 17100,
     "p": {
-      "displayName": "空气罐5",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷水机3",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
         "x": 960,
-        "y": 604.18
+        "y": 878.33
       },
-      "width": 104.47,
-      "height": 156.71
+      "width": 156.71,
+      "height": 235.07
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
-      "layout.instance": 5
+      "layout.group": "group_chillers",
+      "layout.node": "chiller",
+      "layout.instance": 3
     }
   },
   {
     "c": "ht.Node",
     "i": 17101,
     "p": {
-      "displayName": "阀门开关5",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "displayName": "冷冻泵",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 960,
-        "y": 473.59
+        "x": 1577.33,
+        "y": 212.5
       },
-      "width": 52.24,
-      "height": 52.24
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
-      "layout.instance": 5
+      "layout.group": "group_freezing_pumps",
+      "layout.node": "freezing_pump",
+      "layout.instance": 1
     }
   },
   {
     "c": "ht.Node",
     "i": 17102,
     "p": {
-      "displayName": "空气罐6",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷冻泵2",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1574.67,
-        "y": 604.18
+        "x": 1577.33,
+        "y": 447.5
       },
-      "width": 104.47,
-      "height": 156.71
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
-      "layout.instance": 6
+      "layout.group": "group_freezing_pumps",
+      "layout.node": "freezing_pump",
+      "layout.instance": 2
     }
   },
   {
     "c": "ht.Node",
     "i": 17103,
     "p": {
-      "displayName": "阀门开关6",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
+      "displayName": "冷冻泵3",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1574.67,
-        "y": 473.59
+        "x": 1577.33,
+        "y": 682.5
       },
-      "width": 52.24,
-      "height": 52.24
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
-      "layout.instance": 6
+      "layout.group": "group_freezing_pumps",
+      "layout.node": "freezing_pump",
+      "layout.instance": 3
     }
   },
   {
     "c": "ht.Node",
     "i": 17104,
     "p": {
-      "displayName": "空气罐7",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷冻泵4",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 345.33,
-        "y": 917.51
+        "x": 1577.33,
+        "y": 917.5
       },
-      "width": 104.47,
-      "height": 156.71
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
-      "layout.instance": 7
-    }
-  },
-  {
-    "c": "ht.Node",
-    "i": 17105,
-    "p": {
-      "displayName": "阀门开关7",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
-      "position": {
-        "x": 345.33,
-        "y": 786.92
-      },
-      "width": 52.24,
-      "height": 52.24
-    },
-    "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
-      "layout.instance": 7
-    }
-  },
-  {
-    "c": "ht.Node",
-    "i": 17106,
-    "p": {
-      "displayName": "空气罐8",
-      "image": "symbols/Agent/空气罐.json",
-      "position": {
-        "x": 960,
-        "y": 917.51
-      },
-      "width": 104.47,
-      "height": 156.71
-    },
-    "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
-      "layout.instance": 8
-    }
-  },
-  {
-    "c": "ht.Node",
-    "i": 17107,
-    "p": {
-      "displayName": "阀门开关8",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
-      "position": {
-        "x": 960,
-        "y": 786.92
-      },
-      "width": 52.24,
-      "height": 52.24
-    },
-    "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
-      "layout.instance": 8
-    }
-  },
-  {
-    "c": "ht.Node",
-    "i": 17108,
-    "p": {
-      "displayName": "空气罐9",
-      "image": "symbols/Agent/空气罐.json",
-      "position": {
-        "x": 1574.67,
-        "y": 917.51
-      },
-      "width": 104.47,
-      "height": 156.71
-    },
-    "a": {
-      "layout.group": "group_01",
-      "layout.node": "root",
-      "layout.instance": 9
-    }
-  },
-  {
-    "c": "ht.Node",
-    "i": 17109,
-    "p": {
-      "displayName": "阀门开关9",
-      "image": "symbols/demo/Oil tank/阀门开关.json",
-      "position": {
-        "x": 1574.67,
-        "y": 786.92
-      },
-      "width": 52.24,
-      "height": 52.24
-    },
-    "a": {
-      "layout.group": "group_01",
-      "layout.node": "valve",
-      "layout.instance": 9
+      "layout.group": "group_freezing_pumps",
+      "layout.node": "freezing_pump",
+      "layout.instance": 4
     }
   }
 ]

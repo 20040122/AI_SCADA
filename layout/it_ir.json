@@ -2,32 +2,82 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group_01",
-        "region": "center",
+        "id": "group_towers",
+        "region": "left",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "空气罐",
+            "id": "tower",
+            "deviceType": "冷却塔",
             "role": "root"
           },
           "attachments": [
             {
-              "id": "valve",
-              "deviceType": "阀门开关",
-              "role": "valve",
-              "relativeTo": "root",
-              "side": "top"
+              "id": "pump_att",
+              "deviceType": "冷却泵",
+              "role": "default",
+              "relativeTo": "tower",
+              "side": "right"
             }
           ]
         },
-        "count": 9,
-        "arrangement": "grid",
-        "gapHint": "normal",
-        "columns": 3,
-        "rows": 3,
-        "order": "row-major"
+        "count": 3,
+        "arrangement": "vertical",
+        "gapHint": "normal"
+      },
+      {
+        "id": "group_chillers",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "chiller",
+            "deviceType": "冷水机",
+            "role": "root"
+          },
+          "attachments": []
+        },
+        "count": 3,
+        "arrangement": "vertical",
+        "gapHint": "normal"
+      },
+      {
+        "id": "group_freezing_pumps",
+        "region": "right",
+        "unit": {
+          "root": {
+            "id": "freezing_pump",
+            "deviceType": "冷冻泵",
+            "role": "root"
+          },
+          "attachments": []
+        },
+        "count": 4,
+        "arrangement": "vertical",
+        "gapHint": "normal"
       }
     ],
-    "connections": []
+    "connections": [
+      {
+        "id": "c1",
+        "source": {
+          "group": "group_towers",
+          "node": "pump_att"
+        },
+        "target": {
+          "group": "group_chillers",
+          "node": "chiller"
+        }
+      },
+      {
+        "id": "c2",
+        "source": {
+          "group": "group_chillers",
+          "node": "chiller"
+        },
+        "target": {
+          "group": "group_freezing_pumps",
+          "node": "freezing_pump"
+        }
+      }
+    ]
   }
 }

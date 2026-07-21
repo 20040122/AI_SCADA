@@ -7,7 +7,6 @@ import type {
   LayoutZone,
   QualityIssue,
   WorkflowStep,
-  ControlSpec,
 } from "../types/layout";
 import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes";
 
@@ -36,14 +35,12 @@ interface LayoutStore {
   isLoading: boolean;
   error: string | null;
 
-  controls: ControlSpec[];
   fileName: string;
 
   setQuery: (q: string) => void;
   setTitle: (t: string) => void;
   setCanvasWidth: (w: number) => void;
   setCanvasHeight: (h: number) => void;
-  setControls: (c: ControlSpec[]) => void;
   setLayoutResult: (res: LayoutGenerateResponse) => void;
   setWorkflowStep: (id: number, status: WorkflowStep["status"]) => void;
   resetWorkflow: () => void;
@@ -71,15 +68,12 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
   isLoading: false,
   error: null,
 
-  controls: [],
   fileName: "",
 
   setQuery: (q) => set({ query: q }),
   setTitle: (t) => set({ title: t }),
   setCanvasWidth: (w) => set({ canvasWidth: w }),
   setCanvasHeight: (h) => set({ canvasHeight: h }),
-  setControls: (c) => set({ controls: c }),
-
   setLayoutResult: (res) =>
     set({
       jsonData: res.json_data,

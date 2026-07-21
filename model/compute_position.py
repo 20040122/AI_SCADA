@@ -103,6 +103,10 @@ def _load_layout_config() -> LayoutConfig:
 _REGION_ORDER = ["left", "center", "right"]
 
 
+class MissingMaterialError(ValueError):
+    pass
+
+
 def convert_layout_file(
     data: dict,
     controls: Optional[list[dict]] = None,
@@ -114,6 +118,15 @@ def convert_layout_file(
     if errors:
         message = "; ".join("%s: %s" % (e.path, e.message) for e in errors)
         raise ValueError(message)
+    material_map = _material_map(controls or [])
+    device_types = {
+        node.deviceType
+        for group in layout_file.layoutIntent.groups
+        for node in [group.unit.root, *group.unit.attachments]
+    }
+    missing = sorted(device_type for device_type in device_types if not _find_material(device_type, material_map))
+    if missing:
+        raise MissingMaterialError("query_results 缺少控件素材：" + "、".join(missing))
     nodes = compute_nodes(layout_file, controls or [], width, height)
     return build_nodes(nodes)
 
@@ -546,12 +559,19 @@ def _is_canvas_json_path(image: str) -> bool:
 
 
 def _match_material(device_type: str, material_map: dict[str, dict]) -> dict:
+    material = _find_material(device_type, material_map)
+    if material is None:
+        raise MissingMaterialError("query_results 缺少控件素材：" + device_type)
+    return material
+
+
+def _find_material(device_type: str, material_map: dict[str, dict]) -> Optional[dict]:
     if device_type in material_map:
         return material_map[device_type]
     for name, material in material_map.items():
         if device_type in name or name in device_type:
             return material
-    return {"displayName": device_type, "image": "symbols/Agent/%s.json" % device_type}
+    return None
 
 
 def _gap_for(gap_hint: Optional[str]) -> int:
@@ -597,7 +617,7 @@ async def _load_query_results(query: str) -> list[dict]:
     from data.sqlite.material_db import MaterialDB
 
     db = MaterialDB()
-    await db.init_db()
+    await db.init_query_results_db()
     try:
         return await db.list_query_results(query)
     finally:

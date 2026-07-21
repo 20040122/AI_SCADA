@@ -90,35 +90,31 @@ class LayoutAgent:
         width: int,
         height: int,
         title: Optional[str] = None,
-        controls: Optional[list[dict]] = None,
     ) -> LayoutResult:
         from model.generate_gird import generate_intent
-        from model.compute_position import (
-            convert_layout_file,
-            convert_layout_file_from_query_results,
-        )
+        from model.compute_position import MissingMaterialError, convert_layout_file
+
+        if self._db is None:
+            raise ValueError("database required for position computation")
+        materials = await self._db.list_query_results("")
+        if not materials:
+            raise MissingMaterialError("query_results 表为空")
 
         logger.info("Step 1/2: 并行生成背景画布和布局意图 IR...")
         ir_path = LAYOUT_DIR / "it_ir.json"
         canvas_task = asyncio.create_task(
             self.create_canvas(title, width, height)
         )
-        intent_task = asyncio.create_task(generate_intent(query, ir_path))
+        intent_task = asyncio.create_task(
+            generate_intent(query, ir_path, materials, self._client, self._model)
+        )
         canvas, rc = await asyncio.gather(canvas_task, intent_task)
         if rc != 0:
             raise ValueError("Layout intent generation failed")
         ir_data = json.loads(ir_path.read_text(encoding="utf-8"))
 
-        if controls is not None:
-            logger.info("Step 3: 使用传入控件计算坐标...")
-            nodes = convert_layout_file(ir_data, controls, width, height)
-        else:
-            if self._db is None:
-                raise ValueError("database required for position computation")
-            logger.info("Step 3: 从入库控件计算坐标...")
-            nodes = await convert_layout_file_from_query_results(
-                ir_data, self._db, "", width, height
-            )
+        logger.info("Step 3: 从 query_results 计算坐标...")
+        nodes = convert_layout_file(ir_data, materials, width, height)
 
         position_path = LAYOUT_DIR / "position.json"
         position_path.parent.mkdir(parents=True, exist_ok=True)
@@ -178,7 +174,7 @@ def _cli() -> None:
     async def run() -> LayoutResult:
         db = MaterialDB()
         try:
-            await db.init_db()
+            await db.init_query_results_db()
         except Exception:
             logger.exception("MaterialDB init failed")
         agent = LayoutAgent(db=db)

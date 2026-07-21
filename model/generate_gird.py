@@ -266,14 +266,7 @@ def _build_system_prompt(vocab: List[str], example: Optional[str]) -> str:
     return "\n".join(parts)
 
 
-async def _load_vocab() -> List[str]:
-    db = MaterialDB()
-    try:
-        await db.init_db()
-        rows = await db.list_query_results("")
-    finally:
-        await db.close()
-
+def _load_vocab(rows: List[dict]) -> List[str]:
     seen: set = set()
     vocab: List[str] = []
     for r in rows:
@@ -285,14 +278,23 @@ async def _load_vocab() -> List[str]:
     return vocab
 
 
-async def generate_intent(prompt: str, output_path: Path) -> int:
-    if not _MODEL:
+async def generate_intent(
+    prompt: str,
+    output_path: Path,
+    materials: List[dict],
+    client=None,
+    model=None,
+) -> int:
+    client = client or _client
+    model = model or _MODEL
+    if not model:
         print("错误：未设置 DEEPSEEK_MODEL 环境变量", file=sys.stderr)
         return 1
 
-    vocab = await _load_vocab()
+    vocab = _load_vocab(materials)
     if not vocab:
-        logger.warning("query_results 表为空，将不约束 deviceType 词表")
+        print("错误：query_results 表为空", file=sys.stderr)
+        return 1
 
     example = _load_intent_example()
     system_prompt = _build_system_prompt(vocab, example)
@@ -303,8 +305,8 @@ async def generate_intent(prompt: str, output_path: Path) -> int:
 
     try:
         resp = await _call_llm(
-            _client,
-            _MODEL,
+            client,
+            model,
             messages,
             response_format={"type": "json_object"},
         )
@@ -369,8 +371,16 @@ def main(argv: Optional[List[str]] = None) -> int:
     if not prompt:
         print("错误：未提供提示词", file=sys.stderr)
         return 1
-    output_path = Path(args.output).resolve()
-    return asyncio.run(generate_intent(prompt, output_path))
+    async def run() -> int:
+        db = MaterialDB()
+        await db.init_query_results_db()
+        try:
+            materials = await db.list_query_results("")
+            return await generate_intent(prompt, Path(args.output).resolve(), materials)
+        finally:
+            await db.close()
+
+    return asyncio.run(run())
 
 
 if __name__ == "__main__":

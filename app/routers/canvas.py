@@ -14,6 +14,7 @@ from app.schemas import (
     RefineResponse,
 )
 from model.layout_agent import LayoutAgent
+from model.compute_position import MissingMaterialError
 from model.refine_agent import (
     RefineAgent,
     RefineInputError,
@@ -29,14 +30,15 @@ async def canvas_layout(
     req: CanvasLayoutRequest,
     agent: LayoutAgent = Depends(get_layout_agent),
 ):
-    controls = [c.model_dump() for c in req.controls] if req.controls else None
-    result = await agent.generate(
-        query=req.query,
-        width=req.canvas_width,
-        height=req.canvas_height,
-        title=req.title.strip(),
-        controls=controls,
-    )
+    try:
+        result = await agent.generate(
+            query=req.query,
+            width=req.canvas_width,
+            height=req.canvas_height,
+            title=req.title.strip(),
+        )
+    except MissingMaterialError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     safe = re.sub(r'[\\/:*?"<>|]', "_", req.title.strip())
     ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")

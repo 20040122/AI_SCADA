@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Literal, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, StrictInt
 
@@ -25,7 +25,6 @@ class ControlCandidate(BaseModel):
 
 class KeywordResult(BaseModel):
     keyword: str
-    count: int = 1
     candidates: list[ControlCandidate] = []
 
 
@@ -44,9 +43,10 @@ class SaveQueryResultRequest(BaseModel):
 
 
 class CanvasLayoutRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     query: str
     title: str
-    controls: Optional[List[ControlItem]] = None
     canvas_width: int = 1920
     canvas_height: int = 1080
 

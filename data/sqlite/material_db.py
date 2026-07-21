@@ -43,7 +43,7 @@ class MaterialDB:
     def __init__(self, db_path: Optional[str] = None):
         self._db_path = db_path or str(DB_PATH)
         self._conn: Optional[aiosqlite.Connection] = None
-        self._jsonl_hash = self._compute_jsonl_hash()
+        self._jsonl_hash = ""
 
     def _compute_jsonl_hash(self) -> str:
         if not CONTROL_JSONL.exists():
@@ -71,7 +71,16 @@ class MaterialDB:
         await conn.execute(_CREATE_QUERY_RESULTS_SQL)
         await self._migrate_query_results(conn)
         await conn.commit()
+
+        self._jsonl_hash = self._compute_jsonl_hash()
         await self._seed_from_jsonl()
+        self._jsonl_hash = self._compute_jsonl_hash()
+
+    async def init_query_results_db(self) -> None:
+        conn = await self._get_conn()
+        await conn.execute(_CREATE_QUERY_RESULTS_SQL)
+        await self._migrate_query_results(conn)
+        await conn.commit()
 
     async def _migrate_query_results(self, conn: aiosqlite.Connection) -> None:
         cursor = await conn.execute("PRAGMA table_info(query_results)")

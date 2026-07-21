@@ -3,7 +3,6 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Optional
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
@@ -13,20 +12,20 @@ logger = logging.getLogger(__name__)
 load_dotenv(".env.local")
 
 EXTRACT_PROMPT = """\
-你是工业SCADA控件检索专家。从用户的自然语言描述中提取所需的控件关键词及数量。
+你是工业SCADA控件检索专家。从用户的自然语言描述中提取所需的控件名称。
 控件库中可用的控件名称列表：
 {control_names}
 提取要求：
-1. 从用户描述中提取控件关键词，关键词必须优先从上方列表中选取
-2. 若用户描述的控件不在列表中，提取最接近的关键词用于模糊检索
-3. 若用户未指定数量则默认为1
+1. 控件名称必须优先从上方列表中选取
+2. 若用户描述的控件不在列表中，提取最接近的名称用于模糊检索
+3. 忽略用户描述中的数量，同一个控件名称只输出一次
 示例：
 用户: 2个指示灯和1个水泵
-输出: {{"controls": [{{"name": "指示灯", "count": 1}}, {{"name": "水泵", "count": 1}}]}}
+输出: {{"controls": ["指示灯", "水泵"]}}
 用户: 组态画面需要显示温度和压力
-输出: {{"controls": [{{"name": "仪表盘", "count": 1}}, {{"name": "参数值", "count": 2}}]}}
+输出: {{"controls": ["仪表盘", "参数值"]}}
 输出JSON:
-{{"controls": [{{"name": "关键词", "count": 数量}}]}}
+{{"controls": ["控件名"]}}
 """
 _client = AsyncOpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
@@ -34,12 +33,6 @@ _client = AsyncOpenAI(
     timeout=50.0,
 )
 _MODEL = os.environ.get("DEEPSEEK_MODEL")
-
-
-@dataclass
-class ControlIntent:
-    name: str
-    count: int
 
 
 @dataclass
@@ -55,7 +48,6 @@ class ControlCandidate:
 @dataclass
 class KeywordResult:
     keyword: str
-    count: int
     candidates: list[ControlCandidate] = field(default_factory=list)
 
 
@@ -77,18 +69,15 @@ class ControlAgent:
         self._control_names_str = "、".join(c["displayName"] for c in self._control_names)
 
     async def process_query(self, query: str) -> ControlAgentResult:
-        control_intents, cache_hit = await self._extract_controls(query)
+        keywords, cache_hit = await self._extract_control_names(query)
         cache_tag = " (缓存命中)" if cache_hit else ""
-        logger.info("LLM提取: %s%s", ", ".join(f"{c.name}x{c.count}" for c in control_intents), cache_tag)
+        logger.info("LLM提取: %s%s", ", ".join(keywords), cache_tag)
 
-        keywords = [c.name for c in control_intents]
-        count_map = {c.name: c.count for c in control_intents}
         search_results = await search_controls_with_threshold(keywords)
         keyword_results: list[KeywordResult] = []
         missed: list[str] = []
 
         for keyword, candidates in search_results.items():
-            count = count_map.get(keyword, 1)
             all_candidates: list[ControlCandidate] = []
 
             vector_hit = False
@@ -140,7 +129,6 @@ class ControlAgent:
 
             keyword_results.append(KeywordResult(
                 keyword=keyword,
-                count=count,
                 candidates=unique_candidates[:5],
             ))
 
@@ -154,10 +142,10 @@ class ControlAgent:
             missed=missed,
         )
 
-    async def _extract_controls(self, query: str) -> tuple[list[ControlIntent], bool]:
-        cached = _extract_controls_cached(query, self._control_names_str)
+    async def _extract_control_names(self, query: str) -> tuple[list[str], bool]:
+        cached = _extract_control_names_cached(query, self._control_names_str)
         if cached is not None:
-            return [ControlIntent(name=c[0], count=c[1]) for c in cached], True
+            return cached, True
         prompt = EXTRACT_PROMPT.format(control_names=self._control_names_str)
         response = await _client.chat.completions.create(
             model=_MODEL,
@@ -171,15 +159,21 @@ class ControlAgent:
             extra_body={"thinking": {"type": "enabled"}},
         )
         data = json.loads(response.choices[0].message.content)
-        intents = [ControlIntent(**c) for c in data.get("controls", [])]
-        _extract_cache[(query, self._control_names_str)] = [
-            (c.name, c.count) for c in intents
-        ]
-        return intents, False
+        control_names = []
+        seen = set()
+        for value in data.get("controls", []):
+            if not isinstance(value, str):
+                continue
+            name = value.strip()
+            if name and name not in seen:
+                control_names.append(name)
+                seen.add(name)
+        _extract_cache[(query, self._control_names_str)] = control_names.copy()
+        return control_names, False
 
 _extract_cache: dict = {}
 
-def _extract_controls_cached(query: str, control_names_str: str) -> Optional[list[tuple[str, int]]]:
+def _extract_control_names_cached(query: str, control_names_str: str) -> Optional[list[str]]:
     key = (query, control_names_str)
     if key in _extract_cache:
         return _extract_cache[key]

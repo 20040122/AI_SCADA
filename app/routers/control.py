@@ -22,7 +22,6 @@ async def search_control(
     keywords = [
         KeywordResult(
             keyword=kr.keyword,
-            count=kr.count,
             candidates=[
                 ControlCandidate(
                     displayName=c.displayName,
