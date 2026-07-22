@@ -1,13 +1,11 @@
+import { useState } from "react";
 import { useLayoutStore } from "../../stores/layoutStore";
-import { useAssetStore } from "../../stores/assetStore";
 import { generateLayout } from "../../api/layout";
 import { notify } from "../../utils/notification";
 import { extractNodesFromJsonData } from "../../utils/layoutNodes";
-import { WorkflowSteps } from "./CenterPanel";
 
 export default function LeftPanel() {
   const {
-    query,
     title,
     canvasWidth,
     canvasHeight,
@@ -24,10 +22,22 @@ export default function LeftPanel() {
     workflow,
   } = useLayoutStore();
 
-  const assetQueryResults = useAssetStore((s) => s.queryResults);
+  const [controls, setControls] = useState("");
+  const [flow, setFlow] = useState("");
+  const [structure, setStructure] = useState("");
+  const [requirements, setRequirements] = useState("");
 
   const handleGenerate = async () => {
-    if (!query.trim()) {
+    const structuredQuery = [
+      controls.trim() && `控件：${controls.trim()}`,
+      flow.trim() && `流程：${flow.trim()}`,
+      structure.trim() && `结构：${structure.trim()}`,
+      requirements.trim() && `要求：${requirements.trim()}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    if (!structuredQuery) {
       notify("请输入场景描述", "w");
       return;
     }
@@ -37,6 +47,7 @@ export default function LeftPanel() {
     }
 
     resetWorkflow();
+    setQuery(structuredQuery);
     setIsLoading(true);
     setError(null);
 
@@ -46,7 +57,7 @@ export default function LeftPanel() {
       setWorkflowStep(2, "run");
 
       const result = await generateLayout({
-        query: query.trim(),
+        query: structuredQuery,
         canvasWidth,
         canvasHeight,
         title: title.trim(),
@@ -107,20 +118,6 @@ export default function LeftPanel() {
 
         <div className="mb-3">
           <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
-            场景描述 Query
-          </label>
-          <textarea
-            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
-            rows={4}
-            style={{ minHeight: "72px", lineHeight: 1.5 }}
-            placeholder="如：冷却水循环系统，2台水泵、4个阀门、出口压力传感器、流量计，右侧放显示仪表"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
             画面标题
           </label>
           <input
@@ -156,23 +153,61 @@ export default function LeftPanel() {
           </div>
         </div>
 
-        {assetQueryResults.length > 0 && (
-          <div className="mb-3">
-            <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
-              可用控件（已入库 {assetQueryResults.length} 个）
-            </label>
-            <div className="bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] p-[8px] max-h-[120px] overflow-y-auto flex flex-wrap gap-1">
-              {assetQueryResults.map((item, i) => (
-                <span
-                  key={i}
-                  className="text-[10px] px-[6px] py-[2px] rounded-[3px] bg-[rgba(77,184,212,0.08)] border border-[rgba(77,184,212,0.2)] text-[var(--text2)] font-mono"
-                >
-                  {item.displayName} {item.width > 0 && `(${item.width}×${item.height})`}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="mb-3">
+          <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
+            控件
+          </label>
+          <textarea
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            rows={2}
+            style={{ minHeight: "48px", lineHeight: 1.5 }}
+            placeholder="如：3台冷却塔、3台冷却泵、3台冷水机、4台冷冻泵"
+            value={controls}
+            onChange={(e) => setControls(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
+            流程
+          </label>
+          <textarea
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            rows={2}
+            style={{ minHeight: "48px", lineHeight: 1.5 }}
+            placeholder="如：冷却塔-冷却泵-冷水机-冷冻泵"
+            value={flow}
+            onChange={(e) => setFlow(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
+            结构
+          </label>
+          <textarea
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            rows={3}
+            style={{ minHeight: "64px", lineHeight: 1.5 }}
+            placeholder="如：冷却塔在左侧纵向排列，冷水机在页面中部纵向排列"
+            value={structure}
+            onChange={(e) => setStructure(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
+            要求
+          </label>
+          <textarea
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            rows={3}
+            style={{ minHeight: "64px", lineHeight: 1.5 }}
+            placeholder="如：管道采用正交连接，相同设备保持等间距和上下对齐"
+            value={requirements}
+            onChange={(e) => setRequirements(e.target.value)}
+          />
+        </div>
 
         <div className="flex gap-2 mb-3">
           <button
@@ -188,13 +223,6 @@ export default function LeftPanel() {
           >
             清空画布
           </button>
-        </div>
-
-        <div className="mt-auto">
-          <div className="text-[10px] text-[var(--text3)] font-mono mb-2 tracking-[1px] uppercase">
-            Agent 流程
-          </div>
-          <WorkflowSteps />
         </div>
       </div>
     </div>

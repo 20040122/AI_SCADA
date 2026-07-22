@@ -2,34 +2,45 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group_towers",
+        "id": "group_cooling_tower",
         "region": "left",
         "unit": {
           "root": {
-            "id": "tower",
+            "id": "root",
             "deviceType": "冷却塔",
             "role": "root"
           },
-          "attachments": [
-            {
-              "id": "pump_att",
-              "deviceType": "冷却泵",
-              "role": "default",
-              "relativeTo": "tower",
-              "side": "right"
-            }
-          ]
+          "attachments": []
         },
         "count": 3,
         "arrangement": "vertical",
-        "gapHint": "normal"
+        "gapHint": "normal",
+        "topology": "single"
       },
       {
-        "id": "group_chillers",
+        "id": "group_cooling_pump",
         "region": "center",
         "unit": {
           "root": {
-            "id": "chiller",
+            "id": "root",
+            "deviceType": "冷却泵",
+            "role": "root"
+          },
+          "attachments": []
+        },
+        "count": 3,
+        "arrangement": "vertical",
+        "gapHint": "normal",
+        "topology": "single",
+        "relativeTo": "group_cooling_tower",
+        "side": "right"
+      },
+      {
+        "id": "group_chiller",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
             "deviceType": "冷水机",
             "role": "root"
           },
@@ -37,14 +48,17 @@
         },
         "count": 3,
         "arrangement": "vertical",
-        "gapHint": "normal"
+        "gapHint": "normal",
+        "topology": "single",
+        "relativeTo": "group_cooling_pump",
+        "side": "right"
       },
       {
-        "id": "group_freezing_pumps",
+        "id": "group_chilled_pump",
         "region": "right",
         "unit": {
           "root": {
-            "id": "freezing_pump",
+            "id": "root",
             "deviceType": "冷冻泵",
             "role": "root"
           },
@@ -52,32 +66,22 @@
         },
         "count": 4,
         "arrangement": "vertical",
-        "gapHint": "normal"
+        "gapHint": "normal",
+        "topology": "single",
+        "relativeTo": "group_chiller",
+        "side": "right"
       }
     ],
-    "connections": [
-      {
-        "id": "c1",
-        "source": {
-          "group": "group_towers",
-          "node": "pump_att"
-        },
-        "target": {
-          "group": "group_chillers",
-          "node": "chiller"
-        }
-      },
-      {
-        "id": "c2",
-        "source": {
-          "group": "group_chillers",
-          "node": "chiller"
-        },
-        "target": {
-          "group": "group_freezing_pumps",
-          "node": "freezing_pump"
-        }
-      }
-    ]
+    "connections": [],
+    "constraints": {
+      "routeStyle": "orthogonal",
+      "allowedDirections": [
+        "horizontal",
+        "vertical"
+      ],
+      "equalSpacing": true,
+      "alignRepeated": true,
+      "consistentBranches": true
+    }
   }
 }

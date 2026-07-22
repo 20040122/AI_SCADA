@@ -15,6 +15,7 @@ from app.schemas import (
 )
 from model.layout_agent import LayoutAgent
 from model.compute_position import MissingMaterialError
+from model.generate_gird import StructuredPromptError
 from model.refine_agent import (
     RefineAgent,
     RefineInputError,
@@ -39,6 +40,16 @@ async def canvas_layout(
         )
     except MissingMaterialError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except StructuredPromptError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "errors": [
+                    {"path": item.path, "message": item.message}
+                    for item in exc.errors
+                ]
+            },
+        ) from exc
 
     safe = re.sub(r'[\\/:*?"<>|]', "_", req.title.strip())
     ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")

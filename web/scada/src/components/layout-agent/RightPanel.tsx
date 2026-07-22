@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLayoutStore } from "../../stores/layoutStore";
 import { uploadToSystem } from "../../api/layout";
 import { colorJson } from "../../utils/jsonColor";
+import { WorkflowSteps } from "./CenterPanel";
 
 export default function RightPanel() {
   const { jsonData, zones, missingControls, nodes, fileName } = useLayoutStore();
@@ -48,6 +49,13 @@ export default function RightPanel() {
               : '<span style="color:var(--text3);font-style:italic">// 生成后显示</span>',
           }}
         />
+
+        <div className="mb-3">
+          <div className="text-[10px] text-[var(--text3)] font-mono mb-2 tracking-[1px] uppercase">
+            Agent 流程
+          </div>
+          <WorkflowSteps />
+        </div>
 
         {hasJson && (
           <div className="mb-3">

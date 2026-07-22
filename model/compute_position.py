@@ -139,7 +139,11 @@ def compute_nodes(
 ) -> list[dict]:
     material_map = _material_map(controls or [])
     content_rect = _content_rect(width, height)
-    slots = compute_group_slots(layout_file.layoutIntent.groups, content_rect)
+    slots = compute_group_slots(
+        layout_file.layoutIntent.groups,
+        content_rect,
+        layout_file.layoutIntent.connections,
+    )
     result = []
     for group in layout_file.layoutIntent.groups:
         group_slots = slots.get(group.id, [])
@@ -148,7 +152,12 @@ def compute_nodes(
     return result
 
 
-def compute_group_slots(groups: list[LayoutGroup], content_rect: dict) -> dict[str, list[dict]]:
+def compute_group_slots(
+    groups: list[LayoutGroup], content_rect: dict, connections=None
+) -> dict[str, list[dict]]:
+    relations = _group_relations(groups, connections or [])
+    if relations:
+        return _compute_related_group_slots(groups, content_rect, relations)
     region_gap = _outer_gap(content_rect["width"])
     regions = _region_rects(groups, content_rect, region_gap)
     result = {}
@@ -170,6 +179,92 @@ def compute_group_slots(groups: list[LayoutGroup], content_rect: dict) -> dict[s
             }
             result[group.id] = _arrange_slots(group, group_rect)
     return result
+
+
+def _compute_related_group_slots(
+    groups: list[LayoutGroup], content_rect: dict, relations: dict[str, tuple[str, str]]
+) -> dict[str, list[dict]]:
+    groups_by_id = {group.id: group for group in groups}
+    columns = {
+        group.id: _group_column(group, groups_by_id, relations, {})
+        for group in groups
+    }
+    levels = sorted(set(columns.values()))
+    gap = _fit_gap(content_rect["width"], len(levels), _outer_gap(content_rect["width"]))
+    column_width = (content_rect["width"] - gap * (len(levels) - 1)) / len(levels)
+    result = {}
+    for level_index, level in enumerate(levels):
+        column_groups = [group for group in groups if columns[group.id] == level]
+        group_gap = _fit_gap(
+            content_rect["height"], len(column_groups), _outer_gap(content_rect["height"])
+        )
+        group_height = (
+            content_rect["height"] - group_gap * (len(column_groups) - 1)
+        ) / len(column_groups)
+        for group_index, group in enumerate(column_groups):
+            result[group.id] = _arrange_slots(
+                group,
+                {
+                    "x": content_rect["x"] + level_index * (column_width + gap),
+                    "y": content_rect["y"] + group_index * (group_height + group_gap),
+                    "width": column_width,
+                    "height": group_height,
+                },
+            )
+    return result
+
+
+def _group_column(
+    group: LayoutGroup,
+    groups_by_id: dict[str, LayoutGroup],
+    relations: dict[str, tuple[str, str]],
+    cache: dict[str, int],
+) -> int:
+    if group.id in cache:
+        return cache[group.id]
+    relation = relations.get(group.id)
+    if relation is None:
+        column = _REGION_ORDER.index(group.region)
+    else:
+        parent_id, side = relation
+        parent = groups_by_id[parent_id]
+        parent_column = _group_column(parent, groups_by_id, relations, cache)
+        if side == "right":
+            column = parent_column + 1
+        elif side == "left":
+            column = parent_column - 1
+        else:
+            column = parent_column
+    cache[group.id] = column
+    return column
+
+
+def _group_relations(groups: list[LayoutGroup], connections) -> dict[str, tuple[str, str]]:
+    relations = {
+        group.id: (group.relativeTo, group.side)
+        for group in groups
+        if group.relativeTo is not None and group.side is not None
+    }
+    for connection in connections:
+        source = connection.source.group
+        target = connection.target.group
+        if source == target or target in relations:
+            continue
+        if _would_create_relation_cycle(relations, source, target):
+            continue
+        relations[target] = (source, "right")
+    return relations
+
+
+def _would_create_relation_cycle(
+    relations: dict[str, tuple[str, str]], source: str, target: str
+) -> bool:
+    current = source
+    while current in relations:
+        if current == target:
+            return True
+        current = relations[current][0]
+    return current == target
 
 
 def compute_unit_layout(

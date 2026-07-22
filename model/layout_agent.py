@@ -101,17 +101,20 @@ class LayoutAgent:
             raise MissingMaterialError("query_results 表为空")
 
         logger.info("Step 1/2: 并行生成背景画布和布局意图 IR...")
-        ir_path = LAYOUT_DIR / "it_ir.json"
         canvas_task = asyncio.create_task(
             self.create_canvas(title, width, height)
         )
         intent_task = asyncio.create_task(
-            generate_intent(query, ir_path, materials, self._client, self._model)
+            generate_intent(query, materials, self._client, self._model)
         )
-        canvas, rc = await asyncio.gather(canvas_task, intent_task)
-        if rc != 0:
-            raise ValueError("Layout intent generation failed")
-        ir_data = json.loads(ir_path.read_text(encoding="utf-8"))
+        canvas, layout_file = await asyncio.gather(canvas_task, intent_task)
+        ir_data = layout_file.model_dump(exclude_none=True)
+        ir_path = LAYOUT_DIR / "it_ir.json"
+        ir_path.parent.mkdir(parents=True, exist_ok=True)
+        ir_path.write_text(
+            json.dumps(ir_data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
 
         logger.info("Step 3: 从 query_results 计算坐标...")
         nodes = convert_layout_file(ir_data, materials, width, height)
