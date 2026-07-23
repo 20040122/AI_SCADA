@@ -2,84 +2,171 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group_cooling_tower",
+        "id": "group_01",
         "region": "left",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "冷却塔",
+            "id": "air_tank",
+            "deviceType": "空气罐",
             "role": "root"
           },
-          "attachments": []
+          "attachments": [
+            {
+              "id": "valve",
+              "deviceType": "阀门",
+              "role": "valve",
+              "relativeTo": "air_tank",
+              "side": "top"
+            },
+            {
+              "id": "flowmeter_1",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "valve",
+              "side": "right"
+            },
+            {
+              "id": "pressure_sensor",
+              "deviceType": "压力传感器",
+              "role": "sensor",
+              "relativeTo": "flowmeter_1",
+              "side": "right"
+            },
+            {
+              "id": "flowmeter_2",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "pressure_sensor",
+              "side": "right"
+            }
+          ]
         },
-        "count": 3,
-        "arrangement": "vertical",
-        "gapHint": "normal",
+        "count": 1,
+        "gapHint": "tight",
         "topology": "single"
       },
       {
-        "id": "group_cooling_pump",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "冷却泵",
-            "role": "root"
-          },
-          "attachments": []
-        },
-        "count": 3,
-        "arrangement": "vertical",
-        "gapHint": "normal",
-        "topology": "single",
-        "relativeTo": "group_cooling_tower",
-        "side": "right"
-      },
-      {
-        "id": "group_chiller",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "冷水机",
-            "role": "root"
-          },
-          "attachments": []
-        },
-        "count": 3,
-        "arrangement": "vertical",
-        "gapHint": "normal",
-        "topology": "single",
-        "relativeTo": "group_cooling_pump",
-        "side": "right"
-      },
-      {
-        "id": "group_chilled_pump",
+        "id": "group_02",
         "region": "right",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "冷冻泵",
+            "id": "nitrogen_tank",
+            "deviceType": "氮气罐",
             "role": "root"
           },
-          "attachments": []
+          "attachments": [
+            {
+              "id": "valve",
+              "deviceType": "阀门",
+              "role": "valve",
+              "relativeTo": "nitrogen_tank",
+              "side": "top"
+            },
+            {
+              "id": "flowmeter",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "valve",
+              "side": "right"
+            },
+            {
+              "id": "pressure_sensor",
+              "deviceType": "压力传感器",
+              "role": "sensor",
+              "relativeTo": "flowmeter",
+              "side": "right"
+            }
+          ]
         },
-        "count": 4,
+        "count": 2,
         "arrangement": "vertical",
         "gapHint": "normal",
-        "topology": "single",
-        "relativeTo": "group_chiller",
-        "side": "right"
+        "topology": "single"
       }
     ],
-    "connections": [],
+    "connections": [
+      {
+        "id": "c1",
+        "source": {
+          "group": "group_01",
+          "node": "air_tank"
+        },
+        "target": {
+          "group": "group_01",
+          "node": "valve"
+        }
+      },
+      {
+        "id": "c2",
+        "source": {
+          "group": "group_01",
+          "node": "valve"
+        },
+        "target": {
+          "group": "group_01",
+          "node": "flowmeter_1"
+        }
+      },
+      {
+        "id": "c3",
+        "source": {
+          "group": "group_01",
+          "node": "flowmeter_1"
+        },
+        "target": {
+          "group": "group_01",
+          "node": "pressure_sensor"
+        }
+      },
+      {
+        "id": "c4",
+        "source": {
+          "group": "group_01",
+          "node": "pressure_sensor"
+        },
+        "target": {
+          "group": "group_01",
+          "node": "flowmeter_2"
+        }
+      },
+      {
+        "id": "c5",
+        "source": {
+          "group": "group_02",
+          "node": "nitrogen_tank"
+        },
+        "target": {
+          "group": "group_02",
+          "node": "valve"
+        }
+      },
+      {
+        "id": "c6",
+        "source": {
+          "group": "group_02",
+          "node": "valve"
+        },
+        "target": {
+          "group": "group_02",
+          "node": "flowmeter"
+        }
+      },
+      {
+        "id": "c7",
+        "source": {
+          "group": "group_02",
+          "node": "flowmeter"
+        },
+        "target": {
+          "group": "group_02",
+          "node": "pressure_sensor"
+        }
+      }
+    ],
     "constraints": {
       "routeStyle": "orthogonal",
-      "allowedDirections": [
-        "horizontal",
-        "vertical"
-      ],
-      "equalSpacing": true,
+      "allowedDirections": [],
+      "equalSpacing": false,
       "alignRepeated": true,
       "consistentBranches": true
     }

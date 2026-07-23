@@ -23,6 +23,11 @@ GAS_PROMPT = """控件：1台空气罐、2台氮气罐、3个阀门、4台流量
 结构：多套独立系统与重复支路相结合的结构。空气罐及其出口管路布置在页面左侧，2台氮气罐布置在页面右侧，阀门、流量计和压力监测设备分别安装在各储气罐的出口管线上。2套氮气供气支路采用上下纵向排列和相同模板布局，氮气罐、阀门、流量计及压力传感器保持上下对齐；空气罐尺寸较大，作为主要气源设备单独布置在左侧，其流量监测设备沿出口管路横向排列。
 要求：各储气罐出口管路采用水平正交连接，阀门靠近储气罐出口布置，流量计和压力传感器按照气体流动方向依次设置；空气和氮气管路应保持相互独立，避免交叉连接。"""
 
+REPORTED_GAS_PROMPT = """控件：1台空气罐、2台氮气罐、3个阀门、4台流量计以及3个压力传感器
+流程：空气罐上方阀门-流量计-压力传感器-流量计，氮气罐上方阀门-流量计-压力传感器
+结构：2台氮气罐布置在页面右侧，阀门、流量计和压力监测设备分别安装在各储气罐的出口管线上，氮气供气支路采用上下纵向排列和相同模板布局，空气罐尺寸较大，作为主要气源设备单独布置在左侧，其流量监测设备沿出口管路横向排列
+要求：各储气罐出口管路采用水平正交连接，阀门靠近储气罐出口布置，流量计和压力传感器按照气体流动方向依次设置；空气和氮气管路应保持相互独立，避免交叉连接"""
+
 
 def _layout_data(cooling_pump_count=4):
     return {
@@ -173,6 +178,18 @@ def test_layout_validation_accepts_repeated_branch_template_inventory_and_flow()
     assert errors == []
 
 
+def test_layout_validation_requires_each_flow_path_to_be_continuous():
+    data = _gas_layout_data()
+    data["layoutIntent"]["connections"].pop(5)
+    layout = LayoutFile.model_validate(data)
+
+    errors, _ = validate_layout_file(layout, parse_structured_prompt(GAS_PROMPT))
+
+    assert [(item.path, item.message) for item in errors] == [
+        ("layoutIntent.connections", "缺少流程连接：阀门-流量计")
+    ]
+
+
 def test_layout_validation_rejects_wrong_repeated_branch_attachment_total():
     layout = LayoutFile.model_validate(_gas_layout_data(flowmeter_count=2))
 
@@ -258,25 +275,32 @@ def test_layout_validation_rejects_group_placement_cycle():
 async def test_generate_intent_sends_normalized_structured_input(monkeypatch):
     messages = []
     models = []
+    call_options = {}
 
-    async def fake_call(client, model, request_messages, response_format):
+    async def fake_call(client, model, request_messages, **kwargs):
         models.append(model)
         messages.extend(request_messages)
+        call_options.update(kwargs)
         return type(
             "Response",
             (),
             {"choices": [type("Choice", (), {"message": type("Message", (), {"content": __import__("json").dumps(_layout_data())})()})()]},
         )()
 
-    monkeypatch.setattr("model.generate_gird._call_llm", fake_call)
-
     layout = await generate_intent(
-        VALID_PROMPT,
+        VALID_PROMPT.replace("页面中部", "页面任意位置"),
         [{"displayName": item} for item in ("冷却塔", "冷却泵", "冷水机组", "冷冻泵")],
         client=object(),
+        model="deepseek-v4-flash",
+        model_caller=fake_call,
     )
 
-    assert models == ["deepseek-v4-pro"]
+    assert models == ["deepseek-v4-flash"]
+    assert call_options == {
+        "response_format": {"type": "json_object"},
+        "stream": False,
+        "extra_body": {"thinking": {"type": "disabled"}},
+    }
     request = __import__("json").loads(messages[1]["content"])
     assert request["inventory"] == [
         {"deviceType": "冷却塔", "count": 3},
@@ -288,10 +312,10 @@ async def test_generate_intent_sends_normalized_structured_input(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_generate_intent_sends_gas_flow_paths_and_accepts_branch_templates(monkeypatch):
+async def test_generate_intent_sends_gas_flow_paths_and_accepts_branch_templates():
     messages = []
 
-    async def fake_call(client, model, request_messages, response_format):
+    async def fake_call(client, model, request_messages, **kwargs):
         messages.extend(request_messages)
         return type(
             "Response",
@@ -299,13 +323,12 @@ async def test_generate_intent_sends_gas_flow_paths_and_accepts_branch_templates
             {"choices": [type("Choice", (), {"message": type("Message", (), {"content": __import__("json").dumps(_gas_layout_data())})()})()]},
         )()
 
-    monkeypatch.setattr("model.generate_gird._call_llm", fake_call)
-
     layout = await generate_intent(
         GAS_PROMPT,
         [{"displayName": item} for item in ("空气罐", "氮气罐", "阀门", "流量计", "压力传感器")],
         client=object(),
         model="test-model",
+        model_caller=fake_call,
     )
 
     request = __import__("json").loads(messages[1]["content"])
@@ -317,11 +340,80 @@ async def test_generate_intent_sends_gas_flow_paths_and_accepts_branch_templates
 
 
 @pytest.mark.asyncio
-async def test_generate_intent_rejects_invalid_source_before_calling_llm(monkeypatch):
+async def test_generate_intent_completes_reported_missing_attachment_connection():
+    models = []
+
+    async def fake_call(client, model, request_messages, **kwargs):
+        models.append(model)
+        data = _gas_layout_data()
+        data["layoutIntent"]["connections"].pop(4)
+        return type(
+            "Response",
+            (),
+            {"choices": [type("Choice", (), {"message": type("Message", (), {"content": __import__("json").dumps(data)})()})()]},
+        )()
+
+    layout = await generate_intent(
+        REPORTED_GAS_PROMPT,
+        [{"displayName": item} for item in ("空气罐", "氮气罐", "阀门", "流量计", "压力传感器")],
+        client=object(),
+        model="deepseek-v4-flash",
+        model_caller=fake_call,
+    )
+
+    assert models == ["deepseek-v4-flash"]
+    assert any(
+        connection.source.group == "nitrogen"
+        and connection.source.node == "tank"
+        and connection.target.group == "nitrogen"
+        and connection.target.node == "valve"
+        for connection in layout.layoutIntent.connections
+    )
+
+
+@pytest.mark.asyncio
+async def test_generate_intent_retries_semantic_output_with_pro_model():
+    models = []
+    requests = []
+    outputs = {}
+
+    async def fake_call(client, model, request_messages, **kwargs):
+        models.append(model)
+        requests.append([dict(message) for message in request_messages])
+        data = _gas_layout_data(flowmeter_count=2)
+        if model == "deepseek-v4-pro":
+            data = _gas_layout_data()
+        output = __import__("json").dumps(data)
+        outputs[model] = output
+        return type(
+            "Response",
+            (),
+            {"choices": [type("Choice", (), {"message": type("Message", (), {"content": output})()})()]},
+        )()
+
+    layout = await generate_intent(
+        GAS_PROMPT,
+        [{"displayName": item} for item in ("空气罐", "氮气罐", "阀门", "流量计", "压力传感器")],
+        client=object(),
+        model="deepseek-v4-flash",
+        model_caller=fake_call,
+    )
+
+    assert models == ["deepseek-v4-flash", "deepseek-v4-pro"]
+    assert [message["role"] for message in requests[1]] == [
+        "system",
+        "user",
+        "assistant",
+        "user",
+    ]
+    assert requests[1][2]["content"] == outputs["deepseek-v4-flash"]
+    assert layout.layoutIntent.groups[1].unit.root.deviceType == "氮气罐"
+
+
+@pytest.mark.asyncio
+async def test_generate_intent_rejects_invalid_source_before_calling_llm():
     async def fail_if_called(*args, **kwargs):
         raise AssertionError("LLM must not be called")
-
-    monkeypatch.setattr("model.generate_gird._call_llm", fail_if_called)
 
     with pytest.raises(StructuredPromptError):
         await generate_intent(
@@ -329,6 +421,7 @@ async def test_generate_intent_rejects_invalid_source_before_calling_llm(monkeyp
             [{"displayName": "冷却泵"}],
             client=object(),
             model="test-model",
+            model_caller=fail_if_called,
         )
 
 

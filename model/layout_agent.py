@@ -17,7 +17,6 @@ if str(_project_root) not in sys.path:
 from model.canva_agent import (
     _calc_content_rect,
     _client,
-    _MODEL,
     _schema_validate,
 )
 from model.get_background import generate_layout
@@ -71,10 +70,11 @@ def _format_modified() -> str:
 
 
 class LayoutAgent:
-    def __init__(self, db=None, client=None, model=None):
+    def __init__(self, db=None, client=None, model=None, debug=False):
         self._db = db
         self._client = client if client is not None else _client
-        self._model = model if model is not None else _MODEL
+        self._model = model if model is not None else "deepseek-v4-flash"
+        self._debug = debug
 
     async def create_canvas(
         self,
@@ -109,22 +109,24 @@ class LayoutAgent:
         )
         canvas, layout_file = await asyncio.gather(canvas_task, intent_task)
         ir_data = layout_file.model_dump(exclude_none=True)
-        ir_path = LAYOUT_DIR / "it_ir.json"
-        ir_path.parent.mkdir(parents=True, exist_ok=True)
-        ir_path.write_text(
+        if self._debug:
+            ir_path = LAYOUT_DIR / "it_ir.json"
+            ir_path.parent.mkdir(parents=True, exist_ok=True)
+            ir_path.write_text(
             json.dumps(ir_data, ensure_ascii=False, indent=2),
             encoding="utf-8",
-        )
+            )
 
         logger.info("Step 3: 从 query_results 计算坐标...")
         nodes = convert_layout_file(ir_data, materials, width, height)
 
-        position_path = LAYOUT_DIR / "position.json"
-        position_path.parent.mkdir(parents=True, exist_ok=True)
-        position_path.write_text(
+        if self._debug:
+            position_path = LAYOUT_DIR / "position.json"
+            position_path.parent.mkdir(parents=True, exist_ok=True)
+            position_path.write_text(
             json.dumps(nodes, ensure_ascii=False, indent=2),
             encoding="utf-8",
-        )
+            )
 
         logger.info("Step 4: 拼装最终 JSON...")
         out = deepcopy(canvas)

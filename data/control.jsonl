@@ -168,10 +168,12 @@
 {"displayName":"AML-back","image":"assets/现场控制系统/资源图片/大门面板.png","width":477,"height":150}
 {"displayName":"大门-1","image":"assets/现场控制系统/设备图片/大门-1.png","width":489,"height":737}
 {"displayName":"液压基础管网","image":"assets/现场控制系统/设备图片/液压基础管网2.png","width":1404,"height":745}
-{"displayName":"邮箱","image":"assets/现场控制系统/设备图片/邮箱.png","width":316,"height":175}
-{"displayName":"液压电机","image":"assets/现场控制系统/设备图片/液压电机.png","width":154,"height":80}
+{"displayName":"油箱","image":"assets/Agent/油箱.png","width":316,"height":175}
+{"displayName":"电机","image":"assets/现场控制系统/设备图片/液压电机.png","width":154,"height":80}
 {"displayName":"液压泵","image":"assets/现场控制系统/设备图片/液压泵.png","width":154,"height":70}
 {"displayName":"吸油过滤器","image":"assets/现场控制系统/设备图片/吸油过滤器.png","width":30,"height":70}
 {"displayName":"回油单向阀","image":"assets/现场控制系统/设备图片/回油单向阀.png","width":65,"height":35}
 {"displayName":"压力传感器","image":"assets/现场控制系统/设备图片/压力传感器.png","width":25,"height":45}
 {"displayName":"溢流阀","image":"assets/现场控制系统/设备图片/溢流阀.png","width":64,"height":50}
+{"displayName":"开关阀","image":"symbols/Agent/开关阀.json","width":32,"height":32}
+{"displayName":"回油过滤器","image":"symbols/Agent/回油过滤器.json","width":76,"height":60}

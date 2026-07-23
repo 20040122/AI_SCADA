@@ -1,4 +1,3 @@
-import json
 import sqlite3
 
 import pytest
@@ -156,7 +155,7 @@ async def test_layout_agent_rejects_empty_query_results():
 
 
 @pytest.mark.asyncio
-async def test_layout_agent_persists_in_memory_intent_to_ir_file(monkeypatch):
+async def test_layout_agent_does_not_write_debug_files_by_default(monkeypatch):
     class DB:
         async def list_query_results(self, query):
             return [{"displayName": "水泵", "image": "pump.json"}]
@@ -203,5 +202,4 @@ async def test_layout_agent_persists_in_memory_intent_to_ir_file(monkeypatch):
     )
 
     assert result.ir_data["layoutIntent"]["groups"][0]["id"] == "pump-group"
-    assert json.loads(writes["it_ir.json"]) == result.ir_data
-    assert writes["position.json"] == "[]"
+    assert writes == {}

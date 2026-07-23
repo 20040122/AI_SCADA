@@ -15,7 +15,7 @@ from app.schemas import (
 )
 from model.layout_agent import LayoutAgent
 from model.compute_position import MissingMaterialError
-from model.generate_gird import StructuredPromptError
+from model.generate_gird import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
 from model.refine_agent import (
     RefineAgent,
     RefineInputError,
@@ -50,6 +50,12 @@ async def canvas_layout(
                 ]
             },
         ) from exc
+    except IntentModelOutputError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except IntentModelUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except IntentModelTimeoutError as exc:
+        raise HTTPException(status_code=504, detail=str(exc)) from exc
 
     safe = re.sub(r'[\\/:*?"<>|]', "_", req.title.strip())
     ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")

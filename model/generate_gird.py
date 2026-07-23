@@ -4,6 +4,7 @@ import json
 import logging
 import re
 import sys
+from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Literal, Optional, Tuple
@@ -13,9 +14,10 @@ if str(_project_root) not in sys.path:
     sys.path.insert(0, str(_project_root))
 
 from pydantic import BaseModel, Field, ValidationError
+from openai import APITimeoutError
 
 from data.sqlite.material_db import MaterialDB
-from model.canva_agent import _call_llm, _client
+from model.canva_agent import _client
 from model.layout_agent import _llm_text, _parse_json_lenient
 
 logger = logging.getLogger(__name__)
@@ -31,7 +33,10 @@ RouteStyle = Literal["direct", "orthogonal"]
 Direction = Literal["horizontal", "vertical"]
 
 _INTENT_EXAMPLE_PATH = Path(__file__).resolve().parent.parent / "layout" / "intent.json"
-_GENERATE_GIRD_MODEL = "deepseek-v4-pro"
+_GENERATE_GIRD_MODEL = "deepseek-v4-flash"
+_FALLBACK_INTENT_MODEL = "deepseek-v4-pro"
+_INTENT_CACHE = OrderedDict()
+_INTENT_CACHE_VERSION = 2
 
 
 class DeviceNode(BaseModel):
@@ -122,6 +127,29 @@ class StructuredPromptError(ValueError):
     def __init__(self, errors: List[ValidationErrorItem]):
         self.errors = errors
         super().__init__("; ".join(f"{item.path}: {item.message}" for item in errors))
+
+
+class IntentModelUnavailableError(RuntimeError):
+    pass
+
+
+class IntentModelTimeoutError(RuntimeError):
+    pass
+
+
+class IntentModelOutputError(RuntimeError):
+    def __init__(self, message: str, raw_output: Optional[str] = None):
+        self.raw_output = raw_output
+        super().__init__(message)
+
+
+async def _call_intent_model(client, model, messages, **kwargs):
+    timeout = 30.0 if model == _FALLBACK_INTENT_MODEL else 8.0
+    try:
+        request_client = client.with_options(max_retries=0, timeout=timeout)
+        return await asyncio.wait_for(request_client.chat.completions.create(model=model, messages=messages, **kwargs), timeout=timeout)
+    except (asyncio.TimeoutError, APITimeoutError) as exc:
+        raise IntentModelTimeoutError("布局模型请求超时") from exc
 
 
 _SECTION_PATTERN = re.compile(r"(?m)^\s*(控件|流程|结构|要求)\s*[：:]")
@@ -480,25 +508,88 @@ def validate_layout_file(
                         message=f"{device_type}必须声明为 parallel",
                     )
                 )
-        connection_types = {
-            (
-                node_device_types.get((connection.source.group, connection.source.node)),
-                node_device_types.get((connection.target.group, connection.target.node)),
-            )
-            for connection in connections
-        }
+        adjacency = {}
+        for connection in connections:
+            source_endpoint = (connection.source.group, connection.source.node)
+            target_endpoint = (connection.target.group, connection.target.node)
+            adjacency.setdefault(source_endpoint, set()).add(target_endpoint)
+        missing_flow_connections = []
+        seen_missing_flow_connections = set()
         for flow_path in source.flowPaths:
+            current_endpoints = {
+                endpoint
+                for endpoint, device_type in node_device_types.items()
+                if device_type == flow_path[0]
+            }
             for source_device, target_device in zip(flow_path, flow_path[1:]):
-                if (source_device, target_device) in connection_types:
+                next_endpoints = {
+                    target_endpoint
+                    for source_endpoint in current_endpoints
+                    for target_endpoint in adjacency.get(source_endpoint, set())
+                    if node_device_types.get(target_endpoint) == target_device
+                }
+                if next_endpoints:
+                    current_endpoints = next_endpoints
                     continue
-                errors.append(
-                    ValidationErrorItem(
-                        path="layoutIntent.connections",
-                        message=f"缺少流程连接：{source_device}-{target_device}",
-                    )
+                missing_connection = (source_device, target_device)
+                if missing_connection not in seen_missing_flow_connections:
+                    seen_missing_flow_connections.add(missing_connection)
+                    missing_flow_connections.append(missing_connection)
+                break
+        for source_device, target_device in missing_flow_connections:
+            errors.append(
+                ValidationErrorItem(
+                    path="layoutIntent.connections",
+                    message=f"缺少流程连接：{source_device}-{target_device}",
                 )
+            )
 
     return errors, warnings
+
+
+def _complete_attachment_flow_connections(
+    file: LayoutFile, source: StructuredLayoutPrompt
+) -> None:
+    required_pairs = {
+        pair
+        for flow_path in source.flowPaths
+        for pair in zip(flow_path, flow_path[1:])
+    }
+    connections = file.layoutIntent.connections
+    existing_edges = {
+        (
+            connection.source.group,
+            connection.source.node,
+            connection.target.group,
+            connection.target.node,
+        )
+        for connection in connections
+    }
+    used_ids = {connection.id for connection in connections}
+    next_index = 1
+    for group in file.layoutIntent.groups:
+        node_types = {group.unit.root.id: group.unit.root.deviceType}
+        for attachment in group.unit.attachments:
+            source_type = node_types.get(attachment.relativeTo)
+            node_types[attachment.id] = attachment.deviceType
+            if (source_type, attachment.deviceType) not in required_pairs:
+                continue
+            edge = (group.id, attachment.relativeTo, group.id, attachment.id)
+            if edge in existing_edges:
+                continue
+            while f"auto-flow-{next_index}" in used_ids:
+                next_index += 1
+            connection_id = f"auto-flow-{next_index}"
+            next_index += 1
+            used_ids.add(connection_id)
+            existing_edges.add(edge)
+            connections.append(
+                Connection(
+                    id=connection_id,
+                    source=Endpoint(group=group.id, node=attachment.relativeTo),
+                    target=Endpoint(group=group.id, node=attachment.id),
+                )
+            )
 
 
 def _has_group_placement_cycle(groups: List[LayoutGroup]) -> bool:
@@ -609,10 +700,12 @@ async def generate_intent(
     materials: List[dict],
     client=None,
     model=None,
+    model_caller=None,
 ) -> LayoutFile:
     source = parse_structured_prompt(prompt)
     client = client or _client
     model = model or _GENERATE_GIRD_MODEL
+    model_caller = model_caller or _call_intent_model
 
     vocab = _load_vocab(materials)
     if not vocab:
@@ -624,6 +717,18 @@ async def generate_intent(
     ]
     if errors:
         raise StructuredPromptError(errors)
+    cache_key = (_INTENT_CACHE_VERSION, " ".join(prompt.split()), tuple(sorted(vocab)), model)
+    cached = _INTENT_CACHE.get(cache_key)
+    if cached is not None:
+        return cached.model_copy(deep=True)
+    from model.layout_intent_rules import build_rule_layout
+    rule = build_rule_layout(source)
+    if rule.data is not None:
+        layout_file = LayoutFile.model_validate(rule.data)
+        errors, _ = validate_layout_file(layout_file, source)
+        if not errors:
+            _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
+            return layout_file
 
     example = _load_intent_example()
     system_prompt = _build_system_prompt(vocab, example)
@@ -632,40 +737,73 @@ async def generate_intent(
         {"role": "user", "content": _build_user_prompt(source)},
     ]
 
-    try:
-        resp = await _call_llm(
-            client,
-            model,
-            messages,
-            response_format={"type": "json_object"},
-        )
-    except Exception:
-        logger.exception("LLM 调用失败")
-        raise ValueError("LLM 调用失败")
+    async def call_and_validate(selected_model, **kwargs):
+        try:
+            resp = await model_caller(client, selected_model, messages, **kwargs)
+        except IntentModelTimeoutError:
+            raise
+        except Exception as exc:
+            logger.exception("LLM 调用失败")
+            raise IntentModelUnavailableError("布局模型不可用") from exc
 
-    text = _llm_text(resp)
-    data = _parse_json_lenient(text)
-    if data is None:
-        snippet = (text or "")[:200]
-        raise ValueError(f"LLM 输出无法解析为 JSON。片段：{snippet}")
-
-    try:
-        layout_file = LayoutFile.model_validate(data)
-    except ValidationError as exc:
-        errors = [
-            ValidationErrorItem(
-                path=".".join(str(part) for part in item["loc"]),
-                message=item["msg"],
+        text = _llm_text(resp)
+        data = _parse_json_lenient(text)
+        if data is None:
+            raise IntentModelOutputError(
+                f"LLM 输出无法解析为 JSON：{(text or '')[:200]}", text
             )
-            for item in exc.errors()
-        ]
-        raise StructuredPromptError(errors) from exc
+        try:
+            layout_file = LayoutFile.model_validate(data)
+        except ValidationError as exc:
+            details = "; ".join(
+                f"{'.'.join(str(part) for part in item['loc'])}: {item['msg']}"
+                for item in exc.errors()
+            )
+            raise IntentModelOutputError(
+                f"布局模型输出不符合格式：{details}", text
+            ) from exc
 
-    errors, warnings = validate_layout_file(layout_file, source)
-    if errors:
-        raise StructuredPromptError(errors)
-    for w in warnings:
-        logger.warning(w)
+        _complete_attachment_flow_connections(layout_file, source)
+        errors, warnings = validate_layout_file(layout_file, source)
+        if errors:
+            details = "; ".join(f"{item.path}: {item.message}" for item in errors)
+            raise IntentModelOutputError(
+                f"布局模型输出未通过语义校验：{details}", text
+            )
+        for warning in warnings:
+            logger.warning(warning)
+        return layout_file
+
+    try:
+        layout_file = await call_and_validate(
+            model,
+            response_format={"type": "json_object"},
+            stream=False,
+            extra_body={"thinking": {"type": "disabled"}},
+        )
+    except IntentModelOutputError as exc:
+        if model == _FALLBACK_INTENT_MODEL:
+            raise
+        logger.warning("Flash 布局输出校验失败，使用 Pro 修复：%s", exc)
+        if exc.raw_output:
+            messages.append({"role": "assistant", "content": exc.raw_output})
+        messages.append(
+            {
+                "role": "user",
+                "content": f"上一次输出校验失败：{exc}。请修正后只输出完整 JSON。",
+            }
+        )
+        try:
+            layout_file = await call_and_validate(
+                _FALLBACK_INTENT_MODEL,
+                response_format={"type": "json_object"},
+                stream=False,
+                reasoning_effort="high",
+                extra_body={"thinking": {"type": "enabled"}},
+            )
+        except IntentModelOutputError as fallback_exc:
+            raise IntentModelOutputError(f"Pro 修复后仍无效：{fallback_exc}") from fallback_exc
+    _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
     return layout_file
 
 
