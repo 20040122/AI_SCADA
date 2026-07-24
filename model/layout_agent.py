@@ -17,7 +17,6 @@ if str(_project_root) not in sys.path:
 from model.canva_agent import (
     _calc_content_rect,
     _client,
-    _MODEL,
     _schema_validate,
 )
 from model.get_background import generate_layout
@@ -71,10 +70,11 @@ def _format_modified() -> str:
 
 
 class LayoutAgent:
-    def __init__(self, db=None, client=None, model=None):
+    def __init__(self, db=None, client=None, model=None, debug=False):
         self._db = db
         self._client = client if client is not None else _client
-        self._model = model if model is not None else _MODEL
+        self._model = model if model is not None else "deepseek-v4-flash"
+        self._debug = debug
 
     async def create_canvas(
         self,
@@ -90,42 +90,42 @@ class LayoutAgent:
         width: int,
         height: int,
         title: Optional[str] = None,
-        controls: Optional[list[dict]] = None,
     ) -> LayoutResult:
         from model.generate_gird import generate_intent
-        from model.compute_position import (
-            convert_layout_file,
-            convert_layout_file_from_query_results,
-        )
+        from model.compute_position import MissingMaterialError, convert_layout_file
+
+        if self._db is None:
+            raise ValueError("database required for position computation")
+        materials = await self._db.list_query_results("")
+        if not materials:
+            raise MissingMaterialError("query_results 表为空")
 
         logger.info("Step 1/2: 并行生成背景画布和布局意图 IR...")
-        ir_path = LAYOUT_DIR / "it_ir.json"
         canvas_task = asyncio.create_task(
             self.create_canvas(title, width, height)
         )
-        intent_task = asyncio.create_task(generate_intent(query, ir_path))
-        canvas, rc = await asyncio.gather(canvas_task, intent_task)
-        if rc != 0:
-            raise ValueError("Layout intent generation failed")
-        ir_data = json.loads(ir_path.read_text(encoding="utf-8"))
-
-        if controls is not None:
-            logger.info("Step 3: 使用传入控件计算坐标...")
-            nodes = convert_layout_file(ir_data, controls, width, height)
-        else:
-            if self._db is None:
-                raise ValueError("database required for position computation")
-            logger.info("Step 3: 从入库控件计算坐标...")
-            nodes = await convert_layout_file_from_query_results(
-                ir_data, self._db, "", width, height
-            )
-
-        position_path = LAYOUT_DIR / "position.json"
-        position_path.parent.mkdir(parents=True, exist_ok=True)
-        position_path.write_text(
-            json.dumps(nodes, ensure_ascii=False, indent=2),
+        intent_task = asyncio.create_task(
+            generate_intent(query, materials, self._client, self._model)
+        )
+        canvas, layout_file = await asyncio.gather(canvas_task, intent_task)
+        ir_data = layout_file.model_dump(exclude_none=True)
+        ir_path = LAYOUT_DIR / "it_ir.json"
+        ir_path.parent.mkdir(parents=True, exist_ok=True)
+        ir_path.write_text(
+            json.dumps(ir_data, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+
+        logger.info("Step 3: 从 query_results 计算坐标...")
+        nodes = convert_layout_file(ir_data, materials, width, height)
+
+        if self._debug:
+            position_path = LAYOUT_DIR / "position.json"
+            position_path.parent.mkdir(parents=True, exist_ok=True)
+            position_path.write_text(
+                json.dumps(nodes, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
 
         logger.info("Step 4: 拼装最终 JSON...")
         out = deepcopy(canvas)
@@ -178,7 +178,7 @@ def _cli() -> None:
     async def run() -> LayoutResult:
         db = MaterialDB()
         try:
-            await db.init_db()
+            await db.init_query_results_db()
         except Exception:
             logger.exception("MaterialDB init failed")
         agent = LayoutAgent(db=db)

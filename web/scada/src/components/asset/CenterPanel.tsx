@@ -11,7 +11,7 @@ export default function CenterPanel() {
     setQueryResults,
     setSelectedAsset,
     missedKeywords,
-    decrementKeywordCount,
+    removeKeyword,
     query,
     setPipelineStep,
     isLoading,
@@ -64,7 +64,7 @@ export default function CenterPanel() {
     saveQueryResults(query, controls)
       .then(() => {
         refreshQueryResults();
-        decrementKeywordCount(keywordStr);
+        removeKeyword(keywordStr);
         setPipelineStep(3, "done");
         notify(`${displayName} 已入库`, "s");
       })
@@ -108,7 +108,7 @@ export default function CenterPanel() {
             {keywordResults.map((kr) => (
               <div key={kr.keyword} className="mb-3">
                 <div className="text-[9px] text-[var(--accent)] font-mono mb-1 tracking-[0.5px]">
-                  {kr.keyword} ×{kr.count}
+                  {kr.keyword}
                   {kr.candidates.length === 0 && (
                     <span className="text-[var(--text3)] ml-2">无候选</span>
                   )}

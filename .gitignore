@@ -33,6 +33,9 @@ Thumbs.db
 *.log
 logs/
 
+data/chroma/db/
+data/sqlite/*.db*
+
 
 # 模型与训练结果
 models/

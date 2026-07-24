@@ -103,6 +103,10 @@ def _load_layout_config() -> LayoutConfig:
 _REGION_ORDER = ["left", "center", "right"]
 
 
+class MissingMaterialError(ValueError):
+    pass
+
+
 def convert_layout_file(
     data: dict,
     controls: Optional[list[dict]] = None,
@@ -114,6 +118,15 @@ def convert_layout_file(
     if errors:
         message = "; ".join("%s: %s" % (e.path, e.message) for e in errors)
         raise ValueError(message)
+    material_map = _material_map(controls or [])
+    device_types = {
+        node.deviceType
+        for group in layout_file.layoutIntent.groups
+        for node in [group.unit.root, *group.unit.attachments]
+    }
+    missing = sorted(device_type for device_type in device_types if not _find_material(device_type, material_map))
+    if missing:
+        raise MissingMaterialError("query_results 缺少控件素材：" + "、".join(missing))
     nodes = compute_nodes(layout_file, controls or [], width, height)
     return build_nodes(nodes)
 
@@ -126,7 +139,10 @@ def compute_nodes(
 ) -> list[dict]:
     material_map = _material_map(controls or [])
     content_rect = _content_rect(width, height)
-    slots = compute_group_slots(layout_file.layoutIntent.groups, content_rect)
+    slots = compute_group_slots(
+        layout_file.layoutIntent.groups,
+        content_rect,
+    )
     result = []
     for group in layout_file.layoutIntent.groups:
         group_slots = slots.get(group.id, [])
@@ -135,7 +151,12 @@ def compute_nodes(
     return result
 
 
-def compute_group_slots(groups: list[LayoutGroup], content_rect: dict) -> dict[str, list[dict]]:
+def compute_group_slots(
+    groups: list[LayoutGroup], content_rect: dict
+) -> dict[str, list[dict]]:
+    relations = _group_relations(groups)
+    if relations:
+        return _compute_related_group_slots(groups, content_rect, relations)
     region_gap = _outer_gap(content_rect["width"])
     regions = _region_rects(groups, content_rect, region_gap)
     result = {}
@@ -157,6 +178,72 @@ def compute_group_slots(groups: list[LayoutGroup], content_rect: dict) -> dict[s
             }
             result[group.id] = _arrange_slots(group, group_rect)
     return result
+
+
+def _compute_related_group_slots(
+    groups: list[LayoutGroup], content_rect: dict, relations: dict[str, tuple[str, str]]
+) -> dict[str, list[dict]]:
+    groups_by_id = {group.id: group for group in groups}
+    columns = {
+        group.id: _group_column(group, groups_by_id, relations, {})
+        for group in groups
+    }
+    levels = sorted(set(columns.values()))
+    gap = _fit_gap(content_rect["width"], len(levels), _outer_gap(content_rect["width"]))
+    column_width = (content_rect["width"] - gap * (len(levels) - 1)) / len(levels)
+    result = {}
+    for level_index, level in enumerate(levels):
+        column_groups = [group for group in groups if columns[group.id] == level]
+        group_gap = _fit_gap(
+            content_rect["height"], len(column_groups), _outer_gap(content_rect["height"])
+        )
+        group_height = (
+            content_rect["height"] - group_gap * (len(column_groups) - 1)
+        ) / len(column_groups)
+        for group_index, group in enumerate(column_groups):
+            result[group.id] = _arrange_slots(
+                group,
+                {
+                    "x": content_rect["x"] + level_index * (column_width + gap),
+                    "y": content_rect["y"] + group_index * (group_height + group_gap),
+                    "width": column_width,
+                    "height": group_height,
+                },
+            )
+    return result
+
+
+def _group_column(
+    group: LayoutGroup,
+    groups_by_id: dict[str, LayoutGroup],
+    relations: dict[str, tuple[str, str]],
+    cache: dict[str, int],
+) -> int:
+    if group.id in cache:
+        return cache[group.id]
+    relation = relations.get(group.id)
+    if relation is None:
+        column = _REGION_ORDER.index(group.region)
+    else:
+        parent_id, side = relation
+        parent = groups_by_id[parent_id]
+        parent_column = _group_column(parent, groups_by_id, relations, cache)
+        if side == "right":
+            column = parent_column + 1
+        elif side == "left":
+            column = parent_column - 1
+        else:
+            column = parent_column
+    cache[group.id] = column
+    return column
+
+
+def _group_relations(groups: list[LayoutGroup]) -> dict[str, tuple[str, str]]:
+    return {
+        group.id: (group.relativeTo, group.side)
+        for group in groups
+        if group.relativeTo is not None and group.side is not None
+    }
 
 
 def compute_unit_layout(
@@ -546,12 +633,19 @@ def _is_canvas_json_path(image: str) -> bool:
 
 
 def _match_material(device_type: str, material_map: dict[str, dict]) -> dict:
+    material = _find_material(device_type, material_map)
+    if material is None:
+        raise MissingMaterialError("query_results 缺少控件素材：" + device_type)
+    return material
+
+
+def _find_material(device_type: str, material_map: dict[str, dict]) -> Optional[dict]:
     if device_type in material_map:
         return material_map[device_type]
     for name, material in material_map.items():
         if device_type in name or name in device_type:
             return material
-    return {"displayName": device_type, "image": "symbols/Agent/%s.json" % device_type}
+    return None
 
 
 def _gap_for(gap_hint: Optional[str]) -> int:
@@ -597,7 +691,7 @@ async def _load_query_results(query: str) -> list[dict]:
     from data.sqlite.material_db import MaterialDB
 
     db = MaterialDB()
-    await db.init_db()
+    await db.init_query_results_db()
     try:
         return await db.list_query_results(query)
     finally:

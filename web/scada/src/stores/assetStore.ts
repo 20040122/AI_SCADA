@@ -7,7 +7,7 @@ import type {
 } from "../types/asset";
 
 const INITIAL_PIPELINE: PipelineStep[] = [
-  { id: 1, name: "LLM 提取", detail: "从描述提取控件关键词及数量", status: "wait" },
+  { id: 1, name: "LLM 提取", detail: "从描述提取控件关键词", status: "wait" },
   { id: 2, name: "向量检索", detail: "ChromaDB 相似度匹配 (≥0.55)", status: "wait" },
   { id: 3, name: "质检入库", detail: "点击卡片确认后写入数据库", status: "wait" },
 ];
@@ -22,7 +22,6 @@ interface AssetStore {
   keywordResults: KeywordResult[];
   setKeywordResults: (results: KeywordResult[]) => void;
   removeKeyword: (keyword: string) => void;
-  decrementKeywordCount: (keyword: string) => void;
 
   missedKeywords: string[];
   setMissedKeywords: (kw: string[]) => void;
@@ -60,19 +59,6 @@ export const useAssetStore = create<AssetStore>((set) => ({
     set((s) => ({
       keywordResults: s.keywordResults.filter((kr) => kr.keyword !== keyword),
     })),
-  decrementKeywordCount: (keyword) =>
-    set((s) => {
-      const kr = s.keywordResults.find((k) => k.keyword === keyword);
-      if (!kr) return s;
-      if (kr.count <= 1) {
-        return { keywordResults: s.keywordResults.filter((k) => k.keyword !== keyword) };
-      }
-      return {
-        keywordResults: s.keywordResults.map((k) =>
-          k.keyword === keyword ? { ...k, count: k.count - 1 } : k
-        ),
-      };
-    }),
 
   missedKeywords: [],
   setMissedKeywords: (kw) => set({ missedKeywords: kw }),

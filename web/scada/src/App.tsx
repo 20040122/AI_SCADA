@@ -4,6 +4,7 @@ import StatusBar from "./components/layout/StatusBar";
 import AssetAgentPage from "./components/asset/AssetAgentPage";
 import LayoutAgentPage from "./components/layout-agent/LayoutAgentPage";
 import RefineAgentPage from "./components/refine-agent/RefineAgentPage";
+import RuleLibraryPage from "./components/schema/RuleLibraryPage";
 import { useAssetStore } from "./stores/assetStore";
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -30,7 +31,7 @@ export default function App() {
 
       <div className="flex-1 overflow-hidden relative">
         {activeTab === "asset" && <AssetAgentPage />}
-        {activeTab === "schema" && <PlaceholderPage title="R-01 Schema规则库" />}
+        {activeTab === "schema" && <RuleLibraryPage />}
         {activeTab === "layout" && <LayoutAgentPage />}
         {activeTab === "refine" && <RefineAgentPage />}
         {activeTab === "binding" && <PlaceholderPage title="R-05 智能数据绑点" />}

@@ -1,15 +1,7 @@
 import type { JsonPatchOp } from "./refine";
 
-export interface ControlSpec {
-  displayName: string;
-  image?: string;
-  width?: number;
-  height?: number;
-}
-
 export interface LayoutGenerateRequest {
   query: string;
-  controls?: ControlSpec[];
   canvasWidth: number;
   canvasHeight: number;
   title: string;

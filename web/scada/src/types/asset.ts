@@ -16,7 +16,6 @@ export interface ControlCandidate {
 
 export interface KeywordResult {
   keyword: string;
-  count: number;
   candidates: ControlCandidate[];
 }
 
