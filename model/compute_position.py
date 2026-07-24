@@ -142,7 +142,6 @@ def compute_nodes(
     slots = compute_group_slots(
         layout_file.layoutIntent.groups,
         content_rect,
-        layout_file.layoutIntent.connections,
     )
     result = []
     for group in layout_file.layoutIntent.groups:
@@ -153,9 +152,9 @@ def compute_nodes(
 
 
 def compute_group_slots(
-    groups: list[LayoutGroup], content_rect: dict, connections=None
+    groups: list[LayoutGroup], content_rect: dict
 ) -> dict[str, list[dict]]:
-    relations = _group_relations(groups, connections or [])
+    relations = _group_relations(groups)
     if relations:
         return _compute_related_group_slots(groups, content_rect, relations)
     region_gap = _outer_gap(content_rect["width"])
@@ -239,32 +238,12 @@ def _group_column(
     return column
 
 
-def _group_relations(groups: list[LayoutGroup], connections) -> dict[str, tuple[str, str]]:
-    relations = {
+def _group_relations(groups: list[LayoutGroup]) -> dict[str, tuple[str, str]]:
+    return {
         group.id: (group.relativeTo, group.side)
         for group in groups
         if group.relativeTo is not None and group.side is not None
     }
-    for connection in connections:
-        source = connection.source.group
-        target = connection.target.group
-        if source == target or target in relations:
-            continue
-        if _would_create_relation_cycle(relations, source, target):
-            continue
-        relations[target] = (source, "right")
-    return relations
-
-
-def _would_create_relation_cycle(
-    relations: dict[str, tuple[str, str]], source: str, target: str
-) -> bool:
-    current = source
-    while current in relations:
-        if current == target:
-            return True
-        current = relations[current][0]
-    return current == target
 
 
 def compute_unit_layout(

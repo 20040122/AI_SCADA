@@ -37,21 +37,8 @@ export interface LayoutGroup {
   order?: GridOrder;
 }
 
-export interface Endpoint {
-  group: string;
-  node: string;
-  port?: string;
-}
-
-export interface Connection {
-  id: string;
-  source: Endpoint;
-  target: Endpoint;
-}
-
 export interface LayoutIntent {
   groups: LayoutGroup[];
-  connections?: Connection[];
 }
 
 export interface LayoutFile {
@@ -75,8 +62,6 @@ export interface ValidationError {
  * 8. side 只能是 top / right / bottom / left
  * 9. arrangement=grid 时，columns 或 rows 至少一个 >= 1；两者都给时 rows*columns >= count
  * 10. columns/rows/order 仅在 arrangement=grid 时有效
- * 11. connections 可选；connection.id 必须唯一
- * 12. connection.source/target 的 group 必须引用已声明 group.id，node 必须是该 group 内已声明节点
  */
 export function validateLayoutFile(file: LayoutFile): ValidationError[] {
   const errors: ValidationError[] = [];
@@ -193,41 +178,6 @@ export function validateLayoutFile(file: LayoutFile): ValidationError[] {
 
     groupNodeIds.set(group.id, declaredIds);
   });
-
-  const connections = file.layoutIntent.connections;
-  if (connections && connections.length) {
-    const connIds = new Set<string>();
-    connections.forEach((conn, connIndex) => {
-      const connPath = `layoutIntent.connections[${connIndex}]`;
-
-      if (connIds.has(conn.id)) {
-        errors.push({
-          path: `${connPath}.id`,
-          message: `connection id 重复：${conn.id}`,
-        });
-      }
-      connIds.add(conn.id);
-
-      (["source", "target"] as const).forEach((epName) => {
-        const ep = conn[epName];
-        const epPath = `${connPath}.${epName}`;
-        if (!groupIds.has(ep.group)) {
-          errors.push({
-            path: `${epPath}.group`,
-            message: `引用了不存在的 group：${ep.group}`,
-          });
-          return;
-        }
-        const nodeSet = groupNodeIds.get(ep.group);
-        if (nodeSet && !nodeSet.has(ep.node)) {
-          errors.push({
-            path: `${epPath}.node`,
-            message: `引用了 group ${ep.group} 内不存在的节点：${ep.node}`,
-          });
-        }
-      });
-    });
-  }
 
   return errors;
 }

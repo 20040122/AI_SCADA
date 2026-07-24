@@ -32,7 +32,7 @@ export default function LeftPanel() {
       controls.trim() && `控件：${controls.trim()}`,
       flow.trim() && `流程：${flow.trim()}`,
       structure.trim() && `结构：${structure.trim()}`,
-      requirements.trim() && `要求：${requirements.trim()}`,
+      requirements.trim() && `管道：${requirements.trim()}`,
     ]
       .filter(Boolean)
       .join("\n");
@@ -197,7 +197,7 @@ export default function LeftPanel() {
 
         <div className="mb-3">
           <label className="text-[10px] text-[var(--text3)] font-mono mb-1 block tracking-[0.5px] uppercase">
-            要求
+            管道
           </label>
           <textarea
             className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"

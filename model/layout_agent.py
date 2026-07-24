@@ -109,13 +109,12 @@ class LayoutAgent:
         )
         canvas, layout_file = await asyncio.gather(canvas_task, intent_task)
         ir_data = layout_file.model_dump(exclude_none=True)
-        if self._debug:
-            ir_path = LAYOUT_DIR / "it_ir.json"
-            ir_path.parent.mkdir(parents=True, exist_ok=True)
-            ir_path.write_text(
+        ir_path = LAYOUT_DIR / "it_ir.json"
+        ir_path.parent.mkdir(parents=True, exist_ok=True)
+        ir_path.write_text(
             json.dumps(ir_data, ensure_ascii=False, indent=2),
             encoding="utf-8",
-            )
+        )
 
         logger.info("Step 3: 从 query_results 计算坐标...")
         nodes = convert_layout_file(ir_data, materials, width, height)
@@ -124,8 +123,8 @@ class LayoutAgent:
             position_path = LAYOUT_DIR / "position.json"
             position_path.parent.mkdir(parents=True, exist_ok=True)
             position_path.write_text(
-            json.dumps(nodes, ensure_ascii=False, indent=2),
-            encoding="utf-8",
+                json.dumps(nodes, ensure_ascii=False, indent=2),
+                encoding="utf-8",
             )
 
         logger.info("Step 4: 拼装最终 JSON...")

@@ -23,10 +23,68 @@ def _region(text: str, device_type: str) -> Optional[str]:
     return None
 
 
+def _has_complex_topology(structure: str) -> bool:
+    strong = ["泵1", "泵2", "从上和下", "连接同一个"]
+    if any(kw in structure for kw in strong):
+        return True
+    numbered = len(re.findall(r"\d+号", structure))
+    if numbered >= 2 and "分别" in structure:
+        return True
+    return False
+
+
+def _build_complex_groups(source) -> Optional[dict]:
+    groups = []
+    previous_id = None
+    flow_paths = source.flowPaths
+    if not flow_paths:
+        return None
+    flat_order = flow_paths[0]
+    device_map = {}
+    for item in source.inventory:
+        device_map[item.deviceType] = item
+    ordered_devices = []
+    for device_type in flat_order:
+        if device_type in device_map and device_type not in ordered_devices:
+            ordered_devices.append(device_type)
+    remaining = [d for d in device_map if d not in ordered_devices]
+    for device_type in remaining:
+        if device_type not in ordered_devices:
+            ordered_devices.append(device_type)
+    for index, device_type in enumerate(ordered_devices, start=1):
+        item = device_map[device_type]
+        group = {
+            "id": "group-%d" % index,
+            "region": "center",
+            "count": item.count,
+            "unit": {"root": {"id": "root", "deviceType": item.deviceType}},
+        }
+        if previous_id is not None:
+            group["relativeTo"] = previous_id
+            group["side"] = "right"
+        groups.append(group)
+        previous_id = group["id"]
+    piping = source.piping
+    structure = source.structure
+    constraints = {
+        "routeStyle": "orthogonal" if "正交" in piping else None,
+        "allowedDirections": ["horizontal", "vertical"] if "垂直" in piping or "水平" in piping else [],
+        "equalSpacing": "等间距" in piping,
+        "alignRepeated": "对齐" in piping,
+        "consistentBranches": "结构一致" in piping or "相同模板" in structure,
+    }
+    return {"layoutIntent": {"groups": groups, "constraints": constraints}}
+
+
 def build_rule_layout(source) -> RuleLayoutResult:
     structure = source.structure
-    requirements = source.requirements
-    if not any(word in structure or word in requirements for word in ("左侧", "右侧", "中部", "纵向", "横向", "正交")):
+    piping = source.piping
+    if _has_complex_topology(structure):
+        data = _build_complex_groups(source)
+        if data is not None:
+            return RuleLayoutResult(data, None)
+        return RuleLayoutResult(None, "complex_topology_no_flow")
+    if not any(word in structure or word in piping for word in ("左侧", "右侧", "中部", "纵向", "横向", "正交")):
         return RuleLayoutResult(None, "unsupported_structure")
     groups = []
     group_by_device = {}
@@ -47,11 +105,4 @@ def build_rule_layout(source) -> RuleLayoutResult:
         group_by_device[item.deviceType] = group["id"]
         previous_id = group["id"]
         previous_region = region
-    connections = []
-    seen = set()
-    for path in source.flowPaths:
-        for source_type, target_type in zip(path, path[1:]):
-            if (source_type, target_type) not in seen:
-                seen.add((source_type, target_type))
-                connections.append({"id": "flow-%d" % len(connections), "source": {"group": group_by_device[source_type], "node": "root"}, "target": {"group": group_by_device[target_type], "node": "root"}})
-    return RuleLayoutResult({"layoutIntent": {"groups": groups, "connections": connections, "constraints": {"routeStyle": "orthogonal" if "正交" in requirements else None, "allowedDirections": ["horizontal", "vertical"] if "垂直" in requirements or "水平" in requirements else [], "equalSpacing": "等间距" in requirements, "alignRepeated": "对齐" in requirements, "consistentBranches": "结构一致" in requirements or "相同模板" in structure}}}, None)
+    return RuleLayoutResult({"layoutIntent": {"groups": groups, "constraints": {"routeStyle": "orthogonal" if "正交" in piping else None, "allowedDirections": ["horizontal", "vertical"] if "垂直" in piping or "水平" in piping else [], "equalSpacing": "等间距" in piping, "alignRepeated": "对齐" in piping, "consistentBranches": "结构一致" in piping or "相同模板" in structure}}}, None)

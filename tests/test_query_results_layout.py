@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 import pytest
@@ -87,6 +88,8 @@ def test_layout_places_related_groups_in_separate_equal_height_columns():
                 {
                     "id": "cooling-pump",
                     "region": "center",
+                    "relativeTo": "tower",
+                    "side": "right",
                     "count": 3,
                     "arrangement": "vertical",
                     "unit": {"root": {"id": "root", "deviceType": "冷却泵"}},
@@ -94,6 +97,8 @@ def test_layout_places_related_groups_in_separate_equal_height_columns():
                 {
                     "id": "chiller",
                     "region": "center",
+                    "relativeTo": "cooling-pump",
+                    "side": "right",
                     "count": 3,
                     "arrangement": "vertical",
                     "unit": {"root": {"id": "root", "deviceType": "冷水机"}},
@@ -101,15 +106,12 @@ def test_layout_places_related_groups_in_separate_equal_height_columns():
                 {
                     "id": "freeze-pump",
                     "region": "right",
+                    "relativeTo": "chiller",
+                    "side": "right",
                     "count": 4,
                     "arrangement": "vertical",
                     "unit": {"root": {"id": "root", "deviceType": "冷冻泵"}},
                 },
-            ],
-            "connections": [
-                {"id": "flow-1", "source": {"group": "tower", "node": "root"}, "target": {"group": "cooling-pump", "node": "root"}},
-                {"id": "flow-2", "source": {"group": "cooling-pump", "node": "root"}, "target": {"group": "chiller", "node": "root"}},
-                {"id": "flow-3", "source": {"group": "chiller", "node": "root"}, "target": {"group": "freeze-pump", "node": "root"}},
             ],
         }
     }
@@ -155,7 +157,7 @@ async def test_layout_agent_rejects_empty_query_results():
 
 
 @pytest.mark.asyncio
-async def test_layout_agent_does_not_write_debug_files_by_default(monkeypatch):
+async def test_layout_agent_writes_it_ir_unconditionally(monkeypatch):
     class DB:
         async def list_query_results(self, query):
             return [{"displayName": "水泵", "image": "pump.json"}]
@@ -173,7 +175,6 @@ async def test_layout_agent_does_not_write_debug_files_by_default(monkeypatch):
         })
 
     def fake_convert_layout_file(data, controls, width, height):
-        assert data["layoutIntent"]["groups"][0]["id"] == "pump-group"
         return []
 
     async def fake_schema_validate(data):
@@ -196,10 +197,13 @@ async def test_layout_agent_does_not_write_debug_files_by_default(monkeypatch):
     monkeypatch.setattr(LayoutAgent, "create_canvas", fake_create_canvas)
 
     result = await LayoutAgent(db=DB(), client=object(), model="test-model").generate(
-        "控件：1台水泵。\n流程：水泵。\n结构：水泵位于页面中部。\n要求：对齐。",
+        "控件：1台水泵。\n流程：水泵。\n结构：水泵位于页面中部。\n管道：对齐。",
         1920,
         1080,
     )
 
-    assert result.ir_data["layoutIntent"]["groups"][0]["id"] == "pump-group"
-    assert writes == {}
+    ir_writes = {path: content for path, content in writes.items() if path.endswith("it_ir.json")}
+    pos_writes = {path: content for path, content in writes.items() if path.endswith("position.json")}
+    assert len(ir_writes) == 1
+    assert json.loads(list(ir_writes.values())[0]) == result.ir_data
+    assert len(pos_writes) == 0

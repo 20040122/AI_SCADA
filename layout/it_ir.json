@@ -2,78 +2,79 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group_01",
+        "id": "air-tank-group",
         "region": "left",
         "unit": {
           "root": {
-            "id": "air_tank",
+            "id": "air-tank",
             "deviceType": "空气罐",
             "role": "root"
           },
           "attachments": [
             {
-              "id": "valve",
+              "id": "air-valve",
               "deviceType": "阀门",
               "role": "valve",
-              "relativeTo": "air_tank",
+              "relativeTo": "air-tank",
               "side": "top"
             },
             {
-              "id": "flowmeter_1",
+              "id": "air-flowmeter1",
               "deviceType": "流量计",
               "role": "meter",
-              "relativeTo": "valve",
+              "relativeTo": "air-valve",
               "side": "right"
             },
             {
-              "id": "pressure_sensor",
+              "id": "air-pressure",
               "deviceType": "压力传感器",
               "role": "sensor",
-              "relativeTo": "flowmeter_1",
+              "relativeTo": "air-flowmeter1",
               "side": "right"
             },
             {
-              "id": "flowmeter_2",
+              "id": "air-flowmeter2",
               "deviceType": "流量计",
               "role": "meter",
-              "relativeTo": "pressure_sensor",
+              "relativeTo": "air-pressure",
               "side": "right"
             }
           ]
         },
         "count": 1,
-        "gapHint": "tight",
+        "arrangement": "horizontal",
+        "gapHint": "normal",
         "topology": "single"
       },
       {
-        "id": "group_02",
+        "id": "nitrogen-group",
         "region": "right",
         "unit": {
           "root": {
-            "id": "nitrogen_tank",
+            "id": "n2-tank",
             "deviceType": "氮气罐",
             "role": "root"
           },
           "attachments": [
             {
-              "id": "valve",
+              "id": "n2-valve",
               "deviceType": "阀门",
               "role": "valve",
-              "relativeTo": "nitrogen_tank",
+              "relativeTo": "n2-tank",
               "side": "top"
             },
             {
-              "id": "flowmeter",
+              "id": "n2-flowmeter",
               "deviceType": "流量计",
               "role": "meter",
-              "relativeTo": "valve",
+              "relativeTo": "n2-valve",
               "side": "right"
             },
             {
-              "id": "pressure_sensor",
+              "id": "n2-pressure",
               "deviceType": "压力传感器",
               "role": "sensor",
-              "relativeTo": "flowmeter",
+              "relativeTo": "n2-flowmeter",
               "side": "right"
             }
           ]
@@ -81,91 +82,17 @@
         "count": 2,
         "arrangement": "vertical",
         "gapHint": "normal",
-        "topology": "single"
-      }
-    ],
-    "connections": [
-      {
-        "id": "c1",
-        "source": {
-          "group": "group_01",
-          "node": "air_tank"
-        },
-        "target": {
-          "group": "group_01",
-          "node": "valve"
-        }
-      },
-      {
-        "id": "c2",
-        "source": {
-          "group": "group_01",
-          "node": "valve"
-        },
-        "target": {
-          "group": "group_01",
-          "node": "flowmeter_1"
-        }
-      },
-      {
-        "id": "c3",
-        "source": {
-          "group": "group_01",
-          "node": "flowmeter_1"
-        },
-        "target": {
-          "group": "group_01",
-          "node": "pressure_sensor"
-        }
-      },
-      {
-        "id": "c4",
-        "source": {
-          "group": "group_01",
-          "node": "pressure_sensor"
-        },
-        "target": {
-          "group": "group_01",
-          "node": "flowmeter_2"
-        }
-      },
-      {
-        "id": "c5",
-        "source": {
-          "group": "group_02",
-          "node": "nitrogen_tank"
-        },
-        "target": {
-          "group": "group_02",
-          "node": "valve"
-        }
-      },
-      {
-        "id": "c6",
-        "source": {
-          "group": "group_02",
-          "node": "valve"
-        },
-        "target": {
-          "group": "group_02",
-          "node": "flowmeter"
-        }
-      },
-      {
-        "id": "c7",
-        "source": {
-          "group": "group_02",
-          "node": "flowmeter"
-        },
-        "target": {
-          "group": "group_02",
-          "node": "pressure_sensor"
-        }
+        "topology": "single",
+        "relativeTo": "air-tank-group",
+        "side": "right"
       }
     ],
     "constraints": {
       "routeStyle": "orthogonal",
-      "allowedDirections": [],
+      "allowedDirections": [
+        "horizontal",
+        "vertical"
+      ],
       "equalSpacing": false,
       "alignRepeated": true,
       "consistentBranches": true

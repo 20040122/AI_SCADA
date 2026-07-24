@@ -3,6 +3,7 @@ from fastapi import HTTPException
 
 from app.routers.canvas import canvas_layout
 from app.schemas import CanvasLayoutRequest
+from model.compute_position import convert_layout_file
 from model.generate_gird import (
     LayoutFile,
     StructuredPromptError,
@@ -16,17 +17,17 @@ from model.generate_gird import (
 VALID_PROMPT = """控件：3台冷却塔、4台冷却泵、3台冷水机组、4台冷冻泵。
 流程：冷却塔-冷却泵-冷水机组-冷冻泵；冷却塔、冷水机组和冷冻泵采用并联结构。
 结构：冷却塔布置在页面左侧，3台设备纵向排列；冷却泵布置在冷却塔右侧，4台设备纵向排列；3台冷水机组布置在页面中部并纵向排列；4台冷冻泵布置在页面右侧并纵向排列。
-要求：管道垂直或水平引出，并采用正交连接。相同设备和重复支路应保持等间距、上下对齐及结构一致。"""
+管道：管道垂直或水平引出，并采用正交连接。相同设备和重复支路应保持等间距、上下对齐及结构一致。"""
 
 GAS_PROMPT = """控件：1台空气罐、2台氮气罐、3个阀门、4台流量计以及3组压力传感器。
 流程：空气罐上方阀门-流量计-压力传感器-流量计，氮气罐上方阀门-流量计-压力传感器；空气供气支路与氮气供气支路相互独立，2套氮气供气支路采用上下并联、独立输出的结构。
 结构：多套独立系统与重复支路相结合的结构。空气罐及其出口管路布置在页面左侧，2台氮气罐布置在页面右侧，阀门、流量计和压力监测设备分别安装在各储气罐的出口管线上。2套氮气供气支路采用上下纵向排列和相同模板布局，氮气罐、阀门、流量计及压力传感器保持上下对齐；空气罐尺寸较大，作为主要气源设备单独布置在左侧，其流量监测设备沿出口管路横向排列。
-要求：各储气罐出口管路采用水平正交连接，阀门靠近储气罐出口布置，流量计和压力传感器按照气体流动方向依次设置；空气和氮气管路应保持相互独立，避免交叉连接。"""
+管道：各储气罐出口管路采用水平正交连接，阀门靠近储气罐出口布置，流量计和压力传感器按照气体流动方向依次设置；空气和氮气管路应保持相互独立，避免交叉连接。"""
 
 REPORTED_GAS_PROMPT = """控件：1台空气罐、2台氮气罐、3个阀门、4台流量计以及3个压力传感器
 流程：空气罐上方阀门-流量计-压力传感器-流量计，氮气罐上方阀门-流量计-压力传感器
 结构：2台氮气罐布置在页面右侧，阀门、流量计和压力监测设备分别安装在各储气罐的出口管线上，氮气供气支路采用上下纵向排列和相同模板布局，空气罐尺寸较大，作为主要气源设备单独布置在左侧，其流量监测设备沿出口管路横向排列
-要求：各储气罐出口管路采用水平正交连接，阀门靠近储气罐出口布置，流量计和压力传感器按照气体流动方向依次设置；空气和氮气管路应保持相互独立，避免交叉连接"""
+管道：各储气罐出口管路采用水平正交连接，阀门靠近储气罐出口布置，流量计和压力传感器按照气体流动方向依次设置；空气和氮气管路应保持相互独立，避免交叉连接"""
 
 
 def _layout_data(cooling_pump_count=4):
@@ -65,23 +66,6 @@ def _layout_data(cooling_pump_count=4):
                     "arrangement": "vertical",
                     "topology": "parallel",
                     "unit": {"root": {"id": "root", "deviceType": "冷冻泵"}},
-                },
-            ],
-            "connections": [
-                {
-                    "id": "flow-1",
-                    "source": {"group": "cooling-tower", "node": "root"},
-                    "target": {"group": "cooling-pump", "node": "root"},
-                },
-                {
-                    "id": "flow-2",
-                    "source": {"group": "cooling-pump", "node": "root"},
-                    "target": {"group": "chiller", "node": "root"},
-                },
-                {
-                    "id": "flow-3",
-                    "source": {"group": "chiller", "node": "root"},
-                    "target": {"group": "chilled-pump", "node": "root"},
                 },
             ],
             "constraints": {
@@ -129,15 +113,6 @@ def _gas_layout_data(flowmeter_count=1):
                     },
                 },
             ],
-            "connections": [
-                {"id": "air-1", "source": {"group": "air", "node": "tank"}, "target": {"group": "air", "node": "valve"}},
-                {"id": "air-2", "source": {"group": "air", "node": "valve"}, "target": {"group": "air", "node": "meter-in"}},
-                {"id": "air-3", "source": {"group": "air", "node": "meter-in"}, "target": {"group": "air", "node": "sensor"}},
-                {"id": "air-4", "source": {"group": "air", "node": "sensor"}, "target": {"group": "air", "node": "meter-out"}},
-                {"id": "nitrogen-1", "source": {"group": "nitrogen", "node": "tank"}, "target": {"group": "nitrogen", "node": "valve"}},
-                {"id": "nitrogen-2", "source": {"group": "nitrogen", "node": "valve"}, "target": {"group": "nitrogen", "node": "meter"}},
-                {"id": "nitrogen-3", "source": {"group": "nitrogen", "node": "meter"}, "target": {"group": "nitrogen", "node": "sensor"}},
-            ],
         }
     }
 
@@ -178,16 +153,13 @@ def test_layout_validation_accepts_repeated_branch_template_inventory_and_flow()
     assert errors == []
 
 
-def test_layout_validation_requires_each_flow_path_to_be_continuous():
-    data = _gas_layout_data()
-    data["layoutIntent"]["connections"].pop(5)
-    layout = LayoutFile.model_validate(data)
-
-    errors, _ = validate_layout_file(layout, parse_structured_prompt(GAS_PROMPT))
-
-    assert [(item.path, item.message) for item in errors] == [
-        ("layoutIntent.connections", "缺少流程连接：阀门-流量计")
-    ]
+def test_parse_structured_prompt_accepts_requirements_as_piping_alias():
+    prompt = """控件：3台冷却塔、4台冷却泵。
+流程：冷却塔-冷却泵。
+结构：冷却塔布置在页面左侧，3台设备纵向排列；冷却泵布置在冷却塔右侧，4台设备纵向排列。
+要求：采用正交连接。"""
+    source = parse_structured_prompt(prompt)
+    assert source.piping == "采用正交连接。"
 
 
 def test_layout_validation_rejects_wrong_repeated_branch_attachment_total():
@@ -204,7 +176,7 @@ def test_parse_structured_prompt_rejects_structure_count_conflict():
     prompt = """控件：3台冷却塔、4台冷却泵。
 流程：冷却塔-冷却泵。
 结构：冷却塔布置在页面左侧，3台设备纵向排列；冷却泵布置在冷却塔右侧，3台设备纵向排列。
-要求：采用正交连接。"""
+管道：采用正交连接。"""
 
     with pytest.raises(StructuredPromptError) as exc_info:
         parse_structured_prompt(prompt)
@@ -220,7 +192,7 @@ def test_parse_structured_prompt_requires_all_sections():
 
     assert [(item.path, item.message) for item in exc_info.value.errors] == [
         ("结构", "缺少段落"),
-        ("要求", "缺少段落"),
+        ("管道", "缺少段落"),
     ]
 
 
@@ -244,17 +216,15 @@ def test_layout_validation_rejects_llm_inventory_count_change():
     ]
 
 
-def test_layout_validation_requires_source_flow_and_parallel_topology():
+def test_layout_validation_requires_parallel_topology():
     data = _layout_data()
     data["layoutIntent"]["groups"][0]["topology"] = "single"
-    data["layoutIntent"]["connections"].pop()
     layout = LayoutFile.model_validate(data)
 
     errors, _ = validate_layout_file(layout, parse_structured_prompt(VALID_PROMPT))
 
     assert [(item.path, item.message) for item in errors] == [
         ("layoutIntent.groups[0].topology", "冷却塔必须声明为 parallel"),
-        ("layoutIntent.connections", "缺少流程连接：冷水机组-冷冻泵"),
     ]
 
 
@@ -332,43 +302,8 @@ async def test_generate_intent_sends_gas_flow_paths_and_accepts_branch_templates
     )
 
     request = __import__("json").loads(messages[1]["content"])
-    assert request["flowPaths"] == [
-        ["空气罐", "阀门", "流量计", "压力传感器", "流量计"],
-        ["氮气罐", "阀门", "流量计", "压力传感器"],
-    ]
+    assert "空气罐上方阀门-流量计-压力传感器-流量计" in request["flow"]
     assert layout.layoutIntent.groups[1].count == 2
-
-
-@pytest.mark.asyncio
-async def test_generate_intent_completes_reported_missing_attachment_connection():
-    models = []
-
-    async def fake_call(client, model, request_messages, **kwargs):
-        models.append(model)
-        data = _gas_layout_data()
-        data["layoutIntent"]["connections"].pop(4)
-        return type(
-            "Response",
-            (),
-            {"choices": [type("Choice", (), {"message": type("Message", (), {"content": __import__("json").dumps(data)})()})()]},
-        )()
-
-    layout = await generate_intent(
-        REPORTED_GAS_PROMPT,
-        [{"displayName": item} for item in ("空气罐", "氮气罐", "阀门", "流量计", "压力传感器")],
-        client=object(),
-        model="deepseek-v4-flash",
-        model_caller=fake_call,
-    )
-
-    assert models == ["deepseek-v4-flash"]
-    assert any(
-        connection.source.group == "nitrogen"
-        and connection.source.node == "tank"
-        and connection.target.group == "nitrogen"
-        and connection.target.node == "valve"
-        for connection in layout.layoutIntent.connections
-    )
 
 
 @pytest.mark.asyncio
@@ -417,7 +352,7 @@ async def test_generate_intent_rejects_invalid_source_before_calling_llm():
 
     with pytest.raises(StructuredPromptError):
         await generate_intent(
-            "控件：4台冷却泵。\n流程：冷却泵。\n结构：3台冷却泵纵向排列。\n要求：正交连接。",
+            "控件：4台冷却泵。\n流程：冷却泵。\n结构：3台冷却泵纵向排列。\n管道：正交连接。",
             [{"displayName": "冷却泵"}],
             client=object(),
             model="test-model",
@@ -442,3 +377,115 @@ async def test_canvas_layout_returns_structured_prompt_error_as_422():
     assert exc_info.value.detail == {
         "errors": [{"path": "结构.冷却泵.count", "message": "数量冲突"}]
     }
+
+
+HYDRAULIC_PROMPT = """控件：1台油箱、2台电机、4台液压泵、4个溢流阀、2个吸油过滤器、1个回油单向阀
+流程：溢流阀-液压泵-电机-吸油过滤器-回油单向阀-油箱
+结构：4个溢流阀纵向排列，每个溢流阀右侧连接对应各自的液压泵；4个液压泵纵向排列，液压泵1和液压泵2连接1号电机，液压泵3和液压泵4连接2号电机。两个电机纵向排列位于画面中央；液压泵1和液压泵2分别从上和下连接吸油过滤器1(在1号电机右侧)，液压泵3和液压泵4连接分别从上和下连接吸油过滤器2(在2号电机右侧)，俩个吸油过滤器同样纵向排布在电机的右侧；吸油过滤器1连接回油单向阀后连接油箱，吸油过滤器2直接连接油箱；油箱在画面的右下角
+管道：液压管路采用水平、垂直正交连接"""
+
+HYDRAULIC_VOCAB = [
+    {"displayName": "油箱"},
+    {"displayName": "电机"},
+    {"displayName": "液压泵"},
+    {"displayName": "溢流阀"},
+    {"displayName": "吸油过滤器"},
+    {"displayName": "回油单向阀"},
+]
+
+HYDRAULIC_INVENTORY = [
+    ("油箱", 1),
+    ("电机", 2),
+    ("液压泵", 4),
+    ("溢流阀", 4),
+    ("吸油过滤器", 2),
+    ("回油单向阀", 1),
+]
+
+
+def test_hydraulic_parse_structured_prompt():
+    source = parse_structured_prompt(HYDRAULIC_PROMPT)
+
+    assert [(item.deviceType, item.count) for item in source.inventory] == HYDRAULIC_INVENTORY
+    assert source.flowPaths == [
+        ["溢流阀", "液压泵", "电机", "吸油过滤器", "回油单向阀", "油箱"]
+    ]
+
+
+def _assert_hydraulic_groups_have_correct_counts(layout: LayoutFile):
+    totals = {}
+    for group in layout.layoutIntent.groups:
+        totals[group.unit.root.deviceType] = totals.get(group.unit.root.deviceType, 0) + group.count
+        for attachment in group.unit.attachments:
+            totals[attachment.deviceType] = (
+                totals.get(attachment.deviceType, 0)
+                + group.count * (attachment.count or 1)
+            )
+    for device_type, expected in HYDRAULIC_INVENTORY:
+        assert totals.get(device_type) == expected, (
+            f"{device_type}数量 {totals.get(device_type)} 与控件声明 {expected} 不一致"
+        )
+
+
+def test_hydraulic_rules_path_generates_correct_groups():
+    source = parse_structured_prompt(HYDRAULIC_PROMPT)
+    from model.layout_intent_rules import build_rule_layout
+    result = build_rule_layout(source)
+
+    assert result.data is not None
+    layout = LayoutFile.model_validate(result.data)
+
+    device_types = [group.unit.root.deviceType for group in layout.layoutIntent.groups]
+    assert device_types == ["溢流阀", "液压泵", "电机", "吸油过滤器", "回油单向阀", "油箱"]
+
+    assert len(layout.layoutIntent.groups) == 6
+    for group in layout.layoutIntent.groups:
+        assert group.unit.attachments == []
+
+    _assert_hydraulic_groups_have_correct_counts(layout)
+
+    for i in range(1, len(layout.layoutIntent.groups)):
+        assert layout.layoutIntent.groups[i].relativeTo == layout.layoutIntent.groups[i - 1].id
+        assert layout.layoutIntent.groups[i].side == "right"
+
+
+def test_hydraulic_validate_layout_file():
+    source = parse_structured_prompt(HYDRAULIC_PROMPT)
+    from model.layout_intent_rules import build_rule_layout
+    result = build_rule_layout(source)
+
+    layout = LayoutFile.model_validate(result.data)
+    errors, _ = validate_layout_file(layout, source)
+
+    assert errors == []
+
+
+@pytest.mark.asyncio
+async def test_hydraulic_generate_intent_uses_rules_not_llm():
+    async def fail_if_called(*args, **kwargs):
+        raise AssertionError("LLM must not be called for hydraulic prompt")
+
+    layout = await generate_intent(
+        HYDRAULIC_PROMPT,
+        HYDRAULIC_VOCAB,
+        client=object(),
+        model="deepseek-v4-flash",
+        model_caller=fail_if_called,
+    )
+
+    device_types = [group.unit.root.deviceType for group in layout.layoutIntent.groups]
+    assert device_types == ["溢流阀", "液压泵", "电机", "吸油过滤器", "回油单向阀", "油箱"]
+    _assert_hydraulic_groups_have_correct_counts(layout)
+
+
+def test_hydraulic_convert_layout_file():
+    source = parse_structured_prompt(HYDRAULIC_PROMPT)
+    from model.layout_intent_rules import build_rule_layout
+    result = build_rule_layout(source)
+
+    controls = [{"displayName": name, "image": f"{name}.json", "width": 80, "height": 80} for name, _ in HYDRAULIC_INVENTORY]
+
+    nodes = convert_layout_file(result.data, controls)
+
+    assert len(nodes) == sum(count for _, count in HYDRAULIC_INVENTORY)
+    assert all(node["c"] == "ht.Node" for node in nodes)

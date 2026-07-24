@@ -1,4 +1,3 @@
-import argparse
 import asyncio
 import json
 import logging
@@ -16,7 +15,6 @@ if str(_project_root) not in sys.path:
 from pydantic import BaseModel, Field, ValidationError
 from openai import APITimeoutError
 
-from data.sqlite.material_db import MaterialDB
 from model.canva_agent import _client
 from model.layout_agent import _llm_text, _parse_json_lenient
 
@@ -71,18 +69,6 @@ class LayoutGroup(BaseModel):
     side: Optional[Side] = None
 
 
-class Endpoint(BaseModel):
-    group: str
-    node: str
-    port: Optional[str] = None
-
-
-class Connection(BaseModel):
-    id: str
-    source: Endpoint
-    target: Endpoint
-
-
 class LayoutConstraints(BaseModel):
     routeStyle: Optional[RouteStyle] = None
     allowedDirections: List[Direction] = Field(default_factory=list)
@@ -93,7 +79,6 @@ class LayoutConstraints(BaseModel):
 
 class LayoutIntent(BaseModel):
     groups: List[LayoutGroup]
-    connections: List[Connection] = Field(default_factory=list)
     constraints: LayoutConstraints = Field(default_factory=LayoutConstraints)
 
 
@@ -118,7 +103,7 @@ class StructuredLayoutPrompt:
     inventory: List[InventoryItem]
     flow: str
     structure: str
-    requirements: str
+    piping: str
     flowPaths: List[List[str]]
     parallelDevices: List[str]
 
@@ -152,7 +137,7 @@ async def _call_intent_model(client, model, messages, **kwargs):
         raise IntentModelTimeoutError("布局模型请求超时") from exc
 
 
-_SECTION_PATTERN = re.compile(r"(?m)^\s*(控件|流程|结构|要求)\s*[：:]")
+_SECTION_PATTERN = re.compile(r"(?m)^\s*(控件|流程|结构|管道|要求)\s*[：:]")
 _COUNT_PATTERN = re.compile(r"(\d+|[一二三四五六七八九十]+)\s*(?:台|个|组)")
 _CHINESE_NUMBERS = {
     "一": 1,
@@ -193,7 +178,9 @@ def _split_sections(prompt: str) -> dict:
             errors.append(ValidationErrorItem(path=name, message="段落不能为空"))
         else:
             sections[name] = content
-    for name in ("控件", "流程", "结构", "要求"):
+    if "要求" in sections and "管道" not in sections:
+        sections["管道"] = sections.pop("要求")
+    for name in ("控件", "流程", "结构", "管道"):
         if name not in sections and not any(item.path == name for item in errors):
             errors.append(ValidationErrorItem(path=name, message="缺少段落"))
     if errors:
@@ -282,7 +269,7 @@ def parse_structured_prompt(prompt: str) -> StructuredLayoutPrompt:
         inventory=inventory,
         flow=sections["流程"],
         structure=sections["结构"],
-        requirements=sections["要求"],
+        piping=sections["管道"],
         flowPaths=flow_paths,
         parallelDevices=_parallel_devices(sections["流程"], inventory),
     )
@@ -412,36 +399,6 @@ def validate_layout_file(
             )
         )
 
-    connections = file.layoutIntent.connections
-    if connections:
-        conn_ids: set = set()
-        for ci, conn in enumerate(connections):
-            cp = f"layoutIntent.connections[{ci}]"
-            if conn.id in conn_ids:
-                errors.append(
-                    ValidationErrorItem(
-                        path=f"{cp}.id", message=f"connection id 重复：{conn.id}"
-                    )
-                )
-            conn_ids.add(conn.id)
-            for ep_name, ep in (("source", conn.source), ("target", conn.target)):
-                epp = f"{cp}.{ep_name}"
-                if ep.group not in group_ids:
-                    errors.append(
-                        ValidationErrorItem(
-                            path=f"{epp}.group",
-                            message=f"引用了不存在的 group：{ep.group}",
-                        )
-                    )
-                    continue
-                if ep.node not in group_node_ids.get(ep.group, set()):
-                    errors.append(
-                        ValidationErrorItem(
-                            path=f"{epp}.node",
-                            message=f"引用了 group {ep.group} 内不存在的节点：{ep.node}",
-                        )
-                    )
-
     if source is not None:
         groups_by_device = {}
         for gi, group in enumerate(groups):
@@ -508,88 +465,7 @@ def validate_layout_file(
                         message=f"{device_type}必须声明为 parallel",
                     )
                 )
-        adjacency = {}
-        for connection in connections:
-            source_endpoint = (connection.source.group, connection.source.node)
-            target_endpoint = (connection.target.group, connection.target.node)
-            adjacency.setdefault(source_endpoint, set()).add(target_endpoint)
-        missing_flow_connections = []
-        seen_missing_flow_connections = set()
-        for flow_path in source.flowPaths:
-            current_endpoints = {
-                endpoint
-                for endpoint, device_type in node_device_types.items()
-                if device_type == flow_path[0]
-            }
-            for source_device, target_device in zip(flow_path, flow_path[1:]):
-                next_endpoints = {
-                    target_endpoint
-                    for source_endpoint in current_endpoints
-                    for target_endpoint in adjacency.get(source_endpoint, set())
-                    if node_device_types.get(target_endpoint) == target_device
-                }
-                if next_endpoints:
-                    current_endpoints = next_endpoints
-                    continue
-                missing_connection = (source_device, target_device)
-                if missing_connection not in seen_missing_flow_connections:
-                    seen_missing_flow_connections.add(missing_connection)
-                    missing_flow_connections.append(missing_connection)
-                break
-        for source_device, target_device in missing_flow_connections:
-            errors.append(
-                ValidationErrorItem(
-                    path="layoutIntent.connections",
-                    message=f"缺少流程连接：{source_device}-{target_device}",
-                )
-            )
-
     return errors, warnings
-
-
-def _complete_attachment_flow_connections(
-    file: LayoutFile, source: StructuredLayoutPrompt
-) -> None:
-    required_pairs = {
-        pair
-        for flow_path in source.flowPaths
-        for pair in zip(flow_path, flow_path[1:])
-    }
-    connections = file.layoutIntent.connections
-    existing_edges = {
-        (
-            connection.source.group,
-            connection.source.node,
-            connection.target.group,
-            connection.target.node,
-        )
-        for connection in connections
-    }
-    used_ids = {connection.id for connection in connections}
-    next_index = 1
-    for group in file.layoutIntent.groups:
-        node_types = {group.unit.root.id: group.unit.root.deviceType}
-        for attachment in group.unit.attachments:
-            source_type = node_types.get(attachment.relativeTo)
-            node_types[attachment.id] = attachment.deviceType
-            if (source_type, attachment.deviceType) not in required_pairs:
-                continue
-            edge = (group.id, attachment.relativeTo, group.id, attachment.id)
-            if edge in existing_edges:
-                continue
-            while f"auto-flow-{next_index}" in used_ids:
-                next_index += 1
-            connection_id = f"auto-flow-{next_index}"
-            next_index += 1
-            used_ids.add(connection_id)
-            existing_edges.add(edge)
-            connections.append(
-                Connection(
-                    id=connection_id,
-                    source=Endpoint(group=group.id, node=attachment.relativeTo),
-                    target=Endpoint(group=group.id, node=attachment.id),
-                )
-            )
 
 
 def _has_group_placement_cycle(groups: List[LayoutGroup]) -> bool:
@@ -625,7 +501,7 @@ def _build_system_prompt(vocab: List[str], example: Optional[str]) -> str:
     parts.append("输出格式严格为 {\"layoutIntent\":{\"groups\":[...]}}，只输出 JSON,不要解释或 markdown。")
     parts.append("数据结构：")
     parts.append("- LayoutFile: { layoutIntent: LayoutIntent }")
-    parts.append("- LayoutIntent: { groups: LayoutGroup[], connections?: Connection[], constraints?: LayoutConstraints }")
+    parts.append("- LayoutIntent: { groups: LayoutGroup[], constraints?: LayoutConstraints }")
     parts.append(
         '- LayoutGroup: { id: string, region: "left"|"right"|"center", unit: LayoutUnit, count: number, arrangement?: "vertical"|"horizontal"|"grid", gapHint?: "tight"|"normal"|"loose", columns?: number, rows?: number, order?: "row-major"|"col-major", topology?: "single"|"series"|"parallel", relativeTo?: string, side?: "top"|"right"|"bottom"|"left" }'
     )
@@ -634,8 +510,6 @@ def _build_system_prompt(vocab: List[str], example: Optional[str]) -> str:
     parts.append(
         '- AttachmentNode: { id: string, deviceType: string, role?: "root"|"valve"|"pipe"|"meter"|"sensor"|"default", relativeTo: string, side: "top"|"right"|"bottom"|"left", count?: number }'
     )
-    parts.append("- Connection: { id: string, source: Endpoint, target: Endpoint }")
-    parts.append("- Endpoint: { group: string, node: string, port?: string }")
     parts.append('- LayoutConstraints: { routeStyle?: "direct"|"orthogonal", allowedDirections?: ("horizontal"|"vertical")[], equalSpacing?: boolean, alignRepeated?: boolean, consistentBranches?: boolean }')
     parts.append("规则：")
     parts.append("1. groups 不能为空。")
@@ -648,13 +522,11 @@ def _build_system_prompt(vocab: List[str], example: Optional[str]) -> str:
     parts.append("8. region 只能是 left/right/center；side 只能是 top/right/bottom/left。")
     parts.append("9. arrangement 可取 \"grid\"；当用户描述出现 M行N列/M×N/矩阵/二维 排列时，按提示词抽取到的数值填写 rows 和 columns（至少填其一且 >= 1）；若用户只说列数则只填 columns，只说行数则只填 rows。")
     parts.append("10. order 仅在 arrangement=grid 时有意义，默认 row-major。")
-    parts.append("11. connections 可选；若存在，connection.id 必须唯一，source.group/target.group 必须引用已声明的 group.id，source.node/target.node 必须是该 group 内 root.id 或 attachment.id。")
-    parts.append("12. 同一 group 内的节点 id 必须唯一；不同 group 之间 id 可重复，引用时用 {group, node} 组合定位。")
-    parts.append('13. role 可选，取值 "root"|"valve"|"pipe"|"meter"|"sensor"|"default"；root 节点可不标（自动按 root 处理）；附件节点建议标注 role 以确定尺寸约束，未标则按 deviceType 关键词推断，仍无法识别时按 default。')
-    parts.append("14. user message 中 inventory 是设备和数量的唯一真值；设备可作为 root 或 attachment，所有 group.count 和 attachment.count 展开后的总数必须与 inventory 一致。")
-    parts.append("15. flowPaths 中每条路径的相邻设备都必须生成 connections；连接可位于同一 group 内；并联重复支路映射为 topology=parallel，不展开实例级连接。")
-    parts.append("16. 相对位置映射为 relativeTo 和 side；正交、方向、等间距、对齐、支路一致性映射为 constraints。")
-    parts.append("17. 主流程从左到右排列时，首组作为锚点；每个后续 group 必须通过 relativeTo 引用前一组并声明 side=right，即使它们都属于 center 区域。不要让多个流程组仅因 region=center 而共用一列。")
+    parts.append("11. 同一 group 内的节点 id 必须唯一；不同 group 之间 id 可重复。")
+    parts.append('12. role 可选，取值 "root"|"valve"|"pipe"|"meter"|"sensor"|"default"；root 节点可不标（自动按 root 处理）；附件节点建议标注 role 以确定尺寸约束，未标则按 deviceType 关键词推断，仍无法识别时按 default。')
+    parts.append("13. user message 中 inventory 是设备和数量的唯一真值；设备可作为 root 或 attachment，所有 group.count 和 attachment.count 展开后的总数必须与 inventory 一致。")
+    parts.append("14. 相对位置映射为 relativeTo 和 side；正交、方向、等间距、对齐、支路一致性映射为 constraints。")
+    parts.append("15. 主流程从左到右排列时，首组作为锚点；每个后续 group 必须通过 relativeTo 引用前一组并声明 side=right，即使它们都属于 center 区域。不要让多个流程组仅因 region=center 而共用一列。")
     if vocab:
         parts.append("可用设备类型（deviceType 必须从下列选取，不要生造）：")
         parts.append("、".join(vocab))
@@ -686,10 +558,9 @@ def _build_user_prompt(source: StructuredLayoutPrompt) -> str:
                 {"deviceType": item.deviceType, "count": item.count}
                 for item in source.inventory
             ],
-            "flowPaths": source.flowPaths,
             "flow": source.flow,
             "structure": source.structure,
-            "requirements": source.requirements,
+            "piping": source.piping,
         },
         ensure_ascii=False,
     )
@@ -763,7 +634,6 @@ async def generate_intent(
                 f"布局模型输出不符合格式：{details}", text
             ) from exc
 
-        _complete_attachment_flow_connections(layout_file, source)
         errors, warnings = validate_layout_file(layout_file, source)
         if errors:
             details = "; ".join(f"{item.path}: {item.message}" for item in errors)
@@ -790,7 +660,7 @@ async def generate_intent(
         messages.append(
             {
                 "role": "user",
-                "content": f"上一次输出校验失败：{exc}。请修正后只输出完整 JSON。",
+                "content": f"上一次输出校验失败：{exc}。如果错误来自 group.count * attachment.count 超过控件声明，请拆成独立 root groups，不要通过 attachment 表达共享设备。请修正后只输出完整 JSON。",
             }
         )
         try:
@@ -807,53 +677,4 @@ async def generate_intent(
     return layout_file
 
 
-def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        prog="generate_gird", description="根据提示词生成布局意图 intent.json"
-    )
-    parser.add_argument("prompt", nargs="?", help="布局需求描述；未提供时从 stdin 读取")
-    parser.add_argument(
-        "--output",
-        default="layout/intent_ir.json",
-    )
-    return parser.parse_args(argv)
 
-
-def main(argv: Optional[List[str]] = None) -> int:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        stream=sys.stderr,
-    )
-    args = _parse_args(argv)
-    prompt = args.prompt
-    if not prompt:
-        prompt = sys.stdin.read().strip()
-    if not prompt:
-        print("错误：未提供提示词", file=sys.stderr)
-        return 1
-    async def run() -> int:
-        db = MaterialDB()
-        await db.init_query_results_db()
-        try:
-            materials = await db.list_query_results("")
-            layout_file = await generate_intent(prompt, materials)
-            output_path = Path(args.output).resolve()
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            output_path.write_text(
-                json.dumps(layout_file.model_dump(exclude_none=True), ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-            print(f"已写入 {output_path}")
-            return 0
-        except (StructuredPromptError, ValueError) as exc:
-            print(f"错误：{exc}", file=sys.stderr)
-            return 1
-        finally:
-            await db.close()
-
-    return asyncio.run(run())
-
-
-if __name__ == "__main__":
-    sys.exit(main())

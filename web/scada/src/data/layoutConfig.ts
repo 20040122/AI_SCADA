@@ -49,7 +49,6 @@ export const layoutDerivedRules = [
   "group.count >= 1",
   "当 arrangement=grid 时，columns 或 rows 至少一个 >= 1，且 columns*rows >= count",
   "attachment.relativeTo 必须引用本组已声明的节点",
-  "connection.id 必须唯一，source/target.group 必须存在",
   "角色尺寸约束：root(120-180x120-260)、pipe(80-180x20-50)、valve(40-80x40-80)、meter(50-100x50-100)、sensor(50-110x40-90)",
 ];
 
@@ -68,7 +67,6 @@ export const layoutSampleOk = {
         gapHint: "normal",
       },
     ],
-    connections: [{ id: "conn1", source: { group: "group1", node: "valve_1" }, target: { group: "group1", node: "sensor_1" } }],
   },
 };
 
