@@ -16,6 +16,12 @@ from app.schemas import (
 from model.layout_agent import LayoutAgent
 from model.compute_position import MissingMaterialError
 from model.generate_gird import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
+from model.get_connection import ConnectionModelError as PipingModelError
+from model.get_connection import ConnectionModelTimeoutError as PipingModelTimeoutError
+from model.get_connection import ConnectionModelUnavailableError as PipingModelUnavailableError
+from model.get_connection import ConnectionValidationError as PipingValidationError
+from model.get_connection import TopologyMismatchError
+from model.get_connection import PipingSectionError
 from model.refine_agent import (
     RefineAgent,
     RefineInputError,
@@ -50,7 +56,15 @@ async def canvas_layout(
                 ]
             },
         ) from exc
+    except (PipingValidationError, TopologyMismatchError, PipingSectionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except IntentModelOutputError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except PipingModelUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except PipingModelTimeoutError as exc:
+        raise HTTPException(status_code=504, detail=str(exc)) from exc
+    except PipingModelError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except IntentModelUnavailableError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc

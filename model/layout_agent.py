@@ -25,6 +25,7 @@ from data.sqlite.material_db import MaterialDB
 logger = logging.getLogger(__name__)
 
 LAYOUT_DIR = _project_root / "layout"
+_LOCK = asyncio.Lock()
 
 @dataclass
 class LayoutResult:
@@ -109,12 +110,6 @@ class LayoutAgent:
         )
         canvas, layout_file = await asyncio.gather(canvas_task, intent_task)
         ir_data = layout_file.model_dump(exclude_none=True)
-        ir_path = LAYOUT_DIR / "it_ir.json"
-        ir_path.parent.mkdir(parents=True, exist_ok=True)
-        ir_path.write_text(
-            json.dumps(ir_data, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
 
         logger.info("Step 3: 从 query_results 计算坐标...")
         nodes = convert_layout_file(ir_data, materials, width, height)
@@ -127,7 +122,16 @@ class LayoutAgent:
                 encoding="utf-8",
             )
 
-        logger.info("Step 4: 拼装最终 JSON...")
+        logger.info("Step 4: 生成管线连接...")
+        from model.get_connection import (
+            generate_connections,
+        )
+
+        pipe_data = await generate_connections(
+            query, nodes, self._client, self._model, ir_data
+        )
+
+        logger.info("Step 5: 拼装最终 JSON...")
         out = deepcopy(canvas)
         d = list(out.get("d", []))
 
@@ -160,6 +164,28 @@ class LayoutAgent:
         errors = await _schema_validate(out)
         if errors:
             logger.warning("schema 校验失败: %s", errors)
+
+        async with _LOCK:
+            LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
+            for filename, data in [
+                ("it_ir.json", ir_data),
+                ("pt_ir.json", nodes),
+            ]:
+                path = LAYOUT_DIR / filename
+                tmp = path.with_suffix(".tmp")
+                tmp.write_text(
+                    json.dumps(data, ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
+                tmp.replace(path)
+            if pipe_data is not None:
+                pipe_path = LAYOUT_DIR / "pipe.json"
+                tmp = pipe_path.with_suffix(".tmp")
+                tmp.write_text(
+                    json.dumps(pipe_data, ensure_ascii=False, indent=2),
+                    encoding="utf-8",
+                )
+                tmp.replace(pipe_path)
 
         return LayoutResult(
             json_data=out,

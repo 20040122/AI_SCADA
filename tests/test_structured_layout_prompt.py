@@ -5,6 +5,7 @@ from app.routers.canvas import canvas_layout
 from app.schemas import CanvasLayoutRequest
 from model.compute_position import convert_layout_file
 from model.generate_gird import (
+    IntentModelOutputError,
     LayoutFile,
     StructuredPromptError,
     ValidationErrorItem,
@@ -153,13 +154,7 @@ def test_layout_validation_accepts_repeated_branch_template_inventory_and_flow()
     assert errors == []
 
 
-def test_parse_structured_prompt_accepts_requirements_as_piping_alias():
-    prompt = """控件：3台冷却塔、4台冷却泵。
-流程：冷却塔-冷却泵。
-结构：冷却塔布置在页面左侧，3台设备纵向排列；冷却泵布置在冷却塔右侧，4台设备纵向排列。
-要求：采用正交连接。"""
-    source = parse_structured_prompt(prompt)
-    assert source.piping == "采用正交连接。"
+
 
 
 def test_layout_validation_rejects_wrong_repeated_branch_attachment_total():
@@ -192,7 +187,6 @@ def test_parse_structured_prompt_requires_all_sections():
 
     assert [(item.path, item.message) for item in exc_info.value.errors] == [
         ("结构", "缺少段落"),
-        ("管道", "缺少段落"),
     ]
 
 
@@ -307,42 +301,29 @@ async def test_generate_intent_sends_gas_flow_paths_and_accepts_branch_templates
 
 
 @pytest.mark.asyncio
-async def test_generate_intent_retries_semantic_output_with_pro_model():
+async def test_generate_intent_raises_on_invalid_output_no_pro_fallback():
     models = []
-    requests = []
-    outputs = {}
 
     async def fake_call(client, model, request_messages, **kwargs):
         models.append(model)
-        requests.append([dict(message) for message in request_messages])
         data = _gas_layout_data(flowmeter_count=2)
-        if model == "deepseek-v4-pro":
-            data = _gas_layout_data()
         output = __import__("json").dumps(data)
-        outputs[model] = output
         return type(
             "Response",
             (),
             {"choices": [type("Choice", (), {"message": type("Message", (), {"content": output})()})()]},
         )()
 
-    layout = await generate_intent(
-        GAS_PROMPT,
-        [{"displayName": item} for item in ("空气罐", "氮气罐", "阀门", "流量计", "压力传感器")],
-        client=object(),
-        model="deepseek-v4-flash",
-        model_caller=fake_call,
-    )
+    with pytest.raises(IntentModelOutputError, match="数量 6 与控件声明 4 不一致"):
+        await generate_intent(
+            GAS_PROMPT,
+            [{"displayName": item} for item in ("空气罐", "氮气罐", "阀门", "流量计", "压力传感器")],
+            client=object(),
+            model="deepseek-v4-flash",
+            model_caller=fake_call,
+        )
 
-    assert models == ["deepseek-v4-flash", "deepseek-v4-pro"]
-    assert [message["role"] for message in requests[1]] == [
-        "system",
-        "user",
-        "assistant",
-        "user",
-    ]
-    assert requests[1][2]["content"] == outputs["deepseek-v4-flash"]
-    assert layout.layoutIntent.groups[1].unit.root.deviceType == "氮气罐"
+    assert models == ["deepseek-v4-flash"]
 
 
 @pytest.mark.asyncio
@@ -489,3 +470,134 @@ def test_hydraulic_convert_layout_file():
 
     assert len(nodes) == sum(count for _, count in HYDRAULIC_INVENTORY)
     assert all(node["c"] == "ht.Node" for node in nodes)
+
+
+RULE_PROMPT = """控件：3台冷却塔、3台冷却泵、3台冷水机、4台冷冻泵。
+流程：冷却塔-冷却泵-冷水机-冷冻泵；冷却塔和冷水机采用并联结构。
+结构：冷却塔布置在页面左侧，3台设备纵向排列；冷却泵布置在冷却塔右侧，3台设备纵向排列；冷水机布置在冷却泵右侧，3台设备纵向排列；冷冻泵布置在冷水机右侧，4台设备纵向排列。
+管道：管道垂直或水平引出，并采用正交连接。"""
+
+RULE_VOCAB = [{"displayName": name} for name in ("冷却塔", "冷却泵", "冷水机", "冷冻泵")]
+
+
+def test_rule_layout_generates_correct_groups():
+    from model.layout_intent_rules import build_rule_layout
+    source = parse_structured_prompt(RULE_PROMPT)
+    result = build_rule_layout(source)
+
+    assert result.data is not None
+    layout = LayoutFile.model_validate(result.data)
+    groups = layout.layoutIntent.groups
+
+    assert len(groups) == 4
+    device_types = [g.unit.root.deviceType for g in groups]
+    assert device_types == ["冷却塔", "冷却泵", "冷水机", "冷冻泵"]
+
+    assert groups[0].region == "left"
+    assert groups[0].count == 3
+    assert groups[0].arrangement == "vertical"
+
+    assert groups[1].region == "right"
+    assert groups[1].count == 3
+    assert groups[1].arrangement == "vertical"
+    assert groups[1].relativeTo == "group-1"
+    assert groups[1].side == "right"
+
+    assert groups[2].region == "right"
+    assert groups[2].count == 3
+    assert groups[2].arrangement == "vertical"
+    assert groups[2].relativeTo == "group-2"
+    assert groups[2].side == "right"
+
+    assert groups[3].region == "right"
+    assert groups[3].count == 4
+    assert groups[3].arrangement == "vertical"
+    assert groups[3].relativeTo == "group-3"
+    assert groups[3].side == "right"
+
+
+def test_rule_layout_validate():
+    from model.layout_intent_rules import build_rule_layout
+    source = parse_structured_prompt(RULE_PROMPT)
+    result = build_rule_layout(source)
+
+    layout = LayoutFile.model_validate(result.data)
+    errors, _ = validate_layout_file(layout, source)
+    assert errors == []
+
+
+@pytest.mark.asyncio
+async def test_rule_generate_intent_uses_rules_not_llm():
+    async def fail_if_called(*args, **kwargs):
+        raise AssertionError("LLM must not be called for rule prompt")
+
+    layout = await generate_intent(
+        RULE_PROMPT,
+        RULE_VOCAB,
+        client=object(),
+        model="deepseek-v4-flash",
+        model_caller=fail_if_called,
+    )
+    groups = layout.layoutIntent.groups
+    assert len(groups) == 4
+    assert [g.unit.root.deviceType for g in groups] == ["冷却塔", "冷却泵", "冷水机", "冷冻泵"]
+
+
+@pytest.mark.asyncio
+async def test_canvas_layout_returns_intent_unavailable_as_503():
+    class Agent503:
+        async def generate(self, **kwargs):
+            from model.generate_gird import IntentModelUnavailableError
+            raise IntentModelUnavailableError("布局模型不可用")
+
+    request = CanvasLayoutRequest(query="测试", title="测试")
+
+    with pytest.raises(HTTPException) as exc_info:
+        await canvas_layout(request, agent=Agent503())
+
+    assert exc_info.value.status_code == 503
+
+
+@pytest.mark.asyncio
+async def test_canvas_layout_returns_intent_timeout_as_504():
+    class Agent504:
+        async def generate(self, **kwargs):
+            from model.generate_gird import IntentModelTimeoutError
+            raise IntentModelTimeoutError("布局模型请求超时")
+
+    request = CanvasLayoutRequest(query="测试", title="测试")
+
+    with pytest.raises(HTTPException) as exc_info:
+        await canvas_layout(request, agent=Agent504())
+
+    assert exc_info.value.status_code == 504
+
+
+@pytest.mark.asyncio
+async def test_canvas_layout_returns_piping_unavailable_as_503():
+    class Agent503:
+        async def generate(self, **kwargs):
+            from model.get_connection import ConnectionModelUnavailableError
+            raise ConnectionModelUnavailableError("连接模型不可用")
+
+    request = CanvasLayoutRequest(query="测试", title="测试")
+
+    with pytest.raises(HTTPException) as exc_info:
+        await canvas_layout(request, agent=Agent503())
+
+    assert exc_info.value.status_code == 503
+
+
+@pytest.mark.asyncio
+async def test_canvas_layout_returns_piping_timeout_as_504():
+    class Agent504:
+        async def generate(self, **kwargs):
+            from model.get_connection import ConnectionModelTimeoutError
+            raise ConnectionModelTimeoutError("连接模型请求超时")
+
+    request = CanvasLayoutRequest(query="测试", title="测试")
+
+    with pytest.raises(HTTPException) as exc_info:
+        await canvas_layout(request, agent=Agent504())
+
+    assert exc_info.value.status_code == 504
