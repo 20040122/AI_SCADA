@@ -33,6 +33,7 @@ class LayoutResult:
     content_rect: dict
     ir_data: dict
     nodes: list[dict]
+    pipe_data: Optional[dict] = None
 
 
 def _llm_text(resp) -> str:
@@ -192,6 +193,7 @@ class LayoutAgent:
             content_rect=out["contentRect"],
             ir_data=ir_data,
             nodes=nodes,
+            pipe_data=pipe_data,
         )
 
 

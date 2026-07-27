@@ -34,6 +34,7 @@ export function extractNodesFromJsonData(jsonData: LayoutJsonData | null): Canva
       width: n.p.width || 60,
       height: n.p.height || 40,
       color: hashColor(n.p.displayName || ""),
+      a: n.a ? { ...n.a } : undefined,
     }));
 }
 

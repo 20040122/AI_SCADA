@@ -83,6 +83,7 @@ export interface LayoutGenerateResponse {
   zones: LayoutZone[];
   missing_controls: string[];
   file_name: string;
+  pipe_data?: PipeData | null;
 }
 
 export interface RefineRequest {
@@ -96,11 +97,13 @@ export interface RefineResponse {
   message: string;
 }
 
+export type WorkflowStatus = "idle" | "running" | "success" | "error";
+
 export interface WorkflowStep {
   id: number;
   name: string;
   detail: string;
-  status: "wait" | "run" | "done" | "skip";
+  status: "wait" | "done";
 }
 
 export interface CanvasNode {
@@ -112,4 +115,22 @@ export interface CanvasNode {
   width: number;
   height: number;
   color: string;
+  a?: Record<string, unknown>;
+}
+
+export interface PipeConnectionEnd {
+  group: string;
+  node: string;
+  instance: number;
+  port: string;
+}
+
+export interface PipeConnection {
+  id: string;
+  source: PipeConnectionEnd;
+  target: PipeConnectionEnd;
+}
+
+export interface PipeData {
+  connections: PipeConnection[];
 }

@@ -74,6 +74,7 @@ class CanvasLayoutResponse(BaseModel):
     zones: list[LayoutZoneResponse]
     missing_controls: list[str] = []
     file_name: str = ""
+    pipe_data: Optional[dict[str, Any]] = None
 
 
 class JsonPatchOperation(BaseModel):

@@ -87,6 +87,7 @@ async def canvas_layout(
         zones=[],
         missing_controls=[],
         file_name=file_name,
+        pipe_data=result.pipe_data,
     )
     return ApiResponse(data=resp.model_dump())
 

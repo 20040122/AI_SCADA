@@ -1,6 +1,9 @@
-import type { CanvasNode, DecorationNode } from "../../types/layout";
-import { memo, useEffect, useState, useRef } from "react";
+import type { CanvasNode, DecorationNode, PipeData, PipeConnection } from "../../types/layout";
+import { memo, useEffect, useState, useRef, useMemo } from "react";
 import { toPngUrl } from "../../utils/assetPreview";
+import { partitionDecorationsForPipes } from "../../utils/canvasLayers";
+import { routePipe } from "../../utils/pipeRouter";
+import type { Obstacle } from "../../utils/pipeRouter";
 
 const MIN_ZOOM = 0.35;
 const MAX_ZOOM = 2;
@@ -166,7 +169,154 @@ const DecorationText = memo(function DecorationText({ node, scale, offsetX, offs
   );
 });
 
-const CanvasContent = memo(function CanvasContent({ nodes, decorations, canvasW, canvasH, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom }: {
+const LEAD = 20;
+const ARROW_THRESHOLD = 40;
+const ARROW_SIZE = 8;
+
+function getEdgeCenter(node: CanvasNode, port: string): { x: number; y: number } {
+  switch (port) {
+    case "right": return { x: node.x + node.width / 2, y: node.y };
+    case "left": return { x: node.x - node.width / 2, y: node.y };
+    case "top": return { x: node.x, y: node.y - node.height / 2 };
+    case "bottom": return { x: node.x, y: node.y + node.height / 2 };
+    default: return { x: node.x, y: node.y };
+  }
+}
+
+function getLeadEnd(edge: { x: number; y: number }, port: string): { x: number; y: number } {
+  switch (port) {
+    case "right": return { x: edge.x + LEAD, y: edge.y };
+    case "left": return { x: edge.x - LEAD, y: edge.y };
+    case "top": return { x: edge.x, y: edge.y - LEAD };
+    case "bottom": return { x: edge.x, y: edge.y + LEAD };
+    default: return edge;
+  }
+}
+
+interface Seg { x1: number; y1: number; x2: number; y2: number; }
+
+interface PipeArrow { x: number; y: number; angle: number; }
+
+function computeArrows(segments: Seg[]): PipeArrow[] {
+  const arrows: PipeArrow[] = [];
+  for (const seg of segments) {
+    const dx = seg.x2 - seg.x1;
+    const dy = seg.y2 - seg.y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len >= ARROW_THRESHOLD) {
+      arrows.push({
+        x: (seg.x1 + seg.x2) / 2,
+        y: (seg.y1 + seg.y2) / 2,
+        angle: Math.atan2(dy, dx) * 180 / Math.PI,
+      });
+    }
+  }
+  return arrows;
+}
+
+const PipesLayer = memo(function PipesLayer({ pipeData, nodes, canvasW, canvasH, scale, offsetX, offsetY }: {
+  pipeData: PipeData;
+  nodes: CanvasNode[];
+  canvasW: number;
+  canvasH: number;
+  scale: number;
+  offsetX: number;
+  offsetY: number;
+}) {
+  const nodeMap = useMemo(() => {
+    const map = new Map<string, CanvasNode>();
+    for (const node of nodes) {
+      const a = node.a;
+      if (!a) continue;
+      const g = String(a["layout.group"] ?? "");
+      const n = String(a["layout.node"] ?? "");
+      const inst = a["layout.instance"];
+      if (g && n && inst != null) {
+        map.set(`${g}|${n}|${inst}`, node);
+      }
+    }
+    return map;
+  }, [nodes]);
+
+  const { unique, duplicateCount } = useMemo(() => {
+    const seen = new Set<string>();
+    const unique: PipeConnection[] = [];
+    let dup = 0;
+    for (const conn of pipeData.connections) {
+      const key = `${conn.source.group}|${conn.source.node}|${conn.source.instance}|${conn.source.port}|${conn.target.group}|${conn.target.node}|${conn.target.instance}|${conn.target.port}`;
+      if (seen.has(key)) dup++;
+      else { seen.add(key); unique.push(conn); }
+    }
+    return { unique, duplicateCount: dup };
+  }, [pipeData]);
+
+  const scaledW = canvasW * scale;
+  const scaledH = canvasH * scale;
+
+  const obstacleList: Obstacle[] = useMemo(() => {
+    return nodes.map(n => ({ x: n.x, y: n.y, width: n.width, height: n.height }));
+  }, [nodes]);
+
+  const pathDefs = useMemo(() => {
+    const entries: { path: string; arrows: PipeArrow[] }[] = [];
+    let invalid = 0;
+    for (const conn of unique) {
+      const sk = `${conn.source.group}|${conn.source.node}|${conn.source.instance}`;
+      const tk = `${conn.target.group}|${conn.target.node}|${conn.target.instance}`;
+      const src = nodeMap.get(sk);
+      const tgt = nodeMap.get(tk);
+      if (!src || !tgt) { invalid++; continue; }
+      const se = getEdgeCenter(src, conn.source.port);
+      const te = getEdgeCenter(tgt, conn.target.port);
+      const sl = getLeadEnd(se, conn.source.port);
+      const tl = getLeadEnd(te, conn.target.port);
+      const segs = routePipe(sl.x, sl.y, tl.x, tl.y, obstacleList, canvasW, canvasH);
+      let d = `M ${sl.x},${sl.y}`;
+      for (const seg of segs) d += ` L ${seg.x2},${seg.y2}`;
+      entries.push({ path: d, arrows: computeArrows(segs) });
+    }
+    return { entries, invalid };
+  }, [unique, nodeMap, obstacleList, canvasW, canvasH]);
+
+  return (
+    <>
+      <svg
+        className="absolute pointer-events-none overflow-visible"
+        style={{
+          transform: `translate(${offsetX}px, ${offsetY}px)`,
+          width: scaledW,
+          height: scaledH,
+          top: 0, left: 0,
+        }}
+        viewBox={`0 0 ${canvasW} ${canvasH}`}
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <marker id="pipeArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#d93a3a" />
+          </marker>
+        </defs>
+        {pathDefs.entries.map((e, i) => (
+          <g key={i}>
+            <path d={e.path} stroke="#d93a3a" strokeWidth={2} fill="none" strokeLinejoin="round" strokeLinecap="round" />
+            {e.arrows.map((a, j) => (
+              <g key={j} transform={`translate(${a.x}, ${a.y}) rotate(${a.angle})`}>
+                <polygon points={`${-ARROW_SIZE},${-ARROW_SIZE * 0.4} ${0},0 ${-ARROW_SIZE},${ARROW_SIZE * 0.4}`} fill="#d93a3a" />
+              </g>
+            ))}
+          </g>
+        ))}
+      </svg>
+      <div className="absolute bottom-2 right-2 text-[9px] text-[var(--text3)] font-mono bg-[rgba(255,255,255,0.72)] px-2 py-1 rounded-[4px]">
+        {pathDefs.entries.length} 条管线
+        {duplicateCount > 0 && ` · 合并 ${duplicateCount} 条重复`}
+        {pathDefs.invalid > 0 && ` · 跳过 ${pathDefs.invalid} 条无效`}
+      </div>
+    </>
+  );
+});
+
+const CanvasContent = memo(function CanvasContent({ nodes, decorations, canvasW, canvasH, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom, pipes }: {
   nodes: CanvasNode[];
   decorations: DecorationNode[];
   canvasW: number;
@@ -175,14 +325,33 @@ const CanvasContent = memo(function CanvasContent({ nodes, decorations, canvasW,
   onSelectNode?: (id: string) => void;
   onMoveNode?: (id: string, x: number, y: number) => void;
   defaultReadableZoom?: number;
+  pipes?: PipeData | null;
 }) {
   const MARGIN = 36;
+  const { backgrounds, foregrounds } = useMemo(
+    () => partitionDecorationsForPipes(decorations, canvasW, canvasH),
+    [decorations, canvasW, canvasH],
+  );
 
   return (
     <ResizableCanvas targetW={canvasW} targetH={canvasH} margin={MARGIN} defaultReadableZoom={defaultReadableZoom}>
       {(scale, offsetX, offsetY) => (
         <>
-          {decorations.map((d, i) =>
+          {backgrounds.map((d, i) => (
+            <DecorationImage key={`background-img-${i}`} node={d} scale={scale} offsetX={offsetX} offsetY={offsetY} />
+          ))}
+          {pipes && pipes.connections.length > 0 && (
+            <PipesLayer
+              pipeData={pipes}
+              nodes={nodes}
+              canvasW={canvasW}
+              canvasH={canvasH}
+              scale={scale}
+              offsetX={offsetX}
+              offsetY={offsetY}
+            />
+          )}
+          {foregrounds.map((d, i) =>
             d.type === "image" ? (
               <DecorationImage key={`deco-img-${i}`} node={d} scale={scale} offsetX={offsetX} offsetY={offsetY} />
             ) : (
@@ -368,10 +537,11 @@ export interface AgentCanvasProps {
   onSelectNode?: (id: string) => void;
   onMoveNode?: (id: string, x: number, y: number) => void;
   defaultReadableZoom?: number;
+  pipes?: PipeData | null;
 }
 
 export default function AgentCanvas(props: AgentCanvasProps) {
-  const { nodes, decorations = [], canvasWidth, canvasHeight, title, emptyText, emptyIcon, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom } = props;
+  const { nodes, decorations = [], canvasWidth, canvasHeight, title, emptyText, emptyIcon, selectedNodeId, onSelectNode, onMoveNode, defaultReadableZoom, pipes } = props;
   const hasResult = nodes.length > 0;
 
   return (
@@ -401,6 +571,7 @@ export default function AgentCanvas(props: AgentCanvasProps) {
             onSelectNode={onSelectNode}
             onMoveNode={onMoveNode}
             defaultReadableZoom={defaultReadableZoom}
+            pipes={pipes}
           />
         )}
 

@@ -5,15 +5,19 @@ import type {
   LayoutGenerateResponse,
   LayoutJsonData,
   LayoutZone,
+  PipeData,
   QualityIssue,
   WorkflowStep,
+  WorkflowStatus,
 } from "../types/layout";
 import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes";
 
 const INITIAL_WORKFLOW: WorkflowStep[] = [
-  { id: 1, name: "LLM 解析", detail: "从场景描述提取设备类型、数量、关系", status: "wait" },
-  { id: 2, name: "布局计算", detail: "力导向算法 + 约束规则引擎", status: "wait" },
-  { id: 3, name: "质检验证", detail: "重叠/溢出/Schema 规则校验", status: "wait" },
+  { id: 1, name: "加载可用素材", detail: "读取 query_results，为空则生成失败", status: "wait" },
+  { id: 2, name: "并行生成背景画布与布局意图 IR", detail: "生成背景画布与布局意图 IR", status: "wait" },
+  { id: 3, name: "根据布局意图和素材计算设备坐标", detail: "根据布局意图和素材计算设备坐标", status: "wait" },
+  { id: 4, name: "生成管线连接", detail: "生成管线连接", status: "wait" },
+  { id: 5, name: "拼装最终 JSON 并完成 Schema 校验", detail: "拼装最终 JSON 并完成 Schema 校验", status: "wait" },
 ];
 
 interface LayoutStore {
@@ -29,8 +33,10 @@ interface LayoutStore {
 
   nodes: CanvasNode[];
   decorations: DecorationNode[];
+  pipe_data: PipeData | null;
 
   workflow: WorkflowStep[];
+  workflowStatus: WorkflowStatus;
 
   isLoading: boolean;
   error: string | null;
@@ -43,6 +49,7 @@ interface LayoutStore {
   setCanvasHeight: (h: number) => void;
   setLayoutResult: (res: LayoutGenerateResponse) => void;
   setWorkflowStep: (id: number, status: WorkflowStep["status"]) => void;
+  setWorkflowStatus: (s: WorkflowStatus) => void;
   resetWorkflow: () => void;
   clearCanvas: () => void;
   setIsLoading: (v: boolean) => void;
@@ -62,8 +69,10 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
 
   nodes: [],
   decorations: [],
+  pipe_data: null,
 
   workflow: INITIAL_WORKFLOW.map((s) => ({ ...s })),
+  workflowStatus: "idle",
 
   isLoading: false,
   error: null,
@@ -82,6 +91,7 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       missingControls: res.missing_controls,
       nodes: extractNodesFromJsonData(res.json_data),
       decorations: extractDecorationsFromJsonData(res.json_data),
+      pipe_data: res.pipe_data ?? null,
       fileName: res.file_name,
     }),
 
@@ -91,8 +101,9 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
         step.id === id ? { ...step, status } : step
       ),
     })),
+  setWorkflowStatus: (s) => set({ workflowStatus: s }),
   resetWorkflow: () =>
-    set({ workflow: INITIAL_WORKFLOW.map((s) => ({ ...s })) }),
+    set({ workflow: INITIAL_WORKFLOW.map((s) => ({ ...s })), workflowStatus: "idle" }),
 
   clearCanvas: () =>
     set({
@@ -102,7 +113,9 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       missingControls: [],
       nodes: [],
       decorations: [],
+      pipe_data: null,
       fileName: "",
+      workflowStatus: "idle",
     }),
 
   setIsLoading: (v) => set({ isLoading: v }),
