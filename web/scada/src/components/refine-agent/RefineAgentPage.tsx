@@ -8,6 +8,7 @@ export default function RefineAgentPage() {
   const layoutNodes = useLayoutStore((s) => s.nodes);
   const layoutJson = useLayoutStore((s) => s.jsonData);
   const layoutFileName = useLayoutStore((s) => s.fileName);
+  const layoutPipes = useLayoutStore((s) => s.pipe_data);
   const {
     workingJson,
     sourceFileName,
@@ -30,13 +31,15 @@ export default function RefineAgentPage() {
       layoutJson.a?.width || 1000,
       layoutJson.a?.height || 800,
       layoutJson,
-      layoutFileName
+      layoutFileName,
+      layoutPipes
     );
   }, [
     isRefining,
     layoutFileName,
     layoutJson,
     layoutNodes,
+    layoutPipes,
     loadFromLayoutData,
     pendingPatch,
     sourceFileName,

@@ -3,18 +3,18 @@
     "c": "ht.Node",
     "i": 20399,
     "p": {
-      "displayName": "溢流阀",
-      "image": "assets/现场控制系统/设备图片/溢流阀.png",
+      "displayName": "冷却塔",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 188.33,
-        "y": 212.5
+        "x": 265.5,
+        "y": 251.67
       },
-      "width": 153.6,
-      "height": 120
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "group-1",
-      "layout.node": "root",
+      "layout.group": "group1",
+      "layout.node": "cooling_tower_1",
       "layout.instance": 1
     }
   },
@@ -22,18 +22,18 @@
     "c": "ht.Node",
     "i": 20400,
     "p": {
-      "displayName": "溢流阀2",
-      "image": "assets/现场控制系统/设备图片/溢流阀.png",
+      "displayName": "冷却塔2",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 188.33,
-        "y": 447.5
+        "x": 265.5,
+        "y": 565
       },
-      "width": 153.6,
-      "height": 120
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "group-1",
-      "layout.node": "root",
+      "layout.group": "group1",
+      "layout.node": "cooling_tower_1",
       "layout.instance": 2
     }
   },
@@ -41,18 +41,18 @@
     "c": "ht.Node",
     "i": 20401,
     "p": {
-      "displayName": "溢流阀3",
-      "image": "assets/现场控制系统/设备图片/溢流阀.png",
+      "displayName": "冷却塔3",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 188.33,
-        "y": 682.5
+        "x": 265.5,
+        "y": 878.33
       },
-      "width": 153.6,
-      "height": 120
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "group-1",
-      "layout.node": "root",
+      "layout.group": "group1",
+      "layout.node": "cooling_tower_1",
       "layout.instance": 3
     }
   },
@@ -60,209 +60,190 @@
     "c": "ht.Node",
     "i": 20402,
     "p": {
-      "displayName": "溢流阀4",
-      "image": "assets/现场控制系统/设备图片/溢流阀.png",
+      "displayName": "冷却泵",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 188.33,
-        "y": 917.5
+        "x": 728.5,
+        "y": 251.67
       },
-      "width": 153.6,
+      "width": 148.97,
       "height": 120
     },
     "a": {
-      "layout.group": "group-1",
-      "layout.node": "root",
-      "layout.instance": 4
+      "layout.group": "group2",
+      "layout.node": "cooling_pump_1",
+      "layout.instance": 1
     }
   },
   {
     "c": "ht.Node",
     "i": 20403,
     "p": {
-      "displayName": "液压泵",
-      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "displayName": "冷却泵2",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 497,
-        "y": 212.5
+        "x": 728.5,
+        "y": 565
       },
-      "width": 111.8,
-      "height": 167.7
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group-2",
-      "layout.node": "root",
-      "layout.instance": 1
+      "layout.group": "group2",
+      "layout.node": "cooling_pump_1",
+      "layout.instance": 2
     }
   },
   {
     "c": "ht.Node",
     "i": 20404,
     "p": {
-      "displayName": "液压泵2",
-      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "displayName": "冷却泵3",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 497,
-        "y": 447.5
+        "x": 728.5,
+        "y": 878.33
       },
-      "width": 111.8,
-      "height": 167.7
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group-2",
-      "layout.node": "root",
-      "layout.instance": 2
+      "layout.group": "group2",
+      "layout.node": "cooling_pump_1",
+      "layout.instance": 3
     }
   },
   {
     "c": "ht.Node",
     "i": 20405,
     "p": {
-      "displayName": "液压泵3",
-      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "displayName": "冷水机",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 497,
-        "y": 682.5
+        "x": 1191.5,
+        "y": 251.67
       },
-      "width": 111.8,
-      "height": 167.7
+      "width": 156.71,
+      "height": 235.07
     },
     "a": {
-      "layout.group": "group-2",
-      "layout.node": "root",
-      "layout.instance": 3
+      "layout.group": "group3",
+      "layout.node": "chiller_1",
+      "layout.instance": 1
     }
   },
   {
     "c": "ht.Node",
     "i": 20406,
     "p": {
-      "displayName": "液压泵4",
-      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "displayName": "冷水机2",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 497,
-        "y": 917.5
+        "x": 1191.5,
+        "y": 565
       },
-      "width": 111.8,
-      "height": 167.7
+      "width": 156.71,
+      "height": 235.07
     },
     "a": {
-      "layout.group": "group-2",
-      "layout.node": "root",
-      "layout.instance": 4
+      "layout.group": "group3",
+      "layout.node": "chiller_1",
+      "layout.instance": 2
     }
   },
   {
     "c": "ht.Node",
     "i": 20407,
     "p": {
-      "displayName": "电机",
-      "image": "assets/现场控制系统/设备图片/液压电机.png",
+      "displayName": "冷水机3",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 805.67,
-        "y": 330
+        "x": 1191.5,
+        "y": 878.33
       },
-      "width": 160,
-      "height": 240
+      "width": 156.71,
+      "height": 235.07
     },
     "a": {
-      "layout.group": "group-3",
-      "layout.node": "root",
-      "layout.instance": 1
+      "layout.group": "group3",
+      "layout.node": "chiller_1",
+      "layout.instance": 3
     }
   },
   {
     "c": "ht.Node",
     "i": 20408,
     "p": {
-      "displayName": "电机2",
-      "image": "assets/现场控制系统/设备图片/液压电机.png",
+      "displayName": "冷冻泵",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 805.67,
-        "y": 800
+        "x": 1654.5,
+        "y": 212.5
       },
-      "width": 160,
-      "height": 240
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group-3",
-      "layout.node": "root",
-      "layout.instance": 2
+      "layout.group": "group4",
+      "layout.node": "chilled_water_pump_1",
+      "layout.instance": 1
     }
   },
   {
     "c": "ht.Node",
     "i": 20409,
     "p": {
-      "displayName": "吸油过滤器",
-      "image": "assets/现场控制系统/设备图片/吸油过滤器.png",
+      "displayName": "冷冻泵2",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1114.33,
-        "y": 330
+        "x": 1654.5,
+        "y": 447.5
       },
-      "width": 160,
-      "height": 240
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group-4",
-      "layout.node": "root",
-      "layout.instance": 1
+      "layout.group": "group4",
+      "layout.node": "chilled_water_pump_1",
+      "layout.instance": 2
     }
   },
   {
     "c": "ht.Node",
     "i": 20410,
     "p": {
-      "displayName": "吸油过滤器2",
-      "image": "assets/现场控制系统/设备图片/吸油过滤器.png",
+      "displayName": "冷冻泵3",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1114.33,
-        "y": 800
+        "x": 1654.5,
+        "y": 682.5
       },
-      "width": 160,
-      "height": 240
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group-4",
-      "layout.node": "root",
-      "layout.instance": 2
+      "layout.group": "group4",
+      "layout.node": "chilled_water_pump_1",
+      "layout.instance": 3
     }
   },
   {
     "c": "ht.Node",
     "i": 20411,
     "p": {
-      "displayName": "回油单向阀",
-      "image": "assets/现场控制系统/设备图片/回油单向阀.png",
+      "displayName": "冷冻泵4",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1423,
-        "y": 565
+        "x": 1654.5,
+        "y": 917.5
       },
-      "width": 160,
-      "height": 240
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "group-5",
-      "layout.node": "root",
-      "layout.instance": 1
-    }
-  },
-  {
-    "c": "ht.Node",
-    "i": 20412,
-    "p": {
-      "displayName": "油箱",
-      "image": "assets/Agent/油箱.png",
-      "position": {
-        "x": 1731.67,
-        "y": 565
-      },
-      "width": 160,
-      "height": 240
-    },
-    "a": {
-      "layout.group": "group-6",
-      "layout.node": "root",
-      "layout.instance": 1
+      "layout.group": "group4",
+      "layout.node": "chilled_water_pump_1",
+      "layout.instance": 4
     }
   }
 ]

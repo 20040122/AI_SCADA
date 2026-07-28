@@ -11,11 +11,16 @@ export function generateLayout(req: LayoutGenerateRequest): Promise<LayoutGenera
 }
 
 export function refineLayout(req: RefineRequest): Promise<RefineResponse> {
-  return post<RefineResponse>("/api/canvas/refine", {
+  const body: Record<string, unknown> = {
     instruction: req.instruction,
     json_data: req.jsonData,
-    selected_node_i: req.selectedNodeI,
-  });
+  };
+  if (req.selectedNodeIds && req.selectedNodeIds.length > 0) {
+    body.selected_node_ids = req.selectedNodeIds;
+  } else if (req.selectedNodeI !== undefined) {
+    body.selected_node_i = req.selectedNodeI;
+  }
+  return post<RefineResponse>("/api/canvas/refine", body);
 }
 
 const HMI_UPLOAD_URL = "http://daoscada.local/hmi-ui/upload/";

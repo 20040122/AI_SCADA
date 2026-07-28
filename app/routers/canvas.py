@@ -98,10 +98,26 @@ async def canvas_refine(
     agent: RefineAgent = Depends(get_refine_agent),
 ):
     try:
+        if req.selected_node_i is not None and req.selected_node_ids is not None:
+            raise HTTPException(
+                status_code=422,
+                detail="selected_node_i and selected_node_ids are mutually exclusive",
+            )
+        if req.selected_node_ids is not None:
+            if not req.selected_node_ids:
+                raise HTTPException(
+                    status_code=422, detail="selected_node_ids must not be empty"
+                )
+            if len(set(req.selected_node_ids)) != len(req.selected_node_ids):
+                raise HTTPException(
+                    status_code=422, detail="selected_node_ids must be unique"
+                )
+
         result = await agent.refine(
             req.instruction,
             req.json_data,
             req.selected_node_i,
+            req.selected_node_ids,
         )
     except RefineInputError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

@@ -3,14 +3,14 @@
     {
       "id": "pipe-1",
       "source": {
-        "group": "group-1",
-        "node": "root",
+        "group": "group1",
+        "node": "cooling_tower_1",
         "instance": 1,
         "port": "right"
       },
       "target": {
-        "group": "group-2",
-        "node": "root",
+        "group": "group2",
+        "node": "cooling_pump_1",
         "instance": 1,
         "port": "left"
       }
@@ -18,44 +18,44 @@
     {
       "id": "pipe-2",
       "source": {
-        "group": "group-2",
-        "node": "root",
+        "group": "group1",
+        "node": "cooling_tower_1",
         "instance": 1,
         "port": "right"
       },
       "target": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 1,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 2,
         "port": "left"
       }
     },
     {
       "id": "pipe-3",
       "source": {
-        "group": "group-3",
-        "node": "root",
+        "group": "group1",
+        "node": "cooling_tower_1",
         "instance": 1,
-        "port": "right"
+        "port": "bottom"
       },
       "target": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 3,
+        "port": "top"
       }
     },
     {
       "id": "pipe-4",
       "source": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
+        "group": "group1",
+        "node": "cooling_tower_1",
+        "instance": 2,
         "port": "right"
       },
       "target": {
-        "group": "group-5",
-        "node": "root",
+        "group": "group2",
+        "node": "cooling_pump_1",
         "instance": 1,
         "port": "left"
       }
@@ -63,89 +63,89 @@
     {
       "id": "pipe-5",
       "source": {
-        "group": "group-5",
-        "node": "root",
-        "instance": 1,
+        "group": "group1",
+        "node": "cooling_tower_1",
+        "instance": 2,
         "port": "right"
       },
       "target": {
-        "group": "group-6",
-        "node": "root",
-        "instance": 1,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 2,
         "port": "left"
       }
     },
     {
       "id": "pipe-6",
       "source": {
-        "group": "group-1",
-        "node": "root",
+        "group": "group1",
+        "node": "cooling_tower_1",
         "instance": 2,
         "port": "right"
       },
       "target": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 2,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 3,
         "port": "left"
       }
     },
     {
       "id": "pipe-7",
       "source": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 2,
-        "port": "right"
+        "group": "group1",
+        "node": "cooling_tower_1",
+        "instance": 3,
+        "port": "top"
       },
       "target": {
-        "group": "group-3",
-        "node": "root",
+        "group": "group2",
+        "node": "cooling_pump_1",
         "instance": 1,
-        "port": "left"
+        "port": "bottom"
       }
     },
     {
       "id": "pipe-8",
       "source": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 1,
+        "group": "group1",
+        "node": "cooling_tower_1",
+        "instance": 3,
         "port": "right"
       },
       "target": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 2,
         "port": "left"
       }
     },
     {
       "id": "pipe-9",
       "source": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
+        "group": "group1",
+        "node": "cooling_tower_1",
+        "instance": 3,
         "port": "right"
       },
       "target": {
-        "group": "group-5",
-        "node": "root",
-        "instance": 1,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 3,
         "port": "left"
       }
     },
     {
       "id": "pipe-10",
       "source": {
-        "group": "group-5",
-        "node": "root",
+        "group": "group2",
+        "node": "cooling_pump_1",
         "instance": 1,
         "port": "right"
       },
       "target": {
-        "group": "group-6",
-        "node": "root",
+        "group": "group3",
+        "node": "chiller_1",
         "instance": 1,
         "port": "left"
       }
@@ -153,104 +153,104 @@
     {
       "id": "pipe-11",
       "source": {
-        "group": "group-1",
-        "node": "root",
-        "instance": 3,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 1,
         "port": "right"
       },
       "target": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 3,
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 2,
         "port": "left"
       }
     },
     {
       "id": "pipe-12",
       "source": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 3,
-        "port": "right"
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 1,
+        "port": "bottom"
       },
       "target": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 2,
-        "port": "left"
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 3,
+        "port": "top"
       }
     },
     {
       "id": "pipe-13",
       "source": {
-        "group": "group-3",
-        "node": "root",
+        "group": "group2",
+        "node": "cooling_pump_1",
         "instance": 2,
         "port": "right"
       },
       "target": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 2,
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 1,
         "port": "left"
       }
     },
     {
       "id": "pipe-14",
       "source": {
-        "group": "group-4",
-        "node": "root",
+        "group": "group2",
+        "node": "cooling_pump_1",
         "instance": 2,
         "port": "right"
       },
       "target": {
-        "group": "group-6",
-        "node": "root",
-        "instance": 1,
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 2,
         "port": "left"
       }
     },
     {
       "id": "pipe-15",
       "source": {
-        "group": "group-1",
-        "node": "root",
-        "instance": 4,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 2,
         "port": "right"
       },
       "target": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 4,
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 3,
         "port": "left"
       }
     },
     {
       "id": "pipe-16",
       "source": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 4,
-        "port": "right"
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 3,
+        "port": "top"
       },
       "target": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 2,
-        "port": "left"
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 1,
+        "port": "bottom"
       }
     },
     {
       "id": "pipe-17",
       "source": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 2,
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 3,
         "port": "right"
       },
       "target": {
-        "group": "group-4",
-        "node": "root",
+        "group": "group3",
+        "node": "chiller_1",
         "instance": 2,
         "port": "left"
       }
@@ -258,15 +258,150 @@
     {
       "id": "pipe-18",
       "source": {
-        "group": "group-4",
-        "node": "root",
+        "group": "group2",
+        "node": "cooling_pump_1",
+        "instance": 3,
+        "port": "right"
+      },
+      "target": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 3,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-19",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-20",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 2,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-21",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 3,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-22",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
         "instance": 2,
         "port": "right"
       },
       "target": {
-        "group": "group-6",
-        "node": "root",
+        "group": "group4",
+        "node": "chilled_water_pump_1",
         "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-23",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 2,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-24",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 3,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-25",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 3,
+        "port": "top"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 1,
+        "port": "bottom"
+      }
+    },
+    {
+      "id": "pipe-26",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 3,
+        "port": "top"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 2,
+        "port": "bottom"
+      }
+    },
+    {
+      "id": "pipe-27",
+      "source": {
+        "group": "group3",
+        "node": "chiller_1",
+        "instance": 3,
+        "port": "right"
+      },
+      "target": {
+        "group": "group4",
+        "node": "chilled_water_pump_1",
+        "instance": 3,
         "port": "left"
       }
     }

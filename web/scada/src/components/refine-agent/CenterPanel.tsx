@@ -7,11 +7,14 @@ export default function CenterPanel() {
   const {
     workingNodes,
     decorations,
+    workingPipes,
     canvasWidth,
     canvasHeight,
-    selectedNodeId,
-    setSelectedNodeId,
-    moveNode,
+    selectedNodeIds,
+    setSelection,
+    toggleSelection,
+    moveNodesAbsolute,
+    resizeNode,
     loadFromLayoutData,
     isRefining,
     pendingPatch,
@@ -20,14 +23,31 @@ export default function CenterPanel() {
   const layoutNodes = useLayoutStore((s) => s.nodes);
   const layoutJson = useLayoutStore((s) => s.jsonData);
   const layoutFileName = useLayoutStore((s) => s.fileName);
+  const layoutPipes = useLayoutStore((s) => s.pipe_data);
   const locked = isRefining || pendingPatch !== null;
 
-  const handleSelectNode = (id: string) => {
-    setSelectedNodeId(id);
+  const handleSelectNode = (id: string, metaKey: boolean) => {
+    if (!id) {
+      setSelection([]);
+      return;
+    }
+    if (metaKey) {
+      toggleSelection(id);
+    } else {
+      setSelection([id]);
+    }
     const node = workingNodes.find((n) => n.id === id);
-    if (node) {
+    if (node && !metaKey) {
       notify(`已选中: ${node.displayName}`, "s");
     }
+  };
+
+  const handleMoveNodes = (positions: { id: string; x: number; y: number }[]) => {
+    moveNodesAbsolute(positions);
+  };
+
+  const handleResizeNode = (id: string, x: number, y: number, width: number, height: number) => {
+    resizeNode(id, x, y, width, height);
   };
 
   const handleLoadFromLayout = () => {
@@ -37,7 +57,8 @@ export default function CenterPanel() {
         layoutJson?.a?.width || 1000,
         layoutJson?.a?.height || 800,
         layoutJson,
-        layoutFileName
+        layoutFileName,
+        layoutPipes
       );
       notify("已加载布局 Agent 画布", "s");
     } else {
@@ -55,16 +76,21 @@ export default function CenterPanel() {
         canvasHeight={canvasHeight}
         emptyText="请先在布局 Agent 生成画布"
         emptyIcon="🎨"
-        selectedNodeId={selectedNodeId}
-        onSelectNode={handleSelectNode}
-        onMoveNode={locked ? undefined : moveNode}
+        selectedNodeIds={selectedNodeIds}
+        onSelectNode={locked ? undefined : handleSelectNode}
+        onMoveNodes={locked ? undefined : handleMoveNodes}
+        onResizeNode={locked ? undefined : handleResizeNode}
         defaultReadableZoom={0.55}
+        pipes={workingPipes}
+        interactionLocked={locked}
       />
       {workingNodes.length > 0 && (
         <div className="shrink-0 px-3 py-[5px] border-t border-[var(--border)] bg-[var(--bg2)] flex items-center gap-3">
           <div className="flex gap-1 items-center text-[9px] text-[var(--text3)] font-mono">
             <span className="inline-block w-[6px] h-[6px] rounded-full bg-[var(--accent)]" />
-            点击控件选中 → 右侧输入微调指令
+            点击控件选中
+            {selectedNodeIds.length > 1 ? "（多选）" : ""}
+            → 右侧输入微调指令
           </div>
           {layoutNodes.length > 0 && (
             <button

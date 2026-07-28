@@ -2,91 +2,69 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group-1",
-        "region": "center",
+        "id": "group1",
+        "region": "left",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "溢流阀"
+            "id": "cooling_tower_1",
+            "deviceType": "冷却塔",
+            "role": "root"
           },
           "attachments": []
         },
-        "count": 4,
+        "count": 3,
+        "arrangement": "vertical",
         "topology": "single"
       },
       {
-        "id": "group-2",
+        "id": "group2",
         "region": "center",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "液压泵"
+            "id": "cooling_pump_1",
+            "deviceType": "冷却泵",
+            "role": "root"
+          },
+          "attachments": []
+        },
+        "count": 3,
+        "arrangement": "vertical",
+        "topology": "single",
+        "relativeTo": "group1",
+        "side": "right"
+      },
+      {
+        "id": "group3",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "chiller_1",
+            "deviceType": "冷水机",
+            "role": "root"
+          },
+          "attachments": []
+        },
+        "count": 3,
+        "arrangement": "vertical",
+        "topology": "single",
+        "relativeTo": "group2",
+        "side": "right"
+      },
+      {
+        "id": "group4",
+        "region": "right",
+        "unit": {
+          "root": {
+            "id": "chilled_water_pump_1",
+            "deviceType": "冷冻泵",
+            "role": "root"
           },
           "attachments": []
         },
         "count": 4,
+        "arrangement": "vertical",
         "topology": "single",
-        "relativeTo": "group-1",
-        "side": "right"
-      },
-      {
-        "id": "group-3",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "电机"
-          },
-          "attachments": []
-        },
-        "count": 2,
-        "topology": "single",
-        "relativeTo": "group-2",
-        "side": "right"
-      },
-      {
-        "id": "group-4",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "吸油过滤器"
-          },
-          "attachments": []
-        },
-        "count": 2,
-        "topology": "single",
-        "relativeTo": "group-3",
-        "side": "right"
-      },
-      {
-        "id": "group-5",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "回油单向阀"
-          },
-          "attachments": []
-        },
-        "count": 1,
-        "topology": "single",
-        "relativeTo": "group-4",
-        "side": "right"
-      },
-      {
-        "id": "group-6",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "油箱"
-          },
-          "attachments": []
-        },
-        "count": 1,
-        "topology": "single",
-        "relativeTo": "group-5",
+        "relativeTo": "group3",
         "side": "right"
       }
     ],

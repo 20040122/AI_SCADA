@@ -8,7 +8,7 @@ import { colorJson } from "../../utils/jsonColor";
 import { notify } from "../../utils/notification";
 
 const QUICK_CHIPS = [
-  { label: "右移", cmd: "把这个控件移到右边200px" },
+  { label: "右移", cmd: "把这些控件移到右边200px" },
   { label: "上移", cmd: "把选中控件向上移动100px" },
   { label: "放大", cmd: "把选中控件放大20%" },
   { label: "删", cmd: "删除选中控件" },
@@ -23,19 +23,24 @@ function createMessageId(prefix: string) {
   return `${prefix}-${Date.now()}-${messageIdSequence}`;
 }
 
-function getValidatedSelection(selectedNodeId: string | null, workingNodes: CanvasNode[]) {
-  const match = selectedNodeId?.match(/^node-(-?\d+)$/);
-  if (!match) return null;
-  const nodeI = Number(match[1]);
-  if (!Number.isSafeInteger(nodeI)) return null;
-  const node = workingNodes.find((candidate) => candidate.id === selectedNodeId);
-  return node ? { node, nodeI } : null;
+function getValidatedSelectedIds(selectedNodeIds: string[], workingNodes: CanvasNode[]): number[] {
+  const ids: number[] = [];
+  for (const nid of selectedNodeIds) {
+    const match = nid.match(/^node-(-?\d+)$/);
+    if (!match) continue;
+    const nodeI = Number(match[1]);
+    if (!Number.isSafeInteger(nodeI)) continue;
+    if (workingNodes.some((n) => n.id === nid)) {
+      ids.push(nodeI);
+    }
+  }
+  return ids;
 }
 
 export default function RightPanel() {
   const {
     workingNodes,
-    selectedNodeId,
+    selectedNodeIds,
     messages,
     workingJson,
     sourceFileName,
@@ -66,8 +71,7 @@ export default function RightPanel() {
     }
   }, []);
 
-  const selection = getValidatedSelection(selectedNodeId, workingNodes);
-  const selectedNodeI = selection?.nodeI;
+  const selectedNodeIs = getValidatedSelectedIds(selectedNodeIds, workingNodes);
   const interactionLocked = isRefining || pendingPatch !== null;
   const sourceMatchesLayout =
     sourceFileName !== null && sourceFileName.length > 0 && sourceFileName === fileName;
@@ -77,15 +81,15 @@ export default function RightPanel() {
     if (!workingJson) return colorJson('{}');
     const str = JSON.stringify(workingJson, null, 2);
     let html = colorJson(str);
-    if (selectedNodeI !== undefined) {
-      const pattern = `<span class="text-[#7ec8f0]">"i"</span>: <span class="text-[#ffcc80]">${selectedNodeI}</span>`;
+    for (const nodeI of selectedNodeIs) {
+      const pattern = `<span class="text-[#7ec8f0]">"i"</span>: <span class="text-[#ffcc80]">${nodeI}</span>`;
       html = html.replace(
         pattern,
         '<span style="background:rgba(77,184,212,0.15);border-radius:2px;outline:1px solid rgba(77,184,212,0.5)">' + pattern + '</span>'
       );
     }
     return html;
-  }, [workingJson, selectedNodeI]);
+  }, [workingJson, selectedNodeIs]);
 
   const handleSend = async () => {
     const val = input.trim();
@@ -104,7 +108,7 @@ export default function RightPanel() {
       return;
     }
 
-    const submittedSelection = getValidatedSelection(state.selectedNodeId, state.workingNodes);
+    const submittedNodeIds = getValidatedSelectedIds(state.selectedNodeIds, state.workingNodes);
     const requestOwner = Symbol();
     requestOwnerRef.current = requestOwner;
     activeRefineRequestOwner = requestOwner;
@@ -116,7 +120,7 @@ export default function RightPanel() {
       const response = await refineLayout({
         instruction: val,
         jsonData: submittedJson,
-        ...(submittedSelection ? { selectedNodeI: submittedSelection.nodeI } : {}),
+        ...(submittedNodeIds.length > 0 ? { selectedNodeIds: submittedNodeIds } : {}),
       });
       const currentState = useRefineStore.getState();
       if (
@@ -247,6 +251,13 @@ export default function RightPanel() {
     );
   };
 
+  const selectedNames = useMemo(() => {
+    return workingNodes
+      .filter((n) => selectedNodeIds.includes(n.id))
+      .map((n) => n.displayName)
+      .join("、");
+  }, [workingNodes, selectedNodeIds]);
+
   return (
     <div className="w-[380px] bg-[var(--panel)] border-l border-[var(--border)] flex flex-col shrink-0 overflow-hidden">
 
@@ -258,8 +269,8 @@ export default function RightPanel() {
         <div className="flex-1 overflow-y-auto p-[10px] flex flex-col gap-[8px] min-h-0" id="refineChat">
           {messages.length === 0 && (
             <div className="text-[11px] text-[var(--text3)] font-mono text-center py-8">
-              {selection
-                ? '请输入局部或全局微调指令'
+              {selectedNodeIds.length > 0
+                ? `已选中 ${selectedNodeIds.length} 个控件，请输入指令`
                 : '可直接输入全局调整指令，或点击画布控件进行局部调整。'}
             </div>
           )}
@@ -311,9 +322,11 @@ export default function RightPanel() {
             <input
               className="flex-1 bg-[var(--bg3)] border border-[var(--border)] rounded-[4px] px-[9px] py-[6px] text-[11px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder={
-                selection
-                  ? `如：${selection.node.displayName} 右移200px`
-                  : '输入全局调整指令…'
+                selectedNodeIds.length === 1
+                  ? `如：${selectedNames} 右移200px`
+                  : selectedNodeIds.length > 1
+                    ? `已选 ${selectedNodeIds.length} 个控件，输入指令…`
+                    : '输入全局调整指令…'
               }
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -336,8 +349,10 @@ export default function RightPanel() {
           <span className="text-[9px] font-mono text-[var(--text3)] tracking-[0.5px] uppercase">
             画面 JSON
           </span>
-          {selection && (
-            <span className="text-[9px] text-[var(--accent)] font-mono">已选中高亮</span>
+          {selectedNodeIds.length > 0 && (
+            <span className="text-[9px] text-[var(--accent)] font-mono">
+              已选中 {selectedNodeIds.length}
+            </span>
           )}
         </div>
         <div

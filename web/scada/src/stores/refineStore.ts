@@ -1,13 +1,14 @@
 import { create } from "zustand";
-import type { CanvasNode, LayoutJsonData } from "../types/layout";
-import type { JsonPatchOp, RefineMessage, RefineHistoryItem } from "../types/refine";
-import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes";
-import type { DecorationNode } from "../types/layout";
+import type { CanvasNode, LayoutJsonData, PipeData } from "../types/layout.ts";
+import type { JsonPatchOp, RefineMessage, RefineHistoryItem } from "../types/refine.ts";
+import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes.ts";
+import type { DecorationNode } from "../types/layout.ts";
 
 interface PendingPatch {
   messageId: string;
   jsonSnapshot: LayoutJsonData;
-  selectedNodeId: string | null;
+  pipesSnapshot: PipeData | null;
+  selectedNodeIds: string[];
   patch: JsonPatchOp[];
 }
 
@@ -58,14 +59,57 @@ function applyOpImmutable(obj: LayoutJsonData, op: JsonPatchOp): LayoutJsonData 
   return clone;
 }
 
+function nodeToPipeKey(node: CanvasNode): string | null {
+  const a = node.a;
+  if (!a) return null;
+  const g = String(a["layout.group"] ?? "");
+  const n = String(a["layout.node"] ?? "");
+  const inst = a["layout.instance"];
+  if (g && n && inst != null) {
+    return `${g}|${n}|${inst}`;
+  }
+  return null;
+}
+
+function filterRemovedConnections(pipes: PipeData | null, oldNodes: CanvasNode[], newNodes: CanvasNode[]): PipeData | null {
+  if (!pipes || pipes.connections.length === 0) return pipes;
+  const oldKeys = new Set<string>();
+  for (const node of oldNodes) {
+    const key = nodeToPipeKey(node);
+    if (key) oldKeys.add(key);
+  }
+  const newKeys = new Set<string>();
+  for (const node of newNodes) {
+    const key = nodeToPipeKey(node);
+    if (key) newKeys.add(key);
+  }
+  const deletedKeys = new Set<string>();
+  for (const key of oldKeys) {
+    if (!newKeys.has(key)) deletedKeys.add(key);
+  }
+  if (deletedKeys.size === 0) return pipes;
+  const filtered = pipes.connections.filter((conn) => {
+    const sk = `${conn.source.group}|${conn.source.node}|${conn.source.instance}`;
+    const tk = `${conn.target.group}|${conn.target.node}|${conn.target.instance}`;
+    return !deletedKeys.has(sk) && !deletedKeys.has(tk);
+  });
+  return { connections: filtered };
+}
+
+function filterValidIds(ids: string[], nodes: CanvasNode[]): string[] {
+  const valid = new Set(nodes.map((n) => n.id));
+  return ids.filter((id) => valid.has(id));
+}
+
 interface RefineStore {
   workingNodes: CanvasNode[];
   decorations: DecorationNode[];
+  workingPipes: PipeData | null;
   workingJson: LayoutJsonData | null;
   sourceFileName: string | null;
   canvasWidth: number;
   canvasHeight: number;
-  selectedNodeId: string | null;
+  selectedNodeIds: string[];
   messages: RefineMessage[];
   history: RefineHistoryItem[];
   isRefining: boolean;
@@ -76,10 +120,15 @@ interface RefineStore {
     width: number,
     height: number,
     layoutJson: LayoutJsonData | null,
-    sourceFileName: string
+    sourceFileName: string,
+    pipes?: PipeData | null
   ) => void;
-  setSelectedNodeId: (id: string | null) => void;
-  moveNode: (id: string, x: number, y: number) => void;
+  setSelection: (ids: string[]) => void;
+  toggleSelection: (id: string) => void;
+  clearSelection: () => void;
+  moveNodes: (ids: string[], dx: number, dy: number) => void;
+  moveNodesAbsolute: (updates: { id: string; x: number; y: number }[]) => void;
+  resizeNode: (id: string, x: number, y: number, width: number, height: number) => void;
   addMessage: (msg: RefineMessage) => void;
   setRefining: (value: boolean) => void;
   applyPatch: (patch: JsonPatchOp[], messageId: string) => void;
@@ -91,26 +140,28 @@ interface RefineStore {
 export const useRefineStore = create<RefineStore>((set) => ({
   workingNodes: [],
   decorations: [],
+  workingPipes: null,
   workingJson: null,
   sourceFileName: null,
   canvasWidth: 1920,
   canvasHeight: 1080,
-  selectedNodeId: null,
+  selectedNodeIds: [],
   messages: [],
   history: [],
   isRefining: false,
   pendingPatch: null,
 
-  loadFromLayoutData: (nodes, width, height, layoutJson, sourceFileName) => {
+  loadFromLayoutData: (nodes, width, height, layoutJson, sourceFileName, pipes) => {
     const workingJson = layoutJson ? cloneLayout(layoutJson) : null;
     set({
       workingNodes: nodes.map((n) => ({ ...n })),
       decorations: extractDecorationsFromJsonData(workingJson),
+      workingPipes: pipes ? JSON.parse(JSON.stringify(pipes)) as PipeData : null,
       workingJson,
       sourceFileName: sourceFileName || null,
       canvasWidth: width,
       canvasHeight: height,
-      selectedNodeId: null,
+      selectedNodeIds: [],
       messages: [],
       history: [],
       isRefining: false,
@@ -118,14 +169,93 @@ export const useRefineStore = create<RefineStore>((set) => ({
     });
   },
 
-  setSelectedNodeId: (id) => set({ selectedNodeId: id }),
+  setSelection: (ids) => set({ selectedNodeIds: ids }),
 
-  moveNode: (id, x, y) => {
+  toggleSelection: (id) => set((state) => {
+    const idx = state.selectedNodeIds.indexOf(id);
+    if (idx >= 0) {
+      const next = [...state.selectedNodeIds];
+      next.splice(idx, 1);
+      return { selectedNodeIds: next };
+    }
+    return { selectedNodeIds: [...state.selectedNodeIds, id] };
+  }),
+
+  clearSelection: () => set({ selectedNodeIds: [] }),
+
+  moveNodes: (ids, dx, dy) => {
+    set((state) => {
+      if (state.isRefining || state.pendingPatch) return state;
+
+      const idSet = new Set(ids);
+      const newNodes = state.workingNodes.map((n) =>
+        idSet.has(n.id) ? { ...n, x: Math.round((n.x + dx) * 100) / 100, y: Math.round((n.y + dy) * 100) / 100 } : n
+      );
+      let newJson = state.workingJson;
+      if (newJson) {
+        newJson = {
+          ...newJson,
+          d: newJson.d.map((n) => {
+            const nodeId = `node-${n.i}`;
+            if (idSet.has(nodeId) && n.p?.position) {
+              return {
+                ...n,
+                p: {
+                  ...n.p,
+                  position: {
+                    ...n.p.position,
+                    x: Math.round((n.p.position.x + dx) * 100) / 100,
+                    y: Math.round((n.p.position.y + dy) * 100) / 100,
+                  },
+                },
+              };
+            }
+            return n;
+          }),
+        };
+      }
+      return { workingNodes: newNodes, workingJson: newJson };
+    });
+  },
+
+  moveNodesAbsolute: (updates) => {
+    set((state) => {
+      if (state.isRefining || state.pendingPatch) return state;
+      const updateMap = new Map(updates.map((u) => [u.id, u]));
+      const newNodes = state.workingNodes.map((n) => {
+        const u = updateMap.get(n.id);
+        return u ? { ...n, x: u.x, y: u.y } : n;
+      });
+      let newJson = state.workingJson;
+      if (newJson) {
+        newJson = {
+          ...newJson,
+          d: newJson.d.map((n) => {
+            const nodeId = `node-${n.i}`;
+            const u = updateMap.get(nodeId);
+            if (u && n.p?.position) {
+              return {
+                ...n,
+                p: {
+                  ...n.p,
+                  position: { x: u.x, y: u.y },
+                },
+              };
+            }
+            return n;
+          }),
+        };
+      }
+      return { workingNodes: newNodes, workingJson: newJson };
+    });
+  },
+
+  resizeNode: (id, x, y, width, height) => {
     set((state) => {
       if (state.isRefining || state.pendingPatch) return state;
 
       const newNodes = state.workingNodes.map((n) =>
-        n.id === id ? { ...n, x, y } : n
+        n.id === id ? { ...n, x, y, width, height } : n
       );
       let newJson = state.workingJson;
       if (newJson) {
@@ -133,11 +263,18 @@ export const useRefineStore = create<RefineStore>((set) => ({
         if (jsonIdx >= 0) {
           newJson = {
             ...newJson,
-            d: newJson.d.map((n, idx) =>
-              idx === jsonIdx
-                ? { ...n, p: { ...n.p, position: { ...n.p.position, x, y } } }
-                : n
-            ),
+            d: newJson.d.map((n, idx) => {
+              if (idx !== jsonIdx) return n;
+              return {
+                ...n,
+                p: {
+                  ...n.p,
+                  position: { x, y },
+                  width,
+                  height,
+                },
+              };
+            }),
           };
         }
       }
@@ -153,7 +290,8 @@ export const useRefineStore = create<RefineStore>((set) => ({
       if (!state.workingJson || patch.length === 0 || state.pendingPatch) return state;
 
       const jsonSnapshot = cloneLayout(state.workingJson);
-      const selectedNodeId = state.selectedNodeId;
+      const pipesSnapshot = state.workingPipes;
+      const selectedNodeIds = [...state.selectedNodeIds];
 
       let newJson = state.workingJson;
       for (const op of patch) {
@@ -162,18 +300,18 @@ export const useRefineStore = create<RefineStore>((set) => ({
 
       const newNodes = extractNodesFromJsonData(newJson);
       const newDecorations = extractDecorationsFromJsonData(newJson);
+      const newPipes = filterRemovedConnections(state.workingPipes, state.workingNodes, newNodes);
       return {
         workingNodes: newNodes,
         decorations: newDecorations,
+        workingPipes: newPipes,
         workingJson: newJson,
-        selectedNodeId:
-          selectedNodeId && newNodes.some((node) => node.id === selectedNodeId)
-            ? selectedNodeId
-            : null,
+        selectedNodeIds: filterValidIds(selectedNodeIds, newNodes),
         pendingPatch: {
           messageId,
           jsonSnapshot,
-          selectedNodeId,
+          pipesSnapshot,
+          selectedNodeIds,
           patch,
         },
       };
@@ -222,11 +360,9 @@ export const useRefineStore = create<RefineStore>((set) => ({
       return {
         workingNodes,
         decorations,
+        workingPipes: snapshot.pipesSnapshot ? JSON.parse(JSON.stringify(snapshot.pipesSnapshot)) as PipeData : null,
         workingJson,
-        selectedNodeId:
-          snapshot.selectedNodeId && workingNodes.some((node) => node.id === snapshot.selectedNodeId)
-            ? snapshot.selectedNodeId
-            : null,
+        selectedNodeIds: filterValidIds(snapshot.selectedNodeIds, workingNodes),
         messages,
         pendingPatch: null,
       };
@@ -237,9 +373,10 @@ export const useRefineStore = create<RefineStore>((set) => ({
     set({
       workingNodes: [],
       decorations: [],
+      workingPipes: null,
       workingJson: null,
       sourceFileName: null,
-      selectedNodeId: null,
+      selectedNodeIds: [],
       messages: [],
       history: [],
       isRefining: false,

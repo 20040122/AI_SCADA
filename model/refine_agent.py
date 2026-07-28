@@ -182,22 +182,20 @@ def _build_prompt(
     canvas_width: Any,
     canvas_height: Any,
     catalog: list[dict[str, Any]],
-    selected_node_i: Optional[int],
+    selected_node_ids: tuple[int, ...],
 ) -> str:
-    selected = "none" if selected_node_i is None else str(selected_node_i)
+    selected = "none" if not selected_node_ids else ",".join(str(i) for i in selected_node_ids)
     catalog_json = json.dumps(catalog, ensure_ascii=False, indent=2)
     return f"""You refine an interactive SCADA canvas by returning semantic actions.
 Canvas width: {canvas_width}
 Canvas height: {canvas_height}
-Selected control ID: {selected}
+Selected control ID(s): {selected}
 Control catalog with stable IDs and current geometry:
 {catalog_json}
 
-Use the selected ID for local commands that refer to the current selection.
-Resolve explicitly named controls from the catalog.
-Include all intended IDs for global commands.
-Never guess an ambiguous target.
-When a local command has no selected or explicit target, return empty actions and a clarifying message.
+When the user says "these controls" or "选中控件", apply the action to the current selected ID(s).
+When the user explicitly names a control or ID, use that specific target — do not merge with the current selection.
+If there is no selection and no explicit target, return empty actions and a clarifying message.
 Always return a non-empty string in "message", including when actions are generated.
 
 Return exactly one JSON object with only "message" and "actions".
@@ -512,6 +510,7 @@ class RefineAgent:
         instruction: str,
         json_data: dict[str, Any],
         selected_node_i: Optional[int] = None,
+        selected_node_ids: Optional[list[int]] = None,
     ) -> RefineResult:
         if not isinstance(instruction, str):
             raise RefineInputError("instruction must be a string")
@@ -525,6 +524,17 @@ class RefineAgent:
             or selected_node_i not in controls
         ):
             raise RefineInputError("selected control must be editable")
+        if selected_node_ids is not None:
+            for nid in selected_node_ids:
+                if nid not in controls:
+                    raise RefineInputError(f"selected node {nid} is not editable")
+        normalized_selection: tuple[int, ...]
+        if selected_node_ids is not None:
+            normalized_selection = tuple(selected_node_ids)
+        elif selected_node_i is not None:
+            normalized_selection = (selected_node_i,)
+        else:
+            normalized_selection = ()
         if self._client is None or not self._model:
             raise RefineUnavailableError("refine model is unavailable")
 
@@ -532,7 +542,7 @@ class RefineAgent:
             canvas_width,
             canvas_height,
             catalog,
-            selected_node_i,
+            normalized_selection,
         )
         try:
             response = await _call_llm(

@@ -9,8 +9,8 @@ import type {
   QualityIssue,
   WorkflowStep,
   WorkflowStatus,
-} from "../types/layout";
-import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes";
+} from "../types/layout.ts";
+import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes.ts";
 
 const INITIAL_WORKFLOW: WorkflowStep[] = [
   { id: 1, name: "加载可用素材", detail: "读取 query_results，为空则生成失败", status: "wait" },

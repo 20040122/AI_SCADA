@@ -90,6 +90,7 @@ export interface RefineRequest {
   instruction: string;
   jsonData: LayoutJsonData;
   selectedNodeI?: number;
+  selectedNodeIds?: number[];
 }
 
 export interface RefineResponse {
