@@ -13,8 +13,8 @@
       "height": 171
     },
     "a": {
-      "layout.group": "group1",
-      "layout.node": "cooling_tower_1",
+      "layout.group": "cooling-tower",
+      "layout.node": "cooling-tower-1",
       "layout.instance": 1
     }
   },
@@ -32,8 +32,8 @@
       "height": 171
     },
     "a": {
-      "layout.group": "group1",
-      "layout.node": "cooling_tower_1",
+      "layout.group": "cooling-tower",
+      "layout.node": "cooling-tower-1",
       "layout.instance": 2
     }
   },
@@ -51,8 +51,8 @@
       "height": 171
     },
     "a": {
-      "layout.group": "group1",
-      "layout.node": "cooling_tower_1",
+      "layout.group": "cooling-tower",
+      "layout.node": "cooling-tower-1",
       "layout.instance": 3
     }
   },
@@ -70,8 +70,8 @@
       "height": 120
     },
     "a": {
-      "layout.group": "group2",
-      "layout.node": "cooling_pump_1",
+      "layout.group": "cooling-pump",
+      "layout.node": "cooling-pump-1",
       "layout.instance": 1
     }
   },
@@ -89,8 +89,8 @@
       "height": 120
     },
     "a": {
-      "layout.group": "group2",
-      "layout.node": "cooling_pump_1",
+      "layout.group": "cooling-pump",
+      "layout.node": "cooling-pump-1",
       "layout.instance": 2
     }
   },
@@ -108,8 +108,8 @@
       "height": 120
     },
     "a": {
-      "layout.group": "group2",
-      "layout.node": "cooling_pump_1",
+      "layout.group": "cooling-pump",
+      "layout.node": "cooling-pump-1",
       "layout.instance": 3
     }
   },
@@ -127,8 +127,8 @@
       "height": 235.07
     },
     "a": {
-      "layout.group": "group3",
-      "layout.node": "chiller_1",
+      "layout.group": "chiller",
+      "layout.node": "chiller-1",
       "layout.instance": 1
     }
   },
@@ -146,8 +146,8 @@
       "height": 235.07
     },
     "a": {
-      "layout.group": "group3",
-      "layout.node": "chiller_1",
+      "layout.group": "chiller",
+      "layout.node": "chiller-1",
       "layout.instance": 2
     }
   },
@@ -165,8 +165,8 @@
       "height": 235.07
     },
     "a": {
-      "layout.group": "group3",
-      "layout.node": "chiller_1",
+      "layout.group": "chiller",
+      "layout.node": "chiller-1",
       "layout.instance": 3
     }
   },
@@ -184,8 +184,8 @@
       "height": 120
     },
     "a": {
-      "layout.group": "group4",
-      "layout.node": "chilled_water_pump_1",
+      "layout.group": "chilled-water-pump",
+      "layout.node": "chilled-water-pump-1",
       "layout.instance": 1
     }
   },
@@ -203,8 +203,8 @@
       "height": 120
     },
     "a": {
-      "layout.group": "group4",
-      "layout.node": "chilled_water_pump_1",
+      "layout.group": "chilled-water-pump",
+      "layout.node": "chilled-water-pump-1",
       "layout.instance": 2
     }
   },
@@ -222,8 +222,8 @@
       "height": 120
     },
     "a": {
-      "layout.group": "group4",
-      "layout.node": "chilled_water_pump_1",
+      "layout.group": "chilled-water-pump",
+      "layout.node": "chilled-water-pump-1",
       "layout.instance": 3
     }
   },
@@ -241,8 +241,8 @@
       "height": 120
     },
     "a": {
-      "layout.group": "group4",
-      "layout.node": "chilled_water_pump_1",
+      "layout.group": "chilled-water-pump",
+      "layout.node": "chilled-water-pump-1",
       "layout.instance": 4
     }
   }

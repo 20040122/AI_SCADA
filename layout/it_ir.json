@@ -2,11 +2,11 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group1",
+        "id": "cooling-tower",
         "region": "left",
         "unit": {
           "root": {
-            "id": "cooling_tower_1",
+            "id": "cooling-tower-1",
             "deviceType": "冷却塔",
             "role": "root"
           },
@@ -14,14 +14,15 @@
         },
         "count": 3,
         "arrangement": "vertical",
+        "gapHint": "normal",
         "topology": "single"
       },
       {
-        "id": "group2",
+        "id": "cooling-pump",
         "region": "center",
         "unit": {
           "root": {
-            "id": "cooling_pump_1",
+            "id": "cooling-pump-1",
             "deviceType": "冷却泵",
             "role": "root"
           },
@@ -29,16 +30,17 @@
         },
         "count": 3,
         "arrangement": "vertical",
+        "gapHint": "normal",
         "topology": "single",
-        "relativeTo": "group1",
+        "relativeTo": "cooling-tower",
         "side": "right"
       },
       {
-        "id": "group3",
+        "id": "chiller",
         "region": "center",
         "unit": {
           "root": {
-            "id": "chiller_1",
+            "id": "chiller-1",
             "deviceType": "冷水机",
             "role": "root"
           },
@@ -46,16 +48,17 @@
         },
         "count": 3,
         "arrangement": "vertical",
+        "gapHint": "normal",
         "topology": "single",
-        "relativeTo": "group2",
+        "relativeTo": "cooling-pump",
         "side": "right"
       },
       {
-        "id": "group4",
+        "id": "chilled-water-pump",
         "region": "right",
         "unit": {
           "root": {
-            "id": "chilled_water_pump_1",
+            "id": "chilled-water-pump-1",
             "deviceType": "冷冻泵",
             "role": "root"
           },
@@ -63,8 +66,9 @@
         },
         "count": 4,
         "arrangement": "vertical",
+        "gapHint": "normal",
         "topology": "single",
-        "relativeTo": "group3",
+        "relativeTo": "chiller",
         "side": "right"
       }
     ],

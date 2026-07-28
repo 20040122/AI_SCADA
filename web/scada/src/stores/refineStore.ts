@@ -47,10 +47,14 @@ function applyOpImmutable(obj: LayoutJsonData, op: JsonPatchOp): LayoutJsonData 
   }
   const lastKey = parts[parts.length - 1];
   if (Array.isArray(cur)) {
-    const index = Number(lastKey);
-    if (!Number.isInteger(index)) return obj;
-    if (op.op === "remove") cur.splice(index, 1);
-    else cur[index] = op.value;
+    if (lastKey === "-" && op.op === "add") {
+      (cur as unknown[]).push(op.value);
+    } else {
+      const index = Number(lastKey);
+      if (!Number.isInteger(index)) return obj;
+      if (op.op === "remove") cur.splice(index, 1);
+      else cur[index] = op.value;
+    }
   } else if (op.op === "remove") {
     delete cur[lastKey];
   } else {
@@ -188,6 +192,10 @@ export const useRefineStore = create<RefineStore>((set) => ({
       if (state.isRefining || state.pendingPatch) return state;
 
       const idSet = new Set(ids);
+      const movedIs = new Set<number>();
+      for (const id of ids) {
+        movedIs.add(nodeIdToI(id));
+      }
       const newNodes = state.workingNodes.map((n) =>
         idSet.has(n.id) ? { ...n, x: Math.round((n.x + dx) * 100) / 100, y: Math.round((n.y + dy) * 100) / 100 } : n
       );
@@ -210,11 +218,28 @@ export const useRefineStore = create<RefineStore>((set) => ({
                 },
               };
             }
+            if (n.a?.["layout.role"] === "control-label" && n.p?.position) {
+              const labelFor = n.a["layout.labelFor"] as number;
+              if (movedIs.has(labelFor)) {
+                return {
+                  ...n,
+                  p: {
+                    ...n.p,
+                    position: {
+                      ...n.p.position,
+                      x: Math.round((n.p.position.x + dx) * 100) / 100,
+                      y: Math.round((n.p.position.y + dy) * 100) / 100,
+                    },
+                  },
+                };
+              }
+            }
             return n;
           }),
         };
       }
-      return { workingNodes: newNodes, workingJson: newJson };
+      const newDecorations = newJson ? extractDecorationsFromJsonData(newJson) : state.decorations;
+      return { workingNodes: newNodes, workingJson: newJson, decorations: newDecorations };
     });
   },
 
@@ -222,6 +247,13 @@ export const useRefineStore = create<RefineStore>((set) => ({
     set((state) => {
       if (state.isRefining || state.pendingPatch) return state;
       const updateMap = new Map(updates.map((u) => [u.id, u]));
+      const deltas = new Map<string, { dx: number; dy: number }>();
+      for (const u of updates) {
+        const old = state.workingNodes.find((n) => n.id === u.id);
+        if (old) {
+          deltas.set(u.id, { dx: u.x - old.x, dy: u.y - old.y });
+        }
+      }
       const newNodes = state.workingNodes.map((n) => {
         const u = updateMap.get(n.id);
         return u ? { ...n, x: u.x, y: u.y } : n;
@@ -242,11 +274,30 @@ export const useRefineStore = create<RefineStore>((set) => ({
                 },
               };
             }
+            if (n.a?.["layout.role"] === "control-label" && n.p?.position) {
+              const labelFor = n.a["layout.labelFor"];
+              const labelForId = `node-${labelFor}`;
+              const delta = deltas.get(labelForId);
+              if (delta) {
+                return {
+                  ...n,
+                  p: {
+                    ...n.p,
+                    position: {
+                      ...n.p.position,
+                      x: Math.round((n.p.position.x + delta.dx) * 100) / 100,
+                      y: Math.round((n.p.position.y + delta.dy) * 100) / 100,
+                    },
+                  },
+                };
+              }
+            }
             return n;
           }),
         };
       }
-      return { workingNodes: newNodes, workingJson: newJson };
+      const newDecorations = newJson ? extractDecorationsFromJsonData(newJson) : state.decorations;
+      return { workingNodes: newNodes, workingJson: newJson, decorations: newDecorations };
     });
   },
 
@@ -254,6 +305,9 @@ export const useRefineStore = create<RefineStore>((set) => ({
     set((state) => {
       if (state.isRefining || state.pendingPatch) return state;
 
+      const oldNode = state.workingNodes.find((n) => n.id === id);
+      const dx = oldNode ? x - oldNode.x : 0;
+      const dy = oldNode ? y - oldNode.y : 0;
       const newNodes = state.workingNodes.map((n) =>
         n.id === id ? { ...n, x, y, width, height } : n
       );
@@ -261,24 +315,44 @@ export const useRefineStore = create<RefineStore>((set) => ({
       if (newJson) {
         const jsonIdx = findJsonIndex(newJson, id);
         if (jsonIdx >= 0) {
+          const movedI = nodeIdToI(id);
           newJson = {
             ...newJson,
             d: newJson.d.map((n, idx) => {
-              if (idx !== jsonIdx) return n;
-              return {
-                ...n,
-                p: {
-                  ...n.p,
-                  position: { x, y },
-                  width,
-                  height,
-                },
-              };
+              if (idx === jsonIdx) {
+                return {
+                  ...n,
+                  p: {
+                    ...n.p,
+                    position: { x, y },
+                    width,
+                    height,
+                  },
+                };
+              }
+              if (n.a?.["layout.role"] === "control-label" && n.p?.position) {
+                const labelFor = n.a["layout.labelFor"] as number;
+                if (labelFor === movedI) {
+                  return {
+                    ...n,
+                    p: {
+                      ...n.p,
+                      position: {
+                        ...n.p.position,
+                        x: Math.round((n.p.position.x + dx) * 100) / 100,
+                        y: Math.round((n.p.position.y + dy) * 100) / 100,
+                      },
+                    },
+                  };
+                }
+              }
+              return n;
             }),
           };
         }
       }
-      return { workingNodes: newNodes, workingJson: newJson };
+      const newDecorations = newJson ? extractDecorationsFromJsonData(newJson) : state.decorations;
+      return { workingNodes: newNodes, workingJson: newJson, decorations: newDecorations };
     });
   },
 

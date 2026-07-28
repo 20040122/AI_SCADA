@@ -59,6 +59,7 @@ export interface DecorationNode {
   textAlign?: string;
   opacity?: number;
   verticalAlign?: string;
+  labelFor?: number;
 }
 
 export interface LayoutJsonData {
