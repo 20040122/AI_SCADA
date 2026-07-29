@@ -30,7 +30,7 @@ EXTRACT_PROMPT = """\
 _client = AsyncOpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
     base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
-    timeout=50.0,
+    timeout=20.0,
 )
 _MODEL = os.environ.get("DEEPSEEK_MODEL")
 

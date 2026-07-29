@@ -4,7 +4,7 @@ import json
 import logging
 
 
-from model.canva_agent import _client, _MODEL, _call_llm
+from model.llm_client import default_client, default_model, call_llm
 
 logger = logging.getLogger(__name__)
 
@@ -90,8 +90,8 @@ _CATEGORY_PROMPTS = {
 
 class ValidateAgent:
     def __init__(self, client=None, model=None):
-        self._client = client if client is not None else _client
-        self._model = model if model is not None else _MODEL
+        self._client = client if client is not None else default_client
+        self._model = model if model is not None else default_model
 
     async def validate(self, category: str, json_data: dict) -> dict:
         all_errors: list[dict] = []
@@ -124,7 +124,7 @@ class ValidateAgent:
             {"role": "user", "content": json.dumps(json_data, ensure_ascii=False, indent=2)},
         ]
 
-        response = await _call_llm(
+        response = await call_llm(
             self._client,
             self._model,
             messages,

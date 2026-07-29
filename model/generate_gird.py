@@ -2,21 +2,16 @@ import asyncio
 import json
 import logging
 import re
-import sys
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Literal, Optional, Tuple
 
-_project_root = Path(__file__).resolve().parent.parent
-if str(_project_root) not in sys.path:
-    sys.path.insert(0, str(_project_root))
-
-from pydantic import BaseModel, Field, ValidationError
 from openai import APITimeoutError
+from pydantic import BaseModel, Field, ValidationError
 
-from model.canva_agent import _client
 from model.layout_agent import _llm_text, _parse_json_lenient
+from model.llm_client import default_client
 
 logger = logging.getLogger(__name__)
 
@@ -575,7 +570,7 @@ async def generate_intent(
     model_caller=None,
 ) -> LayoutFile:
     source = parse_structured_prompt(prompt)
-    client = client or _client
+    client = client or default_client
     model = model or _GENERATE_GIRD_MODEL
     model_caller = model_caller or _call_intent_model
 

@@ -3,28 +3,21 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-import sys
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-_project_root = Path(__file__).resolve().parent.parent
-if str(_project_root) not in sys.path:
-    sys.path.insert(0, str(_project_root))
+import jsonschema
 
-from model.canva_agent import (
-    _calc_content_rect,
-    _client,
-    _schema_validate,
-)
-from model.get_background import generate_layout
 from data.sqlite.material_db import MaterialDB
+from model.get_background import generate_layout
+from model.llm_client import default_client
 
 logger = logging.getLogger(__name__)
 
-LAYOUT_DIR = _project_root / "layout"
+LAYOUT_DIR = Path(__file__).resolve().parent.parent / "layout"
 _LOCK = asyncio.Lock()
 
 @dataclass
@@ -74,7 +67,7 @@ def _format_modified() -> str:
 class LayoutAgent:
     def __init__(self, db=None, client=None, model=None, debug=False):
         self._db = db
-        self._client = client if client is not None else _client
+        self._client = client if client is not None else default_client
         self._model = model if model is not None else "deepseek-v4-flash"
         self._debug = debug
 
@@ -195,6 +188,52 @@ class LayoutAgent:
             nodes=nodes,
             pipe_data=pipe_data,
         )
+
+
+def _calc_content_rect(nodes: list[dict]) -> dict:
+    if not nodes:
+        return {"x": 0, "y": 0, "width": 0, "height": 0}
+    min_x = float("inf")
+    min_y = float("inf")
+    max_x = float("-inf")
+    max_y = float("-inf")
+    for n in nodes:
+        cx = n.get("x", 0)
+        cy = n.get("y", 0)
+        w = n.get("width", 0) or 0
+        h = n.get("height", 0) or 0
+        half_w, half_h = w / 2, h / 2
+        min_x = min(min_x, cx - half_w)
+        min_y = min(min_y, cy - half_h)
+        max_x = max(max_x, cx + half_w)
+        max_y = max(max_y, cy + half_h)
+    return {
+        "x": round(min_x, 5),
+        "y": round(min_y, 5),
+        "width": round(max_x - min_x, 5),
+        "height": round(max_y - min_y, 5),
+    }
+
+
+_SCHEMA_PATH = Path(__file__).resolve().parent.parent / "data" / "schema" / "canvas_schema.json"
+_SCHEMA_CACHE: dict | None = None
+
+
+def _get_schema() -> dict:
+    global _SCHEMA_CACHE
+    if _SCHEMA_CACHE is None:
+        _SCHEMA_CACHE = json.loads(_SCHEMA_PATH.read_text(encoding="utf-8"))
+    assert _SCHEMA_CACHE is not None
+    return _SCHEMA_CACHE
+
+
+async def _schema_validate(json_data: dict) -> list[str]:
+    schema = _get_schema()
+    try:
+        jsonschema.validate(instance=json_data, schema=schema)
+        return []
+    except jsonschema.ValidationError as e:
+        return [str(e.message)]
 
 
 def _cli() -> None:

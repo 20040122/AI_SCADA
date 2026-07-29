@@ -1,8 +1,6 @@
 # AI-SCADA
 
-## 快速开始
-
-### 后端
+## 后端
 
 ```bash
 # 1. 安装依赖
@@ -14,7 +12,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### 前端
+## 前端
 
 ```bash
 cd web/scada
@@ -26,7 +24,7 @@ cp .env .env.local
 npm run dev
 ```
 
-前端如果卡死执行：
+- 前端卡死：
 ```bash
   rm -rf node_modules
   npm ci
