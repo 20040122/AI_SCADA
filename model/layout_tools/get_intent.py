@@ -25,7 +25,7 @@ Topology = Literal["single", "series", "parallel"]
 RouteStyle = Literal["direct", "orthogonal"]
 Direction = Literal["horizontal", "vertical"]
 
-_INTENT_EXAMPLE_PATH = Path(__file__).resolve().parent.parent / "layout" / "intent.json"
+_INTENT_EXAMPLE_PATH = Path(__file__).resolve().parents[2] / "layout" / "intent.json"
 _GENERATE_GIRD_MODEL = "deepseek-v4-flash"
 _INTENT_CACHE = OrderedDict()
 _INTENT_CACHE_VERSION = 2
@@ -589,7 +589,7 @@ async def generate_intent(
     cached = _INTENT_CACHE.get(cache_key)
     if cached is not None:
         return cached.model_copy(deep=True)
-    from model.layout_intent_rules import build_rule_layout
+    from model.layout_tools.layout_intent_rules import build_rule_layout
     rule = build_rule_layout(source)
     if rule.data is not None:
         layout_file = LayoutFile.model_validate(rule.data)

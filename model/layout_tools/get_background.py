@@ -220,7 +220,7 @@ _TEMPLATES: list[tuple[int, int, str]] = [
 
 def _layout_dir():
     from pathlib import Path
-    return Path(__file__).resolve().parent.parent / "layout"
+    return Path(__file__).resolve().parents[2] / "layout"
 
 def _pick_base(width: int, height: int) -> str:
     target_ratio = width / height
@@ -269,6 +269,6 @@ if __name__ == "__main__":
     _w = int(input("Width: "))
     _h = int(input("Height: "))
     result = generate_layout(_t, _w, _h)
-    _out = Path(__file__).resolve().parent.parent / "data" / "bg_ir.json"
+    _out = Path(__file__).resolve().parents[2] / "data" / "bg_ir.json"
     _out.write_text(_json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(_json.dumps(result, ensure_ascii=False, indent=2))

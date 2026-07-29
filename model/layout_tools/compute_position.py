@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from model.generate_gird import LayoutFile, LayoutGroup, validate_layout_file
+from model.layout_tools.get_intent import LayoutFile, LayoutGroup, validate_layout_file
 
 
 @dataclass
@@ -619,7 +619,7 @@ def _is_canvas_json_path(image: str) -> bool:
     candidates = (
         [path]
         if path.is_absolute()
-        else [Path.cwd() / path, Path(__file__).resolve().parent.parent / path]
+        else [Path.cwd() / path, Path(__file__).resolve().parents[2] / path]
     )
     for candidate in candidates:
         if not candidate.is_file():

@@ -12,7 +12,7 @@ from typing import Optional
 import jsonschema
 
 from data.sqlite.material_db import MaterialDB
-from model.get_background import generate_layout
+from model.layout_tools.get_background import generate_layout
 from model.llm_client import default_client
 
 logger = logging.getLogger(__name__)
@@ -86,8 +86,8 @@ class LayoutAgent:
         height: int,
         title: Optional[str] = None,
     ) -> LayoutResult:
-        from model.generate_gird import generate_intent
-        from model.compute_position import MissingMaterialError, convert_layout_file
+        from model.layout_tools.get_intent import generate_intent
+        from model.layout_tools.compute_position import MissingMaterialError, convert_layout_file
 
         if self._db is None:
             raise ValueError("database required for position computation")
@@ -117,7 +117,7 @@ class LayoutAgent:
             )
 
         logger.info("Step 4: 生成管线连接...")
-        from model.get_connection import (
+        from model.layout_tools.get_connection import (
             generate_connections,
         )
 

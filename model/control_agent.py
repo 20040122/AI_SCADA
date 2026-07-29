@@ -7,7 +7,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from data.sqlite.material_db import MaterialDB
-from model.search_service import search_controls_with_threshold
+from model.control_tools.search_service import search_controls_with_threshold
 logger = logging.getLogger(__name__)
 load_dotenv(".env.local")
 
