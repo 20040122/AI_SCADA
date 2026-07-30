@@ -14,8 +14,14 @@ from app.schemas import (
     RefineResponse,
 )
 from model.layout_agent import LayoutAgent
-from model.compute_position import MissingMaterialError
-from model.generate_gird import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
+from model.layout_tools.compute_position import MissingMaterialError
+from model.layout_tools.get_intent import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
+from model.layout_tools.get_connection import ConnectionModelError as PipingModelError
+from model.layout_tools.get_connection import ConnectionModelTimeoutError as PipingModelTimeoutError
+from model.layout_tools.get_connection import ConnectionModelUnavailableError as PipingModelUnavailableError
+from model.layout_tools.get_connection import ConnectionValidationError as PipingValidationError
+from model.layout_tools.get_connection import TopologyMismatchError
+from model.layout_tools.get_connection import PipingSectionError
 from model.refine_agent import (
     RefineAgent,
     RefineInputError,
@@ -50,7 +56,15 @@ async def canvas_layout(
                 ]
             },
         ) from exc
+    except (PipingValidationError, TopologyMismatchError, PipingSectionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except IntentModelOutputError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except PipingModelUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except PipingModelTimeoutError as exc:
+        raise HTTPException(status_code=504, detail=str(exc)) from exc
+    except PipingModelError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except IntentModelUnavailableError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
@@ -73,6 +87,7 @@ async def canvas_layout(
         zones=[],
         missing_controls=[],
         file_name=file_name,
+        pipe_data=result.pipe_data,
     )
     return ApiResponse(data=resp.model_dump())
 
@@ -83,10 +98,26 @@ async def canvas_refine(
     agent: RefineAgent = Depends(get_refine_agent),
 ):
     try:
+        if req.selected_node_i is not None and req.selected_node_ids is not None:
+            raise HTTPException(
+                status_code=422,
+                detail="selected_node_i and selected_node_ids are mutually exclusive",
+            )
+        if req.selected_node_ids is not None:
+            if not req.selected_node_ids:
+                raise HTTPException(
+                    status_code=422, detail="selected_node_ids must not be empty"
+                )
+            if len(set(req.selected_node_ids)) != len(req.selected_node_ids):
+                raise HTTPException(
+                    status_code=422, detail="selected_node_ids must be unique"
+                )
+
         result = await agent.refine(
             req.instruction,
             req.json_data,
             req.selected_node_i,
+            req.selected_node_ids,
         )
     except RefineInputError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

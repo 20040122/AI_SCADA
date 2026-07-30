@@ -34,6 +34,7 @@ export function extractNodesFromJsonData(jsonData: LayoutJsonData | null): Canva
       width: n.p.width || 60,
       height: n.p.height || 40,
       color: hashColor(n.p.displayName || ""),
+      a: n.a ? { ...n.a } : undefined,
     }));
 }
 
@@ -76,6 +77,7 @@ export function extractDecorationsFromJsonData(jsonData: LayoutJsonData | null):
           textAlign: s["text.align"] as string | undefined,
           opacity: s.opacity as number | undefined,
           verticalAlign: s["layout.v"] as string | undefined,
+          labelFor: n.a?.["layout.labelFor"] as number | undefined,
         } as DecorationNode;
       }
       return {
@@ -83,6 +85,7 @@ export function extractDecorationsFromJsonData(jsonData: LayoutJsonData | null):
         type: "image",
         image: n.p.image || "",
         displayName: n.p.displayName || "",
+        labelFor: n.a?.["layout.labelFor"] as number | undefined,
       } as DecorationNode;
     });
 }

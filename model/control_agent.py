@@ -7,7 +7,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from data.sqlite.material_db import MaterialDB
-from model.search_service import search_controls_with_threshold
+from model.control_tools.search_service import search_controls_with_threshold
 logger = logging.getLogger(__name__)
 load_dotenv(".env.local")
 
@@ -30,7 +30,7 @@ EXTRACT_PROMPT = """\
 _client = AsyncOpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
     base_url=os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
-    timeout=50.0,
+    timeout=20.0,
 )
 _MODEL = os.environ.get("DEEPSEEK_MODEL")
 

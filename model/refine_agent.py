@@ -5,7 +5,7 @@ import math
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from model.canva_agent import _client, _MODEL, _call_llm
+from model.llm_client import default_client, default_model, call_llm
 
 
 _DEFAULT_WIDTH = 60
@@ -18,6 +18,7 @@ _ACTION_FIELDS = {
     "delete": {"type", "target_ids"},
     "align": {"type", "target_ids", "alignment"},
     "distribute": {"type", "target_ids", "axis"},
+    "add_label": {"type", "target_ids", "text", "names"},
 }
 
 
@@ -53,6 +54,21 @@ class _ControlGeometry:
     original_height: Any
     has_width: bool
     has_height: bool
+    image: str = ""
+    touched: bool = False
+    deleted: bool = False
+
+
+@dataclass
+class _LabelInfo:
+    node_i: int
+    index: int
+    label_for: int
+    x: Any
+    y: Any
+    width: Any
+    height: Any
+    text: str
     touched: bool = False
     deleted: bool = False
 
@@ -100,7 +116,14 @@ def _clamp_geometry(
 
 def _read_layout(
     json_data: dict[str, Any],
-) -> tuple[Any, Any, dict[int, _ControlGeometry], list[dict[str, Any]]]:
+) -> tuple[
+    Any,
+    Any,
+    dict[int, _ControlGeometry],
+    list[dict[str, Any]],
+    dict[int, _LabelInfo],
+    int,
+]:
     if not isinstance(json_data, dict):
         raise RefineInputError("json_data must be an object")
     attributes = json_data.get("a")
@@ -116,6 +139,15 @@ def _read_layout(
 
     controls: dict[int, _ControlGeometry] = {}
     catalog: list[dict[str, Any]] = []
+    all_node_is: set[int] = set()
+    control_node_is: set[int] = set()
+
+    for item in entries:
+        if isinstance(item, dict):
+            node_i = item.get("i")
+            if isinstance(node_i, int) and not isinstance(node_i, bool):
+                all_node_is.add(node_i)
+
     for index, item in enumerate(entries):
         if not isinstance(item, dict):
             continue
@@ -137,6 +169,7 @@ def _read_layout(
             raise RefineInputError("editable control IDs must be integers")
         if node_i in controls:
             raise RefineInputError("editable control IDs must be unique")
+        control_node_is.add(node_i)
         x = _require_input_number(position.get("x"), f"control {node_i} x")
         y = _require_input_number(position.get("y"), f"control {node_i} y")
         has_width = "width" in properties
@@ -147,6 +180,9 @@ def _read_layout(
         height = _require_input_number(
             properties.get("height", _DEFAULT_HEIGHT), f"control {node_i} height"
         )
+        image = properties.get("image", "")
+        if not isinstance(image, str):
+            image = str(image)
         control = _ControlGeometry(
             node_i=node_i,
             index=index,
@@ -160,6 +196,7 @@ def _read_layout(
             original_height=height,
             has_width=has_width,
             has_height=has_height,
+            image=image,
         )
         controls[node_i] = control
         display_name = properties.get("displayName", "")
@@ -175,29 +212,86 @@ def _read_layout(
                 "height": height,
             }
         )
-    return canvas_width, canvas_height, controls, catalog
+
+    labels: dict[int, _LabelInfo] = {}
+    label_node_is: set[int] = set()
+    for index, item in enumerate(entries):
+        if not isinstance(item, dict):
+            continue
+        item_attributes = item.get("a")
+        if not isinstance(item_attributes, dict):
+            continue
+        if (
+            item.get("c") != "ht.Text"
+            or item_attributes.get("layout.role") != "control-label"
+        ):
+            continue
+        label_for = item_attributes.get("layout.labelFor")
+        if not isinstance(label_for, int) or isinstance(label_for, bool):
+            raise RefineInputError("layout.labelFor must be an integer")
+        if label_for not in controls:
+            raise RefineInputError(
+                f"labelFor {label_for} does not reference an editable control"
+            )
+        if label_for in labels:
+            raise RefineInputError(f"duplicate label for control {label_for}")
+
+        node_i = item.get("i")
+        if isinstance(node_i, bool) or not isinstance(node_i, int):
+            raise RefineInputError("label node ID must be an integer")
+        if node_i in control_node_is or node_i in label_node_is:
+            raise RefineInputError(f"duplicate node ID {node_i}")
+        label_node_is.add(node_i)
+
+        properties = item.get("p")
+        if not isinstance(properties, dict):
+            raise RefineInputError("label properties must be an object")
+        position = properties.get("position")
+        if not isinstance(position, dict):
+            raise RefineInputError("label position must be an object")
+
+        s = item.get("s")
+        if not isinstance(s, dict):
+            s = {}
+
+        labels[label_for] = _LabelInfo(
+            node_i=node_i,
+            index=index,
+            label_for=label_for,
+            x=_require_input_number(position.get("x"), f"label {node_i} x"),
+            y=_require_input_number(position.get("y"), f"label {node_i} y"),
+            width=_require_input_number(
+                properties.get("width", 0), f"label {node_i} width"
+            ),
+            height=_require_input_number(
+                properties.get("height", 0), f"label {node_i} height"
+            ),
+            text=s.get("text", ""),
+        )
+
+    max_node_i = max(all_node_is) if all_node_is else -1
+
+    return canvas_width, canvas_height, controls, catalog, labels, max_node_i
 
 
 def _build_prompt(
     canvas_width: Any,
     canvas_height: Any,
     catalog: list[dict[str, Any]],
-    selected_node_i: Optional[int],
+    selected_node_ids: tuple[int, ...],
 ) -> str:
-    selected = "none" if selected_node_i is None else str(selected_node_i)
+    selected = "none" if not selected_node_ids else ",".join(str(i) for i in selected_node_ids)
     catalog_json = json.dumps(catalog, ensure_ascii=False, indent=2)
     return f"""You refine an interactive SCADA canvas by returning semantic actions.
 Canvas width: {canvas_width}
 Canvas height: {canvas_height}
-Selected control ID: {selected}
+Selected control ID(s): {selected}
 Control catalog with stable IDs and current geometry:
 {catalog_json}
 
-Use the selected ID for local commands that refer to the current selection.
-Resolve explicitly named controls from the catalog.
-Include all intended IDs for global commands.
-Never guess an ambiguous target.
-When a local command has no selected or explicit target, return empty actions and a clarifying message.
+When the user says "these controls" or "选中控件", apply the action to the current selected ID(s).
+When the user explicitly names a control or ID, use that specific target — do not merge with the current selection.
+If there is no selection and no explicit target, return empty actions and a clarifying message.
 Always return a non-empty string in "message", including when actions are generated.
 
 Return exactly one JSON object with only "message" and "actions".
@@ -209,8 +303,13 @@ Supported actions are:
 {{"type":"delete","target_ids":[12]}}
 {{"type":"align","target_ids":[12,13],"alignment":"left"}}
 {{"type":"distribute","target_ids":[12,13,14],"axis":"horizontal"}}
+{{"type":"add_label","target_ids":[12]}}
+{{"type":"add_label","target_ids":[12],"text":"入口阀"}}
+{{"type":"add_label","target_ids":[12,13],"text":"阀门"}}
+{{"type":"add_label","target_ids":[12,13],"names":{{12:"入口阀",13:"出口阀"}}}}
 Allowed alignments: left, right, top, bottom, center_x, center_y.
 Allowed distribution axes: horizontal, vertical.
+For naming: text and names are mutually exclusive; without either, each control uses its own displayName.
 Do not add fields outside the selected action schema."""
 
 
@@ -299,6 +398,23 @@ def _validate_action(action: Any, known_ids: set[int]) -> None:
             or axis not in _DISTRIBUTION_AXES
         ):
             raise RefineModelError("invalid distribution action")
+    elif action_type == "add_label":
+        known_set = set(known_ids)
+        if "text" in action and "names" in action:
+            raise RefineModelError("add_label cannot have both text and names")
+        if "names" in action:
+            names = action["names"]
+            if not isinstance(names, dict):
+                raise RefineModelError("add_label names must be an object")
+            for name_key, name_value in names.items():
+                if isinstance(name_key, bool) or not isinstance(name_key, int):
+                    raise RefineModelError("add_label names keys must be integers")
+                if not isinstance(name_value, str):
+                    raise RefineModelError("add_label names values must be strings")
+                if name_key not in known_set:
+                    raise RefineModelError(
+                        f"add_label names references unknown ID {name_key}"
+                    )
 
 
 def _validate_model_data(data: dict[str, Any], known_ids: set[int]) -> None:
@@ -370,15 +486,200 @@ def _distribute(controls: list[_ControlGeometry], axis: str) -> None:
             cursor += control.height + gap
 
 
-def _apply_actions(
-    actions: list[dict[str, Any]],
+def _build_label_json(label: _LabelInfo) -> dict[str, Any]:
+    return {
+        "c": "ht.Text",
+        "i": label.node_i,
+        "p": {
+            "position": {"x": label.x, "y": label.y},
+            "width": label.width,
+            "height": label.height,
+            "tall": 20,
+        },
+        "s": {
+            "text": label.text,
+            "text.font": "bold 20px Arial",
+            "text.color": "white",
+            "text.align": "center",
+            "opacity": 1,
+            "layout.v": "top",
+        },
+        "a": {
+            "layout.role": "control-label",
+            "layout.labelFor": label.label_for,
+        },
+    }
+
+
+def _validate_label_text(text: str) -> str:
+    if not isinstance(text, str):
+        raise RefineInputError("label text must be a string")
+    if not text or text.strip() != text:
+        raise RefineInputError("label text must not be empty or have leading/trailing whitespace")
+    for ch in text:
+        if ord(ch) < 0x20 and ch not in ("\t", "\n", "\r"):
+            raise RefineInputError("label text contains control characters")
+    if "\n" in text:
+        raise RefineInputError("label text must not contain newlines")
+    return text
+
+
+def _compute_label_geometry(
+    control: _ControlGeometry,
+    text: str,
+    canvas_width: Any,
+    canvas_height: Any,
+) -> tuple[Any, Any, Any, Any]:
+    label_height = 32
+    text_width = len(text) * 20 + 16
+    label_width = max(control.width, text_width)
+
+    if label_width > canvas_width:
+        raise RefineInputError(
+            f"label text too long ({len(text)} characters, estimated width {label_width} > canvas {canvas_width})"
+        )
+
+    label_x = control.x
+    half_label_width = label_width / 2
+    if label_x - half_label_width < 0:
+        label_x = half_label_width
+    if label_x + half_label_width > canvas_width:
+        label_x = canvas_width - half_label_width
+
+    half_label_height = label_height / 2
+    gap = 8
+
+    above_y = control.y - control.height / 2 - gap - half_label_height
+    if above_y - half_label_height >= 0:
+        label_y = above_y
+    else:
+        below_y = control.y + control.height / 2 + gap + half_label_height
+        if below_y + half_label_height <= canvas_height:
+            label_y = below_y
+        else:
+            raise RefineInputError(
+                f"no space for label {'above or ' if above_y < 0 else ''}below control {control.node_i}"
+            )
+
+    return label_width, label_height, label_x, label_y
+
+
+def _make_label_map(
+    action: dict[str, Any],
     controls: dict[int, _ControlGeometry],
+    catalog: list[dict[str, Any]],
+) -> dict[int, str]:
+    target_ids = action["target_ids"]
+    catalog_map = {entry["i"]: entry for entry in catalog}
+
+    if len(target_ids) > 1:
+        images = [controls[node_i].image for node_i in target_ids]
+        if any(img != images[0] for img in images):
+            raise RefineInputError(
+                "multi-select add_label requires all targets to have the same image type"
+            )
+
+    if "names" in action:
+        names = action["names"]
+        result: dict[int, str] = {}
+        for node_i in target_ids:
+            if node_i not in names:
+                raise RefineInputError(
+                    f"add_label names missing entry for control {node_i}"
+                )
+            result[node_i] = _validate_label_text(names[node_i])
+        return result
+
+    if "text" in action:
+        base_text = action["text"]
+        if not isinstance(base_text, str):
+            raise RefineModelError("add_label text must be a string")
+        _validate_label_text(base_text)
+        if len(target_ids) == 1:
+            return {target_ids[0]: base_text}
+        return {
+            node_i: f"{base_text}{idx + 1}"
+            for idx, node_i in enumerate(target_ids)
+        }
+
+    result = {}
+    for node_i in target_ids:
+        entry = catalog_map.get(node_i)
+        name = (entry.get("displayName") if entry else None) or ""
+        if not name:
+            raise RefineInputError(
+                f"control {node_i} has no displayName and no text provided"
+            )
+        result[node_i] = _validate_label_text(name)
+    return result
+
+
+def _update_label_from_control(
+    label: _LabelInfo,
+    control: _ControlGeometry,
     canvas_width: Any,
     canvas_height: Any,
 ) -> None:
+    label_width, label_height, label_x, label_y = _compute_label_geometry(
+        control, label.text, canvas_width, canvas_height
+    )
+    label.x = label_x
+    label.y = label_y
+    label.width = label_width
+    label.height = label_height
+    label.touched = True
+
+
+def _apply_actions(
+    actions: list[dict[str, Any]],
+    controls: dict[int, _ControlGeometry],
+    labels: dict[int, _LabelInfo],
+    new_labels: list[_LabelInfo],
+    max_node_i: int,
+    canvas_width: Any,
+    canvas_height: Any,
+    catalog: list[dict[str, Any]],
+) -> int:
+    next_node_i = max_node_i + 1
+
     for action in actions:
-        targets = [controls[node_i] for node_i in action["target_ids"]]
+        target_ids = action["target_ids"]
+        targets = [controls[node_i] for node_i in target_ids]
         action_type = action["type"]
+
+        if action_type == "add_label":
+            text_map = _make_label_map(action, controls, catalog)
+            for node_i in target_ids:
+                text = text_map[node_i]
+                control = controls[node_i]
+                _validate_label_text(text)
+
+                existing = labels.get(node_i)
+                if existing is not None:
+                    existing.text = text
+                    _update_label_from_control(
+                        existing, control, canvas_width, canvas_height
+                    )
+                else:
+                    width, height, x, y = _compute_label_geometry(
+                        control, text, canvas_width, canvas_height
+                    )
+                    new_label = _LabelInfo(
+                        node_i=next_node_i,
+                        index=-1,
+                        label_for=node_i,
+                        x=x,
+                        y=y,
+                        width=width,
+                        height=height,
+                        text=text,
+                        touched=True,
+                    )
+                    labels[node_i] = new_label
+                    new_labels.append(new_label)
+                    next_node_i += 1
+            continue
+
         if action_type == "move":
             for control in targets:
                 if "x" in action:
@@ -402,6 +703,8 @@ def _apply_actions(
         elif action_type == "delete":
             for control in targets:
                 control.deleted = True
+                if control.node_i in labels:
+                    labels[control.node_i].deleted = True
             continue
         elif action_type == "align":
             _align(targets, action["alignment"])
@@ -411,16 +714,24 @@ def _apply_actions(
         for control in targets:
             control.touched = True
             _clamp_geometry(control, canvas_width, canvas_height)
+            if control.node_i in labels:
+                _update_label_from_control(
+                    labels[control.node_i], control, canvas_width, canvas_height
+                )
+
+    return next_node_i
 
 
 def _validate_patch(
-    patch: list[dict[str, Any]], controls: dict[int, _ControlGeometry]
+    patch: list[dict[str, Any]],
+    controls: dict[int, _ControlGeometry],
+    labels: dict[int, _LabelInfo],
 ) -> None:
-    geometry_paths = set()
-    remove_paths = set()
+    allowed_paths: set[str] = set()
+    remove_paths: set[str] = set()
     for control in controls.values():
         prefix = f"/d/{control.index}/p"
-        geometry_paths.update(
+        allowed_paths.update(
             {
                 f"{prefix}/position/x",
                 f"{prefix}/position/y",
@@ -430,6 +741,21 @@ def _validate_patch(
         )
         remove_paths.add(f"/d/{control.index}")
 
+    for label in labels.values():
+        if label.index < 0:
+            continue
+        prefix = f"/d/{label.index}/p"
+        allowed_paths.update(
+            {
+                f"{prefix}/position/x",
+                f"{prefix}/position/y",
+                f"{prefix}/width",
+                f"{prefix}/height",
+            }
+        )
+        allowed_paths.add(f"/d/{label.index}/s/text")
+        remove_paths.add(f"/d/{label.index}")
+
     for operation in patch:
         op = operation.get("op")
         path = operation.get("path")
@@ -437,21 +763,29 @@ def _validate_patch(
             if set(operation) != {"op", "path"} or path not in remove_paths:
                 raise RefineModelError("generated patch contains an invalid remove")
             continue
+        if op == "add" and path == "/d/-":
+            value = operation.get("value")
+            if not isinstance(value, dict) or set(operation) != {"op", "path", "value"}:
+                raise RefineModelError("generated /d/- add must have an object value")
+            continue
         if (
             set(operation) != {"op", "path", "value"}
             or not isinstance(path, str)
-            or path not in geometry_paths
+            or path not in allowed_paths
             or op not in {"add", "replace"}
         ):
             raise RefineModelError("generated patch contains an invalid operation")
         if "/position/" in path and op != "replace":
             raise RefineModelError("generated position patch must use replace")
-        if not _is_finite_number(operation["value"]):
-            raise RefineModelError("generated patch contains an invalid number")
+        if path != "/d/-" and not _is_finite_number(operation["value"]):
+            if "s/text" not in path:
+                raise RefineModelError("generated patch contains an invalid number")
 
 
 def _compile_patch(
     controls: dict[int, _ControlGeometry],
+    labels: dict[int, _LabelInfo],
+    new_labels: list[_LabelInfo],
 ) -> list[dict[str, Any]]:
     patch: list[dict[str, Any]] = []
     ordered = sorted(controls.values(), key=lambda control: control.index)
@@ -491,40 +825,123 @@ def _compile_patch(
                     "value": control.height,
                 }
             )
-    deleted_indexes = sorted(
-        (control.index for control in controls.values() if control.deleted),
+
+    for label in labels.values():
+        if label.deleted or not label.touched or label.index < 0:
+            continue
+        prefix = f"/d/{label.index}"
+        patch.append(
+            {
+                "op": "replace",
+                "path": f"{prefix}/s/text",
+                "value": label.text,
+            }
+        )
+        pprefix = f"{prefix}/p"
+        patch.append(
+            {
+                "op": "replace",
+                "path": f"{pprefix}/position/x",
+                "value": label.x,
+            }
+        )
+        patch.append(
+            {
+                "op": "replace",
+                "path": f"{pprefix}/position/y",
+                "value": label.y,
+            }
+        )
+        patch.append(
+            {
+                "op": "replace",
+                "path": f"{pprefix}/width",
+                "value": label.width,
+            }
+        )
+        patch.append(
+            {
+                "op": "replace",
+                "path": f"{pprefix}/height",
+                "value": label.height,
+            }
+        )
+
+    deleted_indexes: list[int] = sorted(
+        (
+            control.index
+            for control in controls.values()
+            if control.deleted
+        ),
         reverse=True,
     )
+    deleted_indexes.extend(
+        sorted(
+            (
+                label.index
+                for label in labels.values()
+                if label.deleted and label.index >= 0
+            ),
+            reverse=True,
+        )
+    )
+    deleted_indexes.sort(reverse=True)
     patch.extend(
         {"op": "remove", "path": f"/d/{index}"} for index in deleted_indexes
     )
-    _validate_patch(patch, controls)
+
+    for label in new_labels:
+        if not label.touched:
+            continue
+        patch.append(
+            {
+                "op": "add",
+                "path": "/d/-",
+                "value": _build_label_json(label),
+            }
+        )
+
+    _validate_patch(patch, controls, labels)
     return patch
 
 
 class RefineAgent:
     def __init__(self, client=None, model=None):
-        self._client = client if client is not None else _client
-        self._model = model if model is not None else _MODEL
+        self._client = client if client is not None else default_client
+        self._model = model if model is not None else default_model
 
     async def refine(
         self,
         instruction: str,
         json_data: dict[str, Any],
         selected_node_i: Optional[int] = None,
+        selected_node_ids: Optional[list[int]] = None,
     ) -> RefineResult:
         if not isinstance(instruction, str):
             raise RefineInputError("instruction must be a string")
         instruction = instruction.strip()
         if not instruction:
             raise RefineInputError("instruction must not be empty")
-        canvas_width, canvas_height, controls, catalog = _read_layout(json_data)
+        canvas_width, canvas_height, controls, catalog, labels, max_node_i = _read_layout(
+            json_data
+        )
         if selected_node_i is not None and (
             isinstance(selected_node_i, bool)
             or not isinstance(selected_node_i, int)
             or selected_node_i not in controls
         ):
             raise RefineInputError("selected control must be editable")
+        if selected_node_ids is not None:
+            for nid in selected_node_ids:
+                if nid not in controls:
+                    raise RefineInputError(f"selected node {nid} is not editable")
+        normalized_selection: tuple[int, ...]
+        if selected_node_ids is not None:
+            normalized_selection = tuple(selected_node_ids)
+        elif selected_node_i is not None:
+            normalized_selection = (selected_node_i,)
+        else:
+            normalized_selection = ()
         if self._client is None or not self._model:
             raise RefineUnavailableError("refine model is unavailable")
 
@@ -532,10 +949,10 @@ class RefineAgent:
             canvas_width,
             canvas_height,
             catalog,
-            selected_node_i,
+            normalized_selection,
         )
         try:
-            response = await _call_llm(
+            response = await call_llm(
                 self._client,
                 self._model,
                 messages=[
@@ -548,12 +965,28 @@ class RefineAgent:
             raise RefineModelError("refine model call failed") from exc
 
         data = _response_data(response)
-        _validate_model_data(data, set(controls))
+        known_ids = set(controls)
+        _validate_model_data(data, known_ids)
         actions = data["actions"]
         if not actions:
             return RefineResult(patch=[], message=data["message"])
-        _apply_actions(actions, controls, canvas_width, canvas_height)
+
+        new_labels: list[_LabelInfo] = []
+        try:
+            _apply_actions(
+                actions,
+                controls,
+                labels,
+                new_labels,
+                max_node_i,
+                canvas_width,
+                canvas_height,
+                catalog,
+            )
+        except RefineInputError as exc:
+            return RefineResult(patch=[], message=str(exc))
+
         return RefineResult(
-            patch=_compile_patch(controls),
+            patch=_compile_patch(controls, labels, new_labels),
             message=data["message"],
         )

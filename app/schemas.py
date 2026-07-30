@@ -74,6 +74,7 @@ class CanvasLayoutResponse(BaseModel):
     zones: list[LayoutZoneResponse]
     missing_controls: list[str] = []
     file_name: str = ""
+    pipe_data: Optional[dict[str, Any]] = None
 
 
 class JsonPatchOperation(BaseModel):
@@ -88,6 +89,7 @@ class RefineRequest(BaseModel):
     instruction: str
     json_data: dict[str, Any]
     selected_node_i: Optional[StrictInt] = None
+    selected_node_ids: Optional[list[StrictInt]] = None
 
 
 class RefineResponse(BaseModel):

@@ -23,6 +23,20 @@ def _region(text: str, device_type: str) -> Optional[str]:
     return None
 
 
+def _arrangement(text: str, device_type: str) -> Optional[str]:
+    start = text.find(device_type)
+    if start < 0:
+        return None
+    fragment = re.split(r"[；。]", text[start:], maxsplit=1)[0]
+    if "纵向" in fragment:
+        return "vertical"
+    if "横向" in fragment:
+        return "horizontal"
+    if "网格" in fragment or "矩阵" in fragment:
+        return "grid"
+    return None
+
+
 def _has_complex_topology(structure: str) -> bool:
     strong = ["泵1", "泵2", "从上和下", "连接同一个"]
     if any(kw in structure for kw in strong):
@@ -64,27 +78,25 @@ def _build_complex_groups(source) -> Optional[dict]:
             group["side"] = "right"
         groups.append(group)
         previous_id = group["id"]
-    piping = source.piping
-    structure = source.structure
-    constraints = {
-        "routeStyle": "orthogonal" if "正交" in piping else None,
-        "allowedDirections": ["horizontal", "vertical"] if "垂直" in piping or "水平" in piping else [],
-        "equalSpacing": "等间距" in piping,
-        "alignRepeated": "对齐" in piping,
-        "consistentBranches": "结构一致" in piping or "相同模板" in structure,
-    }
-    return {"layoutIntent": {"groups": groups, "constraints": constraints}}
+    return {"layoutIntent": {"groups": groups}}
+
+
+def _has_region_or_arrangement(text: str, device_type: str) -> bool:
+    start = text.find(device_type)
+    if start < 0:
+        return False
+    fragment = re.split(r"[；。]", text[start:], maxsplit=1)[0]
+    return any(kw in fragment for kw in ("左侧", "右侧", "中部", "中央", "纵向", "横向"))
 
 
 def build_rule_layout(source) -> RuleLayoutResult:
     structure = source.structure
-    piping = source.piping
     if _has_complex_topology(structure):
         data = _build_complex_groups(source)
         if data is not None:
             return RuleLayoutResult(data, None)
         return RuleLayoutResult(None, "complex_topology_no_flow")
-    if not any(word in structure or word in piping for word in ("左侧", "右侧", "中部", "纵向", "横向", "正交")):
+    if not any(_has_region_or_arrangement(structure, item.deviceType) for item in source.inventory):
         return RuleLayoutResult(None, "unsupported_structure")
     groups = []
     group_by_device = {}
@@ -97,7 +109,16 @@ def build_rule_layout(source) -> RuleLayoutResult:
             return RuleLayoutResult(None, "unsupported_structure")
         if previous_region is not None and region_rank[region] < region_rank[previous_region]:
             return RuleLayoutResult(None, "conflicting_region_order")
-        group = {"id": "group-%d" % index, "region": region, "count": item.count, "topology": "parallel" if item.deviceType in source.parallelDevices else "single", "unit": {"root": {"id": "root", "deviceType": item.deviceType}}}
+        arrangement = _arrangement(structure, item.deviceType)
+        group = {
+            "id": "group-%d" % index,
+            "region": region,
+            "count": item.count,
+            "topology": "parallel" if item.deviceType in source.parallelDevices else "single",
+            "unit": {"root": {"id": "root", "deviceType": item.deviceType}},
+        }
+        if arrangement is not None:
+            group["arrangement"] = arrangement
         if previous_id is not None:
             group["relativeTo"] = previous_id
             group["side"] = "right"
@@ -105,4 +126,4 @@ def build_rule_layout(source) -> RuleLayoutResult:
         group_by_device[item.deviceType] = group["id"]
         previous_id = group["id"]
         previous_region = region
-    return RuleLayoutResult({"layoutIntent": {"groups": groups, "constraints": {"routeStyle": "orthogonal" if "正交" in piping else None, "allowedDirections": ["horizontal", "vertical"] if "垂直" in piping or "水平" in piping else [], "equalSpacing": "等间距" in piping, "alignRepeated": "对齐" in piping, "consistentBranches": "结构一致" in piping or "相同模板" in structure}}}, None)
+    return RuleLayoutResult({"layoutIntent": {"groups": groups}}, None)

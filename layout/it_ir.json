@@ -2,100 +2,99 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "air-tank-group",
-        "region": "left",
+        "id": "group-1",
+        "region": "center",
         "unit": {
           "root": {
-            "id": "air-tank",
-            "deviceType": "空气罐",
-            "role": "root"
+            "id": "root",
+            "deviceType": "溢流阀"
           },
-          "attachments": [
-            {
-              "id": "air-valve",
-              "deviceType": "阀门",
-              "role": "valve",
-              "relativeTo": "air-tank",
-              "side": "top"
-            },
-            {
-              "id": "air-flowmeter1",
-              "deviceType": "流量计",
-              "role": "meter",
-              "relativeTo": "air-valve",
-              "side": "right"
-            },
-            {
-              "id": "air-pressure",
-              "deviceType": "压力传感器",
-              "role": "sensor",
-              "relativeTo": "air-flowmeter1",
-              "side": "right"
-            },
-            {
-              "id": "air-flowmeter2",
-              "deviceType": "流量计",
-              "role": "meter",
-              "relativeTo": "air-pressure",
-              "side": "right"
-            }
-          ]
+          "attachments": []
         },
-        "count": 1,
-        "arrangement": "horizontal",
-        "gapHint": "normal",
+        "count": 4,
         "topology": "single"
       },
       {
-        "id": "nitrogen-group",
-        "region": "right",
+        "id": "group-2",
+        "region": "center",
         "unit": {
           "root": {
-            "id": "n2-tank",
-            "deviceType": "氮气罐",
-            "role": "root"
+            "id": "root",
+            "deviceType": "液压泵"
           },
-          "attachments": [
-            {
-              "id": "n2-valve",
-              "deviceType": "阀门",
-              "role": "valve",
-              "relativeTo": "n2-tank",
-              "side": "top"
-            },
-            {
-              "id": "n2-flowmeter",
-              "deviceType": "流量计",
-              "role": "meter",
-              "relativeTo": "n2-valve",
-              "side": "right"
-            },
-            {
-              "id": "n2-pressure",
-              "deviceType": "压力传感器",
-              "role": "sensor",
-              "relativeTo": "n2-flowmeter",
-              "side": "right"
-            }
-          ]
+          "attachments": []
+        },
+        "count": 4,
+        "topology": "single",
+        "relativeTo": "group-1",
+        "side": "right"
+      },
+      {
+        "id": "group-3",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "电机"
+          },
+          "attachments": []
         },
         "count": 2,
-        "arrangement": "vertical",
-        "gapHint": "normal",
         "topology": "single",
-        "relativeTo": "air-tank-group",
+        "relativeTo": "group-2",
+        "side": "right"
+      },
+      {
+        "id": "group-4",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "吸油过滤器"
+          },
+          "attachments": []
+        },
+        "count": 2,
+        "topology": "single",
+        "relativeTo": "group-3",
+        "side": "right"
+      },
+      {
+        "id": "group-5",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "回油单向阀"
+          },
+          "attachments": []
+        },
+        "count": 1,
+        "topology": "single",
+        "relativeTo": "group-4",
+        "side": "right"
+      },
+      {
+        "id": "group-6",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "油箱"
+          },
+          "attachments": []
+        },
+        "count": 1,
+        "topology": "single",
+        "relativeTo": "group-5",
         "side": "right"
       }
     ],
     "constraints": {
-      "routeStyle": "orthogonal",
-      "allowedDirections": [
-        "horizontal",
-        "vertical"
-      ],
+      "allowedDirections": [],
       "equalSpacing": false,
-      "alignRepeated": true,
-      "consistentBranches": true
+      "alignRepeated": false,
+      "consistentBranches": false
     }
   }
 }

@@ -1,8 +1,6 @@
 # AI-SCADA
 
-## 快速开始
-
-### 后端
+## 后端
 
 ```bash
 # 1. 安装依赖
@@ -14,7 +12,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### 前端
+## 前端
 
 ```bash
 cd web/scada
@@ -25,4 +23,10 @@ cp .env .env.local
 # 3. 启动开发服务器
 npm run dev
 ```
-- demo:左侧一台空气罐，顶部连接管道，管道连接流量计、压力传感器、流量计，空气罐顶部设有阀门。右侧上下排列两台氮气罐，每个罐顶部均安装阀门，每个阀门右侧连接管道，右侧连接流量计和压力传感器。
+
+- 前端卡死：
+```bash
+  rm -rf node_modules
+  npm ci
+  npm run dev
+```

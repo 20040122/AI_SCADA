@@ -15,11 +15,12 @@ export default function LeftPanel() {
     setCanvasHeight,
     setLayoutResult,
     setWorkflowStep,
+    setWorkflowStatus,
     resetWorkflow,
     clearCanvas,
     setIsLoading,
     setError,
-    workflow,
+    workflowStatus,
   } = useLayoutStore();
 
   const [controls, setControls] = useState("");
@@ -50,12 +51,9 @@ export default function LeftPanel() {
     setQuery(structuredQuery);
     setIsLoading(true);
     setError(null);
+    setWorkflowStatus("running");
 
     try {
-      setWorkflowStep(1, "run");
-      setWorkflowStep(1, "done");
-      setWorkflowStep(2, "run");
-
       const result = await generateLayout({
         query: structuredQuery,
         canvasWidth,
@@ -63,10 +61,13 @@ export default function LeftPanel() {
         title: title.trim(),
       });
 
+      setWorkflowStep(1, "done");
       setWorkflowStep(2, "done");
-      setWorkflowStep(3, "run");
-      setLayoutResult(result);
       setWorkflowStep(3, "done");
+      setWorkflowStep(4, "done");
+      setWorkflowStep(5, "done");
+      setWorkflowStatus("success");
+      setLayoutResult(result);
 
       const nodeCount = extractNodesFromJsonData(result.json_data).length;
       const missingCount = result.missing_controls.length || 0;
@@ -85,12 +86,9 @@ export default function LeftPanel() {
         notify(`${nodeCount} 个控件生成成功`, "s");
       }
     } catch (e) {
-      setWorkflowStep(1, "done");
-      setWorkflowStep(2, "done");
-      setWorkflowStep(3, "done");
-
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);
+      setWorkflowStatus("error");
       notify("AI 布局异常，请检查后端服务", "e");
     } finally {
       setIsLoading(false);
@@ -103,7 +101,7 @@ export default function LeftPanel() {
     notify("已清空画布", "s");
   };
 
-  const isGenerating = workflow.some((s) => s.status === "run");
+  const isGenerating = workflowStatus === "running";
 
   return (
     <div className="w-[320px] bg-[var(--panel)] border-r border-[var(--border)] flex flex-col shrink-0 overflow-hidden">

@@ -5,7 +5,7 @@ from typing import Optional
 from app.config import settings
 from data.chroma import ControlChunk
 from data.sqlite.material_db import MaterialDB
-from model import search_service as search_svc
+from model.control_tools import search_service as search_svc
 from model.control_agent import ControlAgent
 from model.layout_agent import LayoutAgent
 from model.refine_agent import RefineAgent

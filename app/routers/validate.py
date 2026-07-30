@@ -57,7 +57,7 @@ def _schema_validate(category: str, json_data: dict) -> list[ValidationErrorItem
 
 
 def _layout_semantic_validate(json_data: dict) -> tuple[list[ValidationErrorItem], list[ValidationErrorItem]]:
-    from model.generate_gird import LayoutFile, validate_layout_file
+    from model.layout_tools.get_intent import LayoutFile, validate_layout_file
     try:
         layout_file = LayoutFile.model_validate(json_data)
         raw_errors, raw_warnings = validate_layout_file(layout_file)

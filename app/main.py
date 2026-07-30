@@ -6,7 +6,6 @@ from typing import AsyncIterator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import settings
 from app.deps import close_resources, init_resources
 from app.routers import binding, canvas, control, material, validate
 

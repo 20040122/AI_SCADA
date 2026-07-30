@@ -1,0 +1,274 @@
+{
+  "connections": [
+    {
+      "id": "pipe-1",
+      "source": {
+        "group": "group-1",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-2",
+      "source": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-3",
+      "source": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-4",
+      "source": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-5",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-5",
+      "source": {
+        "group": "group-5",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-6",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-6",
+      "source": {
+        "group": "group-1",
+        "node": "root",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 2,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-7",
+      "source": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-8",
+      "source": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-9",
+      "source": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-5",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-10",
+      "source": {
+        "group": "group-5",
+        "node": "root",
+        "instance": 1,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-6",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-11",
+      "source": {
+        "group": "group-1",
+        "node": "root",
+        "instance": 3,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 3,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-12",
+      "source": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 3,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 2,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-13",
+      "source": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 2,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-14",
+      "source": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-6",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-15",
+      "source": {
+        "group": "group-1",
+        "node": "root",
+        "instance": 4,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 4,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-16",
+      "source": {
+        "group": "group-2",
+        "node": "root",
+        "instance": 4,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 2,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-17",
+      "source": {
+        "group": "group-3",
+        "node": "root",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 2,
+        "port": "left"
+      }
+    },
+    {
+      "id": "pipe-18",
+      "source": {
+        "group": "group-4",
+        "node": "root",
+        "instance": 2,
+        "port": "right"
+      },
+      "target": {
+        "group": "group-6",
+        "node": "root",
+        "instance": 1,
+        "port": "left"
+      }
+    }
+  ]
+}

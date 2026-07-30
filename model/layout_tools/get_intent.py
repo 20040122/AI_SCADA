@@ -2,21 +2,16 @@ import asyncio
 import json
 import logging
 import re
-import sys
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Literal, Optional, Tuple
 
-_project_root = Path(__file__).resolve().parent.parent
-if str(_project_root) not in sys.path:
-    sys.path.insert(0, str(_project_root))
-
-from pydantic import BaseModel, Field, ValidationError
 from openai import APITimeoutError
+from pydantic import BaseModel, Field, ValidationError
 
-from model.canva_agent import _client
 from model.layout_agent import _llm_text, _parse_json_lenient
+from model.llm_client import default_client
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +25,8 @@ Topology = Literal["single", "series", "parallel"]
 RouteStyle = Literal["direct", "orthogonal"]
 Direction = Literal["horizontal", "vertical"]
 
-_INTENT_EXAMPLE_PATH = Path(__file__).resolve().parent.parent / "layout" / "intent.json"
+_INTENT_EXAMPLE_PATH = Path(__file__).resolve().parents[2] / "layout" / "intent.json"
 _GENERATE_GIRD_MODEL = "deepseek-v4-flash"
-_FALLBACK_INTENT_MODEL = "deepseek-v4-pro"
 _INTENT_CACHE = OrderedDict()
 _INTENT_CACHE_VERSION = 2
 
@@ -103,7 +97,6 @@ class StructuredLayoutPrompt:
     inventory: List[InventoryItem]
     flow: str
     structure: str
-    piping: str
     flowPaths: List[List[str]]
     parallelDevices: List[str]
 
@@ -129,7 +122,7 @@ class IntentModelOutputError(RuntimeError):
 
 
 async def _call_intent_model(client, model, messages, **kwargs):
-    timeout = 30.0 if model == _FALLBACK_INTENT_MODEL else 8.0
+    timeout = 15
     try:
         request_client = client.with_options(max_retries=0, timeout=timeout)
         return await asyncio.wait_for(request_client.chat.completions.create(model=model, messages=messages, **kwargs), timeout=timeout)
@@ -174,13 +167,15 @@ def _split_sections(prompt: str) -> dict:
         content = prompt[match.end() : content_end].strip()
         if name in sections:
             errors.append(ValidationErrorItem(path=name, message="段落重复"))
+        elif name == "管道":
+            pass
         elif not content:
             errors.append(ValidationErrorItem(path=name, message="段落不能为空"))
         else:
             sections[name] = content
-    if "要求" in sections and "管道" not in sections:
-        sections["管道"] = sections.pop("要求")
-    for name in ("控件", "流程", "结构", "管道"):
+    if "要求" in sections:
+        errors.append(ValidationErrorItem(path="要求", message="该段落已不再支持"))
+    for name in ("控件", "流程", "结构"):
         if name not in sections and not any(item.path == name for item in errors):
             errors.append(ValidationErrorItem(path=name, message="缺少段落"))
     if errors:
@@ -269,7 +264,6 @@ def parse_structured_prompt(prompt: str) -> StructuredLayoutPrompt:
         inventory=inventory,
         flow=sections["流程"],
         structure=sections["结构"],
-        piping=sections["管道"],
         flowPaths=flow_paths,
         parallelDevices=_parallel_devices(sections["流程"], inventory),
     )
@@ -485,6 +479,11 @@ def _has_group_placement_cycle(groups: List[LayoutGroup]) -> bool:
     return False
 
 
+def _strip_constraints(layout_file: LayoutFile) -> LayoutFile:
+    layout_file.layoutIntent.constraints = LayoutConstraints()
+    return layout_file
+
+
 def _load_intent_example() -> Optional[str]:
     p = _INTENT_EXAMPLE_PATH
     if not p.exists():
@@ -501,7 +500,7 @@ def _build_system_prompt(vocab: List[str], example: Optional[str]) -> str:
     parts.append("输出格式严格为 {\"layoutIntent\":{\"groups\":[...]}}，只输出 JSON,不要解释或 markdown。")
     parts.append("数据结构：")
     parts.append("- LayoutFile: { layoutIntent: LayoutIntent }")
-    parts.append("- LayoutIntent: { groups: LayoutGroup[], constraints?: LayoutConstraints }")
+    parts.append("- LayoutIntent: { groups: LayoutGroup[] }")
     parts.append(
         '- LayoutGroup: { id: string, region: "left"|"right"|"center", unit: LayoutUnit, count: number, arrangement?: "vertical"|"horizontal"|"grid", gapHint?: "tight"|"normal"|"loose", columns?: number, rows?: number, order?: "row-major"|"col-major", topology?: "single"|"series"|"parallel", relativeTo?: string, side?: "top"|"right"|"bottom"|"left" }'
     )
@@ -510,7 +509,6 @@ def _build_system_prompt(vocab: List[str], example: Optional[str]) -> str:
     parts.append(
         '- AttachmentNode: { id: string, deviceType: string, role?: "root"|"valve"|"pipe"|"meter"|"sensor"|"default", relativeTo: string, side: "top"|"right"|"bottom"|"left", count?: number }'
     )
-    parts.append('- LayoutConstraints: { routeStyle?: "direct"|"orthogonal", allowedDirections?: ("horizontal"|"vertical")[], equalSpacing?: boolean, alignRepeated?: boolean, consistentBranches?: boolean }')
     parts.append("规则：")
     parts.append("1. groups 不能为空。")
     parts.append("2. 每个 group.id 必须唯一。")
@@ -525,8 +523,7 @@ def _build_system_prompt(vocab: List[str], example: Optional[str]) -> str:
     parts.append("11. 同一 group 内的节点 id 必须唯一；不同 group 之间 id 可重复。")
     parts.append('12. role 可选，取值 "root"|"valve"|"pipe"|"meter"|"sensor"|"default"；root 节点可不标（自动按 root 处理）；附件节点建议标注 role 以确定尺寸约束，未标则按 deviceType 关键词推断，仍无法识别时按 default。')
     parts.append("13. user message 中 inventory 是设备和数量的唯一真值；设备可作为 root 或 attachment，所有 group.count 和 attachment.count 展开后的总数必须与 inventory 一致。")
-    parts.append("14. 相对位置映射为 relativeTo 和 side；正交、方向、等间距、对齐、支路一致性映射为 constraints。")
-    parts.append("15. 主流程从左到右排列时，首组作为锚点；每个后续 group 必须通过 relativeTo 引用前一组并声明 side=right，即使它们都属于 center 区域。不要让多个流程组仅因 region=center 而共用一列。")
+    parts.append("14. 主流程从左到右排列时，首组作为锚点；每个后续 group 必须通过 relativeTo 引用前一组并声明 side=right，即使它们都属于 center 区域。不要让多个流程组仅因 region=center 而共用一列。")
     if vocab:
         parts.append("可用设备类型（deviceType 必须从下列选取，不要生造）：")
         parts.append("、".join(vocab))
@@ -560,7 +557,6 @@ def _build_user_prompt(source: StructuredLayoutPrompt) -> str:
             ],
             "flow": source.flow,
             "structure": source.structure,
-            "piping": source.piping,
         },
         ensure_ascii=False,
     )
@@ -574,7 +570,7 @@ async def generate_intent(
     model_caller=None,
 ) -> LayoutFile:
     source = parse_structured_prompt(prompt)
-    client = client or _client
+    client = client or default_client
     model = model or _GENERATE_GIRD_MODEL
     model_caller = model_caller or _call_intent_model
 
@@ -588,16 +584,18 @@ async def generate_intent(
     ]
     if errors:
         raise StructuredPromptError(errors)
-    cache_key = (_INTENT_CACHE_VERSION, " ".join(prompt.split()), tuple(sorted(vocab)), model)
+    section_text = "控件：" + "、".join(f"{item.count}台{item.deviceType}" for item in source.inventory) + "\n流程：" + source.flow + "\n结构：" + source.structure
+    cache_key = (_INTENT_CACHE_VERSION, section_text, tuple(sorted(vocab)), model)
     cached = _INTENT_CACHE.get(cache_key)
     if cached is not None:
         return cached.model_copy(deep=True)
-    from model.layout_intent_rules import build_rule_layout
+    from model.layout_tools.layout_intent_rules import build_rule_layout
     rule = build_rule_layout(source)
     if rule.data is not None:
         layout_file = LayoutFile.model_validate(rule.data)
         errors, _ = validate_layout_file(layout_file, source)
         if not errors:
+            _strip_constraints(layout_file)
             _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
             return layout_file
 
@@ -642,37 +640,15 @@ async def generate_intent(
             )
         for warning in warnings:
             logger.warning(warning)
+        _strip_constraints(layout_file)
         return layout_file
 
-    try:
-        layout_file = await call_and_validate(
-            model,
-            response_format={"type": "json_object"},
-            stream=False,
-            extra_body={"thinking": {"type": "disabled"}},
-        )
-    except IntentModelOutputError as exc:
-        if model == _FALLBACK_INTENT_MODEL:
-            raise
-        logger.warning("Flash 布局输出校验失败，使用 Pro 修复：%s", exc)
-        if exc.raw_output:
-            messages.append({"role": "assistant", "content": exc.raw_output})
-        messages.append(
-            {
-                "role": "user",
-                "content": f"上一次输出校验失败：{exc}。如果错误来自 group.count * attachment.count 超过控件声明，请拆成独立 root groups，不要通过 attachment 表达共享设备。请修正后只输出完整 JSON。",
-            }
-        )
-        try:
-            layout_file = await call_and_validate(
-                _FALLBACK_INTENT_MODEL,
-                response_format={"type": "json_object"},
-                stream=False,
-                reasoning_effort="high",
-                extra_body={"thinking": {"type": "enabled"}},
-            )
-        except IntentModelOutputError as fallback_exc:
-            raise IntentModelOutputError(f"Pro 修复后仍无效：{fallback_exc}") from fallback_exc
+    layout_file = await call_and_validate(
+        model,
+        response_format={"type": "json_object"},
+        stream=False,
+        extra_body={"thinking": {"type": "disabled"}},
+    )
     _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
     return layout_file
 
