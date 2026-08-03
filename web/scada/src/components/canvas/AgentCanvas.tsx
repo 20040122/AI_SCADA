@@ -5,7 +5,7 @@ import { partitionDecorationsForPipes } from "../../utils/canvasLayers";
 import { routePipe } from "../../utils/pipeRouter";
 import type { Obstacle } from "../../utils/pipeRouter";
 import { getLeadLength, getEdgeCenter, getLeadEnd } from "../../utils/pipeGeometry.ts";
-import { captureDragSnapshot, computeDragPositions } from "../../utils/dragGeometry";
+import { captureDragSnapshot, computeDragPositions, computeRatioResize, type ResizeHandleType } from "../../utils/dragGeometry";
 
 const MIN_ZOOM = 0.35;
 const MAX_ZOOM = 2;
@@ -107,7 +107,6 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY,
           src={previewUrl}
           alt={node.displayName}
           className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ objectFit: "contain", padding: Math.max(2, 4 * scale) }}
           onError={() => setImgError(true)}
         />
       )}
@@ -174,7 +173,7 @@ const DecorationImage = memo(function DecorationImage({ node, scale, offsetX, of
       className="absolute pointer-events-none"
       style={{ transform: `translate(${x}px, ${y}px)`, width: w, height: h }}
     >
-      {url && <img src={url} alt="" className="w-full h-full" style={{ objectFit: "contain" }} />}
+      {url && <img src={url} alt="" className="w-full h-full" />}
     </div>
   );
 });
@@ -342,61 +341,33 @@ const PipesLayer = memo(function PipesLayer({ pipeData, nodes, canvasW, canvasH,
   );
 });
 
-type Corner = "nw" | "ne" | "sw" | "se";
+type Corner = ResizeHandleType;
 
-const CORNER_CURSORS: Record<Corner, string> = {
+const CORNER_CURSORS: Record<"nw" | "ne" | "sw" | "se", string> = {
   nw: "nwse-resize",
   ne: "nesw-resize",
   sw: "nesw-resize",
   se: "nwse-resize",
 };
 
-function getOppositeCorner(corner: Corner): { left: boolean; top: boolean } {
-  return {
-    left: corner === "ne" || corner === "se",
-    top: corner === "sw" || corner === "se",
-  };
-}
+const EDGE_CURSORS: Record<"n" | "s" | "e" | "w", string> = {
+  n: "ns-resize",
+  s: "ns-resize",
+  e: "ew-resize",
+  w: "ew-resize",
+};
 
-function computeResize(
-  corner: Corner,
-  node: CanvasNode,
-  dx: number, dy: number,
-  canvasW: number, canvasH: number
-): { x: number; y: number; width: number; height: number } {
-  const opp = getOppositeCorner(corner);
-  const fixedLeft = opp.left;
-  const fixedTop = opp.top;
-
-  let newW: number;
-  let newH: number;
-  let newX: number;
-  let newY: number;
-
-  if (fixedLeft) {
-    newW = node.width - dx;
-    newX = node.x + dx / 2;
-  } else {
-    newW = node.width + dx;
-    newX = node.x + dx / 2;
+function nodeAspect(node: CanvasNode): number {
+  const a = node.a;
+  const sw = a?.["layout.sourceWidth"];
+  const sh = a?.["layout.sourceHeight"];
+  if (typeof sw === "number" && typeof sh === "number" && sw > 0 && sh > 0) {
+    return sw / sh;
   }
-  if (fixedTop) {
-    newH = node.height - dy;
-    newY = node.y + dy / 2;
-  } else {
-    newH = node.height + dy;
-    newY = node.y + dy / 2;
+  if (node.width > 0 && node.height > 0) {
+    return node.width / node.height;
   }
-
-  newW = Math.max(10, newW);
-  newH = Math.max(10, newH);
-
-  const halfW = newW / 2;
-  const halfH = newH / 2;
-  newX = Math.max(halfW, Math.min(canvasW - halfW, newX));
-  newY = Math.max(halfH, Math.min(canvasH - halfH, newY));
-
-  return { x: newX, y: newY, width: newW, height: newH };
+  return 1;
 }
 
 function round2(v: number): number {
@@ -485,7 +456,7 @@ const CanvasContent = memo(function CanvasContent({ nodes, decorations, canvasW,
       const scale = getScale();
       const dx = (ev.clientX - startX) / scale;
       const dy = (ev.clientY - startY) / scale;
-      const result = computeResize(corner, singleSelectedNode, dx, dy, canvasW, canvasH);
+      const result = computeRatioResize(corner, singleSelectedNode, dx, dy, canvasW, canvasH, nodeAspect(singleSelectedNode));
 
       if (resizeAnimRef.current !== null) cancelAnimationFrame(resizeAnimRef.current);
       resizeLastRef.current = { x: result.x, y: result.y, w: result.width, h: result.height };
@@ -569,12 +540,18 @@ const CanvasContent = memo(function CanvasContent({ nodes, decorations, canvasW,
               const top = offsetY + (n.y - n.height / 2) * scale;
               const right = offsetX + (n.x + n.width / 2) * scale;
               const bottom = offsetY + (n.y + n.height / 2) * scale;
+              const midX = offsetX + n.x * scale;
+              const midY = offsetY + n.y * scale;
               return (
                 <>
                   <ResizeHandle cx={left} cy={top} cursor={CORNER_CURSORS.nw} onPointerDown={(e) => handleResizePointerDown("nw", e)} />
                   <ResizeHandle cx={right} cy={top} cursor={CORNER_CURSORS.ne} onPointerDown={(e) => handleResizePointerDown("ne", e)} />
                   <ResizeHandle cx={left} cy={bottom} cursor={CORNER_CURSORS.sw} onPointerDown={(e) => handleResizePointerDown("sw", e)} />
                   <ResizeHandle cx={right} cy={bottom} cursor={CORNER_CURSORS.se} onPointerDown={(e) => handleResizePointerDown("se", e)} />
+                  <ResizeHandle cx={midX} cy={top} cursor={EDGE_CURSORS.n} onPointerDown={(e) => handleResizePointerDown("n", e)} />
+                  <ResizeHandle cx={midX} cy={bottom} cursor={EDGE_CURSORS.s} onPointerDown={(e) => handleResizePointerDown("s", e)} />
+                  <ResizeHandle cx={right} cy={midY} cursor={EDGE_CURSORS.e} onPointerDown={(e) => handleResizePointerDown("e", e)} />
+                  <ResizeHandle cx={left} cy={midY} cursor={EDGE_CURSORS.w} onPointerDown={(e) => handleResizePointerDown("w", e)} />
                 </>
               );
             })()}

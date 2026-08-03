@@ -12,6 +12,7 @@ from typing import Optional
 import jsonschema
 
 from data.sqlite.material_db import MaterialDB
+from model.layout_tools.geometry import content_rect_of_nodes
 from model.layout_tools.get_background import generate_layout
 from model.llm_client import default_client
 
@@ -191,28 +192,7 @@ class LayoutAgent:
 
 
 def _calc_content_rect(nodes: list[dict]) -> dict:
-    if not nodes:
-        return {"x": 0, "y": 0, "width": 0, "height": 0}
-    min_x = float("inf")
-    min_y = float("inf")
-    max_x = float("-inf")
-    max_y = float("-inf")
-    for n in nodes:
-        cx = n.get("x", 0)
-        cy = n.get("y", 0)
-        w = n.get("width", 0) or 0
-        h = n.get("height", 0) or 0
-        half_w, half_h = w / 2, h / 2
-        min_x = min(min_x, cx - half_w)
-        min_y = min(min_y, cy - half_h)
-        max_x = max(max_x, cx + half_w)
-        max_y = max(max_y, cy + half_h)
-    return {
-        "x": round(min_x, 5),
-        "y": round(min_y, 5),
-        "width": round(max_x - min_x, 5),
-        "height": round(max_y - min_y, 5),
-    }
+    return content_rect_of_nodes(nodes)
 
 
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "data" / "schema" / "canvas_schema.json"

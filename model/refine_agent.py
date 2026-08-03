@@ -5,6 +5,7 @@ import math
 from dataclasses import dataclass
 from typing import Any, Optional
 
+from model.layout_tools.geometry import inscribe_ratio
 from model.llm_client import default_client, default_model, call_llm
 
 
@@ -57,6 +58,7 @@ class _ControlGeometry:
     image: str = ""
     touched: bool = False
     deleted: bool = False
+    aspect: Optional[float] = None
 
 
 @dataclass
@@ -97,11 +99,46 @@ def _clamp(value: Any, lower: Any, upper: Any) -> Any:
     return max(lower, min(value, upper))
 
 
+def _aspect_from_attributes(item_attributes: dict[str, Any]) -> Optional[float]:
+    raw_w = item_attributes.get("layout.sourceWidth")
+    raw_h = item_attributes.get("layout.sourceHeight")
+    if not isinstance(raw_w, (int, float)) or isinstance(raw_w, bool):
+        return None
+    if not isinstance(raw_h, (int, float)) or isinstance(raw_h, bool):
+        return None
+    if not (math.isfinite(raw_w) and math.isfinite(raw_h) and raw_w > 0 and raw_h > 0):
+        return None
+    return raw_w / raw_h
+
+
 def _clamp_geometry(
     control: _ControlGeometry, canvas_width: Any, canvas_height: Any
 ) -> None:
     control.width = _clamp(control.width, 1, canvas_width)
     control.height = _clamp(control.height, 1, canvas_height)
+    control.x = _clamp(
+        control.x,
+        control.width / 2,
+        canvas_width - control.width / 2,
+    )
+    control.y = _clamp(
+        control.y,
+        control.height / 2,
+        canvas_height - control.height / 2,
+    )
+
+
+def _clamp_ratio_geometry(
+    control: _ControlGeometry, canvas_width: Any, canvas_height: Any
+) -> None:
+    if control.width < 1 or control.height < 1:
+        floor_scale = 1 / min(control.width, control.height)
+        control.width *= floor_scale
+        control.height *= floor_scale
+    if control.width > canvas_width or control.height > canvas_height:
+        canvas_scale = min(canvas_width / control.width, canvas_height / control.height)
+        control.width *= canvas_scale
+        control.height *= canvas_scale
     control.x = _clamp(
         control.x,
         control.width / 2,
@@ -183,6 +220,7 @@ def _read_layout(
         image = properties.get("image", "")
         if not isinstance(image, str):
             image = str(image)
+        aspect = _aspect_from_attributes(item_attributes)
         control = _ControlGeometry(
             node_i=node_i,
             index=index,
@@ -197,6 +235,7 @@ def _read_layout(
             has_width=has_width,
             has_height=has_height,
             image=image,
+            aspect=aspect,
         )
         controls[node_i] = control
         display_name = properties.get("displayName", "")
@@ -692,14 +731,23 @@ def _apply_actions(
                     control.y += action["dy"]
         elif action_type == "resize":
             for control in targets:
+                if control.aspect is None:
+                    raise RefineInputError(
+                        f"control {control.node_i} has no material size metadata, cannot enforce ratio"
+                    )
                 if "scale" in action:
                     control.width *= action["scale"]
                     control.height *= action["scale"]
+                elif "width" in action and "height" in action:
+                    control.width, control.height = inscribe_ratio(
+                        action["width"], action["height"], control.aspect
+                    )
+                elif "width" in action:
+                    control.width = action["width"]
+                    control.height = control.width / control.aspect
                 else:
-                    if "width" in action:
-                        control.width = action["width"]
-                    if "height" in action:
-                        control.height = action["height"]
+                    control.height = action["height"]
+                    control.width = control.height * control.aspect
         elif action_type == "delete":
             for control in targets:
                 control.deleted = True
@@ -713,7 +761,10 @@ def _apply_actions(
 
         for control in targets:
             control.touched = True
-            _clamp_geometry(control, canvas_width, canvas_height)
+            if action_type == "resize":
+                _clamp_ratio_geometry(control, canvas_width, canvas_height)
+            else:
+                _clamp_geometry(control, canvas_width, canvas_height)
             if control.node_i in labels:
                 _update_label_from_control(
                     labels[control.node_i], control, canvas_width, canvas_height
@@ -809,7 +860,8 @@ def _compile_patch(
                     "value": control.y,
                 }
             )
-        if control.width != control.original_width:
+        size_changed = control.width != control.original_width or control.height != control.original_height
+        if size_changed:
             patch.append(
                 {
                     "op": "replace" if control.has_width else "add",
@@ -817,7 +869,6 @@ def _compile_patch(
                     "value": control.width,
                 }
             )
-        if control.height != control.original_height:
             patch.append(
                 {
                     "op": "replace" if control.has_height else "add",

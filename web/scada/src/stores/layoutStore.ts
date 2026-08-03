@@ -7,6 +7,8 @@ import type {
   LayoutZone,
   PipeData,
   QualityIssue,
+  UploadCanvasResponse,
+  UploadCorrection,
   WorkflowStep,
   WorkflowStatus,
 } from "../types/layout.ts";
@@ -43,11 +45,15 @@ interface LayoutStore {
 
   fileName: string;
 
+  corrections: UploadCorrection[];
+  uploadWarnings: string[];
+
   setQuery: (q: string) => void;
   setTitle: (t: string) => void;
   setCanvasWidth: (w: number) => void;
   setCanvasHeight: (h: number) => void;
   setLayoutResult: (res: LayoutGenerateResponse) => void;
+  applyUploadResult: (res: UploadCanvasResponse) => void;
   setWorkflowStep: (id: number, status: WorkflowStep["status"]) => void;
   setWorkflowStatus: (s: WorkflowStatus) => void;
   resetWorkflow: () => void;
@@ -79,6 +85,9 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
 
   fileName: "",
 
+  corrections: [],
+  uploadWarnings: [],
+
   setQuery: (q) => set({ query: q }),
   setTitle: (t) => set({ title: t }),
   setCanvasWidth: (w) => set({ canvasWidth: w }),
@@ -93,6 +102,17 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       decorations: extractDecorationsFromJsonData(res.json_data),
       pipe_data: res.pipe_data ?? null,
       fileName: res.file_name,
+      corrections: [],
+      uploadWarnings: [],
+    }),
+
+  applyUploadResult: (res) =>
+    set({
+      jsonData: res.json_data,
+      nodes: extractNodesFromJsonData(res.json_data),
+      decorations: extractDecorationsFromJsonData(res.json_data),
+      corrections: res.corrections,
+      uploadWarnings: res.warnings,
     }),
 
   setWorkflowStep: (id, status) =>
@@ -115,6 +135,8 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       decorations: [],
       pipe_data: null,
       fileName: "",
+      corrections: [],
+      uploadWarnings: [],
       workflowStatus: "idle",
     }),
 

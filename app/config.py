@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     control_jsonl_path: str = str(Path(__file__).resolve().parent.parent / "data" / "control.jsonl")
     layout_config_path: str = str(Path(__file__).resolve().parent.parent / "data" / "layout_config.json")
 
+    daoscada_upload_url: str = "http://daoscada.local/hmi-ui/upload/"
+    daoscada_target_dir: str = "displays/dutzcm"
+    daoscada_upload_timeout: float = 30.0
+
     host: str = "0.0.0.0"
     port: int = 8000
     debug: bool = False

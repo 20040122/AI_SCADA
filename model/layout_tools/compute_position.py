@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from model.layout_tools.geometry import fit_size as _fit_size_ratio
 from model.layout_tools.get_intent import LayoutFile, LayoutGroup, validate_layout_file
 
 
@@ -33,6 +34,9 @@ class _PlacedNode:
     y: float
     width: float
     height: float
+    material_name: str = ""
+    source_width: float = 0
+    source_height: float = 0
 
 
 @dataclass
@@ -265,6 +269,9 @@ def compute_unit_layout(
             "y": node.y,
             "width": node.width,
             "height": node.height,
+            "material_name": node.material_name,
+            "source_width": node.source_width,
+            "source_height": node.source_height,
         }
         for node in fitted
     ]
@@ -293,6 +300,9 @@ def build_nodes(nodes: list[dict]) -> list[dict]:
                     "layout.group": node["group_id"],
                     "layout.node": node["node_id"],
                     "layout.instance": node["instance_index"],
+                    "layout.materialName": node.get("material_name") or "",
+                    "layout.sourceWidth": _round(node.get("source_width") or 0),
+                    "layout.sourceHeight": _round(node.get("source_height") or 0),
                 },
             }
         )
@@ -467,9 +477,23 @@ def _new_local_node(
     explicit_role: Optional[str] = None,
 ) -> _PlacedNode:
     material = _match_material(device_type, material_map)
-    width, height = _fit_size(device_type, is_root, material, explicit_role)
+    width, height, source_w, source_h = _fit_size(device_type, is_root, material, explicit_role)
     image = material.get("image") or "symbols/Agent/%s.json" % device_type
-    return _PlacedNode(group_id, node_id, instance_index, device_type, image, x, y, width, height)
+    material_name = str(material.get("displayName") or device_type)
+    return _PlacedNode(
+        group_id,
+        node_id,
+        instance_index,
+        device_type,
+        image,
+        x,
+        y,
+        width,
+        height,
+        material_name,
+        source_w,
+        source_h,
+    )
 
 
 def _place_child(
@@ -515,6 +539,9 @@ def _fit_unit_to_slot(nodes: list[_PlacedNode], slot: dict) -> list[_PlacedNode]
                 slot["y"] + (node.y - center_y) * scale,
                 node.width * scale,
                 node.height * scale,
+                node.material_name,
+                node.source_width,
+                node.source_height,
             )
         )
     return result
@@ -528,7 +555,7 @@ def _node_bbox(nodes: list[_PlacedNode]) -> dict:
     return {"x": min_x, "y": min_y, "width": max(max_x - min_x, 1), "height": max(max_y - min_y, 1)}
 
 
-def _fit_size(device_type: str, is_root: bool, material: dict, explicit_role: Optional[str] = None) -> tuple[float, float]:
+def _fit_size(device_type: str, is_root: bool, material: dict, explicit_role: Optional[str] = None) -> tuple[float, float, float, float]:
     config = _load_layout_config()
     role = _role(device_type, is_root, explicit_role, config)
     entry = config.roles.get(role)
@@ -540,14 +567,10 @@ def _fit_size(device_type: str, is_root: bool, material: dict, explicit_role: Op
     if raw_w <= 0 or raw_h <= 0:
         raw_w = limits.preferred_w
         raw_h = limits.preferred_h
-    min_scale = max(limits.min_w / raw_w, limits.min_h / raw_h)
-    max_scale = min(limits.max_w / raw_w, limits.max_h / raw_h)
-    if min_scale > max_scale:
-        return limits.preferred_w, limits.preferred_h
-    scale = min(1, max_scale)
-    if scale < min_scale:
-        scale = min_scale
-    return raw_w * scale, raw_h * scale
+    width, height = _fit_size_ratio(
+        raw_w, raw_h, limits.min_w, limits.min_h, limits.max_w, limits.max_h
+    )
+    return width, height, raw_w, raw_h
 
 
 def _role(

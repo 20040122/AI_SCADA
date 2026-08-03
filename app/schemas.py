@@ -97,6 +97,33 @@ class RefineResponse(BaseModel):
     message: str
 
 
+class UploadCanvasRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    file_name: str
+    json_data: dict[str, Any]
+
+
+class CorrectionSize(BaseModel):
+    width: float
+    height: float
+
+
+class CorrectionItem(BaseModel):
+    node_i: int
+    display_name: str = ""
+    image: str = ""
+    before: CorrectionSize
+    after: CorrectionSize
+
+
+class UploadCanvasResponse(BaseModel):
+    file_name: str
+    json_data: dict[str, Any]
+    corrections: list[CorrectionItem] = []
+    warnings: list[str] = []
+
+
 class BindingVariable(BaseModel):
     name: str
     data_type: str = ""

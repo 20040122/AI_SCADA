@@ -5,14 +5,24 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.deps import get_layout_agent, get_refine_agent
+from app.deps import get_layout_agent, get_material_db, get_refine_agent
 from app.schemas import (
     ApiResponse,
     CanvasLayoutRequest,
     CanvasLayoutResponse,
     RefineRequest,
     RefineResponse,
+    CorrectionItem,
+    UploadCanvasRequest,
+    UploadCanvasResponse,
 )
+from app.services.canvas_upload_service import (
+    CanvasUploadService,
+    UploadBlockedError,
+    UploadTimeoutError,
+    UploadUpstreamError,
+)
+from data.sqlite.material_db import MaterialDB
 from model.layout_agent import LayoutAgent
 from model.layout_tools.compute_position import MissingMaterialError
 from model.layout_tools.get_intent import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
@@ -128,3 +138,31 @@ async def canvas_refine(
 
     resp = RefineResponse(patch=result.patch, message=result.message)
     return ApiResponse(data=resp.model_dump(exclude_none=True))
+
+
+@router.post("/upload", response_model=ApiResponse)
+async def canvas_upload(
+    req: UploadCanvasRequest,
+    db: MaterialDB = Depends(get_material_db),
+):
+    service = CanvasUploadService()
+    try:
+        library = await db.list_all()
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"material library unavailable: {exc}") from exc
+    try:
+        result = await service.upload_canvas(req.file_name, req.json_data, library)
+    except UploadBlockedError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except UploadTimeoutError as exc:
+        raise HTTPException(status_code=504, detail=str(exc)) from exc
+    except UploadUpstreamError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    resp = UploadCanvasResponse(
+        file_name=req.file_name,
+        json_data=result.json_data,
+        corrections=[CorrectionItem(**item) for item in result.corrections],
+        warnings=result.warnings,
+    )
+    return ApiResponse(data=resp.model_dump())

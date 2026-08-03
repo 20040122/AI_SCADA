@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { CanvasNode, LayoutJsonData, PipeData } from "../types/layout.ts";
+import type { CanvasNode, LayoutJsonData, PipeData, UploadCanvasResponse } from "../types/layout.ts";
 import type { JsonPatchOp, RefineMessage, RefineHistoryItem } from "../types/refine.ts";
 import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes.ts";
 import type { DecorationNode } from "../types/layout.ts";
@@ -136,6 +136,7 @@ interface RefineStore {
   addMessage: (msg: RefineMessage) => void;
   setRefining: (value: boolean) => void;
   applyPatch: (patch: JsonPatchOp[], messageId: string) => void;
+  applyUploadResult: (res: UploadCanvasResponse) => void;
   acceptPatch: (messageId: string) => void;
   rejectPatch: (messageId: string) => void;
   clearCanvas: () => void;
@@ -388,6 +389,19 @@ export const useRefineStore = create<RefineStore>((set) => ({
           selectedNodeIds,
           patch,
         },
+      };
+    });
+  },
+
+  applyUploadResult: (res) => {
+    set((state) => {
+      const jsonData = res.json_data;
+      const newNodes = extractNodesFromJsonData(jsonData);
+      return {
+        workingNodes: newNodes,
+        decorations: extractDecorationsFromJsonData(jsonData),
+        workingJson: jsonData,
+        selectedNodeIds: filterValidIds(state.selectedNodeIds, newNodes),
       };
     });
   },

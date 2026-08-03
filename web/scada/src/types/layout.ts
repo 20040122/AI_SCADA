@@ -136,3 +136,23 @@ export interface PipeConnection {
 export interface PipeData {
   connections: PipeConnection[];
 }
+
+export interface UploadCorrectionSize {
+  width: number;
+  height: number;
+}
+
+export interface UploadCorrection {
+  node_i: number;
+  display_name: string;
+  image: string;
+  before: UploadCorrectionSize;
+  after: UploadCorrectionSize;
+}
+
+export interface UploadCanvasResponse {
+  file_name: string;
+  json_data: LayoutJsonData;
+  corrections: UploadCorrection[];
+  warnings: string[];
+}
