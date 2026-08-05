@@ -12,6 +12,7 @@ import httpx
 from app.config import settings
 from model.layout_agent import _schema_validate
 from model.layout_tools.geometry import content_rect_of_nodes, inscribe_ratio, round2
+from model.layout_tools.pipe_serializer import is_managed_pipe_edge, next_edge_i, serialize_pipes
 
 
 class UploadBlockedError(ValueError):
@@ -202,7 +203,7 @@ class CanvasUploadService:
             if owns_client and client is not None:
                 await client.aclose()
 
-    async def upload_canvas(self, file_name: str, json_data: dict, library: list[dict]) -> UploadResult:
+    async def upload_canvas(self, file_name: str, json_data: dict, library: list[dict], pipe_data: Optional[dict] = None) -> UploadResult:
         _validate_file_name(file_name)
         out = copy.deepcopy(json_data)
         canvas_w, canvas_h = _canvas_size(out)
@@ -282,6 +283,11 @@ class CanvasUploadService:
         out["contentRect"] = content_rect_of_nodes(
             [{"x": c["x"], "y": c["y"], "width": c["width"], "height": c["height"]} for c in controls]
         )
+
+        if pipe_data is not None:
+            out["d"] = [item for item in out.get("d") or [] if not is_managed_pipe_edge(item)]
+            edges = serialize_pipes(pipe_data, out["d"], next_edge_i(out["d"]))
+            out["d"].extend(edges)
 
         schema_errors = await _schema_validate(out)
         if schema_errors:

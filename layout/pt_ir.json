@@ -6,7 +6,7 @@
       "displayName": "空气罐",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 386,
+        "x": 466,
         "y": 623.5
       },
       "width": 160,
@@ -25,10 +25,32 @@
     "c": "ht.Node",
     "i": 20400,
     "p": {
+      "displayName": "状态面板",
+      "image": "symbols/Agent/状态面板.json",
+      "position": {
+        "x": 286,
+        "y": 623.5
+      },
+      "width": 120,
+      "height": 44.44
+    },
+    "a": {
+      "layout.group": "air_group",
+      "layout.node": "panel1",
+      "layout.instance": 1,
+      "layout.materialName": "状态面板",
+      "layout.sourceWidth": 162,
+      "layout.sourceHeight": 60
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20401,
+    "p": {
       "displayName": "阀门",
       "image": "symbols/Agent/阀门.json",
       "position": {
-        "x": 386,
+        "x": 466,
         "y": 431.5
       },
       "width": 64,
@@ -45,12 +67,12 @@
   },
   {
     "c": "ht.Node",
-    "i": 20401,
+    "i": 20402,
     "p": {
       "displayName": "流量计",
       "image": "symbols/Agent/流量计.json",
       "position": {
-        "x": 483,
+        "x": 563,
         "y": 431.5
       },
       "width": 50,
@@ -67,12 +89,12 @@
   },
   {
     "c": "ht.Node",
-    "i": 20402,
+    "i": 20403,
     "p": {
       "displayName": "压力传感器",
       "image": "assets/现场控制系统/设备图片/压力传感器.png",
       "position": {
-        "x": 573,
+        "x": 653,
         "y": 431.5
       },
       "width": 50,
@@ -89,12 +111,12 @@
   },
   {
     "c": "ht.Node",
-    "i": 20403,
+    "i": 20404,
     "p": {
       "displayName": "流量计2",
       "image": "symbols/Agent/流量计.json",
       "position": {
-        "x": 663,
+        "x": 743,
         "y": 431.5
       },
       "width": 50,
@@ -111,7 +133,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20404,
+    "i": 20405,
     "p": {
       "displayName": "氮气罐",
       "image": "symbols/Agent/氮气罐.json",
@@ -124,7 +146,7 @@
     },
     "a": {
       "layout.group": "nitrogen_group",
-      "layout.node": "nitrogen_tank",
+      "layout.node": "n2_tank",
       "layout.instance": 1,
       "layout.materialName": "氮气罐",
       "layout.sourceWidth": 160,
@@ -133,7 +155,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20405,
+    "i": 20406,
     "p": {
       "displayName": "阀门2",
       "image": "symbols/Agent/阀门.json",
@@ -155,7 +177,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20406,
+    "i": 20407,
     "p": {
       "displayName": "流量计3",
       "image": "symbols/Agent/流量计.json",
@@ -177,7 +199,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20407,
+    "i": 20408,
     "p": {
       "displayName": "压力传感器2",
       "image": "assets/现场控制系统/设备图片/压力传感器.png",
@@ -199,7 +221,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20408,
+    "i": 20409,
     "p": {
       "displayName": "氮气罐2",
       "image": "symbols/Agent/氮气罐.json",
@@ -212,7 +234,7 @@
     },
     "a": {
       "layout.group": "nitrogen_group",
-      "layout.node": "nitrogen_tank",
+      "layout.node": "n2_tank",
       "layout.instance": 2,
       "layout.materialName": "氮气罐",
       "layout.sourceWidth": 160,
@@ -221,7 +243,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20409,
+    "i": 20410,
     "p": {
       "displayName": "阀门3",
       "image": "symbols/Agent/阀门.json",
@@ -243,7 +265,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20410,
+    "i": 20411,
     "p": {
       "displayName": "流量计4",
       "image": "symbols/Agent/流量计.json",
@@ -265,7 +287,7 @@
   },
   {
     "c": "ht.Node",
-    "i": 20411,
+    "i": 20412,
     "p": {
       "displayName": "压力传感器3",
       "image": "assets/现场控制系统/设备图片/压力传感器.png",

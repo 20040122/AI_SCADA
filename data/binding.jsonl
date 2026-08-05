@@ -1,0 +1,2 @@
+{"displayName":"状态面板","property":"空气罐温度","path":"2084524131092914178#2084937599679848450#2084940408848506881","label":"Agent . 空气罐 . 空气罐温度 (°C)","writable": false,  "dataType": "int","dataTypeDesc": "整型"}
+{"displayName":"状态面板","property":"空气罐压力","path":"2084524131092914178#2084937599679848450#2084940512418455554","label":"Agent . 空气罐 . 空气罐压力 (MPa)","writable": false,  "dataType": "int","dataTypeDesc": "整型"}

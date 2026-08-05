@@ -102,6 +102,7 @@ class UploadCanvasRequest(BaseModel):
 
     file_name: str
     json_data: dict[str, Any]
+    pipe_data: Optional[dict[str, Any]] = None
 
 
 class CorrectionSize(BaseModel):

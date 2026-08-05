@@ -1,5 +1,6 @@
 import { post } from "./client";
-import type { LayoutGenerateRequest, LayoutGenerateResponse, RefineRequest, RefineResponse, LayoutJsonData, UploadCanvasResponse } from "../types/layout";
+import { buildUploadBody } from "./uploadBody";
+import type { LayoutGenerateRequest, LayoutGenerateResponse, RefineRequest, RefineResponse, LayoutJsonData, PipeData, UploadCanvasResponse } from "../types/layout";
 
 export function generateLayout(req: LayoutGenerateRequest): Promise<LayoutGenerateResponse> {
   return post<LayoutGenerateResponse>("/api/canvas/layout", {
@@ -23,9 +24,6 @@ export function refineLayout(req: RefineRequest): Promise<RefineResponse> {
   return post<RefineResponse>("/api/canvas/refine", body);
 }
 
-export function uploadCanvas(fileName: string, jsonData: LayoutJsonData): Promise<UploadCanvasResponse> {
-  return post<UploadCanvasResponse>("/api/canvas/upload", {
-    file_name: fileName,
-    json_data: jsonData,
-  });
+export function uploadCanvas(fileName: string, jsonData: LayoutJsonData, pipeData?: PipeData | null): Promise<UploadCanvasResponse> {
+  return post<UploadCanvasResponse>("/api/canvas/upload", buildUploadBody(fileName, jsonData, pipeData));
 }

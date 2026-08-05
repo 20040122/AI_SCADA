@@ -14,6 +14,7 @@ import jsonschema
 from data.sqlite.material_db import MaterialDB
 from model.layout_tools.geometry import content_rect_of_nodes
 from model.layout_tools.get_background import generate_layout
+from model.layout_tools.pipe_serializer import next_edge_i, serialize_pipes
 from model.llm_client import default_client
 
 logger = logging.getLogger(__name__)
@@ -142,6 +143,10 @@ class LayoutAgent:
 
         out["d"] = d
 
+        pipe_edges = []
+        if pipe_data is not None:
+            pipe_edges = serialize_pipes(pipe_data, nodes, next_edge_i(nodes))
+
         flat = []
         for n in nodes:
             p = n.get("p", {})
@@ -173,14 +178,13 @@ class LayoutAgent:
                     encoding="utf-8",
                 )
                 tmp.replace(path)
-            if pipe_data is not None:
-                pipe_path = LAYOUT_DIR / "pipe.json"
-                tmp = pipe_path.with_suffix(".tmp")
-                tmp.write_text(
-                    json.dumps(pipe_data, ensure_ascii=False, indent=2),
-                    encoding="utf-8",
-                )
-                tmp.replace(pipe_path)
+            pipe_path = LAYOUT_DIR / "pipe.json"
+            tmp = pipe_path.with_suffix(".tmp")
+            tmp.write_text(
+                json.dumps(pipe_edges, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            tmp.replace(pipe_path)
 
         return LayoutResult(
             json_data=out,

@@ -16,6 +16,7 @@ from app.services.canvas_upload_service import (
     UploadTimeoutError,
     UploadUpstreamError,
 )
+from model.layout_tools.pipe_serializer import PipeConversionError, PipeTemplateError
 
 LIBRARY = [
     {"displayName": "液压泵", "image": "symbols/pump.json", "width": 154, "height": 70},
@@ -91,9 +92,10 @@ async def _upload(
     library: Optional[list[dict]] = None,
     client: Optional[httpx.AsyncClient] = None,
     file_name: str = "画面.json",
+    pipe_data: Optional[dict] = None,
 ) -> UploadResult:
     service = CanvasUploadService(client=client)
-    return await service.upload_canvas(file_name, json_data, library or LIBRARY)
+    return await service.upload_canvas(file_name, json_data, library or LIBRARY, pipe_data=pipe_data)
 
 
 async def _ok_handler(request: httpx.Request) -> httpx.Response:
@@ -103,6 +105,34 @@ async def _ok_handler(request: httpx.Request) -> httpx.Response:
     assert "displays/dutzcm/画面.json" in body
     assert '"displayName": "液压泵"' in body
     return httpx.Response(200, text="ok")
+
+
+def _pipe_edge(edge_i: int, source_i: int, target_i: int) -> dict:
+    return {
+        "c": "ht.Edge",
+        "i": edge_i,
+        "p": {"source": {"__i": source_i}, "target": {"__i": target_i}},
+        "s": {"edge.width": 5, "edge.color": "#60acfc"},
+        "a": {"layout.role": "pipe"},
+    }
+
+
+def _plain_edge(edge_i: int, source_i: int, target_i: int) -> dict:
+    return {
+        "c": "ht.Edge",
+        "i": edge_i,
+        "p": {"source": {"__i": source_i}, "target": {"__i": target_i}},
+        "s": {"edge.width": 1},
+        "a": {"owner": "manual"},
+    }
+
+
+def _conn(sg: str, sn: str, si: int, tg: str, tn: str, ti: int) -> dict:
+    return {
+        "id": f"pipe-{sn}-{tn}",
+        "source": {"group": sg, "node": sn, "instance": si, "port": "out"},
+        "target": {"group": tg, "node": tn, "instance": ti, "port": "in"},
+    }
 
 
 class TestHistoryCorrection:
@@ -257,6 +287,115 @@ class TestBlockedUploads:
         assert json.dumps(data, ensure_ascii=False) == original
 
 
+class TestUploadPipeMerge:
+    def _pipe_controls(self) -> list[dict]:
+        return [
+            _control(1, "液压泵", "symbols/pump.json", 300, 300, 154, 70, attrs={"layout.node": "泵1"}),
+            _control(2, "液压泵", "symbols/pump.json", 700, 300, 154, 70, attrs={"layout.node": "泵2"}),
+            _control(3, "液压泵", "symbols/pump.json", 1100, 300, 154, 70, attrs={"layout.node": "泵3"}),
+        ]
+
+    def _managed(self) -> list[dict]:
+        return [_pipe_edge(20, 1, 2), _pipe_edge(21, 2, 3)]
+
+    async def _upload_with_edges(
+        self, edges: list[dict], pipe_data: Optional[dict], handler: Callable = _ok_handler
+    ) -> UploadResult:
+        data = _canvas_json(self._pipe_controls() + edges)
+        return await _upload(data, client=_mock_client(handler), pipe_data=pipe_data)
+
+    @pytest.mark.asyncio
+    async def test_omitted_pipe_data_leaves_edges_untouched(self):
+        edges = self._managed() + [_plain_edge(30, 1, 2)]
+        result = await _upload(_canvas_json(self._pipe_controls() + edges), client=_mock_client(_ok_handler))
+        by_id = {item["i"]: item for item in result.json_data["d"] if item["c"] == "ht.Edge"}
+        assert set(by_id) == {20, 21, 30}
+
+    @pytest.mark.asyncio
+    async def test_empty_connections_clears_managed_edges(self):
+        edges = self._managed() + [_plain_edge(30, 1, 2)]
+        result = await self._upload_with_edges(edges, {"connections": []})
+        by_id = {item["i"]: item for item in result.json_data["d"] if item["c"] == "ht.Edge"}
+        assert set(by_id) == {30}
+        assert by_id[30]["a"] == {"owner": "manual"}
+
+    @pytest.mark.asyncio
+    async def test_merges_remaps_and_dedupes(self):
+        pipe_data = {
+            "connections": [
+                _conn("g1", "泵1", 0, "g1", "泵2", 0),
+                _conn("g1", "泵1", 0, "g1", "泵2", 0),
+                _conn("g1", "泵2", 0, "g1", "泵1", 0),
+            ]
+        }
+        result = await self._upload_with_edges(self._managed(), pipe_data)
+        edges = [item for item in result.json_data["d"] if item["c"] == "ht.Edge"]
+        assert len(edges) == 2
+        first, second = edges
+        assert first["i"] == 4
+        assert second["i"] == 5
+        assert first["p"]["source"] == {"__i": 1}
+        assert first["p"]["target"] == {"__i": 2}
+        assert second["p"]["source"] == {"__i": 2}
+        assert second["p"]["target"] == {"__i": 1}
+        assert first["a"] == {"layout.role": "pipe"}
+        assert first["s"]["edge.width"] == 5
+        assert first["s"]["edge.color"] == "#60acfc"
+        payload = json.dumps(edges, ensure_ascii=False)
+        for forbidden in ("port", "layout.group", "layout.node", "layout.instance", "instance"):
+            assert forbidden not in payload
+        assert '"__i"' in payload
+
+    @pytest.mark.asyncio
+    async def test_edge_ids_start_after_max_existing_i(self):
+        data = _canvas_json(self._pipe_controls() + [_label(50, 1, "泵1", 300, 200, 200, 32)])
+        pipe_data = {"connections": [_conn("g1", "泵1", 0, "g1", "泵2", 0)]}
+        result = await _upload(data, client=_mock_client(_ok_handler), pipe_data=pipe_data)
+        edges = [item for item in result.json_data["d"] if item["c"] == "ht.Edge"]
+        assert [item["i"] for item in edges] == [51]
+
+    @pytest.mark.asyncio
+    async def test_repeated_upload_no_accumulation(self):
+        pipe_data = {"connections": [_conn("g1", "泵1", 0, "g1", "泵2", 0)]}
+        first = await self._upload_with_edges(self._managed(), pipe_data)
+        second = await _upload(
+            first.json_data, client=_mock_client(_ok_handler), pipe_data=pipe_data
+        )
+        first_edges = [item for item in first.json_data["d"] if item["c"] == "ht.Edge"]
+        second_edges = [item for item in second.json_data["d"] if item["c"] == "ht.Edge"]
+        assert len(first_edges) == len(second_edges) == 1
+        assert second_edges[0]["i"] == first_edges[0]["i"]
+
+    @pytest.mark.asyncio
+    async def test_plain_edges_survive_merge(self):
+        pipe_data = {"connections": [_conn("g1", "泵1", 0, "g1", "泵2", 0)]}
+        result = await self._upload_with_edges(
+            self._managed() + [_plain_edge(30, 1, 2)], pipe_data
+        )
+        edges = [item for item in result.json_data["d"] if item["c"] == "ht.Edge"]
+        assert len(edges) == 2
+        ids = sorted(item["i"] for item in edges)
+        assert ids == [30, 31]
+
+    @pytest.mark.asyncio
+    async def test_missing_endpoint_raises_without_upload(self):
+        pipe_data = {
+            "connections": [
+                _conn("g1", "泵1", 0, "g1", "已删除泵", 0),
+            ]
+        }
+        async def fail_handler(request: httpx.Request) -> httpx.Response:
+            raise AssertionError("upload must not be attempted")
+        with pytest.raises(PipeConversionError) as exc_info:
+            await _upload(
+                _canvas_json(self._pipe_controls()),
+                client=_mock_client(fail_handler),
+                pipe_data=pipe_data,
+            )
+        assert "端点不存在" in str(exc_info.value)
+        assert "已删除泵" in str(exc_info.value)
+
+
 class TestDaoScadaUpload:
     @pytest.mark.asyncio
     async def test_success_multipart_path_and_content(self):
@@ -309,15 +448,23 @@ class FakeMaterialDB:
 class FakeUploadService:
     result: Optional[UploadResult] = None
     error: Optional[Exception] = None
+    received_pipe_data: Optional[dict] = None
 
     def __init__(self) -> None:
         self._result = type(self).result
         self._error = type(self).error
 
-    async def upload_canvas(self, file_name: str, json_data: dict, library: list[dict]) -> Any:
+    async def upload_canvas(
+        self,
+        file_name: str,
+        json_data: dict,
+        library: list[dict],
+        pipe_data: Optional[dict] = None,
+    ) -> Any:
         if self._error is not None:
             raise self._error
         assert library == LIBRARY
+        type(self).received_pipe_data = pipe_data
         return self._result
 
 
@@ -350,12 +497,45 @@ class TestUploadRoute:
         assert data["corrections"][0]["after"]["height"] == pytest.approx(90.91, abs=0.01)
         assert data["warnings"] == []
 
+    def test_route_forwards_pipe_data(self, monkeypatch):
+        monkeypatch.setattr(deps_module, "_material_db", FakeMaterialDB(LIBRARY))
+        result = UploadResult(json_data=_canvas_json([]), corrections=[], warnings=[])
+        monkeypatch.setattr(FakeUploadService, "result", result)
+        monkeypatch.setattr(FakeUploadService, "received_pipe_data", None)
+        monkeypatch.setattr("app.routers.canvas.CanvasUploadService", FakeUploadService)
+        pipe_data = {
+            "connections": [
+                {
+                    "id": "pipe-1",
+                    "source": {"group": "g1", "node": "泵1", "instance": 0, "port": "out"},
+                    "target": {"group": "g1", "node": "泵2", "instance": 0, "port": "in"},
+                }
+            ]
+        }
+        response = self._post(
+            {"file_name": "画面.json", "json_data": _canvas_json([]), "pipe_data": pipe_data}
+        )
+        assert response.status_code == 200
+        assert FakeUploadService.received_pipe_data == pipe_data
+
+    def test_route_omitted_pipe_data_passes_none(self, monkeypatch):
+        monkeypatch.setattr(deps_module, "_material_db", FakeMaterialDB(LIBRARY))
+        result = UploadResult(json_data=_canvas_json([]), corrections=[], warnings=[])
+        monkeypatch.setattr(FakeUploadService, "result", result)
+        monkeypatch.setattr(FakeUploadService, "received_pipe_data", None)
+        monkeypatch.setattr("app.routers.canvas.CanvasUploadService", FakeUploadService)
+        response = self._post({"file_name": "画面.json", "json_data": _canvas_json([])})
+        assert response.status_code == 200
+        assert FakeUploadService.received_pipe_data is None
+
     @pytest.mark.parametrize(
         ("error", "status"),
         [
             (UploadBlockedError("blocked"), 422),
             (UploadUpstreamError("upstream"), 502),
             (UploadTimeoutError("timeout"), 504),
+            (PipeConversionError("端点不存在"), 422),
+            (PipeTemplateError("template invalid"), 422),
         ],
     )
     def test_route_error_mapping(self, monkeypatch, error: Exception, status: int):

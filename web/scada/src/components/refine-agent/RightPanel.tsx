@@ -194,13 +194,14 @@ export default function RightPanel() {
     ) return;
     const submittedJson = state.workingJson;
     const submittedFileName = state.sourceFileName;
+    const submittedPipes = state.workingPipes;
     setUploading(true);
     setUploadMsg(null);
     setUploadErr(false);
     setUploadCorrections([]);
     setUploadWarnings([]);
     try {
-      const res = await uploadCanvas(submittedFileName, submittedJson);
+      const res = await uploadCanvas(submittedFileName, submittedJson, submittedPipes);
       useRefineStore.getState().applyUploadResult(res);
       const count = res.corrections.length;
       setUploadMsg(count > 0 ? `已插入系统（修正 ${count} 个控件宽高比）` : '已插入系统');

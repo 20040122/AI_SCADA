@@ -5,7 +5,7 @@ import { colorJson } from "../../utils/jsonColor";
 import { WorkflowSteps } from "./CenterPanel";
 
 export default function RightPanel() {
-  const { jsonData, zones, missingControls, nodes, fileName, corrections, uploadWarnings } = useLayoutStore();
+  const { jsonData, zones, missingControls, nodes, fileName, corrections, uploadWarnings, pipe_data } = useLayoutStore();
   const hasJson = jsonData !== null;
   const hasNodes = nodes.length > 0;
   const [uploading, setUploading] = useState(false);
@@ -18,7 +18,7 @@ export default function RightPanel() {
     setUploadMsg(null);
     setUploadErr(false);
     try {
-      const res = await uploadCanvas(fileName, jsonData);
+      const res = await uploadCanvas(fileName, jsonData, pipe_data);
       useLayoutStore.getState().applyUploadResult(res);
       const count = res.corrections.length;
       setUploadMsg(count > 0 ? `已插入系统（修正 ${count} 个控件宽高比）` : "已插入系统");

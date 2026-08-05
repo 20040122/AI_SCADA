@@ -32,6 +32,7 @@ from model.layout_tools.get_connection import ConnectionModelUnavailableError as
 from model.layout_tools.get_connection import ConnectionValidationError as PipingValidationError
 from model.layout_tools.get_connection import TopologyMismatchError
 from model.layout_tools.get_connection import PipingSectionError
+from model.layout_tools.pipe_serializer import PipeConversionError, PipeTemplateError
 from model.refine_agent import (
     RefineAgent,
     RefineInputError,
@@ -67,6 +68,8 @@ async def canvas_layout(
             },
         ) from exc
     except (PipingValidationError, TopologyMismatchError, PipingSectionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except (PipeConversionError, PipeTemplateError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except IntentModelOutputError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
@@ -151,8 +154,10 @@ async def canvas_upload(
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"material library unavailable: {exc}") from exc
     try:
-        result = await service.upload_canvas(req.file_name, req.json_data, library)
+        result = await service.upload_canvas(req.file_name, req.json_data, library, pipe_data=req.pipe_data)
     except UploadBlockedError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except (PipeConversionError, PipeTemplateError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except UploadTimeoutError as exc:
         raise HTTPException(status_code=504, detail=str(exc)) from exc
