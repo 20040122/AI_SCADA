@@ -48,6 +48,8 @@ interface LayoutStore {
   corrections: UploadCorrection[];
   uploadWarnings: string[];
 
+  revision: number;
+
   setQuery: (q: string) => void;
   setTitle: (t: string) => void;
   setCanvasWidth: (w: number) => void;
@@ -87,13 +89,14 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
 
   corrections: [],
   uploadWarnings: [],
+  revision: 0,
 
   setQuery: (q) => set({ query: q }),
   setTitle: (t) => set({ title: t }),
   setCanvasWidth: (w) => set({ canvasWidth: w }),
   setCanvasHeight: (h) => set({ canvasHeight: h }),
   setLayoutResult: (res) =>
-    set({
+    set((s) => ({
       jsonData: res.json_data,
       zones: res.zones,
       qualityIssues: res.quality_issues,
@@ -104,16 +107,18 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       fileName: res.file_name,
       corrections: [],
       uploadWarnings: [],
-    }),
+      revision: s.revision + 1,
+    })),
 
   applyUploadResult: (res) =>
-    set({
+    set((s) => ({
       jsonData: res.json_data,
       nodes: extractNodesFromJsonData(res.json_data),
       decorations: extractDecorationsFromJsonData(res.json_data),
       corrections: res.corrections,
       uploadWarnings: res.warnings,
-    }),
+      revision: s.revision + 1,
+    })),
 
   setWorkflowStep: (id, status) =>
     set((s) => ({
@@ -126,7 +131,7 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
     set({ workflow: INITIAL_WORKFLOW.map((s) => ({ ...s })), workflowStatus: "idle" }),
 
   clearCanvas: () =>
-    set({
+    set((s) => ({
       jsonData: null,
       zones: [],
       qualityIssues: [],
@@ -138,7 +143,8 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       corrections: [],
       uploadWarnings: [],
       workflowStatus: "idle",
-    }),
+      revision: s.revision + 1,
+    })),
 
   setIsLoading: (v) => set({ isLoading: v }),
   setError: (e) => set({ error: e }),

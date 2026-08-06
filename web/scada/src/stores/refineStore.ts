@@ -118,6 +118,7 @@ interface RefineStore {
   history: RefineHistoryItem[];
   isRefining: boolean;
   pendingPatch: PendingPatch | null;
+  revision: number;
 
   loadFromLayoutData: (
     nodes: CanvasNode[],
@@ -155,10 +156,11 @@ export const useRefineStore = create<RefineStore>((set) => ({
   history: [],
   isRefining: false,
   pendingPatch: null,
+  revision: 0,
 
   loadFromLayoutData: (nodes, width, height, layoutJson, sourceFileName, pipes) => {
     const workingJson = layoutJson ? cloneLayout(layoutJson) : null;
-    set({
+    set((s) => ({
       workingNodes: nodes.map((n) => ({ ...n })),
       decorations: extractDecorationsFromJsonData(workingJson),
       workingPipes: pipes ? JSON.parse(JSON.stringify(pipes)) as PipeData : null,
@@ -171,7 +173,8 @@ export const useRefineStore = create<RefineStore>((set) => ({
       history: [],
       isRefining: false,
       pendingPatch: null,
-    });
+      revision: s.revision + 1,
+    }));
   },
 
   setSelection: (ids) => set({ selectedNodeIds: ids }),
@@ -389,6 +392,7 @@ export const useRefineStore = create<RefineStore>((set) => ({
           selectedNodeIds,
           patch,
         },
+        revision: state.revision + 1,
       };
     });
   },
@@ -402,6 +406,7 @@ export const useRefineStore = create<RefineStore>((set) => ({
         decorations: extractDecorationsFromJsonData(jsonData),
         workingJson: jsonData,
         selectedNodeIds: filterValidIds(state.selectedNodeIds, newNodes),
+        revision: state.revision + 1,
       };
     });
   },
@@ -428,6 +433,7 @@ export const useRefineStore = create<RefineStore>((set) => ({
         messages,
         history: [historyItem, ...state.history],
         pendingPatch: null,
+        revision: state.revision + 1,
       };
     });
   },
@@ -453,12 +459,13 @@ export const useRefineStore = create<RefineStore>((set) => ({
         selectedNodeIds: filterValidIds(snapshot.selectedNodeIds, workingNodes),
         messages,
         pendingPatch: null,
+        revision: state.revision + 1,
       };
     });
   },
 
   clearCanvas: () =>
-    set({
+    set((s) => ({
       workingNodes: [],
       decorations: [],
       workingPipes: null,
@@ -469,5 +476,6 @@ export const useRefineStore = create<RefineStore>((set) => ({
       history: [],
       isRefining: false,
       pendingPatch: null,
-    }),
+      revision: s.revision + 1,
+    })),
 }));

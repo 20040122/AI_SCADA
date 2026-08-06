@@ -4,6 +4,7 @@ import StatusBar from "./components/layout/StatusBar";
 import AssetAgentPage from "./components/asset/AssetAgentPage";
 import LayoutAgentPage from "./components/layout-agent/LayoutAgentPage";
 import RefineAgentPage from "./components/refine-agent/RefineAgentPage";
+import BindingAgentPage from "./components/binding-agent/BindingAgentPage";
 import RuleLibraryPage from "./components/schema/RuleLibraryPage";
 import { useAssetStore } from "./stores/assetStore";
 
@@ -34,7 +35,7 @@ export default function App() {
         {activeTab === "schema" && <RuleLibraryPage />}
         {activeTab === "layout" && <LayoutAgentPage />}
         {activeTab === "refine" && <RefineAgentPage />}
-        {activeTab === "binding" && <PlaceholderPage title="R-05 智能数据绑点" />}
+        {activeTab === "binding" && <BindingAgentPage />}
         {activeTab === "docs" && <PlaceholderPage title="需求文档" />}
       </div>
 

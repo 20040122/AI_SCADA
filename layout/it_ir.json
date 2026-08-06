@@ -2,7 +2,7 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "air_group",
+        "id": "air_tank_group",
         "region": "left",
         "unit": {
           "root": {
@@ -11,26 +11,34 @@
           },
           "attachments": [
             {
-              "id": "panel1",
+              "id": "status_panel",
               "deviceType": "状态面板",
               "role": "default",
               "relativeTo": "air_tank",
               "side": "left"
             },
             {
-              "id": "valve1",
+              "id": "air_valve",
               "deviceType": "阀门",
               "role": "valve",
               "relativeTo": "air_tank",
               "side": "top"
-            },
-            {
-              "id": "flow1",
-              "deviceType": "流量计",
-              "role": "meter",
-              "relativeTo": "valve1",
-              "side": "right"
-            },
+            }
+          ]
+        },
+        "count": 1,
+        "topology": "single"
+      },
+      {
+        "id": "air_outlet_line",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "flow1",
+            "deviceType": "流量计",
+            "role": "meter"
+          },
+          "attachments": [
             {
               "id": "pressure1",
               "deviceType": "压力传感器",
@@ -49,11 +57,12 @@
         },
         "count": 1,
         "arrangement": "horizontal",
-        "gapHint": "normal",
-        "topology": "single"
+        "topology": "series",
+        "relativeTo": "air_tank_group",
+        "side": "right"
       },
       {
-        "id": "nitrogen_group",
+        "id": "nitrogen_tank_group",
         "region": "right",
         "unit": {
           "root": {
@@ -62,33 +71,41 @@
           },
           "attachments": [
             {
-              "id": "valve2",
+              "id": "n2_valve",
               "deviceType": "阀门",
               "role": "valve",
               "relativeTo": "n2_tank",
               "side": "top"
-            },
-            {
-              "id": "flow3",
-              "deviceType": "流量计",
-              "role": "meter",
-              "relativeTo": "valve2",
-              "side": "right"
-            },
-            {
-              "id": "pressure2",
-              "deviceType": "压力传感器",
-              "role": "sensor",
-              "relativeTo": "flow3",
-              "side": "right"
             }
           ]
         },
         "count": 2,
         "arrangement": "vertical",
-        "gapHint": "normal",
+        "topology": "single"
+      },
+      {
+        "id": "n2_outlet_line",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "n2_flow1",
+            "deviceType": "流量计",
+            "role": "meter"
+          },
+          "attachments": [
+            {
+              "id": "n2_pressure",
+              "deviceType": "压力传感器",
+              "role": "sensor",
+              "relativeTo": "n2_flow1",
+              "side": "right"
+            }
+          ]
+        },
+        "count": 2,
+        "arrangement": "horizontal",
         "topology": "single",
-        "relativeTo": "air_group",
+        "relativeTo": "nitrogen_tank_group",
         "side": "right"
       }
     ],

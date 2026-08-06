@@ -125,37 +125,126 @@ class UploadCanvasResponse(BaseModel):
     warnings: list[str] = []
 
 
-class BindingVariable(BaseModel):
-    name: str
-    data_type: str = ""
-    register_address: str = ""
-    description: str = ""
+class BindingProperty(BaseModel):
+    projectId: str
+    projectName: str
+    deviceId: str
+    deviceName: str
+    propertyId: str
+    propertyName: str
+    dataType: str
+    writable: bool
+    unit: str = ""
+    dataTypeDesc: str = ""
 
 
-class BindingMatchRequest(BaseModel):
-    controls: list[ControlItem]
-    variables: list[BindingVariable]
+class BindingColumnSuggestion(BaseModel):
+    field: str
+    column: Any
+    source: str = "exact"
+
+
+class BindingColumnAmbiguity(BaseModel):
+    column: Any = None
+    header: str = ""
+    matched_fields: list[str] = []
+    detail: str = ""
+
+
+class BindingMapping(BaseModel):
+    suggestions: list[BindingColumnSuggestion]
+    ambiguities: list[BindingColumnAmbiguity]
+    missing: list[str]
+
+
+class BindingPreviewResponse(BaseModel):
+    encoding: str
+    headers: list[str]
+    total_rows: int
+    rows: list[list[str]]
+    mapping: BindingMapping
+
+
+class BindingNormalizeResponse(BaseModel):
+    properties: list[BindingProperty]
+    errors: list[str]
+    blocked: bool = False
+    blocking: list[str] = []
+
+
+class BindingCandidate(BaseModel):
+    projectId: str
+    projectName: str
+    deviceId: str
+    deviceName: str
+    propertyId: str
+    propertyName: str
+    dataType: str
+    writable: bool
+    unit: str = ""
+    dataTypeDesc: str = ""
+    device_name_similarity: float = 0.0
+    property_name_similarity: float = 0.0
+    score: float = 0.0
+    lead: float = 0.0
+    confidence: str = "none"
+    evidence: list[str] = []
+    key: str = ""
 
 
 class BindingMatchItem(BaseModel):
-    control_name: str
-    variable_name: str
-    variable_address: str
-    confidence: float
-    match_reason: str = ""
+    panel_node_i: int
+    panel_displayName: str
+    panel_instance: int
+    expectation_id: str
+    expectation_property: str
+    expectation_required: bool
+    candidates: list[BindingCandidate]
+    suggested: Optional[str] = None
+    confidence: str = "none"
+    confirmed: bool = False
 
 
-class BindingConflictItem(BaseModel):
-    conflict_type: str
-    description: str
-    items: list[str]
+class BindingMatchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    json_data: dict[str, Any]
+    properties: list[BindingProperty]
 
 
 class BindingMatchResponse(BaseModel):
-    matches: list[BindingMatchItem]
-    conflicts: list[BindingConflictItem]
-    unmatched_controls: list[str]
-    unmatched_variables: list[str]
+    panels: list[dict[str, Any]]
+    expectations: list[dict[str, Any]]
+    items: list[BindingMatchItem]
+
+
+class BindingAssignment(BaseModel):
+    panel_node_i: int
+    expectation_id: str
+    candidate: BindingProperty
+
+
+class BindingBuildRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    json_data: dict[str, Any]
+    properties: list[BindingProperty]
+    assignments: list[BindingAssignment]
+
+
+class BindingBuildPreview(BaseModel):
+    node_i: int
+    displayName: str
+    instance: int
+    panel_list: list[dict[str, Any]]
+    has_existing: bool = False
+
+
+class BindingBuildResponse(BaseModel):
+    bound_json: Optional[dict[str, Any]] = None
+    previews: list[BindingBuildPreview]
+    errors: list[str] = []
+    warnings: list[str] = []
 
 
 class ValidateRequest(BaseModel):

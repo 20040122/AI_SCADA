@@ -1,33 +1,77 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "binding",
-  "title": "BindingItem",
-  "description": "绑点项，描述控件属性与 PLC 变量的映射关系",
+  "title": "BindingPanelList",
+  "description": "状态面板绑点结构，包裹在控件 a.panel.list 中",
   "type": "object",
-  "required": ["controlId", "property", "variable"],
+  "required": ["panel.list"],
   "properties": {
-    "controlId": {
-      "type": "string",
-      "description": "控件 ID，引用 control 中的 d 数组元素"
-    },
-    "property": {
-      "type": "string",
-      "enum": ["status", "value", "visible", "color", "text", "enabled"],
-      "description": "控件绑定属性"
-    },
-    "variable": {
-      "type": "string",
-      "description": "PLC 变量名"
-    },
-    "dataType": {
-      "type": "string",
-      "enum": ["bool", "int16", "int32", "float", "string"],
-      "description": "变量数据类型"
-    },
-    "registerAddress": {
-      "type": "string",
-      "description": "寄存器地址"
+    "panel.list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "bind"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "属性显示名"
+          },
+          "bind": {
+            "type": "object",
+            "required": ["type", "path", "key", "label", "proj", "dev", "param"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["designer"],
+                "description": "绑定来源类型"
+              },
+              "path": {
+                "type": "string",
+                "description": "projectId#deviceId#propertyId"
+              },
+              "key": {
+                "type": "string",
+                "description": "deviceId#propertyId"
+              },
+              "label": {
+                "type": "string",
+                "description": "项目名 . 设备名 . 属性名 (单位)"
+              },
+              "proj": {
+                "type": "object",
+                "required": ["id", "name"],
+                "properties": {
+                  "id": {"type": "string"},
+                  "name": {"type": "string"}
+                }
+              },
+              "dev": {
+                "type": "object",
+                "required": ["id", "name"],
+                "properties": {
+                  "id": {"type": "string"},
+                  "name": {"type": "string"}
+                }
+              },
+              "param": {
+                "type": "object",
+                "required": ["id", "name", "unit", "writable", "dataType", "dataTypeDesc"],
+                "properties": {
+                  "id": {"type": "string"},
+                  "name": {"type": "string"},
+                  "unit": {"type": "string"},
+                  "writable": {"type": "boolean"},
+                  "dataType": {
+                    "type": "string",
+                    "enum": ["double", "int", "bool", "string"]
+                  },
+                  "dataTypeDesc": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
     }
-  },
-  "additionalProperties": false
+  }
 }
