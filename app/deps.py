@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Optional
 
 from app.config import settings
 from data.chroma import ControlChunk
 from data.sqlite.material_db import MaterialDB
+from model.binding_agent import BindingAgent
 from model.control_tools import search_service as search_svc
 from model.control_agent import ControlAgent
 from model.layout_agent import LayoutAgent
@@ -15,12 +17,13 @@ _control_agent: Optional[ControlAgent] = None
 _layout_agent: Optional[LayoutAgent] = None
 _refine_agent: Optional[RefineAgent] = None
 _validate_agent: Optional[ValidateAgent] = None
+_binding_agent: Optional[BindingAgent] = None
 _material_db: Optional[MaterialDB] = None
 _chroma_watcher: Optional[ControlChunk] = None
 
 
 async def init_resources() -> None:
-    global _material_db, _control_agent, _layout_agent, _refine_agent, _validate_agent, _chroma_watcher
+    global _material_db, _control_agent, _layout_agent, _refine_agent, _validate_agent, _binding_agent, _chroma_watcher
 
     db = MaterialDB()
     await db.init_db()
@@ -33,6 +36,7 @@ async def init_resources() -> None:
     _layout_agent = LayoutAgent(db=db)
     _refine_agent = RefineAgent()
     _validate_agent = ValidateAgent()
+    _binding_agent = BindingAgent(registry_path=Path(settings.binding_jsonl_path))
 
     _chroma_watcher = ControlChunk(control_jsonl_path=settings.control_jsonl_path)
     _chroma_watcher.reseed()
@@ -67,6 +71,11 @@ def get_refine_agent() -> RefineAgent:
 def get_validate_agent() -> ValidateAgent:
     assert _validate_agent is not None, "ValidateAgent not initialized (call init_resources first)"
     return _validate_agent
+
+
+def get_binding_agent() -> BindingAgent:
+    assert _binding_agent is not None, "BindingAgent not initialized (call init_resources first)"
+    return _binding_agent
 
 
 def get_material_db() -> MaterialDB:

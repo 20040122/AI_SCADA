@@ -6,10 +6,9 @@ import { useRefineStore } from "../src/stores/refineStore.ts";
 import type {
   BindingBuildResponse,
   BindingCandidate,
-  BindingMatchItem,
   BindingMatchResponse,
-  BindingNormalizeResponse,
-  BindingProperty,
+  BindingPreviewResponse,
+  BindingRequestRow,
 } from "../src/types/binding.ts";
 import type { LayoutJsonData, PipeData, UploadCanvasResponse } from "../src/types/layout.ts";
 
@@ -30,69 +29,53 @@ function makeJson(): LayoutJsonData {
   };
 }
 
-function makeProperty(propertyId: string, propertyName: string): BindingProperty {
+function makeRequests(): BindingRequestRow[] {
+  return [
+    { row_number: 2, displayName: "状态面板", propertyName: "空气罐温度" },
+    { row_number: 3, displayName: "状态面板", propertyName: "空气罐压力" },
+  ];
+}
+
+function makePreview(): BindingPreviewResponse {
+  return { encoding: "utf-8", total_rows: 2, requests: makeRequests() };
+}
+
+function makeCandidate(bindingId: string, propertyName: string, score: number): BindingCandidate {
   return {
-    projectId: "p1",
-    projectName: "项目A",
-    deviceId: "d1",
-    deviceName: "空气罐",
-    propertyId,
+    binding_id: bindingId,
     propertyName,
+    projectName: "Agent",
+    deviceName: "空气罐",
     dataType: "int",
     writable: false,
     unit: "°C",
-    dataTypeDesc: "整型",
-  };
-}
-
-function makeCandidate(propertyId: string, propertyName: string, score: number): BindingCandidate {
-  return {
-    ...makeProperty(propertyId, propertyName),
-    device_name_similarity: 1,
-    property_name_similarity: score,
     score,
-    lead: score,
-    confidence: score >= 0.85 ? "high" : "low",
-    evidence: ["规范化完全相等"],
-    key: `p1#d1#${propertyId}`,
+    evidence: ["属性名精确匹配"],
   };
 }
 
-function makeMatchItem(expectationId: string, candidates: BindingCandidate[]): BindingMatchItem {
+function makeMatchItem(rowNumber: number, candidates: BindingCandidate[]): BindingMatchResponse["items"][number] {
   return {
-    panel_node_i: 0,
-    panel_displayName: "状态面板",
-    panel_instance: 1,
-    expectation_id: expectationId,
-    expectation_property: candidates[0].propertyName,
-    expectation_required: true,
+    row_number: rowNumber,
+    target_node_i: 0,
+    requested_displayName: "状态面板",
+    requested_propertyName: candidates[0].propertyName,
     candidates,
-    suggested: candidates[0].key,
-    confidence: candidates[0].confidence,
-    confirmed: false,
+    suggested_binding_id: candidates.length === 1 ? candidates[0].binding_id : null,
+    lead: candidates.length === 1 ? candidates[0].score : 0,
+    confidence: candidates.length === 1 ? "high" : "none",
   };
 }
 
-function makeMatchResponse(): BindingMatchResponse {
+function makeMatchResponse(items?: BindingMatchResponse["items"]): BindingMatchResponse {
   return {
-    panels: [{ node_i: 0, node_id: "node-0", displayName: "状态面板", instance: 1, existing_panel_list: null }],
-    expectations: [
-      { id: "e1", displayName: "状态面板", deviceName: "空气罐", property: "空气罐温度", dataType: "int", writable: false, required: true, path: "", label: "" },
-      { id: "e2", displayName: "状态面板", deviceName: "空气罐", property: "空气罐压力", dataType: "double", writable: false, required: true, path: "", label: "" },
+    targets: [{ node_i: 0, node_id: 0, displayName: "状态面板", handler: "panel_list", existing: null }],
+    items: items ?? [
+      makeMatchItem(2, [makeCandidate("air_tank_temperature", "空气罐温度", 1)]),
+      makeMatchItem(3, [makeCandidate("air_tank_pressure", "空气罐压力", 0.9)]),
     ],
-    items: [
-      makeMatchItem("e1", [makeCandidate("t", "空气罐温度", 0.95), makeCandidate("t2", "空气罐温度2", 0.6)]),
-      makeMatchItem("e2", [makeCandidate("p", "空气罐压力", 0.7)]),
-    ],
-  };
-}
-
-function makeNormalizeResponse(): BindingNormalizeResponse {
-  return {
-    properties: [makeProperty("t", "空气罐温度"), makeProperty("p", "空气罐压力")],
-    errors: [],
     blocked: false,
-    blocking: [],
+    errors: [],
   };
 }
 
@@ -181,11 +164,11 @@ test("same source revision is a no-op and keeps derived state", () => {
   assert.ok(useBindingStore.getState().boundJson);
 });
 
-test("revision change clears match items and bound JSON", () => {
+test("revision change clears candidates, confirm and build results", () => {
   resetStores();
   const b = useBindingStore.getState();
   b.syncSource("layout", 1, makeJson(), null, "画面.json");
-  useBindingStore.setState({ items: [makeMatchItem("e1", [makeCandidate("t", "空气罐温度", 0.95)])], boundJson: makeJson() });
+  useBindingStore.setState({ items: [makeMatchItem(2, [makeCandidate("t", "空气罐温度", 1)])], boundJson: makeJson() });
   b.syncSource("layout", 2, makeJson(), null, "画面.json");
   const s = useBindingStore.getState();
   assert.equal(s.sourceRevision, 2);
@@ -194,38 +177,28 @@ test("revision change clears match items and bound JSON", () => {
   assert.equal(s.targetFileName, "画面_bound.json");
 });
 
-test("column mapping confirms and clears downstream on change", () => {
+test("csv file change clears preview, requests and match", () => {
   resetStores();
   const b = useBindingStore.getState();
   b.syncSource("layout", 1, makeJson(), null, "画面.json");
-  b.setColumnMapping([{ field: "projectId", column: 0 }]);
-  assert.equal(useBindingStore.getState().columnMapping.length, 1);
-
-  b.applyNormalize(makeNormalizeResponse());
-  assert.equal(useBindingStore.getState().normalized.length, 2);
-
-  b.setColumnMapping([{ field: "projectId", column: 1 }]);
-  const s = useBindingStore.getState();
-  assert.equal(s.normalized.length, 0);
-  assert.equal(s.columnMapping[0].column, 1);
+  b.setPreview(makePreview());
+  b.setCsvFile(new File(["x"], "a.csv"));
+  assert.ok(useBindingStore.getState().csvFile);
+  assert.equal(useBindingStore.getState().preview, null);
+  assert.deepEqual(useBindingStore.getState().requests, []);
 });
 
-test("blocked normalize keeps blocking reason", () => {
+test("setPreview stores backend requests and clears build results", () => {
   resetStores();
   const b = useBindingStore.getState();
   b.syncSource("layout", 1, makeJson(), null, "画面.json");
-  b.applyNormalize({
-    properties: [],
-    errors: [],
-    blocked: true,
-    blocking: ["缺少必填列映射"],
-  });
+  b.setPreview(makePreview());
   const s = useBindingStore.getState();
-  assert.equal(s.normalizeBlocked, true);
-  assert.deepEqual(s.normalizeBlocking, ["缺少必填列映射"]);
+  assert.equal(s.preview?.total_rows, 2);
+  assert.deepEqual(s.requests, makeRequests());
 });
 
-test("runMatch guards when no canvas or no normalized properties", async () => {
+test("runMatch guards when no canvas or no requests", async () => {
   resetStores();
   await useBindingStore.getState().runMatch();
   assert.equal(useBindingStore.getState().items.length, 0);
@@ -236,69 +209,112 @@ test("runMatch guards when no canvas or no normalized properties", async () => {
   assert.equal(useBindingStore.getState().items.length, 0);
 });
 
-test("runMatch stores candidates and pre-selects suggestions", async () => {
+test("runMatch sends requests and pre-selects suggestion without confirming", async () => {
   resetStores();
-  const restore = withFetchMock(async (url) => {
+  let body: string | null = null;
+  const restore = withFetchMock(async (url, init) => {
     assert.match(url, /\/api\/binding\/match$/);
+    body = String(init.body);
     return makeMatchResponse();
   });
   try {
     const b = useBindingStore.getState();
     b.syncSource("layout", 1, makeJson(), null, "画面.json");
-    b.applyNormalize(makeNormalizeResponse());
+    b.setPreview(makePreview());
     await useBindingStore.getState().runMatch();
     const s = useBindingStore.getState();
     assert.equal(s.items.length, 2);
-    assert.equal(s.items[0].selectedKey, "p1#d1#t");
-    assert.equal(s.items[1].selectedKey, "p1#d1#p");
+    assert.equal(s.items[0].selectedBindingId, "air_tank_temperature");
+    assert.equal(s.items[1].selectedBindingId, "air_tank_pressure");
     assert.equal(s.items[0].confirmed, false);
     assert.equal(s.items[0].confidence, "high");
-    assert.equal(s.items[1].confidence, "low");
+    assert.ok(body);
+    const parsed = JSON.parse(body!) as { requests: BindingRequestRow[] };
+    assert.deepEqual(parsed.requests, makeRequests());
   } finally {
     restore();
   }
 });
 
-test("selectCandidate replaces candidate and unconfirms item", () => {
+test("multi-exact match has no preselect", async () => {
   resetStores();
-  const b = useBindingStore.getState();
-  b.syncSource("layout", 1, makeJson(), null, "画面.json");
-  useBindingStore.setState({ items: [makeMatchItem("e1", [makeCandidate("t", "空气罐温度", 0.95), makeCandidate("t2", "空气罐温度2", 0.6)])] });
-  useBindingStore.getState().confirmItem(0, "e1");
-  assert.equal(useBindingStore.getState().items[0].confirmed, true);
-
-  useBindingStore.getState().selectCandidate(0, "e1", "p1#d1#t2");
-  const s = useBindingStore.getState();
-  assert.equal(s.items[0].selectedKey, "p1#d1#t2");
-  assert.equal(s.items[0].confirmed, false);
+  const restore = withFetchMock(async () => {
+    return makeMatchResponse([
+      makeMatchItem(2, [
+        makeCandidate("air_tank_temperature", "空气罐温度", 1),
+        makeCandidate("air_tank_temperature_2", "空气罐温度", 1),
+      ]),
+    ]);
+  });
+  try {
+    const b = useBindingStore.getState();
+    b.syncSource("layout", 1, makeJson(), null, "画面.json");
+    b.setPreview(makePreview());
+    await useBindingStore.getState().runMatch();
+    const s = useBindingStore.getState();
+    assert.equal(s.items[0].suggested_binding_id, null);
+    assert.equal(s.items[0].selectedBindingId, null);
+    assert.equal(s.items[0].confirmed, false);
+  } finally {
+    restore();
+  }
 });
 
-test("confirmItem confirms the selected candidate", () => {
+test("runMatch stores blocked errors from backend", async () => {
   resetStores();
-  const b = useBindingStore.getState();
-  b.syncSource("layout", 1, makeJson(), null, "画面.json");
-  useBindingStore.setState({ items: [makeMatchItem("e1", [makeCandidate("t", "空气罐温度", 0.95)])] });
-  useBindingStore.getState().confirmItem(0, "e1");
-  assert.equal(useBindingStore.getState().items[0].confirmed, true);
+  const restore = withFetchMock(async () => {
+    return { ...makeMatchResponse([]), blocked: true, errors: ["第 2 行: 未找到匹配属性 空气罐温度"] };
+  });
+  try {
+    const b = useBindingStore.getState();
+    b.syncSource("layout", 1, makeJson(), null, "画面.json");
+    b.setPreview(makePreview());
+    await useBindingStore.getState().runMatch();
+    const s = useBindingStore.getState();
+    assert.equal(s.match?.blocked, true);
+    assert.ok(s.match?.errors.length === 1);
+  } finally {
+    restore();
+  }
 });
 
-test("confirmAllHigh only confirms high confidence items", () => {
+test("selectCandidate replaces candidate and revokes confirm and build", () => {
   resetStores();
   const b = useBindingStore.getState();
   b.syncSource("layout", 1, makeJson(), null, "画面.json");
   useBindingStore.setState({
     items: [
-      makeMatchItem("e1", [makeCandidate("t", "空气罐温度", 0.95)]),
-      makeMatchItem("e2", [makeCandidate("p", "空气罐压力", 0.7)]),
+      { ...makeMatchItem(2, [makeCandidate("t", "空气罐温度", 1), makeCandidate("t2", "空气罐温度", 0.9)]), selectedBindingId: "t", confirmed: false },
     ],
   });
-  useBindingStore.getState().confirmAllHigh();
+  useBindingStore.getState().confirmItem(2);
+  useBindingStore.setState({ boundJson: makeJson() });
+  assert.equal(useBindingStore.getState().items[0].confirmed, true);
+
+  useBindingStore.getState().selectCandidate(2, "t2");
+  const s = useBindingStore.getState();
+  assert.equal(s.items[0].selectedBindingId, "t2");
+  assert.equal(s.items[0].confirmed, false);
+  assert.equal(s.boundJson, null);
+});
+
+test("confirmItem confirms the selected candidate only", () => {
+  resetStores();
+  const b = useBindingStore.getState();
+  b.syncSource("layout", 1, makeJson(), null, "画面.json");
+  useBindingStore.setState({
+    items: [
+      { ...makeMatchItem(2, [makeCandidate("t", "空气罐温度", 1)]), selectedBindingId: "t", confirmed: false },
+      { ...makeMatchItem(3, [makeCandidate("p", "空气罐压力", 1)]), selectedBindingId: "p", confirmed: false },
+    ],
+  });
+  useBindingStore.getState().confirmItem(2);
   const items = useBindingStore.getState().items;
   assert.equal(items[0].confirmed, true);
   assert.equal(items[1].confirmed, false);
 });
 
-test("runBuild sends only confirmed assignments and stores result", async () => {
+test("runBuild sends only row_number and binding_id for confirmed rows", async () => {
   resetStores();
   let body: string | null = null;
   const restore = withFetchMock(async (url, init) => {
@@ -309,18 +325,20 @@ test("runBuild sends only confirmed assignments and stores result", async () => 
   try {
     const b = useBindingStore.getState();
     b.syncSource("layout", 1, makeJson(), null, "画面.json");
+    b.setPreview(makePreview());
     useBindingStore.setState({
       items: [
-        makeMatchItem("e1", [makeCandidate("t", "空气罐温度", 0.95)]),
-        makeMatchItem("e2", [makeCandidate("p", "空气罐压力", 0.7)]),
+        { ...makeMatchItem(2, [makeCandidate("t", "空气罐温度", 1)]), selectedBindingId: "t", confirmed: false },
+        { ...makeMatchItem(3, [makeCandidate("p", "空气罐压力", 1)]), selectedBindingId: "p", confirmed: false },
       ],
     });
-    useBindingStore.getState().confirmItem(0, "e1");
+    useBindingStore.getState().confirmItem(2);
     await useBindingStore.getState().runBuild();
     const s = useBindingStore.getState();
     assert.ok(body);
-    const parsed = JSON.parse(body!) as { assignments: unknown[] };
-    assert.equal(parsed.assignments.length, 1);
+    const parsed = JSON.parse(body!) as { requests: BindingRequestRow[]; assignments: { row_number: number; binding_id: string }[] };
+    assert.deepEqual(parsed.requests, makeRequests());
+    assert.deepEqual(parsed.assignments, [{ row_number: 2, binding_id: "t" }]);
     assert.ok(s.boundJson);
     assert.deepEqual(s.buildErrors, []);
     assert.equal(s.uploadResult, null);

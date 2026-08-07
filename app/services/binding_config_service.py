@@ -6,13 +6,20 @@ from typing import Any
 
 REQUIRED_KEYS = [
     "id",
+    "handler",
     "displayName",
+    "propertyName",
+    "projectId",
+    "projectName",
+    "deviceId",
     "deviceName",
-    "property",
+    "propertyId",
     "dataType",
+    "dataTypeDesc",
     "writable",
-    "required",
 ]
+ID_KEYS = ["projectId", "deviceId", "propertyId"]
+STRING_KEYS = ["id", "handler", "displayName", "propertyName", "projectName", "deviceName", "dataTypeDesc"]
 VALID_DATATYPES = {"double", "int", "bool", "string"}
 
 
@@ -26,26 +33,27 @@ def _validate_record(item: Any, line_no: int) -> list[str]:
     errors: list[str] = []
     if not isinstance(item, dict):
         return [f"第 {line_no} 行不是 JSON 对象"]
-    missing = [k for k in REQUIRED_KEYS if k not in item]
-    if missing:
-        errors.append(f"第 {line_no} 行缺少字段: {', '.join(missing)}")
-    if not isinstance(item.get("id", ""), str) or not item.get("id"):
-        errors.append(f"第 {line_no} 行 id 必须为非空字符串")
-    if not isinstance(item.get("displayName", ""), str) or not item.get("displayName"):
-        errors.append(f"第 {line_no} 行 displayName 必须为非空字符串")
-    if not isinstance(item.get("deviceName", ""), str) or not item.get("deviceName"):
-        errors.append(f"第 {line_no} 行 deviceName 必须为非空字符串")
-    if not isinstance(item.get("property", ""), str) or not item.get("property"):
-        errors.append(f"第 {line_no} 行 property 必须为非空字符串")
-    if not isinstance(item.get("dataType", ""), str) or item.get("dataType") not in VALID_DATATYPES:
+    for key in REQUIRED_KEYS:
+        if key not in item:
+            errors.append(f"第 {line_no} 行缺少字段: {key}")
+    for key in STRING_KEYS:
+        value = item.get(key)
+        if not isinstance(value, str) or not value:
+            errors.append(f"第 {line_no} 行 {key} 必须为非空字符串")
+    for key in ID_KEYS:
+        value = item.get(key)
+        if not isinstance(value, str) or not value.isdigit():
+            errors.append(f"第 {line_no} 行 {key} 必须为数字字符串")
+    datatype = item.get("dataType")
+    if not isinstance(datatype, str) or datatype not in VALID_DATATYPES:
         errors.append(
-            f"第 {line_no} 行 dataType 非法: {item.get('dataType')!r}，"
+            f"第 {line_no} 行 dataType 非法: {datatype!r}，"
             f"仅支持 {', '.join(sorted(VALID_DATATYPES))}"
         )
     if not isinstance(item.get("writable"), bool):
         errors.append(f"第 {line_no} 行 writable 必须为布尔值")
-    if not isinstance(item.get("required"), bool):
-        errors.append(f"第 {line_no} 行 required 必须为布尔值")
+    if "unit" in item and not isinstance(item["unit"], str):
+        errors.append(f"第 {line_no} 行 unit 必须为字符串")
     return errors
 
 
@@ -53,6 +61,7 @@ def load_binding_registry(path: Path) -> list[dict]:
     errors: list[str] = []
     registry: list[dict] = []
     seen_ids: set[str] = set()
+    seen_sources: set[tuple[str, str, str, str, str]] = set()
 
     with open(path, "r", encoding="utf-8") as f:
         for line_no, line in enumerate(f, start=1):
@@ -72,18 +81,26 @@ def load_binding_registry(path: Path) -> list[dict]:
             if item_id in seen_ids:
                 errors.append(f"第 {line_no} 行 id 重复: {item_id}")
                 continue
+            source_key = (
+                item["handler"],
+                item["displayName"],
+                item["projectId"],
+                item["deviceId"],
+                item["propertyId"],
+            )
+            if source_key in seen_sources:
+                errors.append(
+                    f"第 {line_no} 行重复物理源: handler={item['handler']} "
+                    f"displayName={item['displayName']} "
+                    f"projectId={item['projectId']} deviceId={item['deviceId']} "
+                    f"propertyId={item['propertyId']}"
+                )
+                continue
             seen_ids.add(item_id)
-            registry.append({
-                "id": item_id,
-                "displayName": item["displayName"],
-                "deviceName": item["deviceName"],
-                "property": item["property"],
-                "dataType": item["dataType"],
-                "writable": bool(item["writable"]),
-                "required": bool(item["required"]),
-                "path": item.get("path", ""),
-                "label": item.get("label", ""),
-            })
+            seen_sources.add(source_key)
+            record = {key: item[key] for key in REQUIRED_KEYS}
+            record["unit"] = item.get("unit", "")
+            registry.append(record)
 
     if errors:
         raise BindingConfigError(errors)

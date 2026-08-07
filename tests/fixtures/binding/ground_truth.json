@@ -1,0 +1,24 @@
+{
+  "mappings": [
+    {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度", "binding_id": "air_tank_temperature"},
+    {"row_number": 3, "displayName": "状态面板", "propertyName": "气罐温度", "binding_id": "air_tank_temperature"},
+    {"row_number": 4, "displayName": "状态面板", "propertyName": "空气罐温度值", "binding_id": "air_tank_temperature"},
+    {"row_number": 5, "displayName": "状态面板", "propertyName": "空气罐测温", "binding_id": "air_tank_temperature"},
+    {"row_number": 6, "displayName": "状态面板", "propertyName": "储气罐温度", "binding_id": "air_tank_temperature"},
+    {"row_number": 7, "displayName": "状态面板", "propertyName": "空气容器温度", "binding_id": "air_tank_temperature"},
+    {"row_number": 8, "displayName": "状态面板", "propertyName": "空气罐温度传感器", "binding_id": "air_tank_temperature"},
+    {"row_number": 9, "displayName": "状态面板", "propertyName": "罐体温度", "binding_id": "air_tank_temperature"},
+    {"row_number": 10, "displayName": "状态面板", "propertyName": "气罐热度", "binding_id": "air_tank_temperature"},
+    {"row_number": 11, "displayName": "状态面板", "propertyName": "空气罐当前温度", "binding_id": "air_tank_temperature"},
+    {"row_number": 12, "displayName": "状态面板", "propertyName": "空气罐压力", "binding_id": "air_tank_pressure"},
+    {"row_number": 13, "displayName": "状态面板", "propertyName": "气罐压力", "binding_id": "air_tank_pressure"},
+    {"row_number": 14, "displayName": "状态面板", "propertyName": "空气罐压力值", "binding_id": "air_tank_pressure"},
+    {"row_number": 15, "displayName": "状态面板", "propertyName": "空气罐测压", "binding_id": "air_tank_pressure"},
+    {"row_number": 16, "displayName": "状态面板", "propertyName": "储气罐压力", "binding_id": "air_tank_pressure"},
+    {"row_number": 17, "displayName": "状态面板", "propertyName": "空气容器压力", "binding_id": "air_tank_pressure"},
+    {"row_number": 18, "displayName": "状态面板", "propertyName": "空气罐压力传感器", "binding_id": "air_tank_pressure"},
+    {"row_number": 19, "displayName": "状态面板", "propertyName": "罐体压力", "binding_id": "air_tank_pressure"},
+    {"row_number": 20, "displayName": "状态面板", "propertyName": "气罐气压", "binding_id": "air_tank_pressure"},
+    {"row_number": 21, "displayName": "状态面板", "propertyName": "空气罐当前压力", "binding_id": "air_tank_pressure"}
+  ]
+}

@@ -1,23 +1,21 @@
 import { create } from "zustand";
 import type {
-  BindingAssignment,
   BindingBuildPreview,
   BindingBuildResponse,
   BindingCandidate,
   BindingMatchItem,
   BindingMatchResponse,
-  BindingNormalizeResponse,
   BindingPreviewResponse,
-  BindingProperty,
+  BindingRequestRow,
 } from "../types/binding";
 import type { LayoutJsonData, PipeData, UploadCanvasResponse } from "../types/layout";
 import { buildBinding, matchBinding } from "../api/binding.ts";
-import type { BindingColumnMapping } from "../api/binding.ts";
 
 export type BindingSourceType = "layout" | "refine";
 
 interface LocalMatchItem extends BindingMatchItem {
-  selectedKey: string | null;
+  selectedBindingId: string | null;
+  confirmed: boolean;
 }
 
 export interface BindingSourceSnapshot {
@@ -88,9 +86,12 @@ function deriveTargetFileName(fileName: string): string {
   return `${name}_bound.json`;
 }
 
-function candidateByKey(item: LocalMatchItem, key: string | null): BindingCandidate | null {
-  if (!key) return null;
-  return item.candidates.find((c) => c.key === key) ?? null;
+function candidateByBindingId(
+  item: LocalMatchItem,
+  bindingId: string | null
+): BindingCandidate | null {
+  if (!bindingId) return null;
+  return item.candidates.find((c) => c.binding_id === bindingId) ?? null;
 }
 
 function resetDerived(
@@ -110,6 +111,32 @@ function resetDerived(
   };
 }
 
+function clearCsvDerived(): Partial<BindingStore> {
+  return {
+    preview: null,
+    requests: [],
+    match: null,
+    items: [],
+    boundJson: null,
+    buildPreviews: [],
+    buildErrors: [],
+    buildWarnings: [],
+    uploadResult: null,
+    uploadError: null,
+  };
+}
+
+function clearBuildResult(): Partial<BindingStore> {
+  return {
+    boundJson: null,
+    buildPreviews: [],
+    buildErrors: [],
+    buildWarnings: [],
+    uploadResult: null,
+    uploadError: null,
+  };
+}
+
 export interface BindingStore {
   sourceType: BindingSourceType | null;
   sourceRevision: number;
@@ -119,11 +146,7 @@ export interface BindingStore {
 
   csvFile: File | null;
   preview: BindingPreviewResponse | null;
-  columnMapping: BindingColumnMapping[];
-  normalized: BindingProperty[];
-  normalizeErrors: string[];
-  normalizeBlocked: boolean;
-  normalizeBlocking: string[];
+  requests: BindingRequestRow[];
 
   match: BindingMatchResponse | null;
   items: LocalMatchItem[];
@@ -148,12 +171,9 @@ export interface BindingStore {
   ) => void;
   setCsvFile: (file: File | null) => void;
   setPreview: (preview: BindingPreviewResponse) => void;
-  setColumnMapping: (mapping: BindingColumnMapping[]) => void;
-  applyNormalize: (res: BindingNormalizeResponse) => void;
   runMatch: () => Promise<void>;
-  selectCandidate: (panelNodeI: number, expectationId: string, candidateKey: string) => void;
-  confirmItem: (panelNodeI: number, expectationId: string) => void;
-  confirmAllHigh: () => void;
+  selectCandidate: (rowNumber: number, bindingId: string) => void;
+  confirmItem: (rowNumber: number) => void;
   runBuild: () => Promise<void>;
   setTargetFileName: (name: string) => void;
   setUploadResult: (res: UploadCanvasResponse | null) => void;
@@ -180,11 +200,7 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
 
   csvFile: null,
   preview: null,
-  columnMapping: [],
-  normalized: [],
-  normalizeErrors: [],
-  normalizeBlocked: false,
-  normalizeBlocking: [],
+  requests: [],
 
   match: null,
   items: [],
@@ -206,8 +222,8 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
     const base: BindingStoreState = {
       sourceType,
       sourceRevision: revision,
-      canvas: canvas ? JSON.parse(JSON.stringify(canvas)) as LayoutJsonData : null,
-      pipes: pipes ? JSON.parse(JSON.stringify(pipes)) as PipeData : null,
+      canvas: canvas ? (JSON.parse(JSON.stringify(canvas)) as LayoutJsonData) : null,
+      pipes: pipes ? (JSON.parse(JSON.stringify(pipes)) as PipeData) : null,
       fileName,
     };
     set(resetDerived(base));
@@ -215,97 +231,28 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
 
   setCsvFile: (file) => {
     if (file === null) {
-      set({
-        csvFile: null,
-        preview: null,
-        columnMapping: [],
-        normalized: [],
-        normalizeErrors: [],
-        normalizeBlocked: false,
-        normalizeBlocking: [],
-        match: null,
-        items: [],
-        boundJson: null,
-        buildPreviews: [],
-        buildErrors: [],
-        buildWarnings: [],
-        uploadResult: null,
-        uploadError: null,
-      });
+      set({ csvFile: null, ...clearCsvDerived() });
       return;
     }
-    set({
-      csvFile: file,
-      preview: null,
-      columnMapping: [],
-      normalized: [],
-      normalizeErrors: [],
-      normalizeBlocked: false,
-      normalizeBlocking: [],
-      match: null,
-      items: [],
-      boundJson: null,
-      buildPreviews: [],
-      buildErrors: [],
-      buildWarnings: [],
-      uploadResult: null,
-      uploadError: null,
-    });
+    set({ csvFile: file, ...clearCsvDerived() });
   },
 
-  setPreview: (preview) => set({ preview }),
-
-  setColumnMapping: (mapping) => {
-    const s = get();
-    if (s.columnMapping.length === mapping.length &&
-        s.columnMapping.every((m, i) => m.field === mapping[i]?.field && m.column === mapping[i]?.column)) {
-      return;
-    }
-    set({
-      columnMapping: mapping,
-      normalized: [],
-      normalizeErrors: [],
-      normalizeBlocked: false,
-      normalizeBlocking: [],
-      match: null,
-      items: [],
-      boundJson: null,
-      buildPreviews: [],
-      buildErrors: [],
-      buildWarnings: [],
-      uploadResult: null,
-      uploadError: null,
-    });
-  },
-
-  applyNormalize: (res) => {
-    set({
-      normalized: res.properties,
-      normalizeErrors: res.errors,
-      normalizeBlocked: res.blocked,
-      normalizeBlocking: res.blocking,
-      match: null,
-      items: [],
-      boundJson: null,
-      buildPreviews: [],
-      buildErrors: [],
-      buildWarnings: [],
-      uploadResult: null,
-      uploadError: null,
-    });
+  setPreview: (preview) => {
+    set({ preview, requests: preview.requests, ...clearBuildResult() });
   },
 
   runMatch: async () => {
     const s = get();
-    if (!s.canvas || s.normalized.length === 0) return;
+    if (!s.canvas || s.requests.length === 0) return;
     set({ isLoading: true, error: null });
     try {
-      const res = await matchBinding(s.canvas, s.normalized);
+      const res = await matchBinding(s.canvas, s.requests);
       const items: LocalMatchItem[] = res.items.map((item) => ({
         ...item,
-        selectedKey: item.suggested,
+        selectedBindingId: item.suggested_binding_id,
+        confirmed: false,
       }));
-      set({ match: res, items, boundJson: null, buildPreviews: [], buildErrors: [], buildWarnings: [], uploadResult: null, uploadError: null });
+      set({ match: res, items, ...clearBuildResult() });
     } catch (err) {
       set({ error: err instanceof Error ? err.message : String(err) });
     } finally {
@@ -313,93 +260,45 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
     }
   },
 
-  selectCandidate: (panelNodeI, expectationId, candidateKey) => {
+  selectCandidate: (rowNumber, bindingId) => {
     set((s) => {
-      const item = s.items.find(
-        (it) => it.panel_node_i === panelNodeI && it.expectation_id === expectationId
-      );
-      if (!item || !candidateByKey(item, candidateKey)) return s;
+      const item = s.items.find((it) => it.row_number === rowNumber);
+      if (!item || !candidateByBindingId(item, bindingId)) return s;
       return {
         items: s.items.map((it) =>
-          it.panel_node_i === panelNodeI && it.expectation_id === expectationId
-            ? { ...it, selectedKey: candidateKey, confirmed: false }
+          it.row_number === rowNumber
+            ? { ...it, selectedBindingId: bindingId, confirmed: false }
             : it
         ),
-        boundJson: null,
-        buildPreviews: [],
-        buildErrors: [],
-        buildWarnings: [],
-        uploadResult: null,
-        uploadError: null,
+        ...clearBuildResult(),
       };
     });
   },
 
-  confirmItem: (panelNodeI, expectationId) => {
+  confirmItem: (rowNumber) => {
     set((s) => {
-      const item = s.items.find(
-        (it) => it.panel_node_i === panelNodeI && it.expectation_id === expectationId
-      );
+      const item = s.items.find((it) => it.row_number === rowNumber);
       if (!item) return s;
-      const key = item.selectedKey ?? item.suggested;
-      if (!key || !candidateByKey(item, key)) return s;
+      const key = item.selectedBindingId;
+      if (!key || !candidateByBindingId(item, key)) return s;
       return {
         items: s.items.map((it) =>
-          it.panel_node_i === panelNodeI && it.expectation_id === expectationId
-            ? { ...it, confirmed: true }
-            : it
+          it.row_number === rowNumber ? { ...it, confirmed: true } : it
         ),
-        boundJson: null,
-        buildPreviews: [],
-        buildErrors: [],
-        buildWarnings: [],
-        uploadResult: null,
-        uploadError: null,
-      };
-    });
-  },
-
-  confirmAllHigh: () => {
-    set((s) => {
-      let changed = false;
-      const items = s.items.map((it) => {
-        if (it.confirmed || it.confidence !== "high") return it;
-        const key = it.selectedKey ?? it.suggested;
-        if (!key || !candidateByKey(it, key)) return it;
-        changed = true;
-        return { ...it, confirmed: true };
-      });
-      if (!changed) return s;
-      return {
-        items,
-        boundJson: null,
-        buildPreviews: [],
-        buildErrors: [],
-        buildWarnings: [],
-        uploadResult: null,
-        uploadError: null,
+        ...clearBuildResult(),
       };
     });
   },
 
   runBuild: async () => {
     const s = get();
-    if (!s.canvas) return;
-    const assignments: BindingAssignment[] = [];
-    for (const item of s.items) {
-      if (!item.confirmed) continue;
-      const key = item.selectedKey ?? item.suggested;
-      const candidate = key ? candidateByKey(item, key) : null;
-      if (!candidate) continue;
-      assignments.push({
-        panel_node_i: item.panel_node_i,
-        expectation_id: item.expectation_id,
-        candidate,
-      });
-    }
+    if (!s.canvas || s.requests.length === 0) return;
+    const assignments = s.items
+      .filter((it) => it.confirmed && it.selectedBindingId)
+      .map((it) => ({ row_number: it.row_number, binding_id: it.selectedBindingId as string }));
     set({ isLoading: true, error: null });
     try {
-      const res: BindingBuildResponse = await buildBinding(s.canvas, s.normalized, assignments);
+      const res: BindingBuildResponse = await buildBinding(s.canvas, s.requests, assignments);
       set({
         boundJson: res.bound_json,
         buildPreviews: res.previews,
@@ -433,11 +332,7 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
       fileName: "",
       csvFile: null,
       preview: null,
-      columnMapping: [],
-      normalized: [],
-      normalizeErrors: [],
-      normalizeBlocked: false,
-      normalizeBlocking: [],
+      requests: [],
       match: null,
       items: [],
       boundJson: null,

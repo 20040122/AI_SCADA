@@ -3,7 +3,7 @@ import { useBindingStore } from "../../stores/bindingStore";
 import { uploadCanvas } from "../../api/layout";
 import { colorJson } from "../../utils/jsonColor";
 import { notify } from "../../utils/notification";
-import type { BindingPanel, BindingPanelItem } from "../../types/binding";
+import type { BindingPanelItem } from "../../types/binding";
 
 function renderItemLabel(item: BindingPanelItem): string {
   const b = item.bind;
@@ -13,6 +13,7 @@ function renderItemLabel(item: BindingPanelItem): string {
 export default function RightPanel({ blocked }: { blocked: string | null }) {
   const {
     match,
+    items,
     boundJson,
     buildPreviews,
     buildErrors,
@@ -28,9 +29,13 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
   const [building, setBuilding] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const allConfirmed = items.length > 0 && items.every((it) => it.confirmed);
+  const noBlocking = !(match?.blocked ?? false);
+  const canBuild = allConfirmed && noBlocking && blocked === null;
+
   const hasExisting =
-    (match?.panels ?? []).some(
-      (p: BindingPanel) => p.existing_panel_list && p.existing_panel_list.length > 0
+    (match?.targets ?? []).some(
+      (t) => Array.isArray(t.existing) && t.existing.length > 0
     ) ?? false;
 
   const canUpload = boundJson !== null && buildErrors.length === 0;
@@ -82,7 +87,7 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-[14px]">
-        {(match?.panels ?? []).length > 0 && (
+        {(match?.targets ?? []).length > 0 && (
           <div className="mb-4">
             <div className="text-[10px] text-[var(--text3)] font-mono mb-2 tracking-[1px] uppercase">
               🔄 新旧对比
@@ -94,40 +99,42 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
                   : "画布中状态面板当前没有 panel.list"}
               </div>
             )}
-            {buildPreviews.map((p) => {
-              const existing =
-                (match?.panels ?? []).find((m: BindingPanel) => m.node_i === p.node_i)
-                  ?.existing_panel_list ?? null;
-              return (
-                <div key={p.node_i} className="bg-[var(--bg3)] border border-[var(--border)] rounded-[5px] p-[10px] mb-2">
-                  <div className="text-[11px] font-medium text-[var(--text)] mb-1">
-                    状态面板 #{p.instance}
-                  </div>
-                  <div className="text-[10px] font-mono text-[var(--text3)] mb-1">旧绑定 ({existing?.length ?? 0})</div>
-                  {existing && existing.length > 0 ? (
-                    <div className="mb-1">
-                      {existing.map((it: BindingPanelItem, i: number) => (
-                        <div key={i} className="text-[9px] font-mono text-[var(--text3)] line-through truncate">
-                          {it.bind ? renderItemLabel(it) : String(it.label)}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-[9px] font-mono text-[var(--text3)] mb-1">—</div>
-                  )}
-                  <div className="text-[10px] font-mono text-[var(--text3)] mb-1">新绑定 ({p.panel_list.length})</div>
-                  {p.panel_list.length > 0 ? (
-                    p.panel_list.map((it: BindingPanelItem, i: number) => (
-                      <div key={i} className="text-[9px] font-mono text-[var(--success)] truncate">
-                        {renderItemLabel(it)}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-[9px] font-mono text-[var(--text3)]">—</div>
-                  )}
+            {buildPreviews.map((p) => (
+              <div key={p.node_i} className="bg-[var(--bg3)] border border-[var(--border)] rounded-[5px] p-[10px] mb-2">
+                <div className="text-[11px] font-medium text-[var(--text)] mb-1">
+                  {p.displayName}
+                  <span className="text-[9px] font-mono text-[var(--text3)] ml-2">
+                    handler={p.handler}
+                  </span>
                 </div>
-              );
-            })}
+                <div className="text-[10px] font-mono text-[var(--text3)] mb-1">
+                  旧绑定 ({Array.isArray(p.before) ? p.before.length : 0})
+                </div>
+                {Array.isArray(p.before) && p.before.length > 0 ? (
+                  <div className="mb-1">
+                    {p.before.map((it: BindingPanelItem, i: number) => (
+                      <div key={i} className="text-[9px] font-mono text-[var(--text3)] line-through truncate">
+                        {it.bind ? renderItemLabel(it) : String(it.label)}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-[9px] font-mono text-[var(--text3)] mb-1">—</div>
+                )}
+                <div className="text-[10px] font-mono text-[var(--text3)] mb-1">
+                  新绑定 ({p.after.length})
+                </div>
+                {p.after.length > 0 ? (
+                  p.after.map((it: BindingPanelItem, i: number) => (
+                    <div key={i} className="text-[9px] font-mono text-[var(--success)] truncate">
+                      {renderItemLabel(it)}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-[9px] font-mono text-[var(--text3)]">—</div>
+                )}
+              </div>
+            ))}
           </div>
         )}
 
@@ -203,7 +210,7 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
           <button
             className="flex-1 px-[12px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-50"
             onClick={() => void handleBuild()}
-            disabled={building || blocked !== null || (boundJson !== null && buildErrors.length === 0)}
+            disabled={building || !canBuild || (boundJson !== null && buildErrors.length === 0)}
           >
             {building ? "生成中..." : "生成绑定 JSON"}
           </button>

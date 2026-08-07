@@ -4,6 +4,7 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -12,7 +13,6 @@ from app.services.binding_config_service import (
     BindingConfigError,
     load_binding_registry,
 )
-from app.services.build_service import build_bound_json
 from app.services.csv_service import (
     CsvEncodingError,
     CsvError,
@@ -21,33 +21,16 @@ from app.services.csv_service import (
     MAX_CSV_BYTES,
     MAX_CSV_ROWS,
     detect_encoding,
-    normalize_csv,
     preview_csv,
-    suggest_mapping,
 )
-from app.services.match_service import (
-    match_properties,
-    parse_device_instance,
-    parse_panel_instance,
-    type_compatible,
-)
+from model.binding_agent import BindingAgent, PanelListHandler, _panel_list_item
+
+CSV_HEADER = "displayName,propertyName"
 
 
-def _props(properties: list[dict]) -> list[dict]:
-    return properties
-
-
-BASIC_HEADER = "projectId,projectName,deviceId,deviceName,propertyId,propertyName,dataType,writable,unit"
-
-
-def _basic_csv(rows: list[list[str]]) -> bytes:
-    lines = [BASIC_HEADER] + [",".join(r) for r in rows]
+def _csv(rows: list[list[str]]) -> bytes:
+    lines = [CSV_HEADER] + [",".join(r) for r in rows]
     return ("\n".join(lines) + "\n").encode("utf-8")
-
-
-def _default_mapping() -> dict[str, int]:
-    fields = ["projectId", "projectName", "deviceId", "deviceName", "propertyId", "propertyName", "dataType", "writable", "unit"]
-    return {f: i for i, f in enumerate(fields)}
 
 
 def _panel_canvas(*display_names: str) -> dict:
@@ -63,26 +46,101 @@ def _panel_canvas(*display_names: str) -> dict:
     }
 
 
-def _expectations() -> list[dict]:
+class FakeSimilarity:
+    def __init__(self) -> None:
+        self._map: dict[str, np.ndarray] = {}
+
+    def set(self, text: str, vec) -> None:
+        self._map[text.strip()] = np.asarray(vec, dtype=float)
+
+    def _vec(self, text: str) -> np.ndarray:
+        text = text.strip()
+        if text not in self._map:
+            seed = sum(ord(c) for c in text) % (2**32)
+            self._map[text] = np.random.RandomState(seed).randn(24)
+        return self._map[text]
+
+    def encode(self, texts: list[str]) -> np.ndarray:
+        out = []
+        for t in texts:
+            v = self._vec(t)
+            norm = np.linalg.norm(v)
+            out.append(v / norm if norm else v)
+        return np.array(out)
+
+
+def _rec(
+    rec_id: str,
+    property_name: str,
+    data_type: str = "int",
+    data_type_desc: str = "整型",
+    unit: str = "",
+    writable: bool = False,
+    project_id: str = "2084524131092914178",
+    project_name: str = "Agent",
+    device_id: str = "2084937599679848450",
+    device_name: str = "空气罐",
+    property_id: str = "2084940408848506881",
+    handler: str = "panel_list",
+    display_name: str = "状态面板",
+) -> dict:
+    return {
+        "id": rec_id,
+        "handler": handler,
+        "displayName": display_name,
+        "propertyName": property_name,
+        "projectId": project_id,
+        "projectName": project_name,
+        "deviceId": device_id,
+        "deviceName": device_name,
+        "propertyId": property_id,
+        "dataType": data_type,
+        "dataTypeDesc": data_type_desc,
+        "writable": writable,
+        "unit": unit,
+    }
+
+
+def _records() -> list[dict]:
     return [
-        {"id": "temp", "displayName": "状态面板", "deviceName": "空气罐", "property": "空气罐温度", "dataType": "int", "writable": False, "required": True},
-        {"id": "press", "displayName": "状态面板", "deviceName": "空气罐", "property": "空气罐压力", "dataType": "double", "writable": False, "required": True},
+        _rec(
+            "air_tank_temperature", "空气罐温度",
+            data_type="int", data_type_desc="整型", unit="°C",
+            property_id="2084940408848506881",
+        ),
+        _rec(
+            "air_tank_pressure", "空气罐压力",
+            data_type="double", data_type_desc="双精度", unit="MPa",
+            property_id="2084940512418455554",
+        ),
+    ]
+
+
+def _requests() -> list[dict]:
+    return [
+        {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+        {"row_number": 3, "displayName": "状态面板", "propertyName": "空气罐压力"},
+    ]
+
+
+def _assignments() -> list[dict]:
+    return [
+        {"row_number": 2, "binding_id": "air_tank_temperature"},
+        {"row_number": 3, "binding_id": "air_tank_pressure"},
     ]
 
 
 class TestCsvEncoding:
     def test_utf8(self):
-        data = _basic_csv([["1", "A", "2", "空气罐", "3", "温度", "int", "否", "°C"]])
-        assert detect_encoding(data) == "utf-8"
+        assert detect_encoding(_csv([["状态面板", "空气罐温度"]])) == "utf-8"
 
     def test_utf8_bom(self):
-        data = b"\xef\xbb\xbf" + _basic_csv([["1", "A", "2", "空气罐", "3", "温度", "int", "否", "°C"]])
+        data = b"\xef\xbb\xbf" + _csv([["状态面板", "空气罐温度"]])
         assert detect_encoding(data) == "utf-8-sig"
 
     def test_gb18030(self):
-        text = "项目ID,项目名称,设备ID,设备名称,属性ID,属性名称,数据类型,可写,单位\n1,项目A,2,空气罐,3,温度,int,否,℃\n"
-        data = text.encode("gb18030")
-        assert detect_encoding(data) == "gb18030"
+        text = "displayName,propertyName\n状态面板,空气罐温度\n"
+        assert detect_encoding(text.encode("gb18030")) == "gb18030"
 
     def test_reject_unknown_encoding(self):
         data = bytes(range(256)) * 4
@@ -90,410 +148,235 @@ class TestCsvEncoding:
             detect_encoding(data)
 
     def test_too_large(self):
-        data = _basic_csv([["1", "A", "2", "空气罐", "3", "温度", "int", "否", "°C"]])
-        data = data + b"0" * (MAX_CSV_BYTES + 1)
+        data = _csv([["状态面板", "空气罐温度"]]) + b"0" * (MAX_CSV_BYTES + 1)
         with pytest.raises(CsvTooLargeError):
             preview_csv(data)
 
     def test_too_many_rows(self):
-        rows = [["1", "A", "2", "空气罐", "3", "温度", "int", "否", "°C"]] * (MAX_CSV_ROWS + 1)
+        rows = [["状态面板", "空气罐温度"]] * (MAX_CSV_ROWS + 1)
         with pytest.raises(CsvTooManyRowsError):
-            preview_csv(_basic_csv(rows))
+            preview_csv(_csv(rows))
 
     def test_empty_csv(self):
         with pytest.raises(CsvError):
             preview_csv(b"")
 
-    def test_quoted_fields(self):
-        data = "projectId,projectName,deviceName,propertyId,propertyName,dataType,writable\n1,\"项目,A\",空气罐,3,\"温,度\",int,否\n".encode("utf-8")
+    def test_blank_only_csv(self):
+        with pytest.raises(CsvError):
+            preview_csv("\n\n\n".encode("utf-8"))
+
+
+class TestCsvPreview:
+    def test_valid(self):
+        result = preview_csv(_csv([["状态面板", "空气罐温度"], ["状态面板", "空气罐压力"]]))
+        assert result["encoding"] == "utf-8"
+        assert result["total_rows"] == 2
+        assert result["requests"] == [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "状态面板", "propertyName": "空气罐压力"},
+        ]
+
+    def test_header_extra_column_rejected(self):
+        data = "displayName,propertyName,unit\n状态面板,空气罐温度,°C\n".encode("utf-8")
+        with pytest.raises(CsvError) as exc:
+            preview_csv(data)
+        assert "表头必须精确" in str(exc.value)
+
+    def test_header_reordered_rejected(self):
+        data = "propertyName,displayName\n空气罐温度,状态面板\n".encode("utf-8")
+        with pytest.raises(CsvError):
+            preview_csv(data)
+
+    def test_header_missing_column_rejected(self):
+        data = "displayName\n状态面板\n".encode("utf-8")
+        with pytest.raises(CsvError):
+            preview_csv(data)
+
+    def test_bad_row_width_rejected(self):
+        data = "displayName,propertyName\n状态面板,空气罐温度,extra\n".encode("utf-8")
+        with pytest.raises(CsvError) as exc:
+            preview_csv(data)
+        assert "必须恰好 2 列" in str(exc.value)
+
+    def test_empty_value_rejected(self):
+        data = "displayName,propertyName\n状态面板,\n".encode("utf-8")
+        with pytest.raises(CsvError) as exc:
+            preview_csv(data)
+        assert "均不能为空" in str(exc.value)
+
+    def test_duplicate_row_rejected(self):
+        data = "displayName,propertyName\n状态面板,空气罐温度\n状态面板,空气罐温度\n".encode("utf-8")
+        with pytest.raises(CsvError) as exc:
+            preview_csv(data)
+        assert "重复的 displayName+propertyName" in str(exc.value)
+
+    def test_values_trimmed(self):
+        data = "displayName,propertyName\n  状态面板  ,  空气罐温度  \n".encode("utf-8")
         result = preview_csv(data)
-        assert result["rows"][0][1] == "项目,A"
-        assert result["rows"][0][4] == "温,度"
+        assert result["requests"][0]["displayName"] == "状态面板"
+        assert result["requests"][0]["propertyName"] == "空气罐温度"
 
+    def test_blank_lines_ignored_keep_physical_rows(self):
+        data = "displayName,propertyName\n\n状态面板,空气罐温度\n\n\n状态面板,空气罐压力\n".encode("utf-8")
+        result = preview_csv(data)
+        assert [r["row_number"] for r in result["requests"]] == [3, 6]
 
-class TestCsvMapping:
-    def test_english_exact(self):
-        headers = ["projectId", "projectName", "deviceId", "deviceName", "propertyId", "propertyName", "dataType", "writable"]
-        m = suggest_mapping(headers)
-        suggested = {s["field"]: s["column"] for s in m["suggestions"] if s["source"] == "exact"}
-        assert suggested == {
-            "projectId": 0, "projectName": 1, "deviceId": 2, "deviceName": 3,
-            "propertyId": 4, "propertyName": 5, "dataType": 6, "writable": 7,
-        }
-        assert m["missing"] == []
-
-    def test_chinese_aliases(self):
-        headers = ["项目ID", "项目名称", "设备ID", "设备名称", "属性ID", "属性名称", "数据类型", "可写"]
-        m = suggest_mapping(headers)
-        exact = {s["field"]: s["column"] for s in m["suggestions"] if s["source"] == "exact"}
-        assert exact["projectId"] == 0
-        assert exact["projectName"] == 1
-        assert exact["deviceId"] == 2
-        assert exact["deviceName"] == 3
-        assert exact["propertyId"] == 4
-        assert exact["propertyName"] == 5
-        assert exact["dataType"] == 6
-        assert exact["writable"] == 7
-
-    def test_aliases_with_spaces_case(self):
-        headers = ["Project ID", "project_name", "Device-Id", "设备名称", "属性ID", "属性名称", "DATA TYPE", "可写"]
-        m = suggest_mapping(headers)
-        exact = {s["field"]: s["column"] for s in m["suggestions"] if s["source"] == "exact"}
-        assert exact["projectId"] == 0
-        assert exact["projectName"] == 1
-        assert exact["deviceId"] == 2
-
-    def test_fuzzy_suggestion_prefill(self):
-        headers = ["项目标识", "设备标识", "属性标识"]
-        m = suggest_mapping(headers)
-        fuzzy = {s["field"]: s["column"] for s in m["suggestions"] if s["source"] == "fuzzy"}
-        assert "projectId" in fuzzy
-        assert "deviceId" in fuzzy
-        assert "propertyId" in fuzzy
-
-    def test_ambiguity_two_columns_same_field(self):
-        headers = ["projectId", "项目ID", "projectName"]
-        m = suggest_mapping(headers)
-        assert m["ambiguities"]
-        assert any(a["matched_fields"] == ["projectId"] for a in m["ambiguities"])
-
-    def test_manual_mapping_overrides(self):
-        mapping = {"projectId": 0, "projectName": 0}
-        result = normalize_csv(_basic_csv([["1", "A", "2", "空气罐", "3", "温度", "int", "否", "°C"]]), mapping)
-        assert result["blocked"] is True
-        assert any("列 0 被映射到多个字段" in b for b in result["blocking"])
-
-
-class TestCsvNormalize:
-    def test_valid_normalize(self):
-        rows = [
-            ["1", "A", "2", "空气罐", "3", "温度", "integer", "只读", "°C"],
-            ["1", "A", "2", "空气罐", "4", "压力", "float", "否", "MPa"],
-            ["1", "A", "2", "空气罐", "5", "运行", "bool", "是", ""],
-            ["1", "A", "2", "空气罐", "6", "状态", "string", "true", ""],
-        ]
-        result = normalize_csv(_basic_csv(rows), _default_mapping())
-        assert result["blocked"] is False
-        props = result["properties"]
-        assert props[0]["dataType"] == "int"
-        assert props[1]["dataType"] == "double"
-        assert props[2]["dataType"] == "bool"
-        assert props[3]["dataType"] == "string"
-        assert props[0]["writable"] is False
-        assert props[2]["writable"] is True
-        assert props[0]["unit"] == "°C"
-
-    def test_writable_aliases(self):
-        for alias, expected in [("true", True), ("1", True), ("yes", True), ("是", True), ("可写", True),
-                                ("false", False), ("0", False), ("no", False), ("否", False), ("只读", False)]:
-            rows = [["1", "A", "2", "空气罐", "3", "温度", "int", alias, ""]]
-            result = normalize_csv(_basic_csv(rows), _default_mapping())
-            assert result["blocked"] is False, alias
-            assert result["properties"][0]["writable"] is expected, alias
-
-    def test_datatype_aliases(self):
-        for alias, expected in [("double", "double"), ("float", "double"), ("real", "double"), ("浮点", "double"),
-                                ("int", "int"), ("integer", "int"), ("int32", "int"), ("整型", "int"),
-                                ("bool", "bool"), ("boolean", "bool"), ("bit", "bool"), ("布尔", "bool"),
-                                ("string", "string"), ("str", "string"), ("text", "string"), ("字符串", "string")]:
-            rows = [["1", "A", "2", "空气罐", "3", "温度", alias, "否", ""]]
-            result = normalize_csv(_basic_csv(rows), _default_mapping())
-            assert result["blocked"] is False, alias
-            assert result["properties"][0]["dataType"] == expected, alias
-
-    def test_unknown_datatype_row_error(self):
-        rows = [["1", "A", "2", "空气罐", "3", "温度", "hex", "否", ""]]
-        result = normalize_csv(_basic_csv(rows), _default_mapping())
-        assert result["blocked"] is False
-        assert result["properties"] == []
-        assert any("dataType 无法识别" in e["message"] for e in result["errors"])
-        assert result["errors"][0]["row"] == 2
-
-    def test_unknown_writable_row_error(self):
-        rows = [["1", "A", "2", "空气罐", "3", "温度", "int", "maybe", ""]]
-        result = normalize_csv(_basic_csv(rows), _default_mapping())
-        assert result["properties"] == []
-        assert any("writable 无法确定" in e["message"] for e in result["errors"])
-
-    def test_non_digit_id_row_error(self):
-        rows = [["1", "A", "2", "空气罐", "abc", "温度", "int", "否", ""]]
-        result = normalize_csv(_basic_csv(rows), _default_mapping())
-        assert any("propertyId 必须为数字字符串" in e["message"] for e in result["errors"])
-
-    def test_empty_required_blocking(self):
-        rows = [["1", "A", "", "空气罐", "3", "温度", "int", "否", ""]]
-        result = normalize_csv(_basic_csv(rows), _default_mapping())
-        assert result["blocked"] is True
-        assert any("必填字段为空" in b["message"] for b in result["blocking"])
-
-    def test_duplicate_id_same_name_row_error(self):
-        rows = [
-            ["1", "A", "2", "空气罐", "3", "温度", "int", "否", ""],
-            ["1", "A", "2", "空气罐", "3", "温度", "int", "否", ""],
-        ]
-        result = normalize_csv(_basic_csv(rows), _default_mapping())
-        assert result["blocked"] is True
-        assert any("重复项目/设备/属性 ID" in b["message"] for b in result["blocking"])
-
-    def test_duplicate_id_different_name_blocking(self):
-        rows = [
-            ["1", "A", "2", "空气罐", "3", "温度", "int", "否", ""],
-            ["1", "A", "2", "空气罐", "3", "温标", "int", "否", ""],
-        ]
-        result = normalize_csv(_basic_csv(rows), _default_mapping())
-        assert result["blocked"] is True
-        assert any("重复 ID 对应不同名称" in b["message"] for b in result["blocking"])
-
-    def test_missing_required_mapping_blocking(self):
-        mapping = {"projectId": 0, "projectName": 1, "deviceId": 2, "deviceName": 3, "propertyId": 4, "propertyName": 5, "dataType": 6}
-        result = normalize_csv(_basic_csv([["1", "A", "2", "空气罐", "3", "温度", "int", "否", ""]]), mapping)
-        assert result["blocked"] is True
-        assert any("必填列未映射" in b for b in result["blocking"])
-
-    def test_column_index_out_of_bounds(self):
-        mapping = dict(_default_mapping())
-        mapping["writable"] = 99
-        result = normalize_csv(_basic_csv([["1", "A", "2", "空气罐", "3", "温度", "int", "否", ""]]), mapping)
-        assert result["blocked"] is True
-
-    def test_preview_first_20_rows(self):
-        rows = [["1", "A", "2", "空气罐", str(i), "温度", "int", "否", ""] for i in range(25)]
-        result = preview_csv(_basic_csv(rows))
-        assert result["total_rows"] == 25
-        assert len(result["rows"]) == 20
+    def test_quoted_fields(self):
+        data = "displayName,propertyName\n\"状态,面板\",\"温度,值\"\n".encode("utf-8")
+        result = preview_csv(data)
+        assert result["requests"][0]["displayName"] == "状态,面板"
+        assert result["requests"][0]["propertyName"] == "温度,值"
 
 
 class TestBindingRegistry:
+    def _line(self, **overrides) -> str:
+        rec = {
+            "id": "a",
+            "handler": "panel_list",
+            "displayName": "状态面板",
+            "propertyName": "空气罐温度",
+            "projectId": "1",
+            "projectName": "Agent",
+            "deviceId": "2",
+            "deviceName": "空气罐",
+            "propertyId": "3",
+            "dataType": "int",
+            "dataTypeDesc": "整型",
+            "writable": False,
+        }
+        rec.update(overrides)
+        return json.dumps(rec, ensure_ascii=False)
+
     def test_load_valid(self, tmp_path: Path):
         p = tmp_path / "binding.jsonl"
-        p.write_text(
-            '{"id":"a","displayName":"状态面板","deviceName":"空气罐","property":"温度","dataType":"int","writable":false,"required":true}\n'
-            '{"id":"b","displayName":"状态面板","deviceName":"空气罐","property":"压力","dataType":"double","writable":false,"required":true}\n',
-            encoding="utf-8",
-        )
+        p.write_text(self._line() + "\n" + self._line(id="b", propertyName="空气罐压力", propertyId="4", dataType="double", dataTypeDesc="双精度") + "\n", encoding="utf-8")
         reg = load_binding_registry(p)
         assert [r["id"] for r in reg] == ["a", "b"]
-        assert reg[0]["dataType"] == "int"
+        assert reg[0]["unit"] == ""
+        assert reg[0]["handler"] == "panel_list"
 
-    def test_duplicate_id(self, tmp_path: Path):
+    def test_unit_present(self, tmp_path: Path):
         p = tmp_path / "binding.jsonl"
-        p.write_text(
-            '{"id":"a","displayName":"状态面板","deviceName":"空气罐","property":"温度","dataType":"int","writable":false,"required":true}\n'
-            '{"id":"a","displayName":"状态面板","deviceName":"空气罐","property":"压力","dataType":"int","writable":false,"required":true}\n',
-            encoding="utf-8",
-        )
-        with pytest.raises(BindingConfigError) as exc:
-            load_binding_registry(p)
-        assert any("id 重复" in e for e in exc.value.errors)
+        p.write_text(self._line(unit="°C") + "\n", encoding="utf-8")
+        reg = load_binding_registry(p)
+        assert reg[0]["unit"] == "°C"
 
     def test_missing_field(self, tmp_path: Path):
         p = tmp_path / "binding.jsonl"
-        p.write_text('{"id":"a","displayName":"状态面板","deviceName":"空气罐","property":"温度","dataType":"int"}\n', encoding="utf-8")
+        rec = json.loads(self._line())
+        del rec["writable"]
+        p.write_text(json.dumps(rec, ensure_ascii=False) + "\n", encoding="utf-8")
         with pytest.raises(BindingConfigError) as exc:
             load_binding_registry(p)
         assert any("缺少字段" in e for e in exc.value.errors)
 
+    def test_non_digit_id(self, tmp_path: Path):
+        p = tmp_path / "binding.jsonl"
+        p.write_text(self._line(propertyId="abc") + "\n", encoding="utf-8")
+        with pytest.raises(BindingConfigError) as exc:
+            load_binding_registry(p)
+        assert any("必须为数字字符串" in e for e in exc.value.errors)
+
     def test_illegal_datatype(self, tmp_path: Path):
         p = tmp_path / "binding.jsonl"
-        p.write_text('{"id":"a","displayName":"状态面板","deviceName":"空气罐","property":"温度","dataType":"int16","writable":false,"required":true}\n', encoding="utf-8")
+        p.write_text(self._line(dataType="int16") + "\n", encoding="utf-8")
         with pytest.raises(BindingConfigError) as exc:
             load_binding_registry(p)
         assert any("dataType 非法" in e for e in exc.value.errors)
 
     def test_non_bool_writable(self, tmp_path: Path):
         p = tmp_path / "binding.jsonl"
-        p.write_text('{"id":"a","displayName":"状态面板","deviceName":"空气罐","property":"温度","dataType":"int","writable":"false","required":true}\n', encoding="utf-8")
+        p.write_text(self._line(writable="false") + "\n", encoding="utf-8")
         with pytest.raises(BindingConfigError) as exc:
             load_binding_registry(p)
         assert any("writable 必须为布尔值" in e for e in exc.value.errors)
 
+    def test_empty_string_field(self, tmp_path: Path):
+        p = tmp_path / "binding.jsonl"
+        p.write_text(self._line(displayName="") + "\n", encoding="utf-8")
+        with pytest.raises(BindingConfigError) as exc:
+            load_binding_registry(p)
+        assert any("非空字符串" in e for e in exc.value.errors)
+
+    def test_unit_non_string(self, tmp_path: Path):
+        p = tmp_path / "binding.jsonl"
+        p.write_text(self._line(unit=5) + "\n", encoding="utf-8")
+        with pytest.raises(BindingConfigError) as exc:
+            load_binding_registry(p)
+        assert any("unit 必须为字符串" in e for e in exc.value.errors)
+
+    def test_duplicate_id(self, tmp_path: Path):
+        p = tmp_path / "binding.jsonl"
+        p.write_text(self._line() + "\n" + self._line(propertyName="空气罐压力", propertyId="4") + "\n", encoding="utf-8")
+        with pytest.raises(BindingConfigError) as exc:
+            load_binding_registry(p)
+        assert any("id 重复" in e for e in exc.value.errors)
+
+    def test_duplicate_physical_source(self, tmp_path: Path):
+        p = tmp_path / "binding.jsonl"
+        p.write_text(self._line() + "\n" + self._line(id="b") + "\n", encoding="utf-8")
+        with pytest.raises(BindingConfigError) as exc:
+            load_binding_registry(p)
+        assert any("重复物理源" in e for e in exc.value.errors)
+
     def test_json_syntax_error(self, tmp_path: Path):
         p = tmp_path / "binding.jsonl"
         p.write_text('{"id": "a", broken\n', encoding="utf-8")
-        with pytest.raises(BindingConfigError):
+        with pytest.raises(BindingConfigError) as exc:
             load_binding_registry(p)
+        assert any("JSON 解析失败" in e for e in exc.value.errors)
 
-    def test_path_label_preserved_as_reference(self, tmp_path: Path):
+    def test_non_object_line(self, tmp_path: Path):
         p = tmp_path / "binding.jsonl"
-        p.write_text('{"id":"a","displayName":"状态面板","deviceName":"空气罐","property":"温度","dataType":"int","writable":false,"required":true,"path":"1#2#3","label":"样本"}\n', encoding="utf-8")
-        reg = load_binding_registry(p)
-        assert reg[0]["path"] == "1#2#3"
-        assert reg[0]["label"] == "样本"
+        p.write_text("[1,2,3]\n", encoding="utf-8")
+        with pytest.raises(BindingConfigError) as exc:
+            load_binding_registry(p)
+        assert any("不是 JSON 对象" in e for e in exc.value.errors)
 
 
-class TestMatchRules:
-    def test_panel_instance_parsing(self):
-        assert parse_panel_instance("状态面板") == 1
-        assert parse_panel_instance("状态面板2") == 2
-        assert parse_panel_instance("状态面板02") == 2
-        assert parse_panel_instance("其他控件") is None
+class TestPanelListHandler:
+    def test_matches(self):
+        handler = PanelListHandler()
+        assert handler.matches("状态面板") is True
+        assert handler.matches("状态面板2") is True
+        assert handler.matches("状态面板10") is True
+        assert handler.matches("状态面板0") is False
+        assert handler.matches("面板") is False
+        assert handler.matches("阀门") is False
 
-    def test_device_instance_parsing(self):
-        assert parse_device_instance("空气罐") == 1
-        assert parse_device_instance("空气罐2") == 2
-        assert parse_device_instance("空气罐02") == 2
-        assert parse_device_instance("空气罐A") == 1
+    def test_canonicalize(self):
+        assert PanelListHandler().canonicalize("状态面板2") == "状态面板"
 
-    def test_type_compatible(self):
-        assert type_compatible("int", "int") is True
-        assert type_compatible("int", "double") is True
-        assert type_compatible("double", "int") is True
-        assert type_compatible("bool", "int") is False
-        assert type_compatible("string", "string") is True
+    def test_validate_target(self):
+        handler = PanelListHandler()
+        assert handler.validate_target({"c": "ht.Node", "a": {}}) == []
+        assert handler.validate_target({"c": "ht.Shape"}) != []
 
-    def _similarity(self, a: str, b: str) -> float:
-        na = a.replace(" ", "")
-        nb = b.replace(" ", "")
-        if na == nb:
-            return 1.0
-        if na in nb or nb in na:
-            return 0.8
-        return 0.3
+    def test_read_existing(self):
+        handler = PanelListHandler()
+        assert handler.read_existing({"a": {"panel.list": [1, 2]}}) == [1, 2]
+        assert handler.read_existing({"a": {}}) is None
 
-    def test_exact_match_high_confidence(self):
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "4", "propertyName": "空气罐压力", "dataType": "double", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, _expectations(), props, similarity=self._similarity)
-        assert result["panels"][0]["instance"] == 1
-        for item in result["items"]:
-            assert item["suggested"] is not None
-            assert item["confidence"] == "high"
-
-    def test_semantic_similarity_used(self):
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度采集", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, [_expectations()[0]], props, similarity=self._similarity)
-        item = result["items"][0]
-        assert item["candidates"][0]["property_name_similarity"] == 0.8
-        assert item["candidates"][0]["score"] == round(0.35 * 1.0 + 0.65 * 0.8, 4)
-
-    def test_numbering_multi_instance(self):
-        canvas = _panel_canvas("状态面板", "状态面板2")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "4", "propertyName": "空气罐压力", "dataType": "double", "writable": False, "unit": "", "dataTypeDesc": ""},
-            {"projectId": "1", "projectName": "A", "deviceId": "20", "deviceName": "空气罐2", "propertyId": "5", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-            {"projectId": "1", "projectName": "A", "deviceId": "20", "deviceName": "空气罐2", "propertyId": "6", "propertyName": "空气罐压力", "dataType": "double", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, _expectations(), props, similarity=self._similarity)
-        for item in result["items"]:
-            suggested = next(c for c in item["candidates"] if c["key"] == item["suggested"])
-            dev = suggested["deviceName"]
-            if item["panel_instance"] == 1:
-                assert dev == "空气罐"
-            else:
-                assert dev == "空气罐2"
-
-    def test_device_group_not_reused_between_panels(self):
-        canvas = _panel_canvas("状态面板", "状态面板2")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "4", "propertyName": "空气罐压力", "dataType": "double", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, _expectations(), props, similarity=self._similarity)
-        assigned = set()
-        for item in result["items"]:
-            if item["suggested"]:
-                cand = next(c for c in item["candidates"] if c["key"] == item["suggested"])
-                assigned.add((cand["projectId"], cand["deviceId"]))
-        assert len(assigned) <= 1
-
-    def test_type_filter(self):
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度", "dataType": "string", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, [_expectations()[0]], props, similarity=self._similarity)
-        assert result["items"][0]["candidates"] == []
-
-    def test_writable_filter(self):
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度", "dataType": "int", "writable": True, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, [_expectations()[0]], props, similarity=self._similarity)
-        assert result["items"][0]["candidates"] == []
-
-    def test_stable_sort(self):
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "10", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "1", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-            {"projectId": "2", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "1", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, [_expectations()[0]], props, similarity=self._similarity)
-        keys = [c["key"] for c in result["items"][0]["candidates"]]
-        assert keys == sorted(keys)
-
-    def test_confidence_boundaries(self):
-        low_sim = self._similarity
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "完全不同", "propertyId": "3", "propertyName": "完全不同", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, [_expectations()[0]], props, similarity=low_sim)
-        item = result["items"][0]
-        if item["candidates"]:
-            cand = item["candidates"][0]
-            if cand["score"] < 0.55:
-                assert item["suggested"] is None
-                assert item["confidence"] == "none"
-            else:
-                assert item["confidence"] in ("low", "medium", "high")
-
-    def test_top5_candidates(self):
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": str(i), "deviceName": "空气罐", "propertyId": str(i), "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""}
-            for i in range(10)
-        ]
-        result = match_properties(canvas, [_expectations()[0]], props, similarity=self._similarity)
-        assert len(result["items"][0]["candidates"]) <= 5
-
-    def test_all_items_start_unconfirmed(self):
-        canvas = _panel_canvas("状态面板")
-        props = [
-            {"projectId": "1", "projectName": "A", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "", "dataTypeDesc": ""},
-        ]
-        result = match_properties(canvas, [_expectations()[0]], props, similarity=self._similarity)
-        assert result["items"][0]["confirmed"] is False
+    def test_render_matches_item_builder(self):
+        rec = _records()[0]
+        rendered = PanelListHandler().render([rec])
+        assert rendered == [_panel_list_item(rec)]
 
 
-class TestBuild:
-    def _props(self):
-        return [
-            {"projectId": "1", "projectName": "项目一", "deviceId": "2", "deviceName": "空气罐", "propertyId": "3", "propertyName": "空气罐温度", "dataType": "int", "writable": False, "unit": "°C", "dataTypeDesc": ""},
-            {"projectId": "1", "projectName": "项目一", "deviceId": "2", "deviceName": "空气罐", "propertyId": "4", "propertyName": "空气罐压力", "dataType": "double", "writable": False, "unit": "MPa", "dataTypeDesc": ""},
-        ]
-
-    def _assignments(self, props):
-        return [
-            {"panel_node_i": 0, "expectation_id": "temp", "candidate": props[0]},
-            {"panel_node_i": 0, "expectation_id": "press", "candidate": props[1]},
-        ]
-
-    def test_panel_list_exact_structure(self):
-        canvas = _panel_canvas("状态面板")
-        props = self._props()
-        result = build_bound_json(canvas, props, self._assignments(props), expectations=_expectations())
-        assert result["errors"] == []
-        bound = result["bound_json"]
-        panel_list = bound["d"][0]["a"]["panel.list"]
-        assert panel_list[0] == {
+class TestPanelListItem:
+    def test_full_shape(self):
+        item = _panel_list_item(_records()[0])
+        assert item == {
             "label": "空气罐温度",
             "bind": {
                 "type": "designer",
-                "path": "1#2#3",
-                "key": "2#3",
-                "label": "项目一 . 空气罐 . 空气罐温度 (°C)",
-                "proj": {"id": "1", "name": "项目一"},
-                "dev": {"id": "2", "name": "空气罐"},
+                "path": "2084524131092914178#2084937599679848450#2084940408848506881",
+                "key": "2084937599679848450#2084940408848506881",
+                "label": "Agent . 空气罐 . 空气罐温度 (°C)",
+                "proj": {"id": "2084524131092914178", "name": "Agent"},
+                "dev": {"id": "2084937599679848450", "name": "空气罐"},
                 "param": {
-                    "id": "3",
+                    "id": "2084940408848506881",
                     "name": "空气罐温度",
                     "unit": "°C",
                     "writable": False,
@@ -503,141 +386,383 @@ class TestBuild:
             },
         }
 
-    def test_no_empty_unit_parens(self):
-        canvas = _panel_canvas("状态面板")
-        props = self._props()
-        props[0]["unit"] = ""
-        result = build_bound_json(canvas, props, self._assignments(props), expectations=_expectations())
-        bind_label = result["bound_json"]["d"][0]["a"]["panel.list"][0]["bind"]["label"]
-        assert bind_label == "项目一 . 空气罐 . 空气罐温度"
-        assert "()" not in bind_label
+    def test_no_unit_no_parens(self):
+        rec = _records()[1]
+        rec["unit"] = ""
+        item = _panel_list_item(rec)
+        assert item["bind"]["label"] == "Agent . 空气罐 . 空气罐压力"
+        assert "()" not in item["bind"]["label"]
 
-    def test_data_type_desc_from_csv(self):
+    def test_pressure_double_preserved(self):
+        item = _panel_list_item(_records()[1])
+        assert item["bind"]["param"]["dataType"] == "double"
+        assert item["bind"]["param"]["dataTypeDesc"] == "双精度"
+
+
+class TestBindingAgentRegistry:
+    def test_unknown_handler_blocks_construction(self):
+        with pytest.raises(BindingConfigError) as exc:
+            BindingAgent(records=[_rec("x", "温度", handler="bogus")], similarity=FakeSimilarity())
+        assert any("handler 未注册" in e for e in exc.value.errors)
+
+    def test_registry_records_exposed(self):
+        agent = BindingAgent(records=_records(), similarity=FakeSimilarity())
+        assert [r["id"] for r in agent.registry] == ["air_tank_temperature", "air_tank_pressure"]
+
+
+class TestConfidence:
+    def test_confidence_for(self):
+        agent = BindingAgent(records=_records(), similarity=FakeSimilarity())
+        assert agent._confidence_for(1.0, 0.10) == "high"
+        assert agent._confidence_for(0.90, 0.05) == "medium"
+        assert agent._confidence_for(0.70, 0.06) == "medium"
+        assert agent._confidence_for(0.70, 0.04) == "low"
+        assert agent._confidence_for(0.60, 0.50) == "low"
+        assert agent._confidence_for(0.50, 0.00) == "none"
+
+
+class TestMatch:
+    def _agent(self, records=None):
+        return BindingAgent(records=records if records is not None else _records(), similarity=FakeSimilarity())
+
+    def test_unique_exact_preselects_high(self):
+        agent = self._agent()
+        result = agent.match(_panel_canvas("状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"}])
+        assert result["blocked"] is False
+        assert result["errors"] == []
+        item = result["items"][0]
+        assert len(item["candidates"]) == 1
+        assert item["candidates"][0]["binding_id"] == "air_tank_temperature"
+        assert item["candidates"][0]["score"] == 1.0
+        assert item["suggested_binding_id"] == "air_tank_temperature"
+        assert item["confidence"] == "high"
+        assert item["lead"] == 1.0
+        assert item["target_node_i"] == 0
+        assert result["targets"][0]["displayName"] == "状态面板"
+        assert result["targets"][0]["handler"] == "panel_list"
+
+    def test_multi_exact_no_preselect(self):
+        records = [
+            _rec("air_tank_temperature", "空气罐温度", device_id="d1", property_id="p1"),
+            _rec("air_tank_temperature_b", "空气罐温度", device_id="d2", property_id="p2"),
+        ]
+        agent = self._agent(records)
+        result = agent.match(_panel_canvas("状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"}])
+        item = result["items"][0]
+        assert len(item["candidates"]) == 2
+        assert [c["score"] for c in item["candidates"]] == [1.0, 1.0]
+        assert item["suggested_binding_id"] is None
+
+    def test_semantic_scores_lead_confidence(self):
+        sim = FakeSimilarity()
+        sim.set("空气罐温度", [1.0, 0.0])
+        sim.set("空气罐压力", [0.0, 1.0])
+        sim.set("气罐温度", [0.8, 0.6])
+        agent = BindingAgent(records=_records(), similarity=sim)
+        result = agent.match(_panel_canvas("状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "气罐温度"}])
+        item = result["items"][0]
+        assert [c["binding_id"] for c in item["candidates"]] == ["air_tank_temperature", "air_tank_pressure"]
+        assert item["candidates"][0]["score"] == 0.8
+        assert item["candidates"][1]["score"] == 0.6
+        assert item["lead"] == 0.2
+        assert item["confidence"] == "medium"
+        assert item["suggested_binding_id"] == "air_tank_temperature"
+        assert "相似度" in item["candidates"][0]["evidence"][0]
+
+    def test_below_threshold_no_candidate(self):
+        sim = FakeSimilarity()
+        sim.set("唯一属性", [1.0, 0.0])
+        sim.set("完全无关", [0.0, 1.0])
+        agent = BindingAgent(records=[_rec("only", "唯一属性")], similarity=sim)
+        result = agent.match(_panel_canvas("状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "完全无关"}])
+        assert result["blocked"] is True
+        assert result["items"][0]["candidates"] == []
+        assert any("未找到匹配属性" in e for e in result["errors"])
+
+    def test_single_semantic_candidate_lead_equals_score(self):
+        sim = FakeSimilarity()
+        sim.set("唯一属性", [1.0, 0.0])
+        sim.set("接近属性", [0.8, 0.6])
+        agent = BindingAgent(records=[_rec("only", "唯一属性")], similarity=sim)
+        result = agent.match(_panel_canvas("状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "接近属性"}])
+        item = result["items"][0]
+        assert item["candidates"][0]["score"] == 0.8
+        assert item["lead"] == 0.8
+        assert item["confidence"] == "medium"
+
+    def test_top5_cap(self):
+        records = []
+        sim = FakeSimilarity()
+        sim.set("查询", [1.0, 0.0])
+        for i in range(10):
+            name = f"属性{i}"
+            c = 0.95 - 0.1 * i
+            sim.set(name, [c, np.sqrt(1 - c * c)])
+            records.append(_rec(f"rec{i}", name))
+        agent = BindingAgent(records=records, similarity=sim)
+        result = agent.match(_panel_canvas("状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "查询"}])
+        item = result["items"][0]
+        assert len(item["candidates"]) == 5
+        assert [c["binding_id"] for c in item["candidates"]] == [f"rec{i}" for i in range(5)]
+        assert item["candidates"][-1]["score"] == 0.55
+
+    def test_stable_sort_by_id_on_equal_score(self):
+        records = [
+            _rec("zrec", "属性Z"),
+            _rec("arec", "属性A"),
+        ]
+        sim = FakeSimilarity()
+        sim.set("查询", [1.0, 0.0])
+        sim.set("属性Z", [0.7, np.sqrt(1 - 0.49)])
+        sim.set("属性A", [0.7, np.sqrt(1 - 0.49)])
+        agent = BindingAgent(records=records, similarity=sim)
+        result = agent.match(_panel_canvas("状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "查询"}])
+        item = result["items"][0]
+        assert item["candidates"][0]["binding_id"] == "arec"
+        assert item["candidates"][1]["binding_id"] == "zrec"
+
+    def test_numbered_panel_uses_canonical_catalog(self):
+        agent = self._agent()
+        result = agent.match(_panel_canvas("状态面板2"), [{"row_number": 2, "displayName": "状态面板2", "propertyName": "空气罐温度"}])
+        assert result["blocked"] is False
+        item = result["items"][0]
+        assert item["target_node_i"] == 0
+        assert item["candidates"][0]["binding_id"] == "air_tank_temperature"
+        assert result["targets"][0]["displayName"] == "状态面板2"
+
+    def test_no_broadcast_to_numbered_panels(self):
+        agent = self._agent()
+        canvas = _panel_canvas("状态面板", "状态面板2")
+        r1 = agent.match(canvas, [{"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"}])
+        assert [t["node_i"] for t in r1["targets"]] == [0]
+        r2 = agent.match(canvas, [{"row_number": 2, "displayName": "状态面板2", "propertyName": "空气罐温度"}])
+        assert [t["node_i"] for t in r2["targets"]] == [1]
+
+    def test_duplicate_name_blocks(self):
+        agent = self._agent()
+        result = agent.match(_panel_canvas("状态面板", "状态面板"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"}])
+        assert result["blocked"] is True
+        assert any("多个同名节点" in e for e in result["errors"])
+
+    def test_missing_target_blocks(self):
+        agent = self._agent()
+        result = agent.match(_panel_canvas("其他控件"), [{"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"}])
+        assert result["blocked"] is True
+        assert any("未找到目标控件" in e for e in result["errors"])
+
+    def test_unsupported_control_blocks(self):
+        agent = self._agent()
+        result = agent.match(_panel_canvas("阀门"), [{"row_number": 2, "displayName": "阀门", "propertyName": "空气罐温度"}])
+        assert result["blocked"] is True
+        assert any("不支持的控件" in e for e in result["errors"])
+
+    def test_wrong_node_type_not_located_as_target(self):
+        agent = self._agent()
         canvas = _panel_canvas("状态面板")
-        props = self._props()
-        props[0]["dataTypeDesc"] = "摄氏温度"
-        result = build_bound_json(canvas, props, self._assignments(props), expectations=_expectations())
-        assert result["bound_json"]["d"][0]["a"]["panel.list"][0]["bind"]["param"]["dataTypeDesc"] == "摄氏温度"
+        canvas["d"][0]["c"] = "ht.Shape"
+        result = agent.match(canvas, [{"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"}])
+        assert result["blocked"] is True
+        assert any("未找到目标控件" in e for e in result["errors"])
+
+    def test_all_requested_fields_preserved(self):
+        agent = self._agent()
+        result = agent.match(_panel_canvas("状态面板"), _requests())
+        assert len(result["items"]) == 2
+        assert result["items"][0]["row_number"] == 2
+        assert result["items"][0]["requested_displayName"] == "状态面板"
+        assert result["items"][0]["requested_propertyName"] == "空气罐温度"
+
+
+class TestBuild:
+    def _agent(self, records=None):
+        return BindingAgent(records=records if records is not None else _records(), similarity=FakeSimilarity())
+
+    def test_build_ok_panel_list_exact_structure(self):
+        agent = self._agent()
+        result = agent.build(_panel_canvas("状态面板"), _requests(), _assignments())
+        assert result["errors"] == []
+        assert result["warnings"] == []
+        bound = result["bound_json"]
+        assert bound is not None
+        panel_list = bound["d"][0]["a"]["panel.list"]
+        assert panel_list[0] == {
+            "label": "空气罐温度",
+            "bind": {
+                "type": "designer",
+                "path": "2084524131092914178#2084937599679848450#2084940408848506881",
+                "key": "2084937599679848450#2084940408848506881",
+                "label": "Agent . 空气罐 . 空气罐温度 (°C)",
+                "proj": {"id": "2084524131092914178", "name": "Agent"},
+                "dev": {"id": "2084937599679848450", "name": "空气罐"},
+                "param": {
+                    "id": "2084940408848506881",
+                    "name": "空气罐温度",
+                    "unit": "°C",
+                    "writable": False,
+                    "dataType": "int",
+                    "dataTypeDesc": "整型",
+                },
+            },
+        }
+        assert panel_list[1]["bind"]["param"]["dataType"] == "double"
+        assert panel_list[1]["bind"]["param"]["dataTypeDesc"] == "双精度"
+        assert panel_list[1]["bind"]["param"]["unit"] == "MPa"
 
     def test_full_old_list_replacement(self):
+        agent = self._agent()
         canvas = _panel_canvas("状态面板")
         canvas["d"][0]["a"]["panel.list"] = [{"old": True}]
-        props = self._props()
-        result = build_bound_json(canvas, props, self._assignments(props), expectations=_expectations())
+        result = agent.build(canvas, _requests(), _assignments())
         bound_list = result["bound_json"]["d"][0]["a"]["panel.list"]
         assert len(bound_list) == 2
         assert all("old" not in item for item in bound_list)
 
     def test_original_canvas_unchanged(self):
+        agent = self._agent()
         canvas = _panel_canvas("状态面板")
-        props = self._props()
-        build_bound_json(canvas, props, self._assignments(props), expectations=_expectations())
+        agent.build(canvas, _requests(), _assignments())
         assert "panel.list" not in canvas["d"][0]["a"]
 
     def test_non_target_nodes_unchanged(self):
+        agent = self._agent()
         canvas = _panel_canvas("其他控件", "状态面板")
-        props = self._props()
-        assignments = [
-            {"panel_node_i": 1, "expectation_id": "temp", "candidate": props[0]},
-            {"panel_node_i": 1, "expectation_id": "press", "candidate": props[1]},
-        ]
-        result = build_bound_json(canvas, props, assignments, expectations=_expectations())
+        result = agent.build(canvas, _requests(), _assignments())
         assert result["bound_json"]["d"][0] == canvas["d"][0]
         assert "panel.list" not in result["bound_json"]["d"][0]["a"]
+        assert result["bound_json"]["d"][0]["p"]["displayName"] == "其他控件"
 
     def test_layout_metadata_preserved(self):
+        agent = self._agent()
         canvas = _panel_canvas("状态面板")
         canvas["d"][0]["a"]["layout.group"] = "G"
         canvas["d"][0]["a"]["layout.materialName"] = "M"
-        props = self._props()
-        result = build_bound_json(canvas, props, self._assignments(props), expectations=_expectations())
+        result = agent.build(canvas, _requests(), _assignments())
         a = result["bound_json"]["d"][0]["a"]
         assert a["layout.group"] == "G"
         assert a["layout.materialName"] == "M"
         assert a["panel.list"]
 
-    def test_required_missing_blocks(self):
-        canvas = _panel_canvas("状态面板")
-        props = self._props()
-        assignments = self._assignments(props)[:1]
-        result = build_bound_json(canvas, props, assignments, expectations=_expectations())
-        assert result["bound_json"] is None
-        assert any("必绑项" in e for e in result["errors"])
+    def test_csv_row_order_in_panel_list(self):
+        agent = self._agent()
+        assignments = list(reversed(_assignments()))
+        result = agent.build(_panel_canvas("状态面板"), _requests(), assignments)
+        panel_list = result["bound_json"]["d"][0]["a"]["panel.list"]
+        assert [p["label"] for p in panel_list] == ["空气罐温度", "空气罐压力"]
 
-    def test_candidate_not_in_properties(self):
-        canvas = _panel_canvas("状态面板")
-        props = self._props()
-        assignments = self._assignments(props)
-        assignments[0]["candidate"] = {"projectId": "99", "deviceId": "98", "propertyId": "97"}
-        result = build_bound_json(canvas, props, assignments, expectations=_expectations())
+    def test_missing_assignment_blocks(self):
+        agent = self._agent()
+        result = agent.build(_panel_canvas("状态面板"), _requests(), [])
         assert result["bound_json"] is None
-        assert any("不属于规范属性" in e for e in result["errors"])
+        assert sum("缺少 assignment" in e for e in result["errors"]) == 2
 
-    def test_device_reuse_across_panels_blocks(self):
+    def test_duplicate_assignment_same_row_blocks(self):
+        agent = self._agent()
+        assignments = [
+            {"row_number": 2, "binding_id": "air_tank_temperature"},
+            {"row_number": 2, "binding_id": "air_tank_temperature"},
+        ]
+        result = agent.build(_panel_canvas("状态面板"), _requests(), assignments)
+        assert result["bound_json"] is None
+        assert any("同一行存在多个 assignment" in e for e in result["errors"])
+
+    def test_assignment_unknown_row_blocks(self):
+        agent = self._agent()
+        assignments = [{"row_number": 99, "binding_id": "air_tank_temperature"}]
+        result = agent.build(_panel_canvas("状态面板"), _requests(), assignments)
+        assert result["bound_json"] is None
+        assert any("assignment 对应的请求不存在" in e for e in result["errors"])
+
+    def test_forged_binding_id_blocks(self):
+        agent = self._agent()
+        assignments = _assignments()
+        assignments[0]["binding_id"] = "bogus"
+        result = agent.build(_panel_canvas("状态面板"), _requests(), assignments)
+        assert result["bound_json"] is None
+        assert any("不在允许的候选集合中" in e for e in result["errors"])
+        assert any("不存在于注册表" in e for e in result["errors"])
+
+    def test_binding_id_in_registry_but_not_candidate_blocks(self):
+        records = _records() + [_rec("water_level", "水位", device_id="d9", property_id="p9", display_name="阀门")]
+        agent = self._agent(records)
+        assignments = [{"row_number": 2, "binding_id": "water_level"}]
+        result = agent.build(_panel_canvas("状态面板"), _requests()[:1], assignments)
+        assert result["bound_json"] is None
+        assert any("不在允许的候选集合中" in e for e in result["errors"])
+        assert not any("不存在于注册表" in e for e in result["errors"])
+
+    def test_same_target_dup_source_blocks(self):
+        records = [
+            _rec("air_tank_temperature", "空气罐温度", device_id="d1", property_id="p1"),
+            _rec("air_tank_temperature_b", "空气罐温度", device_id="d2", property_id="p2"),
+        ]
+        agent = self._agent(records)
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "状态面板", "propertyName": "空气罐温度"},
+        ]
+        assignments = [
+            {"row_number": 2, "binding_id": "air_tank_temperature"},
+            {"row_number": 3, "binding_id": "air_tank_temperature"},
+        ]
+        result = agent.build(_panel_canvas("状态面板"), requests, assignments)
+        assert result["bound_json"] is None
+        assert any("重复选择" in e for e in result["errors"])
+
+    def test_cross_target_reuse_allowed(self):
+        agent = self._agent()
         canvas = _panel_canvas("状态面板", "状态面板2")
-        props = self._props()
-        assignments = [
-            {"panel_node_i": 0, "expectation_id": "temp", "candidate": props[0]},
-            {"panel_node_i": 1, "expectation_id": "temp", "candidate": props[0]},
-            {"panel_node_i": 0, "expectation_id": "press", "candidate": props[1]},
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "状态面板2", "propertyName": "空气罐温度"},
         ]
-        result = build_bound_json(canvas, props, assignments, expectations=_expectations())
-        assert result["bound_json"] is None
-        assert any("同时分配给多个状态面板" in e for e in result["errors"])
-
-    def test_writable_property_reuse_blocks(self):
-        canvas = _panel_canvas("状态面板")
-        props = self._props()
-        props[0]["writable"] = True
         assignments = [
-            {"panel_node_i": 0, "expectation_id": "temp", "candidate": props[0]},
-            {"panel_node_i": 0, "expectation_id": "press", "candidate": props[0]},
+            {"row_number": 2, "binding_id": "air_tank_temperature"},
+            {"row_number": 3, "binding_id": "air_tank_temperature"},
         ]
-        result = build_bound_json(canvas, props, assignments, expectations=_expectations())
-        assert result["bound_json"] is None
-        assert any("被多个绑定复用" in e for e in result["errors"])
-
-    def test_readonly_reuse_warning(self):
-        canvas = _panel_canvas("状态面板")
-        props = self._props()
-        assignments = [
-            {"panel_node_i": 0, "expectation_id": "temp", "candidate": props[0]},
-            {"panel_node_i": 0, "expectation_id": "press", "candidate": props[0]},
-        ]
-        result = build_bound_json(canvas, props, assignments, expectations=_expectations())
+        result = agent.build(canvas, requests, assignments)
+        assert result["errors"] == []
         assert result["bound_json"] is not None
-        assert any("只读属性" in w and "复用" in w for w in result["warnings"])
+        assert result["bound_json"]["d"][0]["a"]["panel.list"][0]["label"] == "空气罐温度"
+        assert result["bound_json"]["d"][1]["a"]["panel.list"][0]["label"] == "空气罐温度"
 
-    def test_no_panel_blocks(self):
-        canvas = _panel_canvas("其他控件")
-        props = self._props()
-        result = build_bound_json(canvas, props, [], expectations=_expectations())
-        assert result["bound_json"] is None
-        assert any("没有状态面板" in e for e in result["errors"])
-
-    def test_schema_validator_hooks(self):
-        canvas = _panel_canvas("状态面板")
-        props = self._props()
-        assignments = self._assignments(props)
-        result = build_bound_json(
-            canvas, props, assignments, expectations=_expectations(),
+    def test_canvas_schema_failure_blocks(self):
+        agent = self._agent()
+        result = agent.build(
+            _panel_canvas("状态面板"), _requests(), _assignments(),
             canvas_validator=lambda jd: ["canvas bad"],
+        )
+        assert result["bound_json"] is None
+        assert any("Canvas Schema: canvas bad" in e for e in result["errors"])
+
+    def test_binding_schema_failure_blocks(self):
+        agent = self._agent()
+        result = agent.build(
+            _panel_canvas("状态面板"), _requests(), _assignments(),
             binding_validator=lambda a: ["binding bad"],
         )
         assert result["bound_json"] is None
-        assert any("Canvas Schema" in e for e in result["errors"])
-        assert any("Binding Schema" in e for e in result["errors"])
+        assert any("Binding Schema (状态面板): binding bad" in e for e in result["errors"])
 
-    def test_invalid_expectation_id(self):
+    def test_previews_shape(self):
+        agent = self._agent()
         canvas = _panel_canvas("状态面板")
-        props = self._props()
-        assignments = [
-            {"panel_node_i": 0, "expectation_id": "ghost", "candidate": props[0]},
-            {"panel_node_i": 0, "expectation_id": "press", "candidate": props[1]},
-        ]
-        result = build_bound_json(canvas, props, assignments, expectations=_expectations())
+        canvas["d"][0]["a"]["panel.list"] = [{"old": True}]
+        result = agent.build(canvas, _requests(), _assignments())
+        p = result["previews"][0]
+        assert set(p.keys()) == {"node_i", "displayName", "handler", "before", "after"}
+        assert p["node_i"] == 0
+        assert p["displayName"] == "状态面板"
+        assert p["handler"] == "panel_list"
+        assert p["before"] == [{"old": True}]
+        assert len(p["after"]) == 2
+
+    def test_mixed_valid_invalid_atomic(self):
+        agent = self._agent()
+        assignments = [{"row_number": 2, "binding_id": "bogus"}]
+        result = agent.build(_panel_canvas("状态面板"), _requests(), assignments)
         assert result["bound_json"] is None
-        assert any("不在 JSONL 注册表中" in e for e in result["errors"])
+        assert any("缺少 assignment" in e for e in result["errors"])
+        assert any("不在允许的候选集合中" in e for e in result["errors"])
 
 
 class TestSchemaFiles:
@@ -672,46 +797,20 @@ class TestSchemaFiles:
 
 
 class TestTop1Accuracy:
-    @pytest.mark.skipif(
-        not Path(__file__).resolve().parent.joinpath("fixtures", "binding", "ground_truth.json").exists(),
-        reason="真值集缺失，不得伪造 Top-1 结果",
-    )
     def test_top1_on_fixed_truth_set(self):
         fixture_dir = Path(__file__).resolve().parent.joinpath("fixtures", "binding")
+        requests = preview_csv((fixture_dir / "properties.csv").read_bytes())["requests"]
+        canvas = _panel_canvas("状态面板")
+        agent = BindingAgent(registry_path=Path(__file__).resolve().parent.parent / "data" / "binding.jsonl")
+        result = agent.match(canvas, requests)
+        assert result["blocked"] is False, result["errors"]
         ground_truth = json.loads((fixture_dir / "ground_truth.json").read_text(encoding="utf-8"))
-        properties = _load_fixture_properties(fixture_dir)
-        canvas = _build_canvas_from_truth(ground_truth)
-        expectations = load_binding_registry(Path(__file__).resolve().parent.parent / "data" / "binding.jsonl")
-        result = match_properties(canvas, expectations, properties)
+        expected = {m["row_number"]: m["binding_id"] for m in ground_truth["mappings"]}
+        assert len(result["items"]) == 20
         correct = 0
-        total = 0
         for item in result["items"]:
-            if item["suggested"] is None:
-                continue
-            total += 1
-            cand = next(c for c in item["candidates"] if c["key"] == item["suggested"])
-            truth = {
-                "panelInstance": item["panel_instance"],
-                "expectationId": item["expectation_id"],
-                "projectId": cand["projectId"],
-                "deviceId": cand["deviceId"],
-                "propertyId": cand["propertyId"],
-            }
-            if truth in ground_truth["mappings"]:
+            assert item["candidates"][0]["score"] >= 0.55
+            assert item["suggested_binding_id"] is not None
+            if item["suggested_binding_id"] == expected[item["row_number"]]:
                 correct += 1
-        assert total > 0
-        assert correct / total >= 0.75
-
-
-def _load_fixture_properties(fixture_dir: Path) -> list[dict]:
-    csv_path = fixture_dir / "properties.csv"
-    assert csv_path.exists()
-    result = normalize_csv(csv_path.read_bytes(), _default_mapping())
-    assert result["blocked"] is False
-    return result["properties"]
-
-
-def _build_canvas_from_truth(ground_truth: dict) -> dict:
-    instances = sorted({m["panelInstance"] for m in ground_truth["mappings"]})
-    names = ["状态面板"] + [f"状态面板{i}" for i in range(2, max(instances) + 1)]
-    return _panel_canvas(*[names[i - 1] for i in instances])
+        assert correct / len(result["items"]) >= 0.75

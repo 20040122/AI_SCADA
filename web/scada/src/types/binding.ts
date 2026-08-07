@@ -1,90 +1,35 @@
 import type { LayoutJsonData } from "./layout";
 
-export interface BindingProperty {
-  projectId: string;
-  projectName: string;
-  deviceId: string;
-  deviceName: string;
-  propertyId: string;
+export interface BindingRequestRow {
+  row_number: number;
+  displayName: string;
   propertyName: string;
-  dataType: string;
-  writable: boolean;
-  unit: string;
-  dataTypeDesc: string;
-}
-
-export interface BindingColumnSuggestion {
-  field: string;
-  column: string | number | null;
-  source: "exact" | "fuzzy";
-}
-
-export interface BindingColumnAmbiguity {
-  column: string | number | null;
-  header: string;
-  matched_fields: string[];
-  detail: string;
-}
-
-export interface BindingMapping {
-  suggestions: BindingColumnSuggestion[];
-  ambiguities: BindingColumnAmbiguity[];
-  missing: string[];
 }
 
 export interface BindingPreviewResponse {
   encoding: string;
-  headers: string[];
   total_rows: number;
-  rows: string[][];
-  mapping: BindingMapping;
-}
-
-export interface BindingNormalizeResponse {
-  properties: BindingProperty[];
-  errors: string[];
-  blocked: boolean;
-  blocking: string[];
+  requests: BindingRequestRow[];
 }
 
 export interface BindingCandidate {
-  projectId: string;
-  projectName: string;
-  deviceId: string;
-  deviceName: string;
-  propertyId: string;
+  binding_id: string;
   propertyName: string;
+  projectName: string;
+  deviceName: string;
   dataType: string;
   writable: boolean;
   unit: string;
-  dataTypeDesc: string;
-  device_name_similarity: number;
-  property_name_similarity: number;
   score: number;
-  lead: number;
-  confidence: string;
   evidence: string[];
-  key: string;
 }
 
-export interface BindingExpectation {
-  id: string;
-  displayName: string;
-  deviceName: string;
-  property: string;
-  dataType: string;
-  writable: boolean;
-  required: boolean;
-  path: string;
-  label: string;
-}
-
-export interface BindingPanel {
+export interface BindingTarget {
   node_i: number;
-  node_id: string;
+  node_id: unknown;
   displayName: string;
-  instance: number;
-  existing_panel_list: BindingPanelItem[] | null;
+  handler: string;
+  existing: unknown;
 }
 
 export interface BindingPanelItem {
@@ -108,36 +53,34 @@ export interface BindingPanelItem {
 }
 
 export interface BindingMatchItem {
-  panel_node_i: number;
-  panel_displayName: string;
-  panel_instance: number;
-  expectation_id: string;
-  expectation_property: string;
-  expectation_required: boolean;
+  row_number: number;
+  target_node_i: number | null;
+  requested_displayName: string;
+  requested_propertyName: string;
   candidates: BindingCandidate[];
-  suggested: string | null;
+  suggested_binding_id: string | null;
+  lead: number;
   confidence: string;
-  confirmed: boolean;
 }
 
 export interface BindingMatchResponse {
-  panels: BindingPanel[];
-  expectations: BindingExpectation[];
+  targets: BindingTarget[];
   items: BindingMatchItem[];
+  blocked: boolean;
+  errors: string[];
 }
 
 export interface BindingAssignment {
-  panel_node_i: number;
-  expectation_id: string;
-  candidate: BindingProperty;
+  row_number: number;
+  binding_id: string;
 }
 
 export interface BindingBuildPreview {
   node_i: number;
   displayName: string;
-  instance: number;
-  panel_list: BindingPanelItem[];
-  has_existing: boolean;
+  handler: string;
+  before: unknown;
+  after: BindingPanelItem[];
 }
 
 export interface BindingBuildResponse {

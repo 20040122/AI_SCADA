@@ -15,11 +15,14 @@ class BgeSimilarity:
         self._model = SentenceTransformer(str(model_path), local_files_only=True)
         self._model.eval()
 
+    def encode(self, texts: list[str]):
+        return self._model.encode(texts, normalize_embeddings=True)
+
     def similarity(self, a: str, b: str) -> float:
         import numpy as np
 
-        va = self._model.encode([a], normalize_embeddings=True)[0]
-        vb = self._model.encode([b], normalize_embeddings=True)[0]
+        va = self.encode([a])[0]
+        vb = self.encode([b])[0]
         return float(np.dot(va, vb))
 
 
