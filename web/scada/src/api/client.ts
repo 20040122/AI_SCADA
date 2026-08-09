@@ -5,10 +5,10 @@ function isFormDataBody(body?: BodyInit | null): boolean {
   return typeof FormData !== "undefined" && body instanceof FormData;
 }
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+async function request<T>(path: string, options?: RequestInit, timeoutMs?: number): Promise<T> {
   const url = `${API_BASE}${path}`;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), API_TIMEOUT);
+  const timer = setTimeout(() => controller.abort(), timeoutMs ?? API_TIMEOUT);
 
   try {
     const res = await fetch(url, {
@@ -35,11 +35,19 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   }
 }
 
-export function post<T>(path: string, body: unknown): Promise<T> {
-  return request<T>(path, {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+export interface PostOptions {
+  timeoutMs?: number;
+}
+
+export function post<T>(path: string, body: unknown, options?: PostOptions): Promise<T> {
+  return request<T>(
+    path,
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+    },
+    options?.timeoutMs
+  );
 }
 
 export function postForm<T>(path: string, body: FormData): Promise<T> {

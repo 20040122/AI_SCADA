@@ -1,14 +1,18 @@
-import { post } from "./client";
-import { buildUploadBody } from "./uploadBody";
+import { post } from "./client.ts";
+import { buildUploadBody } from "./uploadBody.ts";
 import type { LayoutGenerateRequest, LayoutGenerateResponse, RefineRequest, RefineResponse, LayoutJsonData, PipeData, UploadCanvasResponse } from "../types/layout";
 
 export function generateLayout(req: LayoutGenerateRequest): Promise<LayoutGenerateResponse> {
-  return post<LayoutGenerateResponse>("/api/canvas/layout", {
-    query: req.query,
-    title: req.title,
-    canvas_width: req.canvasWidth,
-    canvas_height: req.canvasHeight,
-  });
+  return post<LayoutGenerateResponse>(
+    "/api/canvas/layout",
+    {
+      query: req.query,
+      title: req.title,
+      canvas_width: req.canvasWidth,
+      canvas_height: req.canvasHeight,
+    },
+    { timeoutMs: 120000 }
+  );
 }
 
 export function refineLayout(req: RefineRequest): Promise<RefineResponse> {
