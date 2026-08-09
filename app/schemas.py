@@ -212,6 +212,8 @@ class BindingBuildResponse(BaseModel):
     previews: list[BindingBuildPreview] = []
     errors: list[str] = []
     warnings: list[str] = []
+    applied_count: int = 0
+    skipped_count: int = 0
 
 
 class ValidateRequest(BaseModel):

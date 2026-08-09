@@ -126,7 +126,8 @@ export default function CenterPanel({ blocked }: { blocked: string | null }) {
           onChange={(e) => setSearch(e.target.value)}
         />
         <span className="text-[10px] font-mono text-[var(--text3)]">
-          {items.length > 0 && `${confirmedCount}/${items.length} 已确认`}
+          {items.length > 0 &&
+            `已确认 ${confirmedCount} / 总计 ${items.length}，未确认 ${items.length - confirmedCount} 条将跳过`}
         </span>
       </div>
 
@@ -160,6 +161,12 @@ export default function CenterPanel({ blocked }: { blocked: string | null }) {
             {match.errors.map((e, i) => (
               <div key={i}>⛔ {e}</div>
             ))}
+          </div>
+        )}
+
+        {match && !match.blocked && match.errors.length > 0 && (
+          <div className="bg-[rgba(224,159,62,0.07)] border border-[var(--warn)] rounded-[4px] p-[12px] mb-4 text-[11px] text-[var(--warn)] font-mono">
+            部分行不可用（未确认时将跳过），其余行仍可正常生成。
           </div>
         )}
 
@@ -229,7 +236,7 @@ export default function CenterPanel({ blocked }: { blocked: string | null }) {
                       </div>
                       {filtered.length === 0 && (
                         <div className="text-[10px] font-mono text-[var(--text3)]">
-                          没有匹配候选，该行将阻断生成。
+                          该行不可用，未确认时将跳过。
                         </div>
                       )}
                       {filtered.map((cand) => renderCandidateRow(item, cand))}

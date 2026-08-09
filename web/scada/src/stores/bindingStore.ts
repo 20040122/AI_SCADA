@@ -105,6 +105,8 @@ function resetDerived(
     buildPreviews: [],
     buildErrors: [],
     buildWarnings: [],
+    appliedCount: 0,
+    skippedCount: 0,
     targetFileName: deriveTargetFileName(base.fileName),
     uploadResult: null,
     uploadError: null,
@@ -121,6 +123,8 @@ function clearCsvDerived(): Partial<BindingStore> {
     buildPreviews: [],
     buildErrors: [],
     buildWarnings: [],
+    appliedCount: 0,
+    skippedCount: 0,
     uploadResult: null,
     uploadError: null,
   };
@@ -132,6 +136,8 @@ function clearBuildResult(): Partial<BindingStore> {
     buildPreviews: [],
     buildErrors: [],
     buildWarnings: [],
+    appliedCount: 0,
+    skippedCount: 0,
     uploadResult: null,
     uploadError: null,
   };
@@ -155,6 +161,8 @@ export interface BindingStore {
   buildPreviews: BindingBuildPreview[];
   buildErrors: string[];
   buildWarnings: string[];
+  appliedCount: number;
+  skippedCount: number;
   targetFileName: string;
   uploadResult: UploadCanvasResponse | null;
   uploadError: string | null;
@@ -209,6 +217,8 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
   buildPreviews: [],
   buildErrors: [],
   buildWarnings: [],
+  appliedCount: 0,
+  skippedCount: 0,
   targetFileName: "",
   uploadResult: null,
   uploadError: null,
@@ -304,6 +314,8 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
         buildPreviews: res.previews,
         buildErrors: res.errors,
         buildWarnings: res.warnings,
+        appliedCount: res.applied_count,
+        skippedCount: res.skipped_count,
         uploadResult: null,
         uploadError: null,
       });
@@ -339,6 +351,8 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
       buildPreviews: [],
       buildErrors: [],
       buildWarnings: [],
+      appliedCount: 0,
+      skippedCount: 0,
       targetFileName: "",
       uploadResult: null,
       uploadError: null,

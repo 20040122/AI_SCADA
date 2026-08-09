@@ -75,5 +75,7 @@ async def binding_build(
         previews=[BindingBuildPreview(**p) for p in result["previews"]],
         errors=result["errors"],
         warnings=result["warnings"],
+        applied_count=result["applied_count"],
+        skipped_count=result["skipped_count"],
     )
     return ApiResponse(data=resp.model_dump())

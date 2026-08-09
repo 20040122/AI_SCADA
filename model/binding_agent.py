@@ -173,7 +173,6 @@ class BindingAgent:
 
     def match(self, json_data: dict[str, Any], requests: list[dict[str, Any]]) -> dict[str, Any]:
         errors: list[str] = []
-        blocked = False
         targets: dict[int, dict[str, Any]] = {}
         items: list[dict[str, Any]] = []
         pending: list[dict[str, Any]] = []
@@ -195,18 +194,15 @@ class BindingAgent:
             handler = self._find_handler(display_name)
             if handler is None:
                 errors.append(f"第 {row} 行: 不支持的控件 {display_name}")
-                blocked = True
                 items.append(item)
                 continue
             found = self._locate_targets(json_data, display_name)
             if not found:
                 errors.append(f"第 {row} 行: 未找到目标控件 {display_name}")
-                blocked = True
                 items.append(item)
                 continue
             if len(found) > 1:
                 errors.append(f"第 {row} 行: 目标控件 {display_name} 存在多个同名节点")
-                blocked = True
                 items.append(item)
                 continue
             node_i, node = found[0]
@@ -214,7 +210,6 @@ class BindingAgent:
             type_errors = handler.validate_target(node)
             if type_errors:
                 errors.extend(type_errors)
-                blocked = True
                 items.append(item)
                 continue
             if node_i not in targets:
@@ -239,13 +234,13 @@ class BindingAgent:
             candidates, suggested, lead, confidence = row_candidates[row]
             if not candidates:
                 errors.append(f"第 {row} 行: 未找到匹配属性 {entry['query']}")
-                blocked = True
             item["candidates"] = candidates
             item["suggested_binding_id"] = suggested
             item["lead"] = lead
             item["confidence"] = confidence
             items.append(item)
 
+        blocked = bool(items) and all(not it["candidates"] for it in items)
         return {"targets": list(targets.values()), "items": items, "blocked": blocked, "errors": errors}
 
     def _compute_row_candidates(self, pending: list[dict[str, Any]]) -> dict[int, tuple]:
@@ -372,7 +367,25 @@ class BindingAgent:
         if binding_validator is None:
             binding_validator = self._validate_binding
 
-        match_result = self.match(json_data, requests)
+        assigned_rows = {int(a["row_number"]) for a in assignments}
+        skipped_count = sum(
+            1 for r in requests if int(r["row_number"]) not in assigned_rows
+        )
+
+        if not assignments:
+            return {
+                "bound_json": None,
+                "previews": [],
+                "errors": ["至少确认 1 条绑定"],
+                "warnings": warnings,
+                "applied_count": 0,
+                "skipped_count": skipped_count,
+            }
+
+        assigned_requests = [
+            r for r in requests if int(r["row_number"]) in assigned_rows
+        ]
+        match_result = self.match(json_data, assigned_requests)
         errors.extend(match_result["errors"])
         items_by_row = {int(it["row_number"]): it for it in match_result["items"]}
         targets_by_index = {t["node_i"]: t for t in match_result["targets"]}
@@ -385,9 +398,6 @@ class BindingAgent:
                 errors.append(f"第 {row} 行: 同一行存在多个 assignment")
             assigned[row] = binding_id
 
-        for row in sorted(items_by_row.keys()):
-            if row not in assigned:
-                errors.append(f"第 {row} 行: 缺少 assignment")
         for row, binding_id in sorted(assigned.items()):
             if row not in items_by_row:
                 errors.append(f"第 {row} 行: assignment 对应的请求不存在")
@@ -427,6 +437,7 @@ class BindingAgent:
             rendered_by_node[node_i] = handler.render(records)
 
         bound_json: Optional[dict[str, Any]] = None
+        applied_count = 0
         if not errors:
             bound_json = copy.deepcopy(json_data)
             for node_i, rendered in rendered_by_node.items():
@@ -447,10 +458,14 @@ class BindingAgent:
                     )
             if errors:
                 bound_json = None
+            else:
+                applied_count = len(assigned)
 
         previews: list[dict[str, Any]] = []
-        for node_i in sorted(targets_by_index.keys()):
-            target = targets_by_index[node_i]
+        for node_i in sorted(by_node.keys()):
+            target = targets_by_index.get(node_i)
+            if target is None:
+                continue
             previews.append({
                 "node_i": node_i,
                 "displayName": target["displayName"],
@@ -459,11 +474,16 @@ class BindingAgent:
                 "after": rendered_by_node.get(node_i, []),
             })
 
+        if bound_json is not None and skipped_count > 0:
+            warnings.append(f"已跳过 {skipped_count} 条未确认的绑定行")
+
         return {
             "bound_json": bound_json,
             "previews": previews,
             "errors": errors,
             "warnings": warnings,
+            "applied_count": applied_count,
+            "skipped_count": skipped_count,
         }
 
     def _validate_canvas(self, json_data: dict[str, Any]) -> list[str]:

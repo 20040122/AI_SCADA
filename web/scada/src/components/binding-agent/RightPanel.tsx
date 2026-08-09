@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useBindingStore } from "../../stores/bindingStore";
 import { uploadCanvas } from "../../api/layout";
 import { colorJson } from "../../utils/jsonColor";
 import { notify } from "../../utils/notification";
+import {
+  buildPanelPlan,
+  canBuildBinding,
+  needsReplaceConfirm,
+  type PanelBuildPlan,
+} from "../../utils/bindingConfirm";
 import type { BindingPanelItem } from "../../types/binding";
 
 function renderItemLabel(item: BindingPanelItem): string {
@@ -18,6 +24,8 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
     buildPreviews,
     buildErrors,
     buildWarnings,
+    appliedCount,
+    skippedCount,
     targetFileName,
     uploadResult,
     uploadError,
@@ -28,10 +36,26 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
 
   const [building, setBuilding] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [confirmPlan, setConfirmPlan] = useState<PanelBuildPlan[] | null>(null);
 
-  const allConfirmed = items.length > 0 && items.every((it) => it.confirmed);
+  useEffect(() => {
+    if (confirmPlan === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirmPlan(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirmPlan]);
+
+  const confirmedCount = items.filter((it) => it.confirmed).length;
   const noBlocking = !(match?.blocked ?? false);
-  const canBuild = allConfirmed && noBlocking && blocked === null;
+  const canBuild = canBuildBinding({
+    hasMatch: match !== null,
+    confirmedCount,
+    matchBlocked: !noBlocking,
+    refineBlocked: blocked !== null,
+    alreadyBuilt: boundJson !== null && buildErrors.length === 0,
+  });
 
   const hasExisting =
     (match?.targets ?? []).some(
@@ -40,7 +64,7 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
 
   const canUpload = boundJson !== null && buildErrors.length === 0;
 
-  const handleBuild = async () => {
+  const doBuild = async () => {
     setBuilding(true);
     try {
       await runBuild();
@@ -53,6 +77,16 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
     } finally {
       setBuilding(false);
     }
+  };
+
+  const handleBuild = () => {
+    const st = useBindingStore.getState();
+    const plan = buildPanelPlan(st.items, st.match?.targets ?? []);
+    if (needsReplaceConfirm(plan)) {
+      setConfirmPlan(plan);
+      return;
+    }
+    void doBuild();
   };
 
   const handleUpload = async () => {
@@ -209,8 +243,8 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
         <div className="flex gap-2 mb-3">
           <button
             className="flex-1 px-[12px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-50"
-            onClick={() => void handleBuild()}
-            disabled={building || !canBuild || (boundJson !== null && buildErrors.length === 0)}
+            onClick={handleBuild}
+            disabled={building || !canBuild}
           >
             {building ? "生成中..." : "生成绑定 JSON"}
           </button>
@@ -222,6 +256,20 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
             {uploading ? "上传中..." : "上传绑定"}
           </button>
         </div>
+
+        {boundJson && buildErrors.length === 0 && (
+          <div className="mb-3 text-[10px] font-mono text-[var(--success)]">
+            {skippedCount > 0
+              ? `已生成 ${appliedCount} 条，跳过 ${skippedCount} 条`
+              : `已生成 ${appliedCount} 条`}
+          </div>
+        )}
+
+        {items.length > 0 && confirmedCount === 0 && (
+          <div className="mb-3 text-[10px] font-mono text-[var(--warn)]">
+            至少确认 1 条绑定后才能生成
+          </div>
+        )}
 
         {uploadError && (
           <div className="mb-3 bg-[rgba(224,85,85,0.07)] border border-[var(--error)] rounded-[4px] p-[10px] text-[10px] font-mono text-[var(--error)]">
@@ -257,6 +305,61 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
           </div>
         )}
       </div>
+
+      {confirmPlan !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.45)]"
+          onClick={() => setConfirmPlan(null)}
+        >
+          <div
+            className="w-[440px] bg-[var(--panel)] border border-[var(--border)] rounded-[6px] shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-[12px] border-b border-[var(--border)] bg-[var(--bg2)]">
+              <span className="text-[13px] font-medium text-[var(--text)]">
+                确认替换旧绑定
+              </span>
+            </div>
+            <div className="p-[14px]">
+              <p className="text-[11px] text-[var(--text2)] mb-3 leading-[1.6]">
+                以下面板已存在旧绑定，生成时旧 panel.list 将被整体替换，未确认的行不会保留。
+              </p>
+              {confirmPlan.map((p) => (
+                <div
+                  key={p.node_i}
+                  className="flex items-center gap-2 mb-2 bg-[var(--bg3)] border border-[var(--border)] rounded-[4px] p-[8px_10px]"
+                >
+                  <span className="flex-1 text-[11px] text-[var(--text)] truncate">
+                    {p.displayName}
+                  </span>
+                  <span className="text-[10px] font-mono text-[var(--text3)] shrink-0">
+                    旧 {p.oldCount === null ? "数量未知" : `${p.oldCount} 条`} → 新 {p.newCount} 条
+                  </span>
+                </div>
+              ))}
+              <div className="flex gap-2 mt-4">
+                <button
+                  type="button"
+                  className="flex-1 px-[12px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--border2)] bg-[var(--bg3)] text-[var(--text2)] hover:border-[var(--accent2)] hover:text-[var(--accent)]"
+                  onClick={() => setConfirmPlan(null)}
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  className="flex-1 px-[12px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--error)] bg-[rgba(224,85,85,0.08)] text-[var(--error)] hover:bg-[rgba(224,85,85,0.18)]"
+                  onClick={() => {
+                    setConfirmPlan(null);
+                    void doBuild();
+                  }}
+                >
+                  确认替换并生成
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

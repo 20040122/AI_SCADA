@@ -110,7 +110,6 @@
 {"displayName":"平台大门","image":"symbols/发射场/设备模型/平台大门.json","width":584,"height":793}
 {"displayName":"综合速率","image":"symbols/现场控制系统/平台大门控件/综合速率.json","width":78,"height":24,"boundExtend": 2}
 {"displayName":"阴影标签","image":"symbols/现场控制系统/样式修改/阴影标签.json","width":90,"height":32}
-{"displayName":"框4（包括节点、位置、大小）","image":"symbols/素材/边框/框4.json","width":260,"height":157,"boundExtend": 12}
 {"displayName":"折线图 + 面积图","image":"symbols/素材/数据图/线图.json","width":500,"height":200}
 {"displayName":"websocket","image":"symbols/公共资源/控件/报警/websocket.json","width":420,"height":300}
 {"displayName":"鼓风机","image":"symbols/行业图库/污水平板膜处理/鼓风机.json","width":100,"height":100}

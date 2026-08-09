@@ -572,6 +572,28 @@ class TestMatch:
         assert result["items"][0]["requested_displayName"] == "状态面板"
         assert result["items"][0]["requested_propertyName"] == "空气罐温度"
 
+    def test_mixed_valid_invalid_not_blocked(self):
+        agent = self._agent()
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "状态面板", "propertyName": "不存在的属性"},
+        ]
+        result = agent.match(_panel_canvas("状态面板"), requests)
+        assert result["blocked"] is False
+        assert result["items"][0]["candidates"]
+        assert any("未找到匹配属性" in e for e in result["errors"])
+
+    def test_all_rows_unavailable_blocked(self):
+        agent = self._agent()
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "不存在的属性"},
+            {"row_number": 3, "displayName": "阀门", "propertyName": "空气罐压力"},
+        ]
+        result = agent.match(_panel_canvas("状态面板"), requests)
+        assert result["blocked"] is True
+        assert result["items"][0]["candidates"] == []
+        assert result["items"][1]["candidates"] == []
+
 
 class TestBuild:
     def _agent(self, records=None):
@@ -582,6 +604,8 @@ class TestBuild:
         result = agent.build(_panel_canvas("状态面板"), _requests(), _assignments())
         assert result["errors"] == []
         assert result["warnings"] == []
+        assert result["applied_count"] == 2
+        assert result["skipped_count"] == 0
         bound = result["bound_json"]
         assert bound is not None
         panel_list = bound["d"][0]["a"]["panel.list"]
@@ -653,7 +677,9 @@ class TestBuild:
         agent = self._agent()
         result = agent.build(_panel_canvas("状态面板"), _requests(), [])
         assert result["bound_json"] is None
-        assert sum("缺少 assignment" in e for e in result["errors"]) == 2
+        assert result["errors"] == ["至少确认 1 条绑定"]
+        assert result["applied_count"] == 0
+        assert result["skipped_count"] == 2
 
     def test_duplicate_assignment_same_row_blocks(self):
         agent = self._agent()
@@ -761,8 +787,121 @@ class TestBuild:
         assignments = [{"row_number": 2, "binding_id": "bogus"}]
         result = agent.build(_panel_canvas("状态面板"), _requests(), assignments)
         assert result["bound_json"] is None
-        assert any("缺少 assignment" in e for e in result["errors"])
+        assert result["applied_count"] == 0
+        assert result["skipped_count"] == 1
         assert any("不在允许的候选集合中" in e for e in result["errors"])
+        assert not any("缺少 assignment" in e for e in result["errors"])
+
+
+class TestPartialBuild:
+    def _agent(self, records=None):
+        return BindingAgent(records=records if records is not None else _records(), similarity=FakeSimilarity())
+
+    def test_single_row_partial_generates_one_item(self):
+        agent = self._agent()
+        assignments = [{"row_number": 2, "binding_id": "air_tank_temperature"}]
+        result = agent.build(_panel_canvas("状态面板"), _requests(), assignments)
+        assert result["errors"] == []
+        assert result["bound_json"] is not None
+        panel_list = result["bound_json"]["d"][0]["a"]["panel.list"]
+        assert len(panel_list) == 1
+        assert panel_list[0]["label"] == "空气罐温度"
+        assert result["applied_count"] == 1
+        assert result["skipped_count"] == 1
+        assert result["warnings"] == ["已跳过 1 条未确认的绑定行"]
+        assert len(result["previews"]) == 1
+        assert result["previews"][0]["node_i"] == 0
+        assert len(result["previews"][0]["after"]) == 1
+
+    def test_unsubmitted_row_no_candidate_does_not_block(self):
+        agent = self._agent()
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "状态面板", "propertyName": "不存在的属性"},
+        ]
+        assignments = [{"row_number": 2, "binding_id": "air_tank_temperature"}]
+        result = agent.build(_panel_canvas("状态面板"), requests, assignments)
+        assert result["errors"] == []
+        assert result["bound_json"] is not None
+        assert len(result["bound_json"]["d"][0]["a"]["panel.list"]) == 1
+        assert result["applied_count"] == 1
+        assert result["skipped_count"] == 1
+
+    def test_unsubmitted_row_missing_target_does_not_block(self):
+        agent = self._agent()
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "状态面板2", "propertyName": "空气罐压力"},
+        ]
+        assignments = [{"row_number": 2, "binding_id": "air_tank_temperature"}]
+        result = agent.build(_panel_canvas("状态面板"), requests, assignments)
+        assert result["errors"] == []
+        assert result["bound_json"] is not None
+        assert result["applied_count"] == 1
+        assert result["skipped_count"] == 1
+
+    def test_unsubmitted_row_unsupported_control_does_not_block(self):
+        agent = self._agent()
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "阀门", "propertyName": "空气罐压力"},
+        ]
+        assignments = [{"row_number": 2, "binding_id": "air_tank_temperature"}]
+        result = agent.build(_panel_canvas("状态面板"), requests, assignments)
+        assert result["errors"] == []
+        assert result["bound_json"] is not None
+        assert result["applied_count"] == 1
+        assert result["skipped_count"] == 1
+
+    def test_multi_panel_partial_keeps_other_panel_untouched(self):
+        agent = self._agent()
+        canvas = _panel_canvas("状态面板", "状态面板2")
+        canvas["d"][0]["a"]["panel.list"] = [{"old": "panel1"}]
+        canvas["d"][1]["a"]["panel.list"] = [{"old": "panel2"}]
+        requests = [
+            {"row_number": 2, "displayName": "状态面板", "propertyName": "空气罐温度"},
+            {"row_number": 3, "displayName": "状态面板2", "propertyName": "空气罐压力"},
+        ]
+        assignments = [{"row_number": 2, "binding_id": "air_tank_temperature"}]
+        result = agent.build(canvas, requests, assignments)
+        assert result["errors"] == []
+        bound = result["bound_json"]
+        assert bound is not None
+        assert len(bound["d"][0]["a"]["panel.list"]) == 1
+        assert bound["d"][0]["a"]["panel.list"][0]["label"] == "空气罐温度"
+        assert bound["d"][1]["a"]["panel.list"] == [{"old": "panel2"}]
+        assert len(result["previews"]) == 1
+        assert result["previews"][0]["node_i"] == 0
+        assert result["applied_count"] == 1
+        assert result["skipped_count"] == 1
+
+    def test_partial_build_replaces_old_list_entirely(self):
+        agent = self._agent()
+        canvas = _panel_canvas("状态面板")
+        canvas["d"][0]["a"]["panel.list"] = [{"old": 1}, {"old": 2}]
+        assignments = [{"row_number": 3, "binding_id": "air_tank_pressure"}]
+        result = agent.build(canvas, _requests(), assignments)
+        assert result["errors"] == []
+        panel_list = result["bound_json"]["d"][0]["a"]["panel.list"]
+        assert len(panel_list) == 1
+        assert panel_list[0]["label"] == "空气罐压力"
+        assert all("old" not in it for it in panel_list)
+        assert result["applied_count"] == 1
+
+    def test_submitted_row_invalid_still_atomic(self):
+        agent = self._agent()
+        canvas = _panel_canvas("状态面板")
+        canvas["d"][0]["a"]["panel.list"] = [{"old": 1}]
+        assignments = [
+            {"row_number": 2, "binding_id": "air_tank_temperature"},
+            {"row_number": 3, "binding_id": "bogus"},
+        ]
+        result = agent.build(canvas, _requests(), assignments)
+        assert result["bound_json"] is None
+        assert result["applied_count"] == 0
+        assert result["skipped_count"] == 0
+        assert any("不在允许的候选集合中" in e for e in result["errors"])
+        assert any("不存在于注册表" in e for e in result["errors"])
 
 
 class TestSchemaFiles:

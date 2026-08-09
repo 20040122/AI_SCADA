@@ -120,7 +120,24 @@ class TestBindingRoutes:
         assert r.status_code == 200
         data = r.json()["data"]
         assert data["bound_json"] is None
-        assert any("缺少 assignment" in e for e in data["errors"])
+        assert data["errors"] == ["至少确认 1 条绑定"]
+        assert data["applied_count"] == 0
+        assert data["skipped_count"] == 2
+
+    def test_build_partial_ok(self):
+        canvas = _panel_canvas("状态面板")
+        requests = _requests()
+        assignments = [{"row_number": 2, "binding_id": "air_tank_temperature"}]
+        r = client.post("/api/binding/build", json={"json_data": canvas, "requests": requests, "assignments": assignments})
+        assert r.status_code == 200
+        data = r.json()["data"]
+        assert data["errors"] == []
+        assert data["bound_json"] is not None
+        assert len(data["bound_json"]["d"][0]["a"]["panel.list"]) == 1
+        assert data["applied_count"] == 1
+        assert data["skipped_count"] == 1
+        assert len(data["warnings"]) == 1
+        assert len(data["previews"]) == 1
 
     def test_build_forged_binding_id_blocks(self):
         canvas = _panel_canvas("状态面板")

@@ -88,4 +88,6 @@ export interface BindingBuildResponse {
   previews: BindingBuildPreview[];
   errors: string[];
   warnings: string[];
+  applied_count: number;
+  skipped_count: number;
 }

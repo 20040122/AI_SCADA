@@ -85,6 +85,8 @@ function makeBuildResponse(): BindingBuildResponse {
     previews: [],
     errors: [],
     warnings: [],
+    applied_count: 2,
+    skipped_count: 0,
   };
 }
 
@@ -396,4 +398,74 @@ test("pipe snapshot is deep-copied on sync", () => {
   assert.deepEqual(s.pipes, pipes);
   s.pipes!.connections[0].id = "mutated";
   assert.equal(useBindingStore.getState().pipes?.connections[0].id, "mutated");
+});
+
+test("runBuild stores structured counts and changes clear them", async () => {
+  resetStores();
+  const restore = withFetchMock(async () => {
+    return { ...makeBuildResponse(), applied_count: 1, skipped_count: 1 };
+  });
+  try {
+    const b = useBindingStore.getState();
+    b.syncSource("layout", 1, makeJson(), null, "画面.json");
+    b.setPreview(makePreview());
+    useBindingStore.setState({
+      items: [
+        { ...makeMatchItem(2, [makeCandidate("t", "空气罐温度", 1)]), selectedBindingId: "t", confirmed: false },
+        { ...makeMatchItem(3, [makeCandidate("p", "空气罐压力", 1)]), selectedBindingId: "p", confirmed: false },
+      ],
+    });
+    useBindingStore.getState().confirmItem(2);
+    await useBindingStore.getState().runBuild();
+    let s = useBindingStore.getState();
+    assert.equal(s.appliedCount, 1);
+    assert.equal(s.skippedCount, 1);
+    assert.ok(s.boundJson);
+
+    useBindingStore.getState().confirmItem(3);
+    s = useBindingStore.getState();
+    assert.equal(s.appliedCount, 0);
+    assert.equal(s.skippedCount, 0);
+    assert.equal(s.boundJson, null);
+  } finally {
+    restore();
+  }
+});
+
+test("csv change clears structured counts", () => {
+  resetStores();
+  const b = useBindingStore.getState();
+  b.syncSource("layout", 1, makeJson(), null, "画面.json");
+  useBindingStore.setState({ appliedCount: 3, skippedCount: 5 });
+  useBindingStore.getState().setCsvFile(new File(["x"], "a.csv"));
+  const s = useBindingStore.getState();
+  assert.equal(s.appliedCount, 0);
+  assert.equal(s.skippedCount, 0);
+});
+
+test("suggested but unconfirmed rows never enter assignments", async () => {
+  resetStores();
+  let body: string | null = null;
+  const restore = withFetchMock(async (url, init) => {
+    assert.match(url, /\/api\/binding\/build$/);
+    body = String(init.body);
+    return makeBuildResponse();
+  });
+  try {
+    const b = useBindingStore.getState();
+    b.syncSource("layout", 1, makeJson(), null, "画面.json");
+    b.setPreview(makePreview());
+    useBindingStore.setState({
+      items: [
+        { ...makeMatchItem(2, [makeCandidate("t", "空气罐温度", 1)]), selectedBindingId: "t", confirmed: true },
+        { ...makeMatchItem(3, [makeCandidate("p", "空气罐压力", 1)]), selectedBindingId: "p", confirmed: false },
+      ],
+    });
+    await useBindingStore.getState().runBuild();
+    assert.ok(body);
+    const parsed = JSON.parse(body!) as { assignments: { row_number: number; binding_id: string }[] };
+    assert.deepEqual(parsed.assignments, [{ row_number: 2, binding_id: "t" }]);
+  } finally {
+    restore();
+  }
 });
