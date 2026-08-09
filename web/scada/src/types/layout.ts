@@ -117,6 +117,9 @@ export interface CanvasNode {
   width: number;
   height: number;
   color: string;
+  label?: string;
+  labelColor?: string;
+  labelFont?: string;
   a?: Record<string, unknown>;
 }
 

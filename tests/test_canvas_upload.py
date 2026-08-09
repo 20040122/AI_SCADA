@@ -208,6 +208,83 @@ class TestHistoryCorrection:
         assert label["p"]["height"] == 32
 
     @pytest.mark.asyncio
+    async def test_legacy_label_repositioned_after_correction_mocked(self):
+        controls = [
+            _control(1, "液压泵", "symbols/pump.json", 300, 300, 200, 100),
+            _label(2, 1, "液压泵", 300, 226, 200, 32),
+        ]
+        result = await _upload(
+            _canvas_json(controls), client=_mock_client(_ok_handler)
+        )
+        label = result.json_data["d"][1]
+        assert label["p"]["position"]["y"] == pytest.approx(230.55, abs=0.01)
+        assert label["p"]["width"] == 200
+        assert label["p"]["height"] == 32
+
+    @pytest.mark.asyncio
+    async def test_inline_label_fields_preserved_after_correction(self):
+        controls = [
+            _control(1, "液压泵", "symbols/pump.json", 300, 300, 200, 100),
+        ]
+        controls[0]["s"] = {
+            "label": "泵",
+            "label.color": "rgb(255,255,255)",
+            "label.font": "18px arial, sans-serif",
+        }
+        result = await _upload(
+            _canvas_json(controls), client=_mock_client(_ok_handler)
+        )
+        node = result.json_data["d"][0]
+        assert node["s"] == {
+            "label": "泵",
+            "label.color": "rgb(255,255,255)",
+            "label.font": "18px arial, sans-serif",
+        }
+        assert node["p"]["height"] == pytest.approx(90.91, abs=0.01)
+        assert len(result.corrections) == 1
+
+    @pytest.mark.asyncio
+    async def test_upload_keeps_both_inline_and_legacy_label(self):
+        controls = [
+            _control(1, "液压泵", "symbols/pump.json", 300, 300, 200, 100),
+            _label(2, 1, "液压泵", 300, 226, 200, 32),
+        ]
+        controls[0]["s"] = {
+            "label": "泵",
+            "label.color": "rgb(255,255,255)",
+            "label.font": "18px arial, sans-serif",
+        }
+        result = await _upload(
+            _canvas_json(controls), client=_mock_client(_ok_handler)
+        )
+        assert result.json_data["d"][0]["s"]["label"] == "泵"
+        assert result.json_data["d"][1]["a"]["layout.role"] == "control-label"
+        assert result.json_data["d"][1]["p"]["width"] == 200
+
+    @pytest.mark.asyncio
+    async def test_plain_title_text_unaffected(self):
+        title = {
+            "c": "ht.Text",
+            "i": 3,
+            "p": {
+                "displayName": "标题",
+                "position": {"x": 100, "y": 100},
+                "width": 200,
+                "height": 40,
+            },
+            "s": {"text": "标题"},
+            "a": {"layout.role": "title"},
+        }
+        controls = [
+            _control(1, "液压泵", "symbols/pump.json", 300, 300, 200, 100),
+            title,
+        ]
+        result = await _upload(
+            _canvas_json(controls), client=_mock_client(_ok_handler)
+        )
+        assert result.json_data["d"][1]["s"]["text"] == "标题"
+
+    @pytest.mark.asyncio
     async def test_existing_overlap_returns_warning(self):
         controls = [
             _control(1, "液压泵", "symbols/pump.json", 300, 300, 200, 100),

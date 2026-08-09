@@ -12,6 +12,18 @@ const MAX_ZOOM = 2;
 const DEFAULT_READABLE_ZOOM = 0.72;
 const CLICK_THRESHOLD = 3;
 
+function labelFontSizePx(font?: string): number {
+  if (!font) return 18;
+  const match = font.match(/(\d+(?:\.\d+)?)px/);
+  return match ? parseFloat(match[1]) : 18;
+}
+
+function labelFontFamily(font?: string): string {
+  if (!font) return "arial, sans-serif";
+  const cleaned = font.replace(/^[\d.]+px\s*/i, "");
+  return cleaned || "arial, sans-serif";
+}
+
 function clampZoom(value: number) {
   return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 }
@@ -35,8 +47,7 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY,
   const h = node.height * scale;
   const x = offsetX + (node.x - node.width / 2) * scale;
   const y = offsetY + (node.y - node.height / 2) * scale;
-  const fontSize = Math.min(13, Math.max(9, 11 * scale));
-  const compact = w < 88 || h < 44;
+  const labelSize = labelFontSizePx(node.labelFont);
   const [imgError, setImgError] = useState(false);
   const previewUrl = node.image ? toPngUrl(node.image) : "";
   const hasPreview = !!(previewUrl && !imgError);
@@ -73,58 +84,60 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY,
   };
 
   return (
-    <div
-      className={`absolute select-none transition-[box-shadow] duration-200 hover:z-10 ${draggable && !interactionLocked ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"}`}
-      style={{
-        transform: `translate(${x}px, ${y}px)`,
-        width: w,
-        height: h,
-        background: hasPreview ? "transparent" : `linear-gradient(180deg, ${node.color}66 0%, ${node.color}33 100%)`,
-        border: hasPreview ? "none" : `1px solid ${node.color}cc`,
-        borderRadius: `${Math.max(4, 6 * scale)}px`,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        willChange: "transform",
-        touchAction: draggable ? "none" : undefined,
-        boxShadow: isSelected
-          ? "0 0 0 2px var(--accent), 0 0 0 4px rgba(77,184,212,.15)"
-          : hasPreview
-            ? "none"
-            : "0 8px 18px rgba(15,23,42,0.08)",
-        zIndex: isSelected ? 20 : undefined,
-      }}
-      onPointerDown={draggable ? handlePointerDown : undefined}
-      onPointerMove={draggable ? handlePointerMove : undefined}
-      onPointerUp={draggable ? handlePointerUp : undefined}
-      onPointerCancel={draggable ? handlePointerCancel : undefined}
-      onClick={draggable ? undefined : (onClick ? () => onClick(false) : undefined)}
-    >
-      {hasPreview && (
-        <img
-          src={previewUrl}
-          alt={node.displayName}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          onError={() => setImgError(true)}
-        />
-      )}
-      <span
-        className="font-mono text-center whitespace-nowrap overflow-hidden text-ellipsis rounded-full relative"
+    <>
+      <div
+        className={`absolute select-none transition-[box-shadow] duration-200 hover:z-10 ${draggable && !interactionLocked ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"}`}
         style={{
-          fontSize: `${fontSize}px`,
-          color: "#0f172a",
-          maxWidth: compact ? "96%" : "88%",
-          lineHeight: 1.3,
-          padding: compact ? "1px 5px" : "2px 8px",
-          background: "rgba(255,255,255,0.78)",
-          boxShadow: "0 1px 2px rgba(15,23,42,0.08)",
+          transform: `translate(${x}px, ${y}px)`,
+          width: w,
+          height: h,
+          background: hasPreview ? "transparent" : `linear-gradient(180deg, ${node.color}66 0%, ${node.color}33 100%)`,
+          border: hasPreview ? "none" : `1px solid ${node.color}cc`,
+          borderRadius: `${Math.max(4, 6 * scale)}px`,
+          overflow: "hidden",
+          willChange: "transform",
+          touchAction: draggable ? "none" : undefined,
+          boxShadow: isSelected
+            ? "0 0 0 2px var(--accent), 0 0 0 4px rgba(77,184,212,.15)"
+            : hasPreview
+              ? "none"
+              : "0 8px 18px rgba(15,23,42,0.08)",
+          zIndex: isSelected ? 20 : undefined,
         }}
+        onPointerDown={draggable ? handlePointerDown : undefined}
+        onPointerMove={draggable ? handlePointerMove : undefined}
+        onPointerUp={draggable ? handlePointerUp : undefined}
+        onPointerCancel={draggable ? handlePointerCancel : undefined}
+        onClick={draggable ? undefined : (onClick ? () => onClick(false) : undefined)}
       >
-        {node.displayName}
-      </span>
-    </div>
+        {hasPreview && (
+          <img
+            src={previewUrl}
+            alt={node.displayName}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            onError={() => setImgError(true)}
+          />
+        )}
+      </div>
+      {node.label && (
+        <div
+          className="absolute pointer-events-none select-none"
+          style={{
+            left: x + w / 2,
+            top: y + h,
+            transform: "translateX(-50%)",
+            color: node.labelColor || "rgb(255,255,255)",
+            fontSize: `${labelSize * scale}px`,
+            fontFamily: labelFontFamily(node.labelFont),
+            whiteSpace: "nowrap",
+            lineHeight: 1.3,
+            zIndex: isSelected ? 20 : 1,
+          }}
+        >
+          {node.label}
+        </div>
+      )}
+    </>
   );
 });
 
