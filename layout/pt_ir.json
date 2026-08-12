@@ -6,14 +6,14 @@
       "displayName": "空气罐",
       "image": "symbols/Agent/空气罐.json",
       "position": {
-        "x": 466,
-        "y": 623.5
+        "x": 422.67,
+        "y": 617
       },
       "width": 160,
       "height": 240
     },
     "a": {
-      "layout.group": "g1",
+      "layout.group": "group1",
       "layout.node": "air_tank",
       "layout.instance": 1,
       "layout.materialName": "空气罐",
@@ -28,15 +28,15 @@
       "displayName": "状态面板",
       "image": "symbols/Agent/状态面板.json",
       "position": {
-        "x": 286,
-        "y": 623.5
+        "x": 242.67,
+        "y": 617
       },
       "width": 120,
       "height": 44.44
     },
     "a": {
-      "layout.group": "g1",
-      "layout.node": "status_panel",
+      "layout.group": "group1",
+      "layout.node": "panel_left",
       "layout.instance": 1,
       "layout.materialName": "状态面板",
       "layout.sourceWidth": 162,
@@ -50,15 +50,15 @@
       "displayName": "阀门",
       "image": "symbols/Agent/阀门.json",
       "position": {
-        "x": 466,
-        "y": 431.5
+        "x": 422.67,
+        "y": 425
       },
       "width": 64,
       "height": 64
     },
     "a": {
-      "layout.group": "g1",
-      "layout.node": "valve1",
+      "layout.group": "group1",
+      "layout.node": "valve_top",
       "layout.instance": 1,
       "layout.materialName": "阀门",
       "layout.sourceWidth": 64,
@@ -72,14 +72,14 @@
       "displayName": "流量计",
       "image": "symbols/Agent/流量计.json",
       "position": {
-        "x": 563,
-        "y": 431.5
+        "x": 870,
+        "y": 565
       },
-      "width": 50,
-      "height": 68.75
+      "width": 120,
+      "height": 165
     },
     "a": {
-      "layout.group": "g1",
+      "layout.group": "group2",
       "layout.node": "flow1",
       "layout.instance": 1,
       "layout.materialName": "流量计",
@@ -94,15 +94,15 @@
       "displayName": "压力传感器",
       "image": "assets/现场控制系统/设备图片/压力传感器.png",
       "position": {
-        "x": 653,
-        "y": 431.5
+        "x": 995,
+        "y": 565
       },
       "width": 50,
       "height": 90
     },
     "a": {
-      "layout.group": "g1",
-      "layout.node": "pressure1",
+      "layout.group": "group2",
+      "layout.node": "press1",
       "layout.instance": 1,
       "layout.materialName": "压力传感器",
       "layout.sourceWidth": 25,
@@ -116,14 +116,14 @@
       "displayName": "流量计2",
       "image": "symbols/Agent/流量计.json",
       "position": {
-        "x": 743,
-        "y": 431.5
+        "x": 1085,
+        "y": 565
       },
       "width": 50,
       "height": 68.75
     },
     "a": {
-      "layout.group": "g1",
+      "layout.group": "group2",
       "layout.node": "flow2",
       "layout.instance": 1,
       "layout.materialName": "流量计",
@@ -138,14 +138,14 @@
       "displayName": "氮气罐",
       "image": "symbols/Agent/氮气罐.json",
       "position": {
-        "x": 1357,
-        "y": 391.75
+        "x": 1511.33,
+        "y": 388.5
       },
       "width": 160,
       "height": 240
     },
     "a": {
-      "layout.group": "g2",
+      "layout.group": "group3",
       "layout.node": "n2_tank1",
       "layout.instance": 1,
       "layout.materialName": "氮气罐",
@@ -160,15 +160,15 @@
       "displayName": "阀门2",
       "image": "symbols/Agent/阀门.json",
       "position": {
-        "x": 1357,
-        "y": 199.75
+        "x": 1511.33,
+        "y": 196.5
       },
       "width": 64,
       "height": 64
     },
     "a": {
-      "layout.group": "g2",
-      "layout.node": "valve2",
+      "layout.group": "group3",
+      "layout.node": "valve_n1",
       "layout.instance": 1,
       "layout.materialName": "阀门",
       "layout.sourceWidth": 64,
@@ -182,15 +182,15 @@
       "displayName": "流量计3",
       "image": "symbols/Agent/流量计.json",
       "position": {
-        "x": 1454,
-        "y": 199.75
+        "x": 1608.33,
+        "y": 196.5
       },
       "width": 50,
       "height": 68.75
     },
     "a": {
-      "layout.group": "g2",
-      "layout.node": "flow3",
+      "layout.group": "group3",
+      "layout.node": "flow_n1",
       "layout.instance": 1,
       "layout.materialName": "流量计",
       "layout.sourceWidth": 32,
@@ -204,15 +204,15 @@
       "displayName": "压力传感器2",
       "image": "assets/现场控制系统/设备图片/压力传感器.png",
       "position": {
-        "x": 1544,
-        "y": 199.75
+        "x": 1698.33,
+        "y": 196.5
       },
       "width": 50,
       "height": 90
     },
     "a": {
-      "layout.group": "g2",
-      "layout.node": "pressure2",
+      "layout.group": "group3",
+      "layout.node": "press_n1",
       "layout.instance": 1,
       "layout.materialName": "压力传感器",
       "layout.sourceWidth": 25,
@@ -226,16 +226,16 @@
       "displayName": "氮气罐2",
       "image": "symbols/Agent/氮气罐.json",
       "position": {
-        "x": 1357,
-        "y": 855.25
+        "x": 1511.33,
+        "y": 858.5
       },
       "width": 160,
       "height": 240
     },
     "a": {
-      "layout.group": "g3",
-      "layout.node": "n2_tank2",
-      "layout.instance": 1,
+      "layout.group": "group3",
+      "layout.node": "n2_tank1",
+      "layout.instance": 2,
       "layout.materialName": "氮气罐",
       "layout.sourceWidth": 160,
       "layout.sourceHeight": 240
@@ -248,16 +248,16 @@
       "displayName": "阀门3",
       "image": "symbols/Agent/阀门.json",
       "position": {
-        "x": 1357,
-        "y": 663.25
+        "x": 1511.33,
+        "y": 666.5
       },
       "width": 64,
       "height": 64
     },
     "a": {
-      "layout.group": "g3",
-      "layout.node": "valve3",
-      "layout.instance": 1,
+      "layout.group": "group3",
+      "layout.node": "valve_n1",
+      "layout.instance": 2,
       "layout.materialName": "阀门",
       "layout.sourceWidth": 64,
       "layout.sourceHeight": 64
@@ -270,16 +270,16 @@
       "displayName": "流量计4",
       "image": "symbols/Agent/流量计.json",
       "position": {
-        "x": 1454,
-        "y": 663.25
+        "x": 1608.33,
+        "y": 666.5
       },
       "width": 50,
       "height": 68.75
     },
     "a": {
-      "layout.group": "g3",
-      "layout.node": "flow4",
-      "layout.instance": 1,
+      "layout.group": "group3",
+      "layout.node": "flow_n1",
+      "layout.instance": 2,
       "layout.materialName": "流量计",
       "layout.sourceWidth": 32,
       "layout.sourceHeight": 44
@@ -292,16 +292,16 @@
       "displayName": "压力传感器3",
       "image": "assets/现场控制系统/设备图片/压力传感器.png",
       "position": {
-        "x": 1544,
-        "y": 663.25
+        "x": 1698.33,
+        "y": 666.5
       },
       "width": 50,
       "height": 90
     },
     "a": {
-      "layout.group": "g3",
-      "layout.node": "pressure3",
-      "layout.instance": 1,
+      "layout.group": "group3",
+      "layout.node": "press_n1",
+      "layout.instance": 2,
       "layout.materialName": "压力传感器",
       "layout.sourceWidth": 25,
       "layout.sourceHeight": 45

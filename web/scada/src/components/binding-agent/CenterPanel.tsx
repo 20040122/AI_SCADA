@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useBindingStore } from "../../stores/bindingStore";
 import type { BindingCandidate, BindingMatchItem, BindingTarget } from "../../types/binding";
+import { notify } from "../../utils/notification";
 
 function confidenceBadge(confidence: string): { cls: string; label: string } {
   if (confidence === "high") return { cls: "text-[var(--success)] border-[var(--success)]", label: "高" };
@@ -11,15 +12,18 @@ function confidenceBadge(confidence: string): { cls: string; label: string } {
 }
 
 export default function CenterPanel({ blocked }: { blocked: string | null }) {
-  const { canvas, match, items, selectCandidate, confirmItem } = useBindingStore(
-    useShallow((s) => ({
-      canvas: s.canvas,
-      match: s.match,
-      items: s.items,
-      selectCandidate: s.selectCandidate,
-      confirmItem: s.confirmItem,
-    }))
-  );
+  const { canvas, match, items, selectCandidate, confirmItem, confirmAllSelected, isLoading } =
+    useBindingStore(
+      useShallow((s) => ({
+        canvas: s.canvas,
+        match: s.match,
+        items: s.items,
+        selectCandidate: s.selectCandidate,
+        confirmItem: s.confirmItem,
+        confirmAllSelected: s.confirmAllSelected,
+        isLoading: s.isLoading,
+      }))
+    );
 
   const itemOf = (rowNumber: number) => items.find((it) => it.row_number === rowNumber);
 
@@ -40,6 +44,23 @@ export default function CenterPanel({ blocked }: { blocked: string | null }) {
   }, [items]);
 
   const confirmedCount = items.filter((it) => it.confirmed).length;
+
+  const confirmableCount = items.filter(
+    (it) =>
+      !it.confirmed &&
+      it.selectedBindingId !== null &&
+      it.candidates.some((c) => c.binding_id === it.selectedBindingId)
+  ).length;
+
+  const handleConfirmAll = () => {
+    const { newlyConfirmedCount, unselectedCount } = confirmAllSelected();
+    if (newlyConfirmedCount === 0) return;
+    if (unselectedCount > 0) {
+      notify(`已确认 ${newlyConfirmedCount} 条，${unselectedCount} 条无选择未处理`, "w");
+    } else {
+      notify(`已确认 ${newlyConfirmedCount} 条绑定`, "s");
+    }
+  };
 
   const filterCandidates = (candidates: BindingCandidate[]): BindingCandidate[] => {
     const q = search.trim().toLowerCase();
@@ -118,6 +139,16 @@ export default function CenterPanel({ blocked }: { blocked: string | null }) {
     <div className="flex-1 bg-[var(--bg)] flex flex-col overflow-hidden min-w-0">
       <div className="p-[10px] border-b border-[var(--border)] bg-[var(--bg2)] shrink-0 flex items-center gap-3">
         <span className="text-[13px] font-medium text-[var(--text)]">匹配评审</span>
+        <button
+          type="button"
+          className="px-[10px] py-[4px] rounded-[3px] text-[11px] cursor-pointer border border-[var(--accent2)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-40 disabled:cursor-not-allowed"
+          disabled={
+            isLoading || !match || match.blocked || blocked !== null || confirmableCount === 0
+          }
+          onClick={handleConfirmAll}
+        >
+          一键确认绑定
+        </button>
         <div className="flex-1" />
         <input
           className="w-[200px] bg-[var(--bg3)] border border-[var(--border)] rounded-[4px] px-[9px] py-[5px] text-[11px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)]"

@@ -2,7 +2,7 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "g1",
+        "id": "group1",
         "region": "left",
         "unit": {
           "root": {
@@ -11,25 +11,33 @@
           },
           "attachments": [
             {
-              "id": "status_panel",
+              "id": "panel_left",
               "deviceType": "状态面板",
               "relativeTo": "air_tank",
               "side": "left"
             },
             {
-              "id": "valve1",
+              "id": "valve_top",
               "deviceType": "阀门",
               "relativeTo": "air_tank",
               "side": "top"
-            },
+            }
+          ]
+        },
+        "count": 1,
+        "topology": "single"
+      },
+      {
+        "id": "group2",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "flow1",
+            "deviceType": "流量计"
+          },
+          "attachments": [
             {
-              "id": "flow1",
-              "deviceType": "流量计",
-              "relativeTo": "valve1",
-              "side": "right"
-            },
-            {
-              "id": "pressure1",
+              "id": "press1",
               "deviceType": "压力传感器",
               "relativeTo": "flow1",
               "side": "right"
@@ -37,17 +45,18 @@
             {
               "id": "flow2",
               "deviceType": "流量计",
-              "relativeTo": "pressure1",
+              "relativeTo": "press1",
               "side": "right"
             }
           ]
         },
         "count": 1,
-        "arrangement": "horizontal",
-        "topology": "series"
+        "topology": "single",
+        "relativeTo": "group1",
+        "side": "right"
       },
       {
-        "id": "g2",
+        "id": "group3",
         "region": "right",
         "unit": {
           "root": {
@@ -56,65 +65,30 @@
           },
           "attachments": [
             {
-              "id": "valve2",
+              "id": "valve_n1",
               "deviceType": "阀门",
               "relativeTo": "n2_tank1",
               "side": "top"
             },
             {
-              "id": "flow3",
+              "id": "flow_n1",
               "deviceType": "流量计",
-              "relativeTo": "valve2",
+              "relativeTo": "valve_n1",
               "side": "right"
             },
             {
-              "id": "pressure2",
+              "id": "press_n1",
               "deviceType": "压力传感器",
-              "relativeTo": "flow3",
+              "relativeTo": "flow_n1",
               "side": "right"
             }
           ]
         },
-        "count": 1,
-        "arrangement": "horizontal",
-        "topology": "series",
-        "relativeTo": "g1",
+        "count": 2,
+        "arrangement": "vertical",
+        "topology": "single",
+        "relativeTo": "group2",
         "side": "right"
-      },
-      {
-        "id": "g3",
-        "region": "right",
-        "unit": {
-          "root": {
-            "id": "n2_tank2",
-            "deviceType": "氮气罐"
-          },
-          "attachments": [
-            {
-              "id": "valve3",
-              "deviceType": "阀门",
-              "relativeTo": "n2_tank2",
-              "side": "top"
-            },
-            {
-              "id": "flow4",
-              "deviceType": "流量计",
-              "relativeTo": "valve3",
-              "side": "right"
-            },
-            {
-              "id": "pressure3",
-              "deviceType": "压力传感器",
-              "relativeTo": "flow4",
-              "side": "right"
-            }
-          ]
-        },
-        "count": 1,
-        "arrangement": "horizontal",
-        "topology": "series",
-        "relativeTo": "g2",
-        "side": "bottom"
       }
     ],
     "constraints": {

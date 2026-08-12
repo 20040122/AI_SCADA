@@ -143,6 +143,11 @@ function clearBuildResult(): Partial<BindingStore> {
   };
 }
 
+export interface BulkConfirmResult {
+  newlyConfirmedCount: number;
+  unselectedCount: number;
+}
+
 export interface BindingStore {
   sourceType: BindingSourceType | null;
   sourceRevision: number;
@@ -182,6 +187,7 @@ export interface BindingStore {
   runMatch: () => Promise<void>;
   selectCandidate: (rowNumber: number, bindingId: string) => void;
   confirmItem: (rowNumber: number) => void;
+  confirmAllSelected: () => BulkConfirmResult;
   runBuild: () => Promise<void>;
   setTargetFileName: (name: string) => void;
   setUploadResult: (res: UploadCanvasResponse | null) => void;
@@ -298,6 +304,27 @@ export const useBindingStore = create<BindingStore>((set, get) => ({
         ...clearBuildResult(),
       };
     });
+  },
+
+  confirmAllSelected: () => {
+    const s = get();
+    let newlyConfirmedCount = 0;
+    let unselectedCount = 0;
+    const items = s.items.map((it) => {
+      if (it.confirmed) return it;
+      const key = it.selectedBindingId;
+      if (!key || !candidateByBindingId(it, key)) {
+        unselectedCount += 1;
+        return it;
+      }
+      newlyConfirmedCount += 1;
+      return { ...it, confirmed: true };
+    });
+    if (newlyConfirmedCount === 0) {
+      return { newlyConfirmedCount: 0, unselectedCount };
+    }
+    set({ items, ...clearBuildResult() });
+    return { newlyConfirmedCount, unselectedCount };
   },
 
   runBuild: async () => {
