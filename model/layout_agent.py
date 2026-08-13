@@ -12,6 +12,7 @@ from typing import Optional
 import jsonschema
 
 from data.sqlite.material_db import MaterialDB
+from model.layout_tools.control_size import material_map as control_material_map
 from model.layout_tools.geometry import content_rect_of_nodes
 from model.layout_tools.get_background import generate_layout
 from model.layout_tools.pipe_serializer import next_edge_i, serialize_pipes
@@ -130,6 +131,17 @@ class LayoutAgent:
         logger.info("Step 5: 拼装最终 JSON...")
         out = deepcopy(canvas)
         d = list(out.get("d", []))
+
+        snapshot = [
+            {
+                "displayName": name,
+                "image": str(item.get("image") or ""),
+                "width": float(item.get("width") or 0),
+                "height": float(item.get("height") or 0),
+            }
+            for name, item in control_material_map(materials).items()
+        ]
+        out.setdefault("a", {})["layout.materials"] = snapshot
 
         max_i = 0
         for n in d:

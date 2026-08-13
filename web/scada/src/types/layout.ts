@@ -62,6 +62,13 @@ export interface DecorationNode {
   labelFor?: number;
 }
 
+export interface LayoutMaterial {
+  displayName: string;
+  image: string;
+  width: number;
+  height: number;
+}
+
 export interface LayoutJsonData {
   v: string;
   p: Record<string, unknown>;
@@ -72,6 +79,7 @@ export interface LayoutJsonData {
     rectSelectable?: boolean;
     zoomable?: boolean;
     pannable?: boolean;
+    "layout.materials"?: LayoutMaterial[];
   };
   d: LayoutNodeData[];
   contentRect?: ContentRect;

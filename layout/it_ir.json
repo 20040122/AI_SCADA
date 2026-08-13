@@ -2,92 +2,91 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group1",
-        "region": "left",
-        "unit": {
-          "root": {
-            "id": "air_tank",
-            "deviceType": "空气罐"
-          },
-          "attachments": [
-            {
-              "id": "panel_left",
-              "deviceType": "状态面板",
-              "relativeTo": "air_tank",
-              "side": "left"
-            },
-            {
-              "id": "valve_top",
-              "deviceType": "阀门",
-              "relativeTo": "air_tank",
-              "side": "top"
-            }
-          ]
-        },
-        "count": 1,
-        "topology": "single"
-      },
-      {
-        "id": "group2",
+        "id": "group-1",
         "region": "center",
         "unit": {
           "root": {
-            "id": "flow1",
-            "deviceType": "流量计"
+            "id": "root",
+            "deviceType": "溢流阀"
           },
-          "attachments": [
-            {
-              "id": "press1",
-              "deviceType": "压力传感器",
-              "relativeTo": "flow1",
-              "side": "right"
-            },
-            {
-              "id": "flow2",
-              "deviceType": "流量计",
-              "relativeTo": "press1",
-              "side": "right"
-            }
-          ]
+          "attachments": []
         },
-        "count": 1,
+        "count": 4,
+        "topology": "single"
+      },
+      {
+        "id": "group-2",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "液压泵"
+          },
+          "attachments": []
+        },
+        "count": 4,
         "topology": "single",
-        "relativeTo": "group1",
+        "relativeTo": "group-1",
         "side": "right"
       },
       {
-        "id": "group3",
-        "region": "right",
+        "id": "group-3",
+        "region": "center",
         "unit": {
           "root": {
-            "id": "n2_tank1",
-            "deviceType": "氮气罐"
+            "id": "root",
+            "deviceType": "电机"
           },
-          "attachments": [
-            {
-              "id": "valve_n1",
-              "deviceType": "阀门",
-              "relativeTo": "n2_tank1",
-              "side": "top"
-            },
-            {
-              "id": "flow_n1",
-              "deviceType": "流量计",
-              "relativeTo": "valve_n1",
-              "side": "right"
-            },
-            {
-              "id": "press_n1",
-              "deviceType": "压力传感器",
-              "relativeTo": "flow_n1",
-              "side": "right"
-            }
-          ]
+          "attachments": []
         },
         "count": 2,
-        "arrangement": "vertical",
         "topology": "single",
-        "relativeTo": "group2",
+        "relativeTo": "group-2",
+        "side": "right"
+      },
+      {
+        "id": "group-4",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "吸油过滤器"
+          },
+          "attachments": []
+        },
+        "count": 2,
+        "topology": "single",
+        "relativeTo": "group-3",
+        "side": "right"
+      },
+      {
+        "id": "group-5",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "回油单向阀"
+          },
+          "attachments": []
+        },
+        "count": 1,
+        "topology": "single",
+        "relativeTo": "group-4",
+        "side": "right"
+      },
+      {
+        "id": "group-6",
+        "region": "center",
+        "unit": {
+          "root": {
+            "id": "root",
+            "deviceType": "油箱"
+          },
+          "attachments": []
+        },
+        "count": 1,
+        "topology": "single",
+        "relativeTo": "group-5",
         "side": "right"
       }
     ],

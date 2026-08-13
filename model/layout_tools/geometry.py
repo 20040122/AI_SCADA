@@ -58,3 +58,16 @@ def content_rect_of_nodes(nodes: list[dict]) -> dict:
         "width": round(max_x - min_x, 5),
         "height": round(max_y - min_y, 5),
     }
+
+
+def content_rect_of_canvas(width: float, height: float) -> dict:
+    title_bottom = max(80, round(height * 0.086))
+    top = title_bottom + max(20, round(height * 0.02))
+    side = max(40, round(width * 0.03))
+    bottom = max(40, round(height * 0.06))
+    return {
+        "x": side,
+        "y": top,
+        "width": max(100, width - side * 2),
+        "height": max(100, height - top - bottom),
+    }

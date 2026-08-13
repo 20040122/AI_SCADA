@@ -5,7 +5,12 @@ import math
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from model.layout_tools.geometry import inscribe_ratio
+from model.layout_tools.control_size import resolve_control_size
+from model.layout_tools.geometry import (
+    content_rect_of_canvas,
+    content_rect_of_nodes,
+    inscribe_ratio,
+)
 from model.llm_client import default_client, default_model, call_llm
 
 
@@ -23,7 +28,13 @@ _ACTION_FIELDS = {
     "align": {"type", "target_ids", "alignment"},
     "distribute": {"type", "target_ids", "axis"},
     "add_label": {"type", "target_ids", "text", "names"},
+    "add_control": {"type", "target_ids", "material_candidates", "sides"},
 }
+
+_ADD_GAP = 40
+_MIN_SCALE_PERCENT = 50
+_SIDE_NAMES = {"left": "左侧", "right": "右侧", "top": "上方", "bottom": "下方"}
+_ADD_TOLERANCE = 0.02
 
 
 @dataclass
@@ -321,15 +332,20 @@ def _build_prompt(
     canvas_height: Any,
     catalog: list[dict[str, Any]],
     selected_node_ids: tuple[int, ...],
+    materials: Optional[list[dict[str, Any]]] = None,
 ) -> str:
     selected = "none" if not selected_node_ids else ",".join(str(i) for i in selected_node_ids)
     catalog_json = json.dumps(catalog, ensure_ascii=False, indent=2)
+    materials_json = json.dumps(materials or [], ensure_ascii=False, indent=2)
     return f"""You refine an interactive SCADA canvas by returning semantic actions.
 Canvas width: {canvas_width}
 Canvas height: {canvas_height}
 Selected control ID(s): {selected}
 Control catalog with stable IDs and current geometry:
 {catalog_json}
+
+Materials available for adding controls (exact display names from the layout snapshot):
+{materials_json}
 
 When the user says "these controls" or "选中控件", apply the action to the current selected ID(s).
 When the user explicitly names a control or ID, use that specific target — do not merge with the current selection.
@@ -349,11 +365,18 @@ Supported actions are:
 {{"type":"add_label","target_ids":[12],"text":"入口阀"}}
 {{"type":"add_label","target_ids":[12,13],"text":"阀门"}}
 {{"type":"add_label","target_ids":[12,13],"names":{{"12":"入口阀","13":"出口阀"}}}}
+{{"type":"add_control","target_ids":[12],"material_candidates":["状态面板"],"sides":["left"]}}
 Allowed alignments: left, right, top, bottom, center_x, center_y.
 Allowed distribution axes: horizontal, vertical.
 For naming: text and names are mutually exclusive; without either, each control uses its own displayName.
 names keys must be JSON strings matching control IDs exactly, e.g. "12" for control 12.
-Do not add fields outside the selected action schema."""
+Do not add fields outside the selected action schema.
+
+Rules for add_control:
+- Use it only when the user asks to add a control; it must be the ONLY action in the response.
+- target_ids must be exactly the single currently selected control ID; never name another control.
+- material_candidates must use exact display names from the material list above. When the user's request could match several materials, return all plausible candidates (up to 5) and let the backend decide; never guess a single one.
+- sides accepts a single "left"/"right"/"top"/"bottom", or ["left","right"], or ["top","bottom"]. "两侧" means left and right. When the user does not specify a side, omit sides and the backend will ask instead of guessing."""
 
 
 def _response_data(response: Any) -> dict[str, Any]:
@@ -448,6 +471,35 @@ def _validate_action(action: Any, known_ids: set[int]) -> None:
             names = action["names"]
             if not isinstance(names, dict):
                 raise RefineModelError("add_label names must be an object")
+    elif action_type == "add_control":
+        if not set(action).issubset(
+            {"type", "target_ids", "material_candidates", "sides"}
+        ):
+            raise RefineModelError("add_control contains invalid fields")
+        if "material_candidates" in action:
+            candidates = action["material_candidates"]
+            if not isinstance(candidates, list):
+                raise RefineModelError("material_candidates must be an array")
+            if not candidates:
+                raise RefineModelError("material_candidates must not be empty")
+            if any(not isinstance(value, str) for value in candidates):
+                raise RefineModelError("material_candidates must be strings")
+            if len(set(candidates)) > 5:
+                raise RefineModelError(
+                    "material_candidates must have at most 5 unique names"
+                )
+        if "sides" in action:
+            sides = action["sides"]
+            if isinstance(sides, str):
+                if not sides:
+                    raise RefineModelError("sides must not be empty")
+            elif isinstance(sides, list):
+                if not sides:
+                    raise RefineModelError("sides must not be empty")
+                if any(not isinstance(value, str) for value in sides):
+                    raise RefineModelError("sides must be strings")
+            else:
+                raise RefineModelError("sides must be an array or string")
 
 
 def _validate_model_data(data: dict[str, Any], known_ids: set[int]) -> None:
@@ -667,6 +719,448 @@ def _update_label_from_control(
     label.touched = True
 
 
+def _normalize_sides(sides: list[str]) -> list[str]:
+    if len(sides) == 1:
+        side = sides[0]
+        if side not in _SIDE_NAMES:
+            raise RefineInputError(f"不支持的方位：{side}")
+        return [side]
+    if len(sides) != 2:
+        raise RefineInputError("仅支持单个方位或左右、上下成对方位")
+    if sorted(sides) == ["left", "right"]:
+        return ["left", "right"]
+    if sorted(sides) == ["bottom", "top"]:
+        return ["top", "bottom"]
+    raise RefineInputError("仅支持成对添加左右两侧或上下两侧")
+
+
+def _place_at(
+    anchor: _ControlGeometry,
+    side: str,
+    width: float,
+    height: float,
+) -> tuple[float, float]:
+    if side == "left":
+        return anchor.x - anchor.width / 2 - _ADD_GAP - width / 2, anchor.y
+    if side == "right":
+        return anchor.x + anchor.width / 2 + _ADD_GAP + width / 2, anchor.y
+    if side == "top":
+        return anchor.x, anchor.y - anchor.height / 2 - _ADD_GAP - height / 2
+    return anchor.x, anchor.y + anchor.height / 2 + _ADD_GAP + height / 2
+
+
+def _rect_gap(
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    ox: float,
+    oy: float,
+    ow: float,
+    oh: float,
+) -> float:
+    left = x - width / 2
+    right = x + width / 2
+    top = y - height / 2
+    bottom = y + height / 2
+    o_left = ox - ow / 2
+    o_right = ox + ow / 2
+    o_top = oy - oh / 2
+    o_bottom = oy + oh / 2
+    gap_x = max(o_left - right, left - o_right, 0.0)
+    gap_y = max(o_top - bottom, top - o_bottom, 0.0)
+    if gap_x > 0 and gap_y > 0:
+        return math.hypot(gap_x, gap_y)
+    return max(gap_x, gap_y)
+
+
+def _anchor_edge_gap(
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    anchor: _ControlGeometry,
+    side: str,
+) -> float:
+    if side == "left":
+        return anchor.x - anchor.width / 2 - (x - width / 2)
+    if side == "right":
+        return x - width / 2 - (anchor.x + anchor.width / 2)
+    if side == "top":
+        return anchor.y - anchor.height / 2 - (y - height / 2)
+    return y - height / 2 - (anchor.y + anchor.height / 2)
+
+
+def _fits(
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    safe: dict[str, Any],
+    canvas_width: Any,
+    canvas_height: Any,
+    obstacles: list[_ControlGeometry],
+) -> bool:
+    left = x - width / 2
+    right = x + width / 2
+    top = y - height / 2
+    bottom = y + height / 2
+    if left < 0 or top < 0 or right > canvas_width or bottom > canvas_height:
+        return False
+    if (
+        left < safe["x"]
+        or top < safe["y"]
+        or right > safe["x"] + safe["width"]
+        or bottom > safe["y"] + safe["height"]
+    ):
+        return False
+    for obstacle in obstacles:
+        if (
+            _rect_gap(
+                x,
+                y,
+                width,
+                height,
+                obstacle.x,
+                obstacle.y,
+                obstacle.width,
+                obstacle.height,
+            )
+            < _ADD_GAP
+        ):
+            return False
+    return True
+
+
+def _max_fit_scale(
+    anchor: _ControlGeometry,
+    side: str,
+    base_width: float,
+    base_height: float,
+    safe: dict[str, Any],
+    canvas_width: Any,
+    canvas_height: Any,
+    obstacles: list[_ControlGeometry],
+) -> Optional[tuple[int, float, float, float, float]]:
+    for percent in range(100, _MIN_SCALE_PERCENT - 1, -1):
+        width = base_width * percent / 100
+        height = base_height * percent / 100
+        x, y = _place_at(anchor, side, width, height)
+        if _fits(x, y, width, height, safe, canvas_width, canvas_height, obstacles):
+            return percent, x, y, width, height
+    return None
+
+
+def _verify_placement(
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    anchor: _ControlGeometry,
+    side: str,
+    safe: dict[str, Any],
+    canvas_width: Any,
+    canvas_height: Any,
+    obstacles: list[_ControlGeometry],
+) -> bool:
+    left = x - width / 2
+    right = x + width / 2
+    top = y - height / 2
+    bottom = y + height / 2
+    if (
+        left < -_ADD_TOLERANCE
+        or top < -_ADD_TOLERANCE
+        or right > canvas_width + _ADD_TOLERANCE
+        or bottom > canvas_height + _ADD_TOLERANCE
+    ):
+        return False
+    if (
+        left < safe["x"] - _ADD_TOLERANCE
+        or top < safe["y"] - _ADD_TOLERANCE
+        or right > safe["x"] + safe["width"] + _ADD_TOLERANCE
+        or bottom > safe["y"] + safe["height"] + _ADD_TOLERANCE
+    ):
+        return False
+    if side in ("left", "right") and abs(y - anchor.y) > _ADD_TOLERANCE:
+        return False
+    if side in ("top", "bottom") and abs(x - anchor.x) > _ADD_TOLERANCE:
+        return False
+    if _anchor_edge_gap(x, y, width, height, anchor, side) < _ADD_GAP - _ADD_TOLERANCE:
+        return False
+    for obstacle in obstacles:
+        if (
+            _rect_gap(
+                x,
+                y,
+                width,
+                height,
+                obstacle.x,
+                obstacle.y,
+                obstacle.width,
+                obstacle.height,
+            )
+            < _ADD_GAP - _ADD_TOLERANCE
+        ):
+            return False
+    return True
+
+
+def _validate_snapshot_structure(json_data: dict[str, Any]) -> None:
+    attributes = json_data.get("a")
+    if not isinstance(attributes, dict):
+        raise RefineInputError("canvas attributes must be an object")
+    if "layout.materials" not in attributes:
+        return
+    snapshot = attributes["layout.materials"]
+    if not isinstance(snapshot, list):
+        raise RefineInputError("layout.materials must be an array")
+    for item in snapshot:
+        if not isinstance(item, dict):
+            raise RefineInputError("layout.materials entries must be objects")
+        name = item.get("displayName")
+        if not isinstance(name, str) or not name:
+            raise RefineInputError(
+                "layout.materials displayName must be a non-empty string"
+            )
+        if "image" in item and not isinstance(item["image"], str):
+            raise RefineInputError("layout.materials image must be a string")
+        for key in ("width", "height"):
+            if key in item and not _is_finite_number(item[key]):
+                raise RefineInputError(
+                    f"layout.materials {key} must be a finite number"
+                )
+
+
+def _unique_add_name(base: str, used_names: set[str]) -> str:
+    name = base
+    suffix = 2
+    while name in used_names:
+        name = f"{base}{suffix}"
+        suffix += 1
+    used_names.add(name)
+    return name
+
+
+def _round2(value: float):
+    rounded = round(value, 2)
+    if rounded == int(rounded):
+        return int(rounded)
+    return rounded
+
+
+def _apply_add_control(
+    actions: list[dict[str, Any]],
+    json_data: dict[str, Any],
+    controls: dict[int, _ControlGeometry],
+    labels: dict[int, _LabelInfo],
+    canvas_width: Any,
+    canvas_height: Any,
+    selection: tuple[int, ...],
+) -> RefineResult:
+    if len(actions) != 1 or actions[0].get("type") != "add_control":
+        raise RefineInputError("添加控件必须独占一次请求，不能与其他动作混用")
+    action = actions[0]
+    if len(selection) != 1:
+        raise RefineInputError("添加控件需要先单选一个锚点控件")
+    anchor_i = selection[0]
+    target_ids = action["target_ids"]
+    if len(target_ids) != 1 or target_ids[0] != anchor_i:
+        raise RefineInputError(
+            "添加控件必须针对当前唯一选中的控件，不能通过文字点名其他控件"
+        )
+    attributes = json_data.get("a")
+    snapshot = (
+        attributes.get("layout.materials") if isinstance(attributes, dict) else None
+    )
+    if snapshot is None:
+        raise RefineInputError("该画布缺少素材快照，无法添加控件")
+    candidates = action.get("material_candidates")
+    if not candidates:
+        raise RefineInputError("缺少素材名称，请指定要添加的控件素材")
+    seen = set()
+    deduped = []
+    for name in candidates:
+        if name not in seen:
+            seen.add(name)
+            deduped.append(name)
+    if len(deduped) > 1:
+        raise RefineInputError(f"素材名称存在歧义，请重新指定：{'、'.join(deduped)}")
+    candidate = deduped[0]
+    material = next(
+        (m for m in snapshot if m.get("displayName") == candidate), None
+    )
+    if material is None:
+        raise RefineInputError(f"素材「{candidate}」不在该画布的素材快照中，无法添加")
+    sides = action.get("sides")
+    if isinstance(sides, str):
+        sides = [sides]
+    if not sides:
+        raise RefineInputError("缺少放置方位，请指定左侧、右侧、上方或下方")
+    ordered_sides = _normalize_sides(sides)
+
+    anchor = controls[anchor_i]
+    obstacles = [c for c in controls.values() if c.node_i != anchor_i]
+    safe = content_rect_of_canvas(canvas_width, canvas_height)
+    base_width, base_height, source_width, source_height = resolve_control_size(
+        candidate, material
+    )
+
+    if len(ordered_sides) == 1:
+        side = ordered_sides[0]
+        fit = _max_fit_scale(
+            anchor,
+            side,
+            base_width,
+            base_height,
+            safe,
+            canvas_width,
+            canvas_height,
+            obstacles,
+        )
+        if fit is None:
+            raise RefineInputError("没有足够的空间放置新控件，请尝试其他方位或缩小画布")
+        placements = [(side, fit)]
+    else:
+        fits = []
+        for side in ordered_sides:
+            fit = _max_fit_scale(
+                anchor,
+                side,
+                base_width,
+                base_height,
+                safe,
+                canvas_width,
+                canvas_height,
+                obstacles,
+            )
+            if fit is None:
+                raise RefineInputError(
+                    "没有足够的空间放置新控件，请尝试其他方位或缩小画布"
+                )
+            fits.append((side, fit))
+        percent = min(fit[0] for _, fit in fits)
+        placements = []
+        for side, _ in fits:
+            width = base_width * percent / 100
+            height = base_height * percent / 100
+            x, y = _place_at(anchor, side, width, height)
+            placements.append((side, (percent, x, y, width, height)))
+
+    final_placements = []
+    for side, (percent, x, y, width, height) in placements:
+        rx = _round2(x)
+        ry = _round2(y)
+        rw = _round2(width)
+        rh = _round2(height)
+        if not _verify_placement(
+            rx,
+            ry,
+            rw,
+            rh,
+            anchor,
+            side,
+            safe,
+            canvas_width,
+            canvas_height,
+            obstacles,
+        ):
+            raise RefineInputError("没有足够的空间放置新控件，请尝试其他方位或缩小画布")
+        final_placements.append((side, percent, rx, ry, rw, rh))
+
+    entries = json_data.get("d")
+    max_i = 0
+    for item in entries if isinstance(entries, list) else []:
+        node_i = item.get("i")
+        if isinstance(node_i, int) and not isinstance(node_i, bool) and node_i > max_i:
+            max_i = node_i
+    used_names = {
+        str(item.get("p", {}).get("displayName") or "")
+        for item in entries
+        if isinstance(item, dict) and isinstance(item.get("p"), dict)
+    }
+    anchor_item = next(
+        (item for item in entries if item.get("i") == anchor_i),
+        None,
+    )
+    anchor_a = (
+        anchor_item.get("a")
+        if anchor_item is not None and isinstance(anchor_item.get("a"), dict)
+        else {}
+    )
+    group = anchor_a.get("layout.group") or f"refine_group_{anchor_i}"
+    instance = anchor_a.get("layout.instance")
+    if not isinstance(instance, int) or isinstance(instance, bool):
+        instance = 1
+    image = str(material.get("image") or "") or f"symbols/Agent/{candidate}.json"
+    material_name = str(material.get("displayName") or candidate)
+
+    nodes = []
+    for index, (side, percent, x, y, width, height) in enumerate(final_placements):
+        new_i = max_i + 1 + index
+        display_name = _unique_add_name(candidate, used_names)
+        nodes.append(
+            {
+                "c": "ht.Node",
+                "i": new_i,
+                "p": {
+                    "displayName": display_name,
+                    "image": image,
+                    "position": {"x": x, "y": y},
+                    "width": width,
+                    "height": height,
+                },
+                "a": {
+                    "layout.group": group,
+                    "layout.node": f"refine_{new_i}",
+                    "layout.instance": instance,
+                    "layout.materialName": material_name,
+                    "layout.sourceWidth": _round2(source_width),
+                    "layout.sourceHeight": _round2(source_height),
+                },
+            }
+        )
+
+    flat = [
+        {
+            "x": control.x,
+            "y": control.y,
+            "width": control.width,
+            "height": control.height,
+        }
+        for control in controls.values()
+    ]
+    for side, percent, x, y, width, height in final_placements:
+        flat.append({"x": x, "y": y, "width": width, "height": height})
+    new_rect = content_rect_of_nodes(flat)
+
+    patch = [
+        {"op": "add", "path": "/d/-", "value": node} for node in nodes
+    ]
+    rect_op = "replace" if "contentRect" in json_data else "add"
+    patch.append({"op": rect_op, "path": "/contentRect", "value": new_rect})
+    _validate_patch(patch, controls, labels, allow_content_rect=True)
+
+    if len(final_placements) == 1:
+        side_label = _SIDE_NAMES[final_placements[0][0]]
+        message = (
+            f"已在锚点控件{side_label}添加「{material_name}」"
+            f"（{final_placements[0][4]}×{final_placements[0][5]}，"
+            f"缩放 {final_placements[0][1]}%）"
+        )
+    else:
+        side_pair = tuple(side for side, *_ in final_placements)
+        if side_pair == ("left", "right"):
+            sides_label = "左右两侧"
+        else:
+            sides_label = "上下两侧"
+        message = (
+            f"已在锚点控件{sides_label}各添加一个「{material_name}」"
+            f"（{final_placements[0][4]}×{final_placements[0][5]}，"
+            f"缩放 {final_placements[0][1]}%）"
+        )
+    return RefineResult(patch=patch, message=message)
+
+
 def _apply_actions(
     actions: list[dict[str, Any]],
     controls: dict[int, _ControlGeometry],
@@ -746,9 +1240,12 @@ def _validate_patch(
     patch: list[dict[str, Any]],
     controls: dict[int, _ControlGeometry],
     labels: dict[int, _LabelInfo],
+    allow_content_rect: bool = False,
 ) -> None:
     allowed_paths: set[str] = set()
     remove_paths: set[str] = set()
+    if allow_content_rect:
+        allowed_paths.add("/contentRect")
     for control in controls.values():
         prefix = f"/d/{control.index}/p"
         allowed_paths.update(
@@ -798,6 +1295,14 @@ def _validate_patch(
             value = operation.get("value")
             if not isinstance(value, dict) or set(operation) != {"op", "path", "value"}:
                 raise RefineModelError("generated /d/- add must have an object value")
+            continue
+        if path == "/contentRect":
+            if (
+                set(operation) != {"op", "path", "value"}
+                or op not in {"add", "replace"}
+                or not isinstance(operation["value"], dict)
+            ):
+                raise RefineModelError("generated contentRect patch must be an object")
             continue
         if (
             set(operation) != {"op", "path", "value"}
@@ -1007,11 +1512,19 @@ class RefineAgent:
         if self._client is None or not self._model:
             raise RefineUnavailableError("refine model is unavailable")
 
+        attributes = json_data.get("a")
+        materials = (
+            attributes.get("layout.materials")
+            if isinstance(attributes, dict)
+            and isinstance(attributes.get("layout.materials"), list)
+            else None
+        )
         prompt = _build_prompt(
             canvas_width,
             canvas_height,
             catalog,
             normalized_selection,
+            materials,
         )
         try:
             response = await call_llm(
@@ -1032,6 +1545,25 @@ class RefineAgent:
         actions = data["actions"]
         if not actions:
             return RefineResult(patch=[], message=data["message"])
+
+        has_add_control = any(
+            isinstance(action, dict) and action.get("type") == "add_control"
+            for action in actions
+        )
+        if has_add_control:
+            _validate_snapshot_structure(json_data)
+            try:
+                return _apply_add_control(
+                    actions,
+                    json_data,
+                    controls,
+                    labels,
+                    canvas_width,
+                    canvas_height,
+                    normalized_selection,
+                )
+            except RefineInputError as exc:
+                return RefineResult(patch=[], message=str(exc))
 
         try:
             _apply_actions(
