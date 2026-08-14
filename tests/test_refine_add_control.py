@@ -58,14 +58,14 @@ def _json(
     return {"a": attributes, "d": entries}
 
 
-def _control(node_i: int, name: str, x: float, y: float, w: float, h: float) -> dict:
+def _control(node_i: int, name: str, x: float, y: float, w: float, h: float, image: str = "symbols/x.png") -> dict:
     return {
         "c": "ht.Node",
         "i": node_i,
         "a": {"layout.node": True},
         "p": {
             "displayName": name,
-            "image": "symbols/x.png",
+            "image": image,
             "position": {"x": x, "y": y},
             "width": w,
             "height": h,
@@ -280,19 +280,20 @@ async def test_no_selection_rejected():
         [],
     )
     assert result.patch == []
-    assert "单选" in result.message
+    assert "选中" in result.message
 
 
 @pytest.mark.asyncio
-async def test_multi_selection_rejected():
+async def test_multi_selection_different_images_rejected():
     extra = [_control(20400, "阀门", 300, 300, 60, 60)]
     result = await _refine(
-        '[{"type":"add_control","target_ids":[20399],"material_candidates":["状态面板"],"sides":["left"]}]',
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
         _json(extra=extra),
         [20399, 20400],
     )
     assert result.patch == []
-    assert "单选" in result.message
+    assert "素材不一致" in result.message
+    assert "未生成任何节点" in result.message
 
 
 @pytest.mark.asyncio
@@ -533,6 +534,322 @@ async def test_rounding_keeps_gap_valid():
     anchor_left = 960 - 120.005 / 2
     new_right = node["p"]["position"]["x"] + node["p"]["width"] / 2
     assert abs((anchor_left - new_right) - 40) <= 0.02
+
+
+def _batch_json(anchor: dict, extras: list[dict]) -> dict:
+    return _json(
+        anchor_x=anchor["p"]["position"]["x"],
+        anchor_y=anchor["p"]["position"]["y"],
+        anchor_w=anchor["p"]["width"],
+        anchor_h=anchor["p"]["height"],
+        extra=extras,
+    )
+
+
+def _panel_anchor(node_i: int, x: float, y: float) -> dict:
+    return _control(node_i, f"锚点{node_i}", x, y, 60, 60, image="symbols/panel.json")
+
+
+@pytest.mark.asyncio
+async def test_batch_two_anchors_single_side_creates_two_nodes():
+    anchor_a = _json()
+    anchor_b = _panel_anchor(20400, 300, 300)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 2
+    assert nodes[0]["i"] == 20401
+    assert nodes[1]["i"] == 20402
+    assert nodes[0]["p"]["position"] == {"x": 800, "y": 540}
+    assert nodes[1]["p"]["position"] == {"x": 170, "y": 300}
+    assert nodes[0]["p"]["width"] == 120
+    assert nodes[0]["p"]["height"] == 44.44
+    assert nodes[0]["p"]["displayName"] == "状态面板2"
+    assert nodes[1]["p"]["displayName"] == "状态面板3"
+    assert nodes[0]["a"]["layout.group"] == "g1"
+    assert nodes[0]["a"]["layout.instance"] == 1
+    assert nodes[1]["a"]["layout.group"] == "refine_group_20400"
+    assert nodes[1]["a"]["layout.instance"] == 1
+    assert nodes[0]["a"]["layout.node"] == "refine_20401"
+    assert len(_content_rect_ops(result.patch)) == 1
+    assert "2 个锚点" in result.message
+    assert "共添加 2 个" in result.message
+    assert "「状态面板」" in result.message
+    assert "统一缩放 100%" in result.message
+    assert "全部按请求方向放置" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_pair_sides_creates_2n_nodes():
+    anchor_a = _json()
+    anchor_b = _panel_anchor(20400, 300, 300)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left","right"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 4
+    assert [node["i"] for node in nodes] == [20401, 20402, 20403, 20404]
+    assert nodes[0]["p"]["position"] == {"x": 800, "y": 540}
+    assert nodes[1]["p"]["position"] == {"x": 1120, "y": 540}
+    assert nodes[2]["p"]["position"] == {"x": 170, "y": 300}
+    assert nodes[3]["p"]["position"] == {"x": 430, "y": 300}
+    assert len({node["p"]["width"] for node in nodes}) == 1
+    assert "共添加 4 个" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_different_display_names_same_image_success():
+    anchor_a = _json()
+    anchor_b = _control(20400, "阀门", 300, 300, 60, 60, image="symbols/panel.json")
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b]),
+        [20399, 20400],
+    )
+    assert len(_added(result.patch)) == 2
+
+
+@pytest.mark.asyncio
+async def test_batch_same_display_name_different_image_rejected():
+    anchor_a = _json()
+    anchor_b = _control(20400, "状态面板", 300, 300, 60, 60, image="symbols/valve.json")
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b]),
+        [20399, 20400],
+    )
+    assert result.patch == []
+    assert "素材不一致" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_missing_image_rejected():
+    anchor_a = _json()
+    anchor_b = _control(20400, "锚点20400", 300, 300, 60, 60, image="")
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b]),
+        [20399, 20400],
+    )
+    assert result.patch == []
+    assert "素材不一致" in result.message
+
+
+def _twenty_anchor_json() -> dict:
+    xs = [300, 650, 1000, 1350, 1700]
+    ys = [300, 550, 800, 950]
+    positions = [(x, y) for y in ys for x in xs]
+    anchor_a = _json(anchor_x=300, anchor_y=300, anchor_w=60, anchor_h=60)
+    extras = []
+    for idx, (x, y) in enumerate(positions[1:]):
+        extras.append(_panel_anchor(20400 + idx, x, y))
+    return _batch_json(anchor_a["d"][0], extras)
+
+
+@pytest.mark.asyncio
+async def test_batch_twenty_anchors_allowed():
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400,20401,20402,20403,20404,20405,20406,20407,20408,20409,20410,20411,20412,20413,20414,20415,20416,20417,20418],"material_candidates":["状态面板"],"sides":["top"]}]',
+        _twenty_anchor_json(),
+        [20399, 20400, 20401, 20402, 20403, 20404, 20405, 20406, 20407, 20408, 20409, 20410, 20411, 20412, 20413, 20414, 20415, 20416, 20417, 20418],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 20
+    assert [node["i"] for node in nodes] == list(range(20419, 20439))
+    assert all(node["p"]["width"] == 120 for node in nodes)
+    assert "20 个锚点" in result.message
+    assert "共添加 20 个" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_over_twenty_anchors_rejected():
+    jd = _twenty_anchor_json()
+    jd["d"].append(_panel_anchor(20419, 600, 600))
+    ids = list(range(20399, 20420))
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400,20401,20402,20403,20404,20405,20406,20407,20408,20409,20410,20411,20412,20413,20414,20415,20416,20417,20418,20419],"material_candidates":["状态面板"],"sides":["top"]}]',
+        jd,
+        ids,
+    )
+    assert result.patch == []
+    assert "一次最多支持 20 个锚点" in result.message
+    assert "当前选中 21 个" in result.message
+    assert "未生成任何节点" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_target_mismatch_rejected():
+    anchor_a = _json()
+    anchor_b = _panel_anchor(20400, 300, 300)
+    anchor_c = _panel_anchor(20401, 700, 700)
+    jd = _batch_json(anchor_a["d"][0], [anchor_b, anchor_c])
+    cases = [
+        '[{"type":"add_control","target_ids":[20399],"material_candidates":["状态面板"],"sides":["left"]}]',
+        '[{"type":"add_control","target_ids":[20399,20400,20401],"material_candidates":["状态面板"],"sides":["left"]}]',
+        '[{"type":"add_control","target_ids":[20399,20401],"material_candidates":["状态面板"],"sides":["left"]}]',
+    ]
+    for actions_json in cases:
+        result = await _refine(actions_json, jd, [20399, 20400])
+        assert result.patch == []
+        assert "目标控件与当前选中的锚点不一致" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_target_order_differs_success_in_canvas_order():
+    anchor_a = _json()
+    anchor_b = _panel_anchor(20400, 300, 300)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b]),
+        [20400, 20399],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 2
+    assert nodes[0]["i"] == 20401
+    assert nodes[0]["p"]["position"]["y"] == 540
+    assert nodes[1]["i"] == 20402
+    assert nodes[1]["p"]["position"]["y"] == 300
+
+
+@pytest.mark.asyncio
+async def test_batch_unified_scale_for_all_nodes():
+    anchor_a = _json()
+    anchor_b = _panel_anchor(20400, 700, 700)
+    obstacle = _control(20401, "挡块", 460, 700, 60, 60)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b, obstacle]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 2
+    assert nodes[0]["p"]["width"] == nodes[1]["p"]["width"] == 99.6
+    assert nodes[0]["p"]["height"] == nodes[1]["p"]["height"]
+    assert "统一缩放 83%" in result.message
+    assert "全部按请求方向放置" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_no_switch_when_50_percent_fits():
+    anchor_a = _json()
+    anchor_b = _panel_anchor(20400, 700, 700)
+    obstacle = _control(20401, "挡块", 900, 700, 60, 60)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["right"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b, obstacle]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 2
+    assert nodes[0]["p"]["width"] == 60
+    assert nodes[0]["p"]["position"]["x"] == 1090
+    assert nodes[1]["p"]["position"]["x"] == 800
+    assert "统一缩放 50%" in result.message
+    assert "全部按请求方向放置" in result.message
+    assert "换向" not in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_single_side_fallback_switches_only_failed_anchor():
+    anchor_a = _json()
+    anchor_b = _panel_anchor(20400, 300, 300)
+    obstacle = _control(20401, "挡块", 110, 300, 60, 60)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b, obstacle]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 2
+    assert nodes[0]["p"]["position"] == {"x": 800, "y": 540}
+    assert nodes[1]["p"]["position"] == {"x": 430, "y": 300}
+    assert "统一缩放 100%" in result.message
+    assert "锚点 20400 由 左侧 改为 右侧" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_pair_rotates_left_right_to_top_bottom():
+    anchor_a = _json(anchor_x=300, anchor_y=300, anchor_w=60, anchor_h=60)
+    anchor_b = _panel_anchor(20400, 1000, 600)
+    left = _control(20401, "挡块", 110, 300, 60, 60)
+    right = _control(20402, "挡块", 420, 300, 60, 60)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left","right"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b, left, right]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 4
+    assert nodes[0]["p"]["position"] == {"x": 300, "y": 207.78}
+    assert nodes[1]["p"]["position"] == {"x": 300, "y": 392.22}
+    assert nodes[2]["p"]["position"] == {"x": 870, "y": 600}
+    assert nodes[3]["p"]["position"] == {"x": 1130, "y": 600}
+    assert "锚点 20399 由 左侧、右侧 改为 上方、下方" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_pair_rotates_top_bottom_to_left_right():
+    anchor_a = _json(anchor_x=300, anchor_y=300, anchor_w=60, anchor_h=60)
+    anchor_b = _panel_anchor(20400, 1000, 600)
+    top = _control(20401, "挡块", 300, 200, 60, 60)
+    bottom = _control(20402, "挡块", 300, 400, 60, 60)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["top","bottom"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b, top, bottom]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 4
+    assert nodes[0]["p"]["position"] == {"x": 170, "y": 300}
+    assert nodes[1]["p"]["position"] == {"x": 430, "y": 300}
+    assert nodes[2]["p"]["position"] == {"x": 1000, "y": 507.78}
+    assert nodes[3]["p"]["position"] == {"x": 1000, "y": 692.22}
+    assert "锚点 20399 由 上方、下方 改为 左侧、右侧" in result.message
+    assert "锚点 20400" not in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_all_fallbacks_fail_returns_empty():
+    anchor_a = _json(anchor_x=300, anchor_y=300, anchor_w=60, anchor_h=60)
+    anchor_b = _panel_anchor(20400, 1000, 600)
+    left = _control(20401, "挡块", 110, 300, 60, 60)
+    right = _control(20402, "挡块", 420, 300, 60, 60)
+    top = _control(20403, "挡块", 300, 200, 60, 60)
+    bottom = _control(20404, "挡块", 300, 400, 60, 60)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b, left, right, top, bottom]),
+        [20399, 20400],
+    )
+    assert result.patch == []
+    assert "没有足够的空间" in result.message
+    assert "未生成任何节点" in result.message
+    assert "无法安排的锚点：20399" in result.message
+
+
+@pytest.mark.asyncio
+async def test_batch_canvas_order_priority_and_40px_gap():
+    anchor_a = _json(anchor_x=300, anchor_y=300, anchor_w=60, anchor_h=60)
+    anchor_b = _panel_anchor(20400, 580, 300)
+    result = await _refine(
+        '[{"type":"add_control","target_ids":[20399,20400],"material_candidates":["状态面板"],"sides":["left","right"]}]',
+        _batch_json(anchor_a["d"][0], [anchor_b]),
+        [20399, 20400],
+    )
+    nodes = _added(result.patch)
+    assert len(nodes) == 4
+    assert nodes[0]["p"]["position"] == {"x": 170, "y": 300}
+    assert nodes[1]["p"]["position"] == {"x": 430, "y": 300}
+    assert nodes[2]["p"]["position"] == {"x": 580, "y": 207.78}
+    assert nodes[3]["p"]["position"] == {"x": 580, "y": 392.22}
+    assert "锚点 20400 由 左侧、右侧 改为 上方、下方" in result.message
+    assert "锚点 20399" not in result.message
+    assert "统一缩放 100%" in result.message
 
 
 class FakeDB:

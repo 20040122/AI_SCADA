@@ -3,63 +3,305 @@
     "c": "ht.Node",
     "i": 20399,
     "p": {
-      "displayName": "油箱",
-      "image": "assets/Agent/油箱.png",
+      "displayName": "溢流阀",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
       "position": {
-        "x": 960,
-        "y": 251.67
+        "x": 188.33,
+        "y": 212.5
       },
-      "width": 180,
-      "height": 99.68
+      "width": 153.6,
+      "height": 120
     },
     "a": {
-      "layout.group": "g1",
-      "layout.node": "tank1",
+      "layout.group": "group-1",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "油箱",
-      "layout.sourceWidth": 316,
-      "layout.sourceHeight": 175
+      "layout.materialName": "溢流阀",
+      "layout.sourceWidth": 64,
+      "layout.sourceHeight": 50
     }
   },
   {
     "c": "ht.Node",
     "i": 20400,
     "p": {
-      "displayName": "油箱2",
-      "image": "assets/Agent/油箱.png",
+      "displayName": "溢流阀2",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
       "position": {
-        "x": 960,
-        "y": 565
+        "x": 188.33,
+        "y": 447.5
       },
-      "width": 180,
-      "height": 99.68
+      "width": 153.6,
+      "height": 120
     },
     "a": {
-      "layout.group": "g1",
-      "layout.node": "tank1",
+      "layout.group": "group-1",
+      "layout.node": "root",
       "layout.instance": 2,
-      "layout.materialName": "油箱",
-      "layout.sourceWidth": 316,
-      "layout.sourceHeight": 175
+      "layout.materialName": "溢流阀",
+      "layout.sourceWidth": 64,
+      "layout.sourceHeight": 50
     }
   },
   {
     "c": "ht.Node",
     "i": 20401,
     "p": {
-      "displayName": "油箱3",
+      "displayName": "溢流阀3",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
+      "position": {
+        "x": 188.33,
+        "y": 682.5
+      },
+      "width": 153.6,
+      "height": 120
+    },
+    "a": {
+      "layout.group": "group-1",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "溢流阀",
+      "layout.sourceWidth": 64,
+      "layout.sourceHeight": 50
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20402,
+    "p": {
+      "displayName": "溢流阀4",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
+      "position": {
+        "x": 188.33,
+        "y": 917.5
+      },
+      "width": 153.6,
+      "height": 120
+    },
+    "a": {
+      "layout.group": "group-1",
+      "layout.node": "root",
+      "layout.instance": 4,
+      "layout.materialName": "溢流阀",
+      "layout.sourceWidth": 64,
+      "layout.sourceHeight": 50
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20403,
+    "p": {
+      "displayName": "液压泵",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "position": {
+        "x": 497,
+        "y": 212.5
+      },
+      "width": 180,
+      "height": 81.82
+    },
+    "a": {
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 1,
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20404,
+    "p": {
+      "displayName": "液压泵2",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "position": {
+        "x": 497,
+        "y": 447.5
+      },
+      "width": 180,
+      "height": 81.82
+    },
+    "a": {
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20405,
+    "p": {
+      "displayName": "液压泵3",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "position": {
+        "x": 497,
+        "y": 682.5
+      },
+      "width": 180,
+      "height": 81.82
+    },
+    "a": {
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20406,
+    "p": {
+      "displayName": "液压泵4",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
+      "position": {
+        "x": 497,
+        "y": 917.5
+      },
+      "width": 180,
+      "height": 81.82
+    },
+    "a": {
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 4,
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20407,
+    "p": {
+      "displayName": "电机",
+      "image": "assets/现场控制系统/设备图片/液压电机.png",
+      "position": {
+        "x": 805.67,
+        "y": 330
+      },
+      "width": 180,
+      "height": 93.51
+    },
+    "a": {
+      "layout.group": "group-3",
+      "layout.node": "root",
+      "layout.instance": 1,
+      "layout.materialName": "电机",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 80
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20408,
+    "p": {
+      "displayName": "电机2",
+      "image": "assets/现场控制系统/设备图片/液压电机.png",
+      "position": {
+        "x": 805.67,
+        "y": 800
+      },
+      "width": 180,
+      "height": 93.51
+    },
+    "a": {
+      "layout.group": "group-3",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "电机",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 80
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20409,
+    "p": {
+      "displayName": "吸油过滤器",
+      "image": "assets/现场控制系统/设备图片/吸油过滤器.png",
+      "position": {
+        "x": 1114.33,
+        "y": 330
+      },
+      "width": 111.43,
+      "height": 260
+    },
+    "a": {
+      "layout.group": "group-4",
+      "layout.node": "root",
+      "layout.instance": 1,
+      "layout.materialName": "吸油过滤器",
+      "layout.sourceWidth": 30,
+      "layout.sourceHeight": 70
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20410,
+    "p": {
+      "displayName": "吸油过滤器2",
+      "image": "assets/现场控制系统/设备图片/吸油过滤器.png",
+      "position": {
+        "x": 1114.33,
+        "y": 800
+      },
+      "width": 111.43,
+      "height": 260
+    },
+    "a": {
+      "layout.group": "group-4",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "吸油过滤器",
+      "layout.sourceWidth": 30,
+      "layout.sourceHeight": 70
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20411,
+    "p": {
+      "displayName": "回油单向阀",
+      "image": "assets/现场控制系统/设备图片/回油单向阀.png",
+      "position": {
+        "x": 1423,
+        "y": 565
+      },
+      "width": 180,
+      "height": 96.92
+    },
+    "a": {
+      "layout.group": "group-5",
+      "layout.node": "root",
+      "layout.instance": 1,
+      "layout.materialName": "回油单向阀",
+      "layout.sourceWidth": 65,
+      "layout.sourceHeight": 35
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20412,
+    "p": {
+      "displayName": "油箱",
       "image": "assets/Agent/油箱.png",
       "position": {
-        "x": 960,
-        "y": 878.33
+        "x": 1731.67,
+        "y": 565
       },
       "width": 180,
       "height": 99.68
     },
     "a": {
-      "layout.group": "g1",
-      "layout.node": "tank1",
-      "layout.instance": 3,
+      "layout.group": "group-6",
+      "layout.node": "root",
+      "layout.instance": 1,
       "layout.materialName": "油箱",
       "layout.sourceWidth": 316,
       "layout.sourceHeight": 175

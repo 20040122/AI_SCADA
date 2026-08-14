@@ -25,6 +25,19 @@ def test_refine_route_exists():
     assert resp.status_code in (200, 422, 500)
 
 
+def test_refine_duplicate_selected_node_ids_rejected():
+    resp = client.post(
+        "/api/canvas/refine",
+        json={
+            "instruction": "add control",
+            "json_data": {"a": {"width": 1920, "height": 1080}, "d": []},
+            "selected_node_ids": [1, 1],
+        },
+    )
+    assert resp.status_code == 422
+    assert "unique" in resp.json()["detail"]
+
+
 def test_validate_route_exists():
     resp = client.post("/api/validate", json={"category": "canvas", "json_data": {"v": "8.0.5"}})
     assert resp.status_code in (200, 422, 500)

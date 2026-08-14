@@ -36,6 +36,17 @@ _ADD_GAP = 40
 _MIN_SCALE_PERCENT = 50
 _SIDE_NAMES = {"left": "左侧", "right": "右侧", "top": "上方", "bottom": "下方"}
 _ADD_TOLERANCE = 0.02
+_MAX_ANCHORS = 20
+_SIDE_FALLBACK = {
+    "left": ("left", "right", "top", "bottom"),
+    "right": ("right", "left", "top", "bottom"),
+    "top": ("top", "bottom", "left", "right"),
+    "bottom": ("bottom", "top", "left", "right"),
+}
+_PAIR_ROTATION = {
+    ("left", "right"): ("top", "bottom"),
+    ("top", "bottom"): ("left", "right"),
+}
 
 
 @dataclass
@@ -368,6 +379,7 @@ Supported actions are:
 {{"type":"add_label","target_ids":[12,13],"text":"阀门"}}
 {{"type":"add_label","target_ids":[12,13],"names":{{"12":"入口阀","13":"出口阀"}}}}
 {{"type":"add_control","target_ids":[12],"material_candidates":["状态面板"],"sides":["left"]}}
+{{"type":"add_control","target_ids":[12,13,14],"material_candidates":["状态面板"],"sides":["left","right"]}}
 Allowed alignments: left, right, top, bottom, center_x, center_y.
 Allowed distribution axes: horizontal, vertical.
 For swap: exchange the positions of exactly two controls; keep their sizes unchanged.
@@ -377,7 +389,8 @@ Do not add fields outside the selected action schema.
 
 Rules for add_control:
 - Use it only when the user asks to add a control; it must be the ONLY action in the response.
-- target_ids must be exactly the single currently selected control ID; never name another control.
+- target_ids must contain exactly the currently selected control IDs, one or many. Never drop any selected ID, never add unselected controls, and never name controls outside the current selection; the backend compares the target set against the selection exactly.
+- When multiple controls are selected, every target uses the same material — never choose different materials for different anchors.
 - material_candidates must use exact display names from the material list above. When the user's request could match several materials, return all plausible candidates (up to 5) and let the backend decide; never guess a single one.
 - sides accepts a single "left"/"right"/"top"/"bottom", or ["left","right"], or ["top","bottom"]. "两侧" means left and right. When the user does not specify a side, omit sides and the backend will ask instead of guessing."""
 
@@ -913,6 +926,129 @@ def _verify_placement(
     return True
 
 
+def _obstacle_rect(
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+) -> _ControlGeometry:
+    return _ControlGeometry(
+        node_i=-1,
+        index=-1,
+        x=x,
+        y=y,
+        width=width,
+        height=height,
+        original_x=x,
+        original_y=y,
+        original_width=width,
+        original_height=height,
+        has_width=True,
+        has_height=True,
+    )
+
+
+def _batch_obstacles(
+    controls_all: list[_ControlGeometry],
+    anchor_i: int,
+    planned: list[_ControlGeometry],
+) -> list[_ControlGeometry]:
+    return [
+        c for c in controls_all if c.node_i != anchor_i
+    ] + planned
+
+
+def _plan_batch_placements(
+    anchors: list[_ControlGeometry],
+    requested_sides: list[str],
+    base_width: float,
+    base_height: float,
+    safe: dict[str, Any],
+    canvas_width: Any,
+    canvas_height: Any,
+    controls_all: list[_ControlGeometry],
+) -> Optional[tuple[list[tuple[int, tuple[str, ...]]], Optional[int]]]:
+    width50 = base_width * _MIN_SCALE_PERCENT / 100
+    height50 = base_height * _MIN_SCALE_PERCENT / 100
+    planned: list[tuple[int, tuple[str, ...]]] = []
+    planned_obstacles: list[_ControlGeometry] = []
+    for anchor in anchors:
+        obstacles = _batch_obstacles(controls_all, anchor.node_i, planned_obstacles)
+        chosen = None
+        if len(requested_sides) == 1:
+            requested = requested_sides[0]
+            for side in _SIDE_FALLBACK[requested]:
+                x, y = _place_at(anchor, side, width50, height50)
+                if _fits(
+                    x, y, width50, height50, safe, canvas_width, canvas_height, obstacles
+                ):
+                    chosen = (side,)
+                    break
+        else:
+            requested_pair = tuple(requested_sides)
+            for pair in (requested_pair, _PAIR_ROTATION[requested_pair]):
+                ok = True
+                for side in pair:
+                    x, y = _place_at(anchor, side, width50, height50)
+                    if not _fits(
+                        x,
+                        y,
+                        width50,
+                        height50,
+                        safe,
+                        canvas_width,
+                        canvas_height,
+                        obstacles,
+                    ):
+                        ok = False
+                        break
+                if ok:
+                    chosen = pair
+                    break
+        if chosen is None:
+            return None, anchor.node_i
+        planned.append((anchor.node_i, chosen))
+        for side in chosen:
+            x, y = _place_at(anchor, side, width50, height50)
+            planned_obstacles.append(_obstacle_rect(x, y, width50, height50))
+    return planned, None
+
+
+def _search_batch_scale(
+    anchors_by_id: dict[int, _ControlGeometry],
+    planned: list[tuple[int, tuple[str, ...]]],
+    base_width: float,
+    base_height: float,
+    safe: dict[str, Any],
+    canvas_width: Any,
+    canvas_height: Any,
+    controls_all: list[_ControlGeometry],
+) -> Optional[tuple[int, list[tuple[int, str, float, float, float, float]]]]:
+    for percent in range(100, _MIN_SCALE_PERCENT - 1, -1):
+        width = base_width * percent / 100
+        height = base_height * percent / 100
+        placements: list[tuple[int, str, float, float, float, float]] = []
+        planned_obstacles: list[_ControlGeometry] = []
+        ok = True
+        for anchor_i, sides in planned:
+            anchor = anchors_by_id[anchor_i]
+            obstacles = _batch_obstacles(controls_all, anchor_i, planned_obstacles)
+            for side in sides:
+                x, y = _place_at(anchor, side, width, height)
+                if not _fits(
+                    x, y, width, height, safe, canvas_width, canvas_height, obstacles
+                ):
+                    ok = False
+                    break
+                placements.append((anchor_i, side, x, y, width, height))
+                planned_obstacles.append(_obstacle_rect(x, y, width, height))
+            if not ok:
+                break
+        if ok:
+            return percent, placements
+    return None
+
+
 def _validate_snapshot_structure(json_data: dict[str, Any]) -> None:
     attributes = json_data.get("a")
     if not isinstance(attributes, dict):
@@ -968,13 +1104,21 @@ def _apply_add_control(
     if len(actions) != 1 or actions[0].get("type") != "add_control":
         raise RefineInputError("添加控件必须独占一次请求，不能与其他动作混用")
     action = actions[0]
-    if len(selection) != 1:
-        raise RefineInputError("添加控件需要先单选一个锚点控件")
-    anchor_i = selection[0]
+    if not selection:
+        raise RefineInputError("添加控件需要先选中 1～20 个同类锚点控件")
     target_ids = action["target_ids"]
-    if len(target_ids) != 1 or target_ids[0] != anchor_i:
+    if set(target_ids) != set(selection):
+        if len(selection) == 1:
+            raise RefineInputError(
+                "添加控件必须针对当前唯一选中的控件，不能通过文字点名其他控件"
+            )
         raise RefineInputError(
-            "添加控件必须针对当前唯一选中的控件，不能通过文字点名其他控件"
+            "添加控件失败：目标控件与当前选中的锚点不一致，未生成任何节点"
+        )
+    if len(selection) > _MAX_ANCHORS:
+        raise RefineInputError(
+            f"添加控件失败：一次最多支持 {_MAX_ANCHORS} 个锚点，"
+            f"当前选中 {len(selection)} 个，未生成任何节点"
         )
     attributes = json_data.get("a")
     snapshot = (
@@ -1006,6 +1150,42 @@ def _apply_add_control(
         raise RefineInputError("缺少放置方位，请指定左侧、右侧、上方或下方")
     ordered_sides = _normalize_sides(sides)
 
+    if len(selection) == 1:
+        return _apply_single_add(
+            selection[0],
+            candidate,
+            material,
+            ordered_sides,
+            json_data,
+            controls,
+            labels,
+            canvas_width,
+            canvas_height,
+        )
+    return _apply_batch_add(
+        selection,
+        candidate,
+        material,
+        ordered_sides,
+        json_data,
+        controls,
+        labels,
+        canvas_width,
+        canvas_height,
+    )
+
+
+def _apply_single_add(
+    anchor_i: int,
+    candidate: str,
+    material: dict[str, Any],
+    ordered_sides: list[str],
+    json_data: dict[str, Any],
+    controls: dict[int, _ControlGeometry],
+    labels: dict[int, _LabelInfo],
+    canvas_width: Any,
+    canvas_height: Any,
+) -> RefineResult:
     anchor = controls[anchor_i]
     obstacles = [c for c in controls.values() if c.node_i != anchor_i]
     safe = content_rect_of_canvas(canvas_width, canvas_height)
@@ -1166,6 +1346,198 @@ def _apply_add_control(
             f"（{final_placements[0][4]}×{final_placements[0][5]}，"
             f"缩放 {final_placements[0][1]}%）"
         )
+    return RefineResult(patch=patch, message=message)
+
+
+def _batch_message(
+    anchor_is: list[int],
+    planned: list[tuple[int, tuple[str, ...]]],
+    requested_sides: list[str],
+    total: int,
+    material_name: str,
+    percent: int,
+) -> str:
+    switches = []
+    for anchor_i, sides in planned:
+        if len(requested_sides) == 1:
+            if sides[0] != requested_sides[0]:
+                switches.append((anchor_i, (requested_sides[0],), sides))
+        elif tuple(sides) != tuple(requested_sides):
+            switches.append((anchor_i, tuple(requested_sides), sides))
+    base = (
+        f"已在 {len(anchor_is)} 个锚点旁共添加 {total} 个「{material_name}」控件"
+        f"（统一缩放 {percent}%）"
+    )
+    if not switches:
+        return f"{base}，全部按请求方向放置"
+    parts = []
+    for anchor_i, requested, final in switches:
+        req_label = "、".join(_SIDE_NAMES[side] for side in requested)
+        final_label = "、".join(_SIDE_NAMES[side] for side in final)
+        parts.append(f"锚点 {anchor_i} 由 {req_label} 改为 {final_label}")
+    return f"{base}；换向：{'；'.join(parts)}"
+
+
+def _apply_batch_add(
+    selection: tuple[int, ...],
+    candidate: str,
+    material: dict[str, Any],
+    ordered_sides: list[str],
+    json_data: dict[str, Any],
+    controls: dict[int, _ControlGeometry],
+    labels: dict[int, _LabelInfo],
+    canvas_width: Any,
+    canvas_height: Any,
+) -> RefineResult:
+    anchor_is = sorted(selection, key=lambda node_i: controls[node_i].index)
+    images = [controls[node_i].image for node_i in anchor_is]
+    if any(not isinstance(img, str) or not img for img in images) or len(set(images)) != 1:
+        raise RefineInputError("添加控件失败：所选锚点素材不一致，未生成任何节点")
+    safe = content_rect_of_canvas(canvas_width, canvas_height)
+    base_width, base_height, source_width, source_height = resolve_control_size(
+        candidate, material
+    )
+    controls_all = list(controls.values())
+    planned, failed_anchor = _plan_batch_placements(
+        [controls[node_i] for node_i in anchor_is],
+        ordered_sides,
+        base_width,
+        base_height,
+        safe,
+        canvas_width,
+        canvas_height,
+        controls_all,
+    )
+    if planned is None:
+        raise RefineInputError(
+            "没有足够的空间放置新控件，未生成任何节点，"
+            f"无法安排的锚点：{failed_anchor}"
+        )
+    anchors_by_id = {node_i: controls[node_i] for node_i in anchor_is}
+    scaled = _search_batch_scale(
+        anchors_by_id,
+        planned,
+        base_width,
+        base_height,
+        safe,
+        canvas_width,
+        canvas_height,
+        controls_all,
+    )
+    if scaled is None:
+        raise RefineInputError("没有足够的空间放置新控件，未生成任何节点")
+    percent, raw_placements = scaled
+
+    final_placements = []
+    placed_rects: list[_ControlGeometry] = []
+    for anchor_i, side, x, y, width, height in raw_placements:
+        rx = _round2(x)
+        ry = _round2(y)
+        rw = _round2(width)
+        rh = _round2(height)
+        anchor = controls[anchor_i]
+        obstacles = _batch_obstacles(controls_all, anchor_i, placed_rects)
+        if not _verify_placement(
+            rx,
+            ry,
+            rw,
+            rh,
+            anchor,
+            side,
+            safe,
+            canvas_width,
+            canvas_height,
+            obstacles,
+        ):
+            raise RefineInputError("没有足够的空间放置新控件，未生成任何节点")
+        final_placements.append((anchor_i, side, percent, rx, ry, rw, rh))
+        placed_rects.append(_obstacle_rect(rx, ry, rw, rh))
+
+    entries = json_data.get("d")
+    max_i = 0
+    for item in entries if isinstance(entries, list) else []:
+        node_i = item.get("i")
+        if isinstance(node_i, int) and not isinstance(node_i, bool) and node_i > max_i:
+            max_i = node_i
+    used_names = {
+        str(item.get("p", {}).get("displayName") or "")
+        for item in entries
+        if isinstance(item, dict) and isinstance(item.get("p"), dict)
+    }
+    anchor_meta = {}
+    for node_i in anchor_is:
+        anchor_item = next(
+            (item for item in entries if item.get("i") == node_i),
+            None,
+        )
+        anchor_a = (
+            anchor_item.get("a")
+            if anchor_item is not None and isinstance(anchor_item.get("a"), dict)
+            else {}
+        )
+        group = anchor_a.get("layout.group") or f"refine_group_{node_i}"
+        instance = anchor_a.get("layout.instance")
+        if not isinstance(instance, int) or isinstance(instance, bool):
+            instance = 1
+        anchor_meta[node_i] = (group, instance)
+    image = str(material.get("image") or "") or f"symbols/Agent/{candidate}.json"
+    material_name = str(material.get("displayName") or candidate)
+
+    nodes = []
+    for anchor_i, side, percent, x, y, width, height in final_placements:
+        new_i = max_i + 1 + len(nodes)
+        group, instance = anchor_meta[anchor_i]
+        display_name = _unique_add_name(candidate, used_names)
+        nodes.append(
+            {
+                "c": "ht.Node",
+                "i": new_i,
+                "p": {
+                    "displayName": display_name,
+                    "image": image,
+                    "position": {"x": x, "y": y},
+                    "width": width,
+                    "height": height,
+                },
+                "a": {
+                    "layout.group": group,
+                    "layout.node": f"refine_{new_i}",
+                    "layout.instance": instance,
+                    "layout.materialName": material_name,
+                    "layout.sourceWidth": _round2(source_width),
+                    "layout.sourceHeight": _round2(source_height),
+                },
+            }
+        )
+
+    flat = [
+        {
+            "x": control.x,
+            "y": control.y,
+            "width": control.width,
+            "height": control.height,
+        }
+        for control in controls.values()
+    ]
+    for anchor_i, side, percent, x, y, width, height in final_placements:
+        flat.append({"x": x, "y": y, "width": width, "height": height})
+    new_rect = content_rect_of_nodes(flat)
+
+    patch = [
+        {"op": "add", "path": "/d/-", "value": node} for node in nodes
+    ]
+    rect_op = "replace" if "contentRect" in json_data else "add"
+    patch.append({"op": rect_op, "path": "/contentRect", "value": new_rect})
+    _validate_patch(patch, controls, labels, allow_content_rect=True)
+
+    message = _batch_message(
+        anchor_is,
+        planned,
+        ordered_sides,
+        len(final_placements),
+        material_name,
+        percent,
+    )
     return RefineResult(patch=patch, message=message)
 
 
