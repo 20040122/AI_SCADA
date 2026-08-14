@@ -29,6 +29,7 @@ _ACTION_FIELDS = {
     "distribute": {"type", "target_ids", "axis"},
     "add_label": {"type", "target_ids", "text", "names"},
     "add_control": {"type", "target_ids", "material_candidates", "sides"},
+    "swap": {"type", "target_ids"},
 }
 
 _ADD_GAP = 40
@@ -361,6 +362,7 @@ Supported actions are:
 {{"type":"delete","target_ids":[12]}}
 {{"type":"align","target_ids":[12,13],"alignment":"left"}}
 {{"type":"distribute","target_ids":[12,13,14],"axis":"horizontal"}}
+{{"type":"swap","target_ids":[12,13]}}
 {{"type":"add_label","target_ids":[12]}}
 {{"type":"add_label","target_ids":[12],"text":"入口阀"}}
 {{"type":"add_label","target_ids":[12,13],"text":"阀门"}}
@@ -368,6 +370,7 @@ Supported actions are:
 {{"type":"add_control","target_ids":[12],"material_candidates":["状态面板"],"sides":["left"]}}
 Allowed alignments: left, right, top, bottom, center_x, center_y.
 Allowed distribution axes: horizontal, vertical.
+For swap: exchange the positions of exactly two controls; keep their sizes unchanged.
 For naming: text and names are mutually exclusive; without either, each control uses its own displayName.
 names keys must be JSON strings matching control IDs exactly, e.g. "12" for control 12.
 Do not add fields outside the selected action schema.
@@ -464,6 +467,11 @@ def _validate_action(action: Any, known_ids: set[int]) -> None:
             or axis not in _DISTRIBUTION_AXES
         ):
             raise RefineModelError("invalid distribution action")
+    elif action_type == "swap":
+        if set(action) != {"type", "target_ids"}:
+            raise RefineModelError("swap contains invalid fields")
+        if len(target_ids) != 2:
+            raise RefineModelError("swap requires exactly two targets")
     elif action_type == "add_label":
         if "text" in action and "names" in action:
             raise RefineModelError("add_label cannot have both text and names")
@@ -1219,6 +1227,10 @@ def _apply_actions(
                 if control.node_i in labels:
                     labels[control.node_i].deleted = True
             continue
+        elif action_type == "swap":
+            first, second = targets
+            first.x, second.x = second.x, first.x
+            first.y, second.y = second.y, first.y
         elif action_type == "align":
             _align(targets, action["alignment"])
         else:
