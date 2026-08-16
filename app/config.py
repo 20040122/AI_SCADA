@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     binding_schema_path: str = str(Path(__file__).resolve().parent.parent / "data" / "schema" / "binding_schema.json")
     binding_jsonl_path: str = str(Path(__file__).resolve().parent.parent / "data" / "binding.jsonl")
     control_jsonl_path: str = str(Path(__file__).resolve().parent.parent / "data" / "control.jsonl")
+    control_mappings_path: str = str(Path(__file__).resolve().parent.parent / "data" / "control_mappings.json")
     layout_config_path: str = str(Path(__file__).resolve().parent.parent / "data" / "layout_config.json")
 
     daoscada_upload_url: str = "http://daoscada.local/hmi-ui/upload/"
