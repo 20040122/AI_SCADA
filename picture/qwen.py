@@ -2,16 +2,20 @@ from __future__ import annotations
 
 import argparse
 import base64
+import io
 import json
 import mimetypes
 import os
+import socket
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
+from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +32,49 @@ PROMPT_TEMPLATE = (
     "避免卡通化、游戏化和复杂装饰、背景简洁、不包含文字、Logo 或水印，"
     "仅输出独立高精度 SCADA UI 控件。"
 )
+
+
+class GenerationError(RuntimeError):
+    def __init__(self, message: str, code: str = "generation_error"):
+        super().__init__(message)
+        self.code = code
+
+
+class MissingApiKeyError(GenerationError):
+    def __init__(self, message: str = "缺少 DASHSCOPE_API_KEY，请在项目根目录 .env.local 中配置"):
+        super().__init__(message, "missing_api_key")
+
+
+class QwenTimeoutError(GenerationError):
+    def __init__(self, message: str = "Qwen 图片生成超时"):
+        super().__init__(message, "qwen_timeout")
+
+
+class QwenUnavailableError(GenerationError):
+    def __init__(self, message: str = "Qwen 图片生成服务不可用"):
+        super().__init__(message, "qwen_unavailable")
+
+
+class QwenResponseError(GenerationError):
+    def __init__(self, message: str = "Qwen 返回非法响应"):
+        super().__init__(message, "qwen_response")
+
+
+class ImageDecodeError(GenerationError):
+    def __init__(self, message: str = "生成结果无法解码为 PNG 图片"):
+        super().__init__(message, "image_decode")
+
+
+def default_api_key() -> str:
+    return os.environ.get("DASHSCOPE_API_KEY", "").strip()
+
+
+def default_base_url() -> str:
+    return os.environ.get("DASHSCOPE_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
+
+
+def default_model() -> str:
+    return os.environ.get("QWEN_IMAGE_MODEL", DEFAULT_MODEL)
 
 
 def parse_args() -> argparse.Namespace:
@@ -98,9 +145,11 @@ def call_api(endpoint: str, api_key: str, payload: dict, timeout: float) -> dict
             return json.loads(response.read().decode("utf-8"))
     except HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"API 请求失败: HTTP {exc.code} {body}") from exc
+        raise QwenUnavailableError(f"API 请求失败: HTTP {exc.code} {body}") from exc
     except URLError as exc:
-        raise RuntimeError(f"API 连接失败: {exc.reason}") from exc
+        raise QwenUnavailableError(f"API 连接失败: {exc.reason}") from exc
+    except (TimeoutError, socket.timeout) as exc:
+        raise QwenTimeoutError() from exc
 
 
 def extract_image_url(response: dict) -> str:
@@ -113,22 +162,80 @@ def extract_image_url(response: dict) -> str:
                 return image
     code = response.get("code", "UnknownError")
     message = response.get("message", "响应中没有生成图片")
-    raise RuntimeError(f"图片生成失败: {code} {message}")
+    raise QwenResponseError(f"图片生成失败: {code} {message}")
 
 
-def save_image(image: str, output: Path, timeout: float) -> None:
-    output.parent.mkdir(parents=True, exist_ok=True)
+def download_image_bytes(image: str, timeout: float) -> bytes:
     if image.startswith("data:"):
         _, encoded = image.split(",", 1)
-        output.write_bytes(base64.b64decode(encoded))
-        return
+        return base64.b64decode(encoded)
     try:
         with urlopen(image, timeout=timeout) as response:
-            output.write_bytes(response.read())
+            return response.read()
     except HTTPError as exc:
-        raise RuntimeError(f"下载生成图片失败: HTTP {exc.code}") from exc
+        raise QwenUnavailableError(f"下载生成图片失败: HTTP {exc.code}") from exc
     except URLError as exc:
-        raise RuntimeError(f"下载生成图片失败: {exc.reason}") from exc
+        raise QwenUnavailableError(f"下载生成图片失败: {exc.reason}") from exc
+    except (TimeoutError, socket.timeout) as exc:
+        raise QwenTimeoutError() from exc
+
+
+def validate_and_convert_png(data: bytes) -> bytes:
+    try:
+        image = Image.open(io.BytesIO(data))
+        image.load()
+    except Exception as exc:
+        raise ImageDecodeError() from exc
+    if image.mode not in ("RGBA", "RGB", "L"):
+        image = image.convert("RGBA")
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    return buffer.getvalue()
+
+
+def generate_image_bytes(
+    name: str,
+    reference_path: Path,
+    model: str,
+    size: str,
+    seed: int,
+    api_key: str,
+    base_url: str,
+    timeout: float,
+) -> bytes:
+    prompt = build_prompt(name)
+    image = encode_image(reference_path)
+    payload = build_payload(image, prompt, model, size, seed)
+    endpoint = f"{base_url}/services/aigc/multimodal-generation/generation"
+    response = call_api(endpoint, api_key, payload, timeout)
+    image_url = extract_image_url(response)
+    return download_image_bytes(image_url, timeout)
+
+
+def generate_control_image(
+    name: str,
+    reference_path: Path = DEFAULT_INPUT,
+    output_path: Optional[Path] = None,
+    seed: int = 123456,
+    model: Optional[str] = None,
+    size: str = "1024*1024",
+    api_key: Optional[str] = None,
+    base_url: Optional[str] = None,
+    timeout: float = 300.0,
+) -> Path:
+    key = (api_key if api_key is not None else default_api_key()).strip()
+    if not key:
+        raise MissingApiKeyError()
+    model = model or default_model()
+    base = (base_url if base_url is not None else default_base_url()).rstrip("/")
+    data = generate_image_bytes(name, reference_path, model, size, seed, key, base, timeout)
+    png = validate_and_convert_png(data)
+    if output_path is None:
+        output_path = default_output_path()
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_bytes(png)
+    return output_path
 
 
 def default_output_path() -> Path:
@@ -139,23 +246,19 @@ def default_output_path() -> Path:
 def main() -> int:
     load_dotenv(ROOT / ".env.local")
     args = parse_args()
-    api_key = os.environ.get("DASHSCOPE_API_KEY", "").strip()
-    if not api_key:
-        print("缺少 DASHSCOPE_API_KEY，请在项目根目录 .env.local 中配置", file=sys.stderr)
-        return 1
-    base_url = os.environ.get("DASHSCOPE_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
-    model = args.model or os.environ.get("QWEN_IMAGE_MODEL", DEFAULT_MODEL)
-    endpoint = f"{base_url}/services/aigc/multimodal-generation/generation"
     output = args.output or default_output_path()
     try:
         control_name = args.name if args.name is not None else input("请输入控件名称: ")
-        prompt = build_prompt(control_name)
-        image = encode_image(args.input)
-        payload = build_payload(image, prompt, model, args.size, args.seed)
-        response = call_api(endpoint, api_key, payload, args.timeout)
-        image_url = extract_image_url(response)
-        save_image(image_url, output, args.timeout)
-    except (OSError, ValueError, RuntimeError, json.JSONDecodeError) as exc:
+        generate_control_image(
+            name=control_name,
+            reference_path=args.input,
+            output_path=output,
+            seed=args.seed,
+            model=args.model,
+            size=args.size,
+            timeout=args.timeout,
+        )
+    except (GenerationError, OSError, ValueError, json.JSONDecodeError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
     print(output.resolve())

@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     daoscada_target_dir: str = "displays/dutzcm"
     daoscada_upload_timeout: float = 30.0
 
+    generation_temp_dir: str = str(Path(__file__).resolve().parent.parent / "data" / "generations")
+    generation_ttl_seconds: float = 1800.0
+    qwen_reference_path: str = str(Path(__file__).resolve().parent.parent / "data" / "reference.png")
+    qwen_timeout: float = 300.0
+
     host: str = "0.0.0.0"
     port: int = 8000
     debug: bool = False

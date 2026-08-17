@@ -4,6 +4,11 @@ from pathlib import Path
 from typing import Optional
 
 from app.config import settings
+from app.services.generation_service import (
+    AssetUploader,
+    GenerationManager,
+    make_default_generator,
+)
 from data.sqlite.material_db import MaterialDB
 from model.binding_agent import BindingAgent
 from model.control_agent import ControlAgent
@@ -19,10 +24,11 @@ _refine_agent: Optional[RefineAgent] = None
 _validate_agent: Optional[ValidateAgent] = None
 _binding_agent: Optional[BindingAgent] = None
 _material_db: Optional[MaterialDB] = None
+_generation_manager: Optional[GenerationManager] = None
 
 
 async def init_resources() -> None:
-    global _material_db, _control_agent, _control_catalog, _layout_agent, _refine_agent, _validate_agent, _binding_agent
+    global _material_db, _control_agent, _control_catalog, _layout_agent, _refine_agent, _validate_agent, _binding_agent, _generation_manager
 
     db = MaterialDB()
     await db.init_db()
@@ -38,6 +44,23 @@ async def init_resources() -> None:
     _control_agent = agent
     _control_catalog = manager
 
+    generation_manager = GenerationManager(
+        temp_dir=Path(settings.generation_temp_dir),
+        ttl_seconds=settings.generation_ttl_seconds,
+        generator=make_default_generator(
+            Path(settings.qwen_reference_path), settings.qwen_timeout
+        ),
+        uploader=AssetUploader(
+            base_url=settings.daoscada_upload_url,
+            timeout=settings.daoscada_upload_timeout,
+        ),
+        jsonl_path=Path(settings.control_jsonl_path),
+        catalog=manager,
+        db=db,
+    )
+    generation_manager.start()
+    _generation_manager = generation_manager
+
     _layout_agent = LayoutAgent(db=db)
     _refine_agent = RefineAgent()
     _validate_agent = ValidateAgent()
@@ -45,7 +68,10 @@ async def init_resources() -> None:
 
 
 async def close_resources() -> None:
-    global _material_db, _control_catalog
+    global _material_db, _control_catalog, _generation_manager
+    if _generation_manager is not None:
+        await _generation_manager.stop()
+        _generation_manager = None
     if _control_catalog is not None:
         _control_catalog.close()
         _control_catalog = None
@@ -81,3 +107,8 @@ def get_binding_agent() -> BindingAgent:
 def get_material_db() -> MaterialDB:
     assert _material_db is not None, "MaterialDB not initialized (call init_resources first)"
     return _material_db
+
+
+def get_generation_manager() -> GenerationManager:
+    assert _generation_manager is not None, "GenerationManager not initialized (call init_resources first)"
+    return _generation_manager

@@ -24,6 +24,7 @@ class ControlCandidate:
 class KeywordResult:
     keyword: str
     candidates: list[ControlCandidate] = field(default_factory=list)
+    canGenerate: bool = False
 
 
 @dataclass
@@ -73,7 +74,7 @@ class ControlAgent:
                 whitelist = snap.mappings[norm]
                 candidates = await self._query_whitelist(snap, word, whitelist, "mapping")
             else:
-                keyword_results.append(KeywordResult(keyword=word, candidates=[]))
+                keyword_results.append(KeywordResult(keyword=word, candidates=[], canGenerate=True))
                 if norm not in missed_norms:
                     missed.append(word)
                     missed_norms.add(norm)

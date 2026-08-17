@@ -2,87 +2,126 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "air_tank_group",
+        "id": "group_air",
         "region": "left",
         "unit": {
           "root": {
             "id": "air_tank",
-            "deviceType": "空气罐"
+            "deviceType": "空气罐",
+            "role": "root"
           },
           "attachments": [
             {
-              "id": "valve1",
+              "id": "valve_air",
               "deviceType": "阀门",
               "role": "valve",
               "relativeTo": "air_tank",
               "side": "top"
             },
             {
-              "id": "flow1",
+              "id": "flow_air_1",
               "deviceType": "流量计",
               "role": "meter",
-              "relativeTo": "valve1",
+              "relativeTo": "valve_air",
               "side": "right"
             },
             {
-              "id": "pressure1",
+              "id": "pressure_air",
               "deviceType": "压力传感器",
               "role": "sensor",
-              "relativeTo": "flow1",
+              "relativeTo": "flow_air_1",
               "side": "right"
             },
             {
-              "id": "flow2",
+              "id": "flow_air_2",
               "deviceType": "流量计",
               "role": "meter",
-              "relativeTo": "pressure1",
+              "relativeTo": "pressure_air",
               "side": "right"
             }
           ]
         },
         "count": 1,
         "arrangement": "horizontal",
-        "gapHint": "normal",
         "topology": "single"
       },
       {
-        "id": "nitrogen_group",
+        "id": "group_nitrogen_top",
         "region": "right",
         "unit": {
           "root": {
-            "id": "nitrogen_tank",
-            "deviceType": "氮气罐"
+            "id": "nitrogen_tank_1",
+            "deviceType": "氮气罐",
+            "role": "root"
           },
           "attachments": [
             {
-              "id": "valve2",
+              "id": "valve_n1",
               "deviceType": "阀门",
               "role": "valve",
-              "relativeTo": "nitrogen_tank",
+              "relativeTo": "nitrogen_tank_1",
               "side": "top"
             },
             {
-              "id": "flow3",
+              "id": "flow_n1",
               "deviceType": "流量计",
               "role": "meter",
-              "relativeTo": "valve2",
+              "relativeTo": "valve_n1",
               "side": "right"
             },
             {
-              "id": "pressure2",
+              "id": "pressure_n1",
               "deviceType": "压力传感器",
               "role": "sensor",
-              "relativeTo": "flow3",
+              "relativeTo": "flow_n1",
               "side": "right"
             }
           ]
         },
-        "count": 2,
-        "arrangement": "vertical",
-        "gapHint": "normal",
+        "count": 1,
+        "arrangement": "horizontal",
         "topology": "single",
-        "relativeTo": "air_tank_group",
+        "relativeTo": "group_air",
         "side": "right"
+      },
+      {
+        "id": "group_nitrogen_bottom",
+        "region": "right",
+        "unit": {
+          "root": {
+            "id": "nitrogen_tank_2",
+            "deviceType": "氮气罐",
+            "role": "root"
+          },
+          "attachments": [
+            {
+              "id": "valve_n2",
+              "deviceType": "阀门",
+              "role": "valve",
+              "relativeTo": "nitrogen_tank_2",
+              "side": "top"
+            },
+            {
+              "id": "flow_n2",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "valve_n2",
+              "side": "right"
+            },
+            {
+              "id": "pressure_n2",
+              "deviceType": "压力传感器",
+              "role": "sensor",
+              "relativeTo": "flow_n2",
+              "side": "right"
+            }
+          ]
+        },
+        "count": 1,
+        "arrangement": "horizontal",
+        "topology": "single",
+        "relativeTo": "group_nitrogen_top",
+        "side": "bottom"
       }
     ],
     "constraints": {

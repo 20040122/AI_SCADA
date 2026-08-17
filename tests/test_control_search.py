@@ -255,6 +255,58 @@ async def test_empty_extract_twice_uses_full_query_as_empty_keyword(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_missed_word_can_generate_true(tmp_path):
+    fake = FakeAsyncClient([make_fake_completion('{"controls": ["飞机"]}')])
+    agent, manager, _ = await _build_agent(tmp_path, fake)
+    try:
+        result = await agent.process_query("飞机")
+        kr = result.keywords[0]
+        assert kr.canGenerate is True
+    finally:
+        manager.close()
+
+
+@pytest.mark.asyncio
+async def test_full_query_fallback_can_generate_false(tmp_path):
+    fake = FakeAsyncClient([
+        make_fake_completion('{"controls": []}'),
+        make_fake_completion('{"controls": []}'),
+    ])
+    agent, manager, _ = await _build_agent(tmp_path, fake)
+    try:
+        result = await agent.process_query("给我一个画面")
+        assert result.keywords[0].keyword == "给我一个画面"
+        assert result.keywords[0].canGenerate is False
+    finally:
+        manager.close()
+
+
+@pytest.mark.asyncio
+async def test_matched_and_mapped_keywords_can_generate_false(tmp_path):
+    fake = FakeAsyncClient([make_fake_completion('{"controls": ["水泵", "温度"]}')])
+    agent, manager, _ = await _build_agent(tmp_path, fake)
+    try:
+        result = await agent.process_query("水泵和温度")
+        for kr in result.keywords:
+            assert kr.candidates
+            assert kr.canGenerate is False
+    finally:
+        manager.close()
+
+
+@pytest.mark.asyncio
+async def test_mixed_matched_and_missed_can_generate(tmp_path):
+    fake = FakeAsyncClient([make_fake_completion('{"controls": ["水泵", "飞机"]}')])
+    agent, manager, _ = await _build_agent(tmp_path, fake)
+    try:
+        result = await agent.process_query("水泵和飞机")
+        by_keyword = {kr.keyword: kr.canGenerate for kr in result.keywords}
+        assert by_keyword == {"水泵": False, "飞机": True}
+    finally:
+        manager.close()
+
+
+@pytest.mark.asyncio
 async def test_catalog_corrupt_whitelist_query_raises(tmp_path):
     fake = FakeAsyncClient([make_fake_completion('{"controls": ["温度"]}')])
     agent, manager, _ = await _build_agent(tmp_path, fake)

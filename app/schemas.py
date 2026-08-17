@@ -26,6 +26,7 @@ class ControlCandidate(BaseModel):
 class KeywordResult(BaseModel):
     keyword: str
     candidates: list[ControlCandidate] = []
+    canGenerate: bool = False
 
 
 class ControlSearchRequest(BaseModel):
@@ -35,6 +36,28 @@ class ControlSearchRequest(BaseModel):
 class ControlSearchResponse(BaseModel):
     keywords: list[KeywordResult]
     missed: list[str]
+
+
+class GenerationCreateRequest(BaseModel):
+    query: str
+    name: str
+
+
+class GenerationCreateResponse(BaseModel):
+    generation_id: str
+    status: str
+
+
+class GenerationStatusResponse(BaseModel):
+    generation_id: str
+    name: str
+    status: str
+    seed: int
+    created_at: Optional[str] = None
+    expires_at: Optional[str] = None
+    preview_url: Optional[str] = None
+    error: Optional[str] = None
+    error_code: Optional[str] = None
 
 
 class SaveQueryResultRequest(BaseModel):

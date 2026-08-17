@@ -17,6 +17,46 @@ export interface ControlCandidate {
 export interface KeywordResult {
   keyword: string;
   candidates: ControlCandidate[];
+  canGenerate: boolean;
+}
+
+export type GenerationStatusValue =
+  | "queued"
+  | "running"
+  | "ready"
+  | "failed"
+  | "confirmed"
+  | "discarded"
+  | "expired";
+
+export interface GenerationCreateRequest {
+  query: string;
+  name: string;
+}
+
+export interface GenerationCreateResponse {
+  generation_id: string;
+  status: GenerationStatusValue;
+}
+
+export interface GenerationStatusResponse {
+  generation_id: string;
+  name: string;
+  status: GenerationStatusValue;
+  seed: number | null;
+  created_at: string | null;
+  expires_at: string | null;
+  preview_url: string | null;
+  error: string | null;
+  error_code: string | null;
+}
+
+export interface GenerationState {
+  generationId: string | null;
+  status: GenerationStatusValue;
+  seed: number | null;
+  previewUrl: string | null;
+  error: string | null;
 }
 
 export interface ControlSearchRequest {

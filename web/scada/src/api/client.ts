@@ -1,6 +1,10 @@
 const API_BASE = import.meta.env?.VITE_API_BASE_URL || "";
 const API_TIMEOUT = 60000;
 
+export function apiUrl(path: string): string {
+  return `${API_BASE}${path}`;
+}
+
 function isFormDataBody(body?: BodyInit | null): boolean {
   return typeof FormData !== "undefined" && body instanceof FormData;
 }

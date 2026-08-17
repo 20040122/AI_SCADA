@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type {
+  GenerationState,
   KeywordResult,
   MaterialItem,
   PipelineStep,
@@ -22,6 +23,12 @@ interface AssetStore {
   keywordResults: KeywordResult[];
   setKeywordResults: (results: KeywordResult[]) => void;
   removeKeyword: (keyword: string) => void;
+
+  generations: Record<string, GenerationState>;
+  setGeneration: (keyword: string, state: Partial<GenerationState>) => void;
+  clearGeneration: (keyword: string) => void;
+  clearGenerations: () => void;
+  addQueryResult: (item: MaterialItem) => void;
 
   missedKeywords: string[];
   setMissedKeywords: (kw: string[]) => void;
@@ -58,6 +65,29 @@ export const useAssetStore = create<AssetStore>((set) => ({
   removeKeyword: (keyword: string) =>
     set((s) => ({
       keywordResults: s.keywordResults.filter((kr) => kr.keyword !== keyword),
+    })),
+
+  generations: {},
+  setGeneration: (keyword, state) =>
+    set((s) => ({
+      generations: {
+        ...s.generations,
+        [keyword]: { ...s.generations[keyword], ...state } as GenerationState,
+      },
+    })),
+  clearGeneration: (keyword) =>
+    set((s) => {
+      const next = { ...s.generations };
+      delete next[keyword];
+      return { generations: next };
+    }),
+  clearGenerations: () => set({ generations: {} }),
+  addQueryResult: (item) =>
+    set((s) => ({
+      queryResults: [
+        item,
+        ...s.queryResults.filter((i) => i.displayName !== item.displayName),
+      ],
     })),
 
   missedKeywords: [],

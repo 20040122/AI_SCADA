@@ -11,10 +11,8 @@
 {"displayName":"真空罐体","image":"symbols/Agent/真空罐体.json","width":184,"height":155}
 {"displayName":"状态面板","image":"symbols/Agent/状态面板.json","width":162,"height":60}
 {"displayName":"高低温试验箱","image":"symbols/zdk18s/devices/高低温试验箱.json","width":500,"height":800}
-{"displayName":"HT按钮","image":"symbols/公共资源/HT/btns/button.json","width":80,"height":42}
 {"displayName":"轮播","image":"symbols/公共资源/HT/carousels/carousel.json","width":138,"height":200}
 {"displayName":"下行控制","image":"symbols/test/wangj/下行控制.json","width":100,"height":20}
-{"displayName":"switch开关","image":"symbols/test/wangj/switch.json","width":64,"height":37}
 {"displayName":"指示灯","image":"symbols/test/wangj/指示灯.json","width":30,"height":30}
 {"displayName":"参数值","image":"symbols/test/wangj/参数值.json","width":60,"height":20}
 {"displayName":"启动按钮","image":"symbols/demo/KUKA/下行控制按钮.json","width":30,"height":30}
@@ -23,8 +21,6 @@
 {"displayName":"机械臂大臂","image":"symbols/demo/KUKA/arm2.json","width":1439,"height":1439}
 {"displayName":"机械臂小臂","image":"symbols/demo/KUKA/arm1.json","width":378,"height":1602}
 {"displayName":"表格","image":"symbols/ht/ui/table.json","width":828.53954,"height":300}
-{"displayName":"table源码分析","image":"symbols/test/ljTest/table源码分析.json","width":500,"height":213}
-{"displayName":"table机床","image":"symbols/机加工自动化生产线/table.json","width":420,"height":300}
 {"displayName":"图表使用绑定","image":"symbols/机加工自动化生产线/chartUseBinding.json","width":420,"height":280}
 {"displayName":"折线图图例","image":"symbols/公共资源/HT/charts/barCharts/lineBar_legend.json","width":419,"height":320}
 {"displayName":"线柱图","image":"symbols/公共资源/HT/charts/barCharts/lineBarChart.json","width":480,"height":280}
@@ -74,18 +70,10 @@
 {"displayName":"Light","image":"symbols/公共资源/HTDD/lights/Light.json","width":30,"height":30}
 {"displayName":"交通信号灯","image":"symbols/公共资源/HTDD/lights/TrafficLight.json","width":40,"height":95}
 {"displayName":"多种交通信号灯","image":"symbols/公共资源/HTDD/lights/MultiTrafficLight.json","width":130,"height":95}
-{"displayName":"wave","image":"symbols/公共资源/HTDD/waves/wave.json","width":100,"height":100}
 {"displayName":"中国地图背景","image":"symbols/机加工自动化生产线/中国地图背景.json","width":1366,"height":768}
 {"displayName":"发光条","image":"symbols/机加工自动化生产线/发光条.json","width":128,"height":4,"boundExtend": 24}
 {"displayName":"数据统计图（设备、运行、待料、报警、停机、手动数量）","image":"symbols/机加工自动化生产线/statistic.json","width":1000,"height":90}
 {"displayName":"车间","image":"symbols/机加工自动化生产线/车间.json","width":1817,"height":709}
-{"displayName":"区域0-0-pie","image":"symbols/机加工自动化生产线/pie.json","width":376.76768,"height":276.98617}
-{"displayName":"区域0-2-table","image":"symbols/机加工自动化生产线/table_qs.json","width":370,"height":262.49728}
-{"displayName":"区域1-0-barChart","image":"symbols/机加工自动化生产线/barChart_hour.json","width":376.76768,"height":284.46613}
-{"displayName":"区域1-2-table","image":"symbols/机加工自动化生产线/table_alert.json","width":370,"height":262.49728}
-{"displayName":"区域2-0-barChart","image":"symbols/机加工自动化生产线/barChart_month.json","width":376.76768,"height":284.46613}
-{"displayName":"区域2-1-table","image":"symbols/机加工自动化生产线/table.json","width":1065.53982,"height":278.97725}
-{"displayName":"区域2-2-table","image":"symbols/机加工自动化生产线/table_jdl.json","width":370,"height":259.02176}
 {"displayName":"按钮-下行控制","image":"symbols/现场控制系统/样式修改/按钮-下行控制.json","width":160,"height":50}
 {"displayName":"数值显示2-小","image":"symbols/现场控制系统/样式修改/数值显示2-小.json","width":78,"height":24,"boundExtend": 2}
 {"displayName":"数值输入","image":"symbols/现场控制系统/样式修改/数值输入.json","width":160,"height":36,"boundExtend": 2}
@@ -116,7 +104,6 @@
 {"displayName":"图片控件","image":"symbols/公共资源/控件/功能控件/image.json","width":75.89099,"height":75.84659}
 {"displayName":"数字面板2","image":"symbols/demo/basic/number-pane.json","width":200,"height":24,"boundExtend": 20}
 {"displayName":"圆形进度条","image":"symbols/demo/basic/circleProgressBar.json","width":100,"height":100}
-{"displayName":"交互","image":"symbols/demo/basic/interaction.json","width":200,"height":50}
 {"displayName":"机柜弹窗","image":"symbols/demo/basic/机柜弹窗.json","width":4000,"height":660}
 {"displayName":"风扇","image":"symbols/demo/fan/风扇.json","width":79,"height":106}
 {"displayName":"阀门开关","image":"symbols/demo/Oil tank/阀门开关.json","width":100,"height":100}
@@ -149,8 +136,6 @@
 {"displayName":"门","image":"symbols/demo/water treatment/门.json","width":100,"height":117}
 {"displayName":"水滴","image":"symbols/demo/water treatment/水滴.json","width":35,"height":52}
 {"displayName":"超声波液位计","image":"symbols/demo/water treatment/超声波液位计.json","width":60,"height":60}
-{"displayName":"dev-519","image":"symbols/_public/basic/devStatus.json","width":250.5658,"height":85.21917}
-{"displayName":"navButton","image":"symbols/_public/basic/navButton.json","width":null,"height":null}
 {"displayName":"左上长条面板","image":"assets/现场控制系统/521-522空调冷冻站/面板图片/多联机-楼层背景框1.fw.png","width":1833,"height":112}
 {"displayName":"整流罩.fw","image":"assets/现场控制系统/521-522空调冷冻站/空调模型/整流罩.fw.png","width":1802,"height":627}
 {"displayName":"电加热.fw","image":"assets/现场控制系统/521-522空调冷冻站/空调模型/电加热.fw.png","width":43,"height":55}
@@ -177,3 +162,7 @@
 {"displayName":"溢流阀","image":"assets/现场控制系统/设备图片/溢流阀.png","width":64,"height":50}
 {"displayName":"开关阀","image":"symbols/Agent/开关阀.json","width":32,"height":32}
 {"displayName":"回油过滤器","image":"symbols/Agent/回油过滤器.json","width":76,"height":60}
+{"displayName": "滑动变阻器", "image": "assets/Agent/滑动变阻器.png", "width": 128, "height": 128}
+{"displayName": "汽车", "image": "assets/Agent/汽车.png", "width": 128, "height": 128}
+{"displayName": "小推车", "image": "assets/Agent/小推车.png", "width": 128, "height": 128}
+{"displayName": "巴士", "image": "assets/Agent/巴士.png", "width": 128, "height": 128}

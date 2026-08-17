@@ -46,6 +46,7 @@ async def search_control(
                 )
                 for c in kr.candidates
             ],
+            canGenerate=kr.canGenerate,
         )
         for kr in result.keywords
     ]

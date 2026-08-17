@@ -253,6 +253,7 @@ class ControlCatalogManager:
         name = COLLECTION_PREFIX + control_hash
         try:
             collection = self._client.get_collection(name=name)
+            collection._embedding_function = self._ef
         except Exception:
             collection = None
         ids = [_build_id(item) for item in controls]
