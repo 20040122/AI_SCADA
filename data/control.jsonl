@@ -162,7 +162,3 @@
 {"displayName":"溢流阀","image":"assets/现场控制系统/设备图片/溢流阀.png","width":64,"height":50}
 {"displayName":"开关阀","image":"symbols/Agent/开关阀.json","width":32,"height":32}
 {"displayName":"回油过滤器","image":"symbols/Agent/回油过滤器.json","width":76,"height":60}
-{"displayName": "滑动变阻器", "image": "assets/Agent/滑动变阻器.png", "width": 128, "height": 128}
-{"displayName": "汽车", "image": "assets/Agent/汽车.png", "width": 128, "height": 128}
-{"displayName": "小推车", "image": "assets/Agent/小推车.png", "width": 128, "height": 128}
-{"displayName": "巴士", "image": "assets/Agent/巴士.png", "width": 128, "height": 128}
