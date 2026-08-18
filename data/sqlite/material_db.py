@@ -124,6 +124,22 @@ class MaterialDB:
         )
         await conn.commit()
 
+    async def confirm_generated(self, name: str, image: str, query: str) -> None:
+        conn = await self._get_conn()
+        await conn.execute(_CREATE_TABLE_SQL)
+        await conn.execute(_CREATE_QUERY_RESULTS_SQL)
+        await conn.execute(
+            """INSERT OR REPLACE INTO controls (displayName, image, width, height, source)
+               VALUES (?, ?, ?, ?, ?)""",
+            (name, image, 128, 128, "ai-generated"),
+        )
+        await conn.execute(
+            """INSERT INTO query_results (query, displayName, image, width, height, similarity, source)
+               VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (query, name, image, 128, 128, 1.0, "ai-generated"),
+        )
+        await conn.commit()
+
     async def batch_add(self, items: list[dict], source: str = "local") -> None:
         conn = await self._get_conn()
         await conn.executemany(

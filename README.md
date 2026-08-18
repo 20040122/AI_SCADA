@@ -16,17 +16,8 @@ python main.py
 
 ```bash
 cd web/scada
-# 1. 安装依赖
-npm install
-# 2. 配置环境变量
-cp .env .env.local
-# 3. 启动开发服务器
-npm run dev
-```
 
-- 前端卡死：
-```bash
-  rm -rf node_modules
-  npm ci
-  npm run dev
+rm -rf node_modules
+npm ci
+npm run dev
 ```

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.deps import get_control_agent
 from app.schemas import (
@@ -9,6 +9,12 @@ from app.schemas import (
     KeywordResult,
 )
 from model.control_agent import ControlAgent
+from model.control_tools.catalog import CatalogCorruptError
+from model.control_tools.extract import (
+    ControlModelOutputError,
+    ControlModelTimeoutError,
+    ControlModelUnavailableError,
+)
 
 router = APIRouter(prefix="/api/control", tags=["control"])
 
@@ -18,7 +24,14 @@ async def search_control(
     req: ControlSearchRequest,
     agent: ControlAgent = Depends(get_control_agent),
 ):
-    result = await agent.process_query(req.query)
+    try:
+        result = await agent.process_query(req.query)
+    except ControlModelOutputError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except (ControlModelUnavailableError, CatalogCorruptError) as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except ControlModelTimeoutError as exc:
+        raise HTTPException(status_code=504, detail=str(exc)) from exc
     keywords = [
         KeywordResult(
             keyword=kr.keyword,
@@ -33,6 +46,7 @@ async def search_control(
                 )
                 for c in kr.candidates
             ],
+            canGenerate=kr.canGenerate,
         )
         for kr in result.keywords
     ]

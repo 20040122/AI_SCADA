@@ -62,6 +62,13 @@ export interface DecorationNode {
   labelFor?: number;
 }
 
+export interface LayoutMaterial {
+  displayName: string;
+  image: string;
+  width: number;
+  height: number;
+}
+
 export interface LayoutJsonData {
   v: string;
   p: Record<string, unknown>;
@@ -72,6 +79,7 @@ export interface LayoutJsonData {
     rectSelectable?: boolean;
     zoomable?: boolean;
     pannable?: boolean;
+    "layout.materials"?: LayoutMaterial[];
   };
   d: LayoutNodeData[];
   contentRect?: ContentRect;
@@ -117,6 +125,9 @@ export interface CanvasNode {
   width: number;
   height: number;
   color: string;
+  label?: string;
+  labelColor?: string;
+  labelFont?: string;
   a?: Record<string, unknown>;
 }
 
@@ -135,4 +146,24 @@ export interface PipeConnection {
 
 export interface PipeData {
   connections: PipeConnection[];
+}
+
+export interface UploadCorrectionSize {
+  width: number;
+  height: number;
+}
+
+export interface UploadCorrection {
+  node_i: number;
+  display_name: string;
+  image: string;
+  before: UploadCorrectionSize;
+  after: UploadCorrectionSize;
+}
+
+export interface UploadCanvasResponse {
+  file_name: string;
+  json_data: LayoutJsonData;
+  corrections: UploadCorrection[];
+  warnings: string[];
 }

@@ -12,6 +12,7 @@ export function useAssetSearch() {
     resetPipeline,
     setIsLoading,
     setError,
+    clearGenerations,
   } = useAssetStore();
 
   const search = useCallback(async () => {
@@ -35,6 +36,7 @@ export function useAssetSearch() {
 
       setPipelineStep(3, "wait");
 
+      clearGenerations();
       setKeywordResults(result.keywords);
       setMissedKeywords(result.missed);
 
@@ -71,6 +73,7 @@ export function useAssetSearch() {
     setMissedKeywords,
     setIsLoading,
     setError,
+    clearGenerations,
   ]);
 
   return { search };

@@ -12,7 +12,10 @@ from typing import Optional
 import jsonschema
 
 from data.sqlite.material_db import MaterialDB
+from model.layout_tools.control_size import material_map as control_material_map
+from model.layout_tools.geometry import content_rect_of_nodes
 from model.layout_tools.get_background import generate_layout
+from model.layout_tools.pipe_serializer import next_edge_i, serialize_pipes
 from model.llm_client import default_client
 
 logger = logging.getLogger(__name__)
@@ -129,6 +132,17 @@ class LayoutAgent:
         out = deepcopy(canvas)
         d = list(out.get("d", []))
 
+        snapshot = [
+            {
+                "displayName": name,
+                "image": str(item.get("image") or ""),
+                "width": float(item.get("width") or 0),
+                "height": float(item.get("height") or 0),
+            }
+            for name, item in control_material_map(materials).items()
+        ]
+        out.setdefault("a", {})["layout.materials"] = snapshot
+
         max_i = 0
         for n in d:
             i = n.get("i")
@@ -140,6 +154,10 @@ class LayoutAgent:
             d.append(node)
 
         out["d"] = d
+
+        pipe_edges = []
+        if pipe_data is not None:
+            pipe_edges = serialize_pipes(pipe_data, nodes, next_edge_i(nodes))
 
         flat = []
         for n in nodes:
@@ -172,14 +190,13 @@ class LayoutAgent:
                     encoding="utf-8",
                 )
                 tmp.replace(path)
-            if pipe_data is not None:
-                pipe_path = LAYOUT_DIR / "pipe.json"
-                tmp = pipe_path.with_suffix(".tmp")
-                tmp.write_text(
-                    json.dumps(pipe_data, ensure_ascii=False, indent=2),
-                    encoding="utf-8",
-                )
-                tmp.replace(pipe_path)
+            pipe_path = LAYOUT_DIR / "pipe.json"
+            tmp = pipe_path.with_suffix(".tmp")
+            tmp.write_text(
+                json.dumps(pipe_edges, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            tmp.replace(pipe_path)
 
         return LayoutResult(
             json_data=out,
@@ -191,28 +208,7 @@ class LayoutAgent:
 
 
 def _calc_content_rect(nodes: list[dict]) -> dict:
-    if not nodes:
-        return {"x": 0, "y": 0, "width": 0, "height": 0}
-    min_x = float("inf")
-    min_y = float("inf")
-    max_x = float("-inf")
-    max_y = float("-inf")
-    for n in nodes:
-        cx = n.get("x", 0)
-        cy = n.get("y", 0)
-        w = n.get("width", 0) or 0
-        h = n.get("height", 0) or 0
-        half_w, half_h = w / 2, h / 2
-        min_x = min(min_x, cx - half_w)
-        min_y = min(min_y, cy - half_h)
-        max_x = max(max_x, cx + half_w)
-        max_y = max(max_y, cy + half_h)
-    return {
-        "x": round(min_x, 5),
-        "y": round(min_y, 5),
-        "width": round(max_x - min_x, 5),
-        "height": round(max_y - min_y, 5),
-    }
+    return content_rect_of_nodes(nodes)
 
 
 _SCHEMA_PATH = Path(__file__).resolve().parent.parent / "data" / "schema" / "canvas_schema.json"

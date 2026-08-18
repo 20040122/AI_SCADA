@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import os
 from typing import Any
 
@@ -8,6 +9,32 @@ os.environ["DEEPSEEK_MODEL"] = "test-model"
 
 from openai.types.chat import ChatCompletion, ChatCompletionMessage
 from openai.types.chat.chat_completion import Choice
+
+
+class FakeEmbedding:
+    def __init__(self, dimension: int = 16):
+        self._dimension = dimension
+
+    def _embed_texts(self, input):
+        result = []
+        for text in input:
+            digest = hashlib.sha256(text.encode("utf-8")).digest()
+            vec = []
+            for byte in digest[:4]:
+                for shift in range(8):
+                    vec.append(1.0 if (byte & (1 << shift)) else -1.0)
+            norm = len(vec) ** 0.5
+            result.append([v / norm for v in vec])
+        return result
+
+    def embed_query(self, input):
+        return self._embed_texts(input)
+
+    def embed_documents(self, input):
+        return self._embed_texts(input)
+
+    def __call__(self, input):
+        return self._embed_texts(input)
 
 
 def _make_choice(content: str = "") -> Choice:

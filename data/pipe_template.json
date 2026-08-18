@@ -1,0 +1,30 @@
+    {
+      "c": "ht.Edge",
+      "i": 16335,
+      "p": {
+        "source": {
+          "__i": 16295
+        },
+        "target": {
+          "__i": 16299
+        }
+      },
+      "s": {
+        "edge.width": 5,
+        "edge.color": "#60acfc",
+        "edge.gap": 24,
+        "edge.corner.radius": 20,
+        "edge.dash": true,
+        "edge.dash.color": "#b8daff",
+        "edge.dash.pattern": [
+          20,
+          20
+        ],
+        "edge.dash.width": 4,
+        "note.background": "#60acfc",
+        "note.border.color": "#3d3d3d",
+        "edge.type": "flex2",
+        "opacity": 1,
+        "edge.dash.flow": true
+      }
+    }

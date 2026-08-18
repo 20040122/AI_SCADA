@@ -3,7 +3,7 @@ import { useRefineStore } from "../../stores/refineStore";
 import { useLayoutStore } from "../../stores/layoutStore";
 import type { RefineMessage } from "../../types/refine";
 import type { CanvasNode } from "../../types/layout";
-import { refineLayout, uploadToSystem } from "../../api/layout";
+import { refineLayout, uploadCanvas } from "../../api/layout";
 import { colorJson } from "../../utils/jsonColor";
 import { notify } from "../../utils/notification";
 
@@ -55,6 +55,8 @@ export default function RightPanel() {
   const [uploading, setUploading] = useState(false);
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
   const [uploadErr, setUploadErr] = useState(false);
+  const [uploadCorrections, setUploadCorrections] = useState<Array<{ node_i: number; display_name: string; before: { width: number; height: number }; after: { width: number; height: number } }>>([]);
+  const [uploadWarnings, setUploadWarnings] = useState<string[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const requestOwnerRef = useRef<symbol | null>(null);
 
@@ -192,12 +194,19 @@ export default function RightPanel() {
     ) return;
     const submittedJson = state.workingJson;
     const submittedFileName = state.sourceFileName;
+    const submittedPipes = state.workingPipes;
     setUploading(true);
     setUploadMsg(null);
     setUploadErr(false);
+    setUploadCorrections([]);
+    setUploadWarnings([]);
     try {
-      await uploadToSystem(submittedJson, submittedFileName);
-      setUploadMsg('已插入系统');
+      const res = await uploadCanvas(submittedFileName, submittedJson, submittedPipes);
+      useRefineStore.getState().applyUploadResult(res);
+      const count = res.corrections.length;
+      setUploadMsg(count > 0 ? `已插入系统（修正 ${count} 个控件宽高比）` : '已插入系统');
+      setUploadCorrections(res.corrections);
+      setUploadWarnings(res.warnings);
     } catch (e) {
       setUploadMsg(e instanceof Error ? e.message : '插入系统失败，请稍后重试');
       setUploadErr(true);
@@ -374,6 +383,22 @@ export default function RightPanel() {
               }`}
             >
               {uploadMsg}
+            </div>
+          )}
+          {uploadCorrections.length > 0 && (
+            <div className="mt-2 text-[10px] font-mono text-[var(--text2)]">
+              {uploadCorrections.map((c) => (
+                <div key={c.node_i}>
+                  #{c.node_i} {c.display_name}: {c.before.width}x{c.before.height} → {c.after.width}x{c.after.height}
+                </div>
+              ))}
+            </div>
+          )}
+          {uploadWarnings.length > 0 && (
+            <div className="mt-2 text-[10px] font-mono text-[var(--warn)]">
+              {uploadWarnings.map((w, i) => (
+                <div key={i}>⚠ {w}</div>
+              ))}
             </div>
           )}
         </div>

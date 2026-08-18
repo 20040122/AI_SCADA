@@ -29,6 +29,8 @@ _INTENT_EXAMPLE_PATH = Path(__file__).resolve().parents[2] / "layout" / "intent.
 _GENERATE_GIRD_MODEL = "deepseek-v4-flash"
 _INTENT_CACHE = OrderedDict()
 _INTENT_CACHE_VERSION = 2
+_MAX_INTENT_ATTEMPTS = 5
+_INTENT_ERROR_SUMMARY_LIMIT = 2000
 
 
 class DeviceNode(BaseModel):
@@ -116,8 +118,14 @@ class IntentModelTimeoutError(RuntimeError):
 
 
 class IntentModelOutputError(RuntimeError):
-    def __init__(self, message: str, raw_output: Optional[str] = None):
+    def __init__(
+        self,
+        message: str,
+        raw_output: Optional[str] = None,
+        category: str = "semantic",
+    ):
         self.raw_output = raw_output
+        self.category = category
         super().__init__(message)
 
 
@@ -606,9 +614,9 @@ async def generate_intent(
         {"role": "user", "content": _build_user_prompt(source)},
     ]
 
-    async def call_and_validate(selected_model, **kwargs):
+    async def call_and_validate(selected_model, attempt_messages, **kwargs):
         try:
-            resp = await model_caller(client, selected_model, messages, **kwargs)
+            resp = await model_caller(client, selected_model, attempt_messages, **kwargs)
         except IntentModelTimeoutError:
             raise
         except Exception as exc:
@@ -619,7 +627,7 @@ async def generate_intent(
         data = _parse_json_lenient(text)
         if data is None:
             raise IntentModelOutputError(
-                f"LLM 输出无法解析为 JSON：{(text or '')[:200]}", text
+                "LLM 输出无法解析为 JSON", text, category="json_parse"
             )
         try:
             layout_file = LayoutFile.model_validate(data)
@@ -629,28 +637,66 @@ async def generate_intent(
                 for item in exc.errors()
             )
             raise IntentModelOutputError(
-                f"布局模型输出不符合格式：{details}", text
+                f"布局模型输出不符合格式：{details}", text, category="structure"
             ) from exc
 
         errors, warnings = validate_layout_file(layout_file, source)
         if errors:
             details = "; ".join(f"{item.path}: {item.message}" for item in errors)
             raise IntentModelOutputError(
-                f"布局模型输出未通过语义校验：{details}", text
+                f"布局模型输出未通过语义校验：{details}", text, category="semantic"
             )
         for warning in warnings:
             logger.warning(warning)
         _strip_constraints(layout_file)
         return layout_file
 
-    layout_file = await call_and_validate(
-        model,
-        response_format={"type": "json_object"},
-        stream=False,
-        extra_body={"thinking": {"type": "disabled"}},
-    )
-    _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
-    return layout_file
+    attempt = 0
+    last_error: Optional[IntentModelOutputError] = None
+    while True:
+        attempt += 1
+        attempt_messages = list(messages)
+        if attempt > 1:
+            assert last_error is not None
+            summary = str(last_error)
+            if len(summary) > _INTENT_ERROR_SUMMARY_LIMIT:
+                summary = summary[:_INTENT_ERROR_SUMMARY_LIMIT]
+            attempt_messages.append(
+                {
+                    "role": "user",
+                    "content": (
+                        f"上一次布局意图输出未通过校验（{last_error.category}）：{summary}。"
+                        "请基于原始需求重新生成完整布局意图 JSON，只输出 JSON，不要解释或 Markdown。"
+                    ),
+                }
+            )
+        try:
+            layout_file = await call_and_validate(
+                model,
+                attempt_messages,
+                response_format={"type": "json_object"},
+                stream=False,
+                extra_body={"thinking": {"type": "disabled"}},
+            )
+        except IntentModelOutputError as exc:
+            last_error = exc
+            logger.warning(
+                "布局意图第 %d/%d 次尝试未通过校验：类别=%s，摘要=%s",
+                attempt,
+                _MAX_INTENT_ATTEMPTS,
+                exc.category,
+                str(exc)[:_INTENT_ERROR_SUMMARY_LIMIT],
+            )
+            if attempt >= _MAX_INTENT_ATTEMPTS:
+                raise IntentModelOutputError(
+                    f"布局模型输出连续 {_MAX_INTENT_ATTEMPTS} 次未通过校验：{str(exc)[:_INTENT_ERROR_SUMMARY_LIMIT]}",
+                    exc.raw_output,
+                    category=exc.category,
+                ) from exc
+            continue
+        logger.info("布局意图第 %d/%d 次尝试成功", attempt, _MAX_INTENT_ATTEMPTS)
+        _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
+        return layout_file
 
 
 

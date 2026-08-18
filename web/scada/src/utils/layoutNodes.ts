@@ -25,17 +25,23 @@ export function extractNodesFromJsonData(jsonData: LayoutJsonData | null): Canva
   if (!jsonData?.d) return [];
   return jsonData.d
     .filter((n) => n.a?.["layout.node"] != null && n.p?.position)
-    .map((n, idx) => ({
-      id: `node-${n.i ?? idx}`,
-      displayName: n.p.displayName || "",
-      image: n.p.image || "",
-      x: n.p.position!.x,
-      y: n.p.position!.y,
-      width: n.p.width || 60,
-      height: n.p.height || 40,
-      color: hashColor(n.p.displayName || ""),
-      a: n.a ? { ...n.a } : undefined,
-    }));
+    .map((n, idx) => {
+      const s = n.s || {};
+      return {
+        id: `node-${n.i ?? idx}`,
+        displayName: n.p.displayName || "",
+        image: n.p.image || "",
+        x: n.p.position!.x,
+        y: n.p.position!.y,
+        width: n.p.width || 60,
+        height: n.p.height || 40,
+        color: hashColor(n.p.displayName || ""),
+        label: (s.label as string | undefined) || "",
+        labelColor: (s["label.color"] as string | undefined) || "rgb(255,255,255)",
+        labelFont: (s["label.font"] as string | undefined) || "18px arial, sans-serif",
+        a: n.a ? { ...n.a } : undefined,
+      };
+    });
 }
 
 function parseFontStyle(font?: string): { fontSize?: string; fontWeight?: string } {

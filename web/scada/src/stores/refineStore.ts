@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { CanvasNode, LayoutJsonData, PipeData } from "../types/layout.ts";
+import type { CanvasNode, LayoutJsonData, PipeData, UploadCanvasResponse } from "../types/layout.ts";
 import type { JsonPatchOp, RefineMessage, RefineHistoryItem } from "../types/refine.ts";
 import { extractDecorationsFromJsonData, extractNodesFromJsonData } from "../utils/layoutNodes.ts";
 import type { DecorationNode } from "../types/layout.ts";
@@ -118,6 +118,7 @@ interface RefineStore {
   history: RefineHistoryItem[];
   isRefining: boolean;
   pendingPatch: PendingPatch | null;
+  revision: number;
 
   loadFromLayoutData: (
     nodes: CanvasNode[],
@@ -136,6 +137,7 @@ interface RefineStore {
   addMessage: (msg: RefineMessage) => void;
   setRefining: (value: boolean) => void;
   applyPatch: (patch: JsonPatchOp[], messageId: string) => void;
+  applyUploadResult: (res: UploadCanvasResponse) => void;
   acceptPatch: (messageId: string) => void;
   rejectPatch: (messageId: string) => void;
   clearCanvas: () => void;
@@ -154,10 +156,11 @@ export const useRefineStore = create<RefineStore>((set) => ({
   history: [],
   isRefining: false,
   pendingPatch: null,
+  revision: 0,
 
   loadFromLayoutData: (nodes, width, height, layoutJson, sourceFileName, pipes) => {
     const workingJson = layoutJson ? cloneLayout(layoutJson) : null;
-    set({
+    set((s) => ({
       workingNodes: nodes.map((n) => ({ ...n })),
       decorations: extractDecorationsFromJsonData(workingJson),
       workingPipes: pipes ? JSON.parse(JSON.stringify(pipes)) as PipeData : null,
@@ -170,7 +173,8 @@ export const useRefineStore = create<RefineStore>((set) => ({
       history: [],
       isRefining: false,
       pendingPatch: null,
-    });
+      revision: s.revision + 1,
+    }));
   },
 
   setSelection: (ids) => set({ selectedNodeIds: ids }),
@@ -388,6 +392,21 @@ export const useRefineStore = create<RefineStore>((set) => ({
           selectedNodeIds,
           patch,
         },
+        revision: state.revision + 1,
+      };
+    });
+  },
+
+  applyUploadResult: (res) => {
+    set((state) => {
+      const jsonData = res.json_data;
+      const newNodes = extractNodesFromJsonData(jsonData);
+      return {
+        workingNodes: newNodes,
+        decorations: extractDecorationsFromJsonData(jsonData),
+        workingJson: jsonData,
+        selectedNodeIds: filterValidIds(state.selectedNodeIds, newNodes),
+        revision: state.revision + 1,
       };
     });
   },
@@ -414,6 +433,7 @@ export const useRefineStore = create<RefineStore>((set) => ({
         messages,
         history: [historyItem, ...state.history],
         pendingPatch: null,
+        revision: state.revision + 1,
       };
     });
   },
@@ -439,12 +459,13 @@ export const useRefineStore = create<RefineStore>((set) => ({
         selectedNodeIds: filterValidIds(snapshot.selectedNodeIds, workingNodes),
         messages,
         pendingPatch: null,
+        revision: state.revision + 1,
       };
     });
   },
 
   clearCanvas: () =>
-    set({
+    set((s) => ({
       workingNodes: [],
       decorations: [],
       workingPipes: null,
@@ -455,5 +476,6 @@ export const useRefineStore = create<RefineStore>((set) => ({
       history: [],
       isRefining: false,
       pendingPatch: null,
-    }),
+      revision: s.revision + 1,
+    })),
 }));

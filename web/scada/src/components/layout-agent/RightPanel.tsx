@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useLayoutStore } from "../../stores/layoutStore";
-import { uploadToSystem } from "../../api/layout";
+import { uploadCanvas } from "../../api/layout";
 import { colorJson } from "../../utils/jsonColor";
 import { WorkflowSteps } from "./CenterPanel";
 
 export default function RightPanel() {
-  const { jsonData, zones, missingControls, nodes, fileName } = useLayoutStore();
+  const { jsonData, zones, missingControls, nodes, fileName, corrections, uploadWarnings, pipe_data } = useLayoutStore();
   const hasJson = jsonData !== null;
   const hasNodes = nodes.length > 0;
   const [uploading, setUploading] = useState(false);
@@ -18,8 +18,10 @@ export default function RightPanel() {
     setUploadMsg(null);
     setUploadErr(false);
     try {
-      await uploadToSystem(jsonData, fileName);
-      setUploadMsg("已插入系统");
+      const res = await uploadCanvas(fileName, jsonData, pipe_data);
+      useLayoutStore.getState().applyUploadResult(res);
+      const count = res.corrections.length;
+      setUploadMsg(count > 0 ? `已插入系统（修正 ${count} 个控件宽高比）` : "已插入系统");
       setUploadErr(false);
     } catch (e) {
       setUploadMsg(e instanceof Error ? e.message : "上传失败");
@@ -73,6 +75,23 @@ export default function RightPanel() {
                 }`}
               >
                 {uploadMsg}
+              </div>
+            )}
+            {corrections.length > 0 && (
+              <div className="mt-2 text-[10px] font-mono text-[var(--text2)]">
+                {corrections.map((c) => (
+                  <div key={c.node_i}>
+                    #{c.node_i} {c.display_name}: {c.before.width}x{c.before.height} →{" "}
+                    {c.after.width}x{c.after.height}
+                  </div>
+                ))}
+              </div>
+            )}
+            {uploadWarnings.length > 0 && (
+              <div className="mt-2 text-[10px] font-mono text-[var(--warn)]">
+                {uploadWarnings.map((w, i) => (
+                  <div key={i}>⚠ {w}</div>
+                ))}
               </div>
             )}
           </div>

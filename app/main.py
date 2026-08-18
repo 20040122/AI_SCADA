@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.deps import close_resources, init_resources
-from app.routers import binding, canvas, control, material, validate
+from app.routers import binding, canvas, control, generation, material, validate
 
 
 @asynccontextmanager
@@ -37,3 +37,4 @@ app.include_router(canvas.router)
 app.include_router(binding.router)
 app.include_router(validate.router)
 app.include_router(material.router)
+app.include_router(generation.router)

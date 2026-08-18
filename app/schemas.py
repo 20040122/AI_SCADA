@@ -26,6 +26,7 @@ class ControlCandidate(BaseModel):
 class KeywordResult(BaseModel):
     keyword: str
     candidates: list[ControlCandidate] = []
+    canGenerate: bool = False
 
 
 class ControlSearchRequest(BaseModel):
@@ -35,6 +36,28 @@ class ControlSearchRequest(BaseModel):
 class ControlSearchResponse(BaseModel):
     keywords: list[KeywordResult]
     missed: list[str]
+
+
+class GenerationCreateRequest(BaseModel):
+    query: str
+    name: str
+
+
+class GenerationCreateResponse(BaseModel):
+    generation_id: str
+    status: str
+
+
+class GenerationStatusResponse(BaseModel):
+    generation_id: str
+    name: str
+    status: str
+    seed: int
+    created_at: Optional[str] = None
+    expires_at: Optional[str] = None
+    preview_url: Optional[str] = None
+    error: Optional[str] = None
+    error_code: Optional[str] = None
 
 
 class SaveQueryResultRequest(BaseModel):
@@ -97,37 +120,123 @@ class RefineResponse(BaseModel):
     message: str
 
 
-class BindingVariable(BaseModel):
-    name: str
-    data_type: str = ""
-    register_address: str = ""
-    description: str = ""
+class UploadCanvasRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    file_name: str
+    json_data: dict[str, Any]
+    pipe_data: Optional[dict[str, Any]] = None
 
 
-class BindingMatchRequest(BaseModel):
-    controls: list[ControlItem]
-    variables: list[BindingVariable]
+class CorrectionSize(BaseModel):
+    width: float
+    height: float
+
+
+class CorrectionItem(BaseModel):
+    node_i: int
+    display_name: str = ""
+    image: str = ""
+    before: CorrectionSize
+    after: CorrectionSize
+
+
+class UploadCanvasResponse(BaseModel):
+    file_name: str
+    json_data: dict[str, Any]
+    corrections: list[CorrectionItem] = []
+    warnings: list[str] = []
+
+
+class BindingRequestRow(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    row_number: int
+    displayName: str
+    propertyName: str
+
+
+class BindingPreviewResponse(BaseModel):
+    encoding: str
+    total_rows: int
+    requests: list[BindingRequestRow]
+
+
+class BindingCandidate(BaseModel):
+    binding_id: str
+    propertyName: str
+    projectName: str
+    deviceName: str
+    dataType: str
+    writable: bool
+    unit: str = ""
+    score: float = 0.0
+    evidence: list[str] = []
+
+
+class BindingTarget(BaseModel):
+    node_i: int
+    node_id: Any = None
+    displayName: str
+    handler: str
+    existing: Any = None
 
 
 class BindingMatchItem(BaseModel):
-    control_name: str
-    variable_name: str
-    variable_address: str
-    confidence: float
-    match_reason: str = ""
+    row_number: int
+    target_node_i: Optional[int] = None
+    requested_displayName: str
+    requested_propertyName: str
+    candidates: list[BindingCandidate] = []
+    suggested_binding_id: Optional[str] = None
+    lead: float = 0.0
+    confidence: str = "none"
 
 
-class BindingConflictItem(BaseModel):
-    conflict_type: str
-    description: str
-    items: list[str]
+class BindingMatchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    json_data: dict[str, Any]
+    requests: list[BindingRequestRow]
 
 
 class BindingMatchResponse(BaseModel):
-    matches: list[BindingMatchItem]
-    conflicts: list[BindingConflictItem]
-    unmatched_controls: list[str]
-    unmatched_variables: list[str]
+    targets: list[BindingTarget]
+    items: list[BindingMatchItem]
+    blocked: bool = False
+    errors: list[str] = []
+
+
+class BindingAssignment(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    row_number: int
+    binding_id: str
+
+
+class BindingBuildRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    json_data: dict[str, Any]
+    requests: list[BindingRequestRow]
+    assignments: list[BindingAssignment]
+
+
+class BindingBuildPreview(BaseModel):
+    node_i: int
+    displayName: str
+    handler: str
+    before: Any = None
+    after: list[dict[str, Any]] = []
+
+
+class BindingBuildResponse(BaseModel):
+    bound_json: Optional[dict[str, Any]] = None
+    previews: list[BindingBuildPreview] = []
+    errors: list[str] = []
+    warnings: list[str] = []
+    applied_count: int = 0
+    skipped_count: int = 0
 
 
 class ValidateRequest(BaseModel):

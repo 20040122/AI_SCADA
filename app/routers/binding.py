@@ -1,53 +1,81 @@
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
+from app.deps import get_binding_agent
 from app.schemas import (
     ApiResponse,
-    BindingConflictItem,
-    BindingMatchItem,
+    BindingBuildPreview,
+    BindingBuildRequest,
+    BindingBuildResponse,
     BindingMatchRequest,
     BindingMatchResponse,
+    BindingPreviewResponse,
+    BindingRequestRow,
 )
-from app.services.binding_service import match_variables
+from app.services.csv_service import (
+    CsvError,
+    CsvEncodingError,
+    CsvTooLargeError,
+    CsvTooManyRowsError,
+    preview_csv,
+)
+from model.binding_agent import BindingAgent
 
 router = APIRouter(prefix="/api/binding", tags=["binding"])
 
 
-@router.post("/match", response_model=ApiResponse)
-async def binding_match(req: BindingMatchRequest):
-    controls = [{"displayName": c.displayName} for c in req.controls]
-    variables = [
-        {"name": v.name, "register_address": v.register_address}
-        for v in req.variables
-    ]
-
-    matches, conflicts, unmatched_controls, unmatched_variables = match_variables(
-        controls, variables, threshold=0.5
-    )
-
-    match_items = [
-        BindingMatchItem(
-            control_name=m["control_name"],
-            variable_name=m["variable_name"],
-            variable_address=m["variable_address"],
-            confidence=m["confidence"],
-            match_reason=m["match_reason"],
-        )
-        for m in matches
-    ]
-    conflict_items = [
-        BindingConflictItem(
-            conflict_type=c["conflict_type"],
-            description=c["description"],
-            items=c["items"],
-        )
-        for c in conflicts
-    ]
-
-    return ApiResponse(data=BindingMatchResponse(
-        matches=match_items,
-        conflicts=conflict_items,
-        unmatched_controls=unmatched_controls,
-        unmatched_variables=unmatched_variables,
+@router.post("/csv/preview", response_model=ApiResponse)
+async def csv_preview(file: UploadFile = File(...)):
+    if not (file.filename or "").lower().endswith(".csv"):
+        raise HTTPException(status_code=422, detail="仅接受 .csv 文件")
+    data = await file.read()
+    try:
+        result = preview_csv(data)
+    except CsvEncodingError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except CsvTooLargeError as exc:
+        raise HTTPException(status_code=413, detail=str(exc)) from exc
+    except CsvTooManyRowsError as exc:
+        raise HTTPException(status_code=413, detail=str(exc)) from exc
+    except CsvError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    requests = [BindingRequestRow(**r) for r in result["requests"]]
+    return ApiResponse(data=BindingPreviewResponse(
+        encoding=result["encoding"],
+        total_rows=result["total_rows"],
+        requests=requests,
     ).model_dump())
+
+
+@router.post("/match", response_model=ApiResponse)
+async def binding_match(
+    req: BindingMatchRequest,
+    agent: BindingAgent = Depends(get_binding_agent),
+):
+    result = agent.match(
+        req.json_data,
+        [r.model_dump() for r in req.requests],
+    )
+    return ApiResponse(data=BindingMatchResponse(**result).model_dump())
+
+
+@router.post("/build", response_model=ApiResponse)
+async def binding_build(
+    req: BindingBuildRequest,
+    agent: BindingAgent = Depends(get_binding_agent),
+):
+    result = agent.build(
+        req.json_data,
+        [r.model_dump() for r in req.requests],
+        [a.model_dump() for a in req.assignments],
+    )
+    resp = BindingBuildResponse(
+        bound_json=result["bound_json"],
+        previews=[BindingBuildPreview(**p) for p in result["previews"]],
+        errors=result["errors"],
+        warnings=result["warnings"],
+        applied_count=result["applied_count"],
+        skipped_count=result["skipped_count"],
+    )
+    return ApiResponse(data=resp.model_dump())

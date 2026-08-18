@@ -1,274 +1,332 @@
-{
-  "connections": [
-    {
-      "id": "pipe-1",
+[
+  {
+    "c": "ht.Edge",
+    "i": 20412,
+    "p": {
       "source": {
-        "group": "group-1",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
+        "__i": 20399
       },
       "target": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
+        "__i": 20400
       }
     },
-    {
-      "id": "pipe-2",
-      "source": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
     },
-    {
-      "id": "pipe-3",
-      "source": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-4",
-      "source": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-5",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-5",
-      "source": {
-        "group": "group-5",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-6",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-6",
-      "source": {
-        "group": "group-1",
-        "node": "root",
-        "instance": 2,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 2,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-7",
-      "source": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 2,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-8",
-      "source": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-9",
-      "source": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-5",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-10",
-      "source": {
-        "group": "group-5",
-        "node": "root",
-        "instance": 1,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-6",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-11",
-      "source": {
-        "group": "group-1",
-        "node": "root",
-        "instance": 3,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 3,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-12",
-      "source": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 3,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 2,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-13",
-      "source": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 2,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 2,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-14",
-      "source": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 2,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-6",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-15",
-      "source": {
-        "group": "group-1",
-        "node": "root",
-        "instance": 4,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 4,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-16",
-      "source": {
-        "group": "group-2",
-        "node": "root",
-        "instance": 4,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 2,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-17",
-      "source": {
-        "group": "group-3",
-        "node": "root",
-        "instance": 2,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 2,
-        "port": "left"
-      }
-    },
-    {
-      "id": "pipe-18",
-      "source": {
-        "group": "group-4",
-        "node": "root",
-        "instance": 2,
-        "port": "right"
-      },
-      "target": {
-        "group": "group-6",
-        "node": "root",
-        "instance": 1,
-        "port": "left"
-      }
+    "a": {
+      "layout.role": "pipe"
     }
-  ]
-}
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20413,
+    "p": {
+      "source": {
+        "__i": 20400
+      },
+      "target": {
+        "__i": 20401
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20414,
+    "p": {
+      "source": {
+        "__i": 20401
+      },
+      "target": {
+        "__i": 20402
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20415,
+    "p": {
+      "source": {
+        "__i": 20402
+      },
+      "target": {
+        "__i": 20403
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20416,
+    "p": {
+      "source": {
+        "__i": 20404
+      },
+      "target": {
+        "__i": 20405
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20417,
+    "p": {
+      "source": {
+        "__i": 20405
+      },
+      "target": {
+        "__i": 20406
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20418,
+    "p": {
+      "source": {
+        "__i": 20406
+      },
+      "target": {
+        "__i": 20407
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20419,
+    "p": {
+      "source": {
+        "__i": 20408
+      },
+      "target": {
+        "__i": 20409
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20420,
+    "p": {
+      "source": {
+        "__i": 20409
+      },
+      "target": {
+        "__i": 20410
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  },
+  {
+    "c": "ht.Edge",
+    "i": 20421,
+    "p": {
+      "source": {
+        "__i": 20410
+      },
+      "target": {
+        "__i": 20411
+      }
+    },
+    "s": {
+      "edge.width": 5,
+      "edge.color": "#60acfc",
+      "edge.gap": 24,
+      "edge.corner.radius": 20,
+      "edge.dash": true,
+      "edge.dash.color": "#b8daff",
+      "edge.dash.pattern": [
+        20,
+        20
+      ],
+      "edge.dash.width": 4,
+      "note.background": "#60acfc",
+      "note.border.color": "#3d3d3d",
+      "edge.type": "flex2",
+      "opacity": 1,
+      "edge.dash.flow": true
+    },
+    "a": {
+      "layout.role": "pipe"
+    }
+  }
+]

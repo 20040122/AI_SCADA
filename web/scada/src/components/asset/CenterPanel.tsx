@@ -1,8 +1,10 @@
 import { useEffect, useCallback } from "react";
 import { useAssetStore } from "../../stores/assetStore";
 import { getQueryResults, clearQueryResults, saveQueryResults } from "../../api/material";
+import { useGenerationPolling } from "../../hooks/useGenerationPolling";
 import { notify } from "../../utils/notification";
 import AssetCard from "./AssetCard";
+import AiGenerationRow from "./AiGenerationRow";
 
 export default function CenterPanel() {
   const {
@@ -15,7 +17,10 @@ export default function CenterPanel() {
     query,
     setPipelineStep,
     isLoading,
+    generations,
   } = useAssetStore();
+
+  useGenerationPolling();
 
   const refreshQueryResults = useCallback(() => {
     getQueryResults()
@@ -113,7 +118,7 @@ export default function CenterPanel() {
                     <span className="text-[var(--text3)] ml-2">无候选</span>
                   )}
                 </div>
-                {kr.candidates.length > 0 && (
+                {kr.candidates.length > 0 ? (
                   <div className="grid grid-cols-3 gap-2">
                     {kr.candidates.map((c) => (
                       <AssetCard
@@ -123,6 +128,19 @@ export default function CenterPanel() {
                         onClick={() => handleSaveCandidate(kr.keyword, c.displayName)}
                       />
                     ))}
+                  </div>
+                ) : kr.canGenerate ? (
+                  <div className="p-[6px] border border-[var(--border)] rounded-[4px] bg-[var(--bg2)]">
+                    <AiGenerationRow
+                      keyword={kr.keyword}
+                      query={query}
+                      generation={generations[kr.keyword]}
+                      onConfirmed={refreshQueryResults}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-[10px] text-[var(--text3)] font-mono">
+                    请输入明确控件名称后重试
                   </div>
                 )}
               </div>

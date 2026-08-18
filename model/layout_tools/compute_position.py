@@ -9,17 +9,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from model.layout_tools.control_size import (
+    MissingMaterialError,
+    find_material,
+    material_map as build_material_map,
+    match_material,
+    resolve_control_size,
+)
+from model.layout_tools.geometry import content_rect_of_canvas
 from model.layout_tools.get_intent import LayoutFile, LayoutGroup, validate_layout_file
-
-
-@dataclass
-class _Limits:
-    min_w: float
-    min_h: float
-    max_w: float
-    max_h: float
-    preferred_w: float
-    preferred_h: float
 
 
 @dataclass
@@ -33,78 +31,21 @@ class _PlacedNode:
     y: float
     width: float
     height: float
+    material_name: str = ""
+    source_width: float = 0
+    source_height: float = 0
 
-
-@dataclass
-class _RoleEntry:
-    keywords: list[str]
-    limits: _Limits
-
-
-@dataclass
-class LayoutConfig:
-    root_role_name: str
-    roles: dict[str, _RoleEntry]
-
-
-_DEFAULT_LAYOUT_CONFIG = LayoutConfig(
-    root_role_name="root",
-    roles={
-        "root": _RoleEntry([], _Limits(120, 120, 180, 260, 160, 240)),
-        "pipe": _RoleEntry(["管"], _Limits(80, 20, 180, 50, 120, 30)),
-        "valve": _RoleEntry(["阀"], _Limits(40, 40, 80, 80, 60, 60)),
-        "meter": _RoleEntry(["流量", "表"], _Limits(50, 50, 100, 100, 80, 80)),
-        "sensor": _RoleEntry(["传感", "压力"], _Limits(50, 40, 110, 90, 80, 60)),
-        "default": _RoleEntry([], _Limits(50, 40, 120, 120, 80, 80)),
-    },
-)
-
-_LAYOUT_CONFIG: Optional[LayoutConfig] = None
-
-
-def _load_layout_config() -> LayoutConfig:
-    global _LAYOUT_CONFIG
-    if _LAYOUT_CONFIG is not None:
-        return _LAYOUT_CONFIG
-    try:
-        from app.config import settings
-
-        path = Path(settings.layout_config_path)
-    except Exception:
-        _LAYOUT_CONFIG = _DEFAULT_LAYOUT_CONFIG
-        return _LAYOUT_CONFIG
-    if not path.is_file():
-        _LAYOUT_CONFIG = _DEFAULT_LAYOUT_CONFIG
-        return _LAYOUT_CONFIG
-    try:
-        raw = json.loads(path.read_text(encoding="utf-8"))
-        root_name = raw.get("root_role_name", "root")
-        roles: dict[str, _RoleEntry] = {}
-        for name, entry in raw.get("roles", {}).items():
-            lim = entry.get("limits", {})
-            roles[name] = _RoleEntry(
-                list(entry.get("keywords", [])),
-                _Limits(
-                    lim.get("min_w", 50),
-                    lim.get("min_h", 40),
-                    lim.get("max_w", 120),
-                    lim.get("max_h", 120),
-                    lim.get("preferred_w", 80),
-                    lim.get("preferred_h", 80),
-                ),
-            )
-        for name, entry in _DEFAULT_LAYOUT_CONFIG.roles.items():
-            roles.setdefault(name, entry)
-        _LAYOUT_CONFIG = LayoutConfig(root_role_name=root_name, roles=roles)
-    except (OSError, json.JSONDecodeError, TypeError):
-        _LAYOUT_CONFIG = _DEFAULT_LAYOUT_CONFIG
-    return _LAYOUT_CONFIG
 
 _REGION_ORDER = ["left", "center", "right"]
 
 
-class MissingMaterialError(ValueError):
-    pass
+def _fit_size(
+    device_type: str,
+    is_root: bool,
+    material: dict,
+    explicit_role: Optional[str] = None,
+) -> tuple[float, float, float, float]:
+    return resolve_control_size(device_type, material, is_root, explicit_role)
 
 
 def convert_layout_file(
@@ -118,13 +59,13 @@ def convert_layout_file(
     if errors:
         message = "; ".join("%s: %s" % (e.path, e.message) for e in errors)
         raise ValueError(message)
-    material_map = _material_map(controls or [])
+    material_map = build_material_map(controls or [])
     device_types = {
         node.deviceType
         for group in layout_file.layoutIntent.groups
         for node in [group.unit.root, *group.unit.attachments]
     }
-    missing = sorted(device_type for device_type in device_types if not _find_material(device_type, material_map))
+    missing = sorted(device_type for device_type in device_types if not find_material(device_type, material_map))
     if missing:
         raise MissingMaterialError("query_results 缺少控件素材：" + "、".join(missing))
     nodes = compute_nodes(layout_file, controls or [], width, height)
@@ -137,8 +78,8 @@ def compute_nodes(
     width: int = 1920,
     height: int = 1080,
 ) -> list[dict]:
-    material_map = _material_map(controls or [])
-    content_rect = _content_rect(width, height)
+    material_map = build_material_map(controls or [])
+    content_rect = content_rect_of_canvas(width, height)
     slots = compute_group_slots(
         layout_file.layoutIntent.groups,
         content_rect,
@@ -265,6 +206,9 @@ def compute_unit_layout(
             "y": node.y,
             "width": node.width,
             "height": node.height,
+            "material_name": node.material_name,
+            "source_width": node.source_width,
+            "source_height": node.source_height,
         }
         for node in fitted
     ]
@@ -293,6 +237,9 @@ def build_nodes(nodes: list[dict]) -> list[dict]:
                     "layout.group": node["group_id"],
                     "layout.node": node["node_id"],
                     "layout.instance": node["instance_index"],
+                    "layout.materialName": node.get("material_name") or "",
+                    "layout.sourceWidth": _round(node.get("source_width") or 0),
+                    "layout.sourceHeight": _round(node.get("source_height") or 0),
                 },
             }
         )
@@ -308,19 +255,6 @@ async def convert_layout_file_from_query_results(
 ) -> list[dict]:
     controls = await db.list_query_results(query)
     return convert_layout_file(data, controls, width, height)
-
-
-def _content_rect(width: int, height: int) -> dict:
-    title_bottom = max(80, round(height * 0.086))
-    top = title_bottom + max(20, round(height * 0.02))
-    side = max(40, round(width * 0.03))
-    bottom = max(40, round(height * 0.06))
-    return {
-        "x": side,
-        "y": top,
-        "width": max(100, width - side * 2),
-        "height": max(100, height - top - bottom),
-    }
 
 
 def _region_rects(groups: list[LayoutGroup], content_rect: dict, gap: float) -> dict[str, dict]:
@@ -466,10 +400,24 @@ def _new_local_node(
     y: float,
     explicit_role: Optional[str] = None,
 ) -> _PlacedNode:
-    material = _match_material(device_type, material_map)
-    width, height = _fit_size(device_type, is_root, material, explicit_role)
+    material = match_material(device_type, material_map)
+    width, height, source_w, source_h = resolve_control_size(device_type, material, is_root, explicit_role)
     image = material.get("image") or "symbols/Agent/%s.json" % device_type
-    return _PlacedNode(group_id, node_id, instance_index, device_type, image, x, y, width, height)
+    material_name = str(material.get("displayName") or device_type)
+    return _PlacedNode(
+        group_id,
+        node_id,
+        instance_index,
+        device_type,
+        image,
+        x,
+        y,
+        width,
+        height,
+        material_name,
+        source_w,
+        source_h,
+    )
 
 
 def _place_child(
@@ -515,6 +463,9 @@ def _fit_unit_to_slot(nodes: list[_PlacedNode], slot: dict) -> list[_PlacedNode]
                 slot["y"] + (node.y - center_y) * scale,
                 node.width * scale,
                 node.height * scale,
+                node.material_name,
+                node.source_width,
+                node.source_height,
             )
         )
     return result
@@ -526,126 +477,6 @@ def _node_bbox(nodes: list[_PlacedNode]) -> dict:
     max_x = max(node.x + node.width / 2 for node in nodes)
     max_y = max(node.y + node.height / 2 for node in nodes)
     return {"x": min_x, "y": min_y, "width": max(max_x - min_x, 1), "height": max(max_y - min_y, 1)}
-
-
-def _fit_size(device_type: str, is_root: bool, material: dict, explicit_role: Optional[str] = None) -> tuple[float, float]:
-    config = _load_layout_config()
-    role = _role(device_type, is_root, explicit_role, config)
-    entry = config.roles.get(role)
-    if entry is None:
-        entry = _DEFAULT_LAYOUT_CONFIG.roles["default"]
-    limits = entry.limits
-    raw_w = _number(material.get("width"), limits.preferred_w)
-    raw_h = _number(material.get("height"), limits.preferred_h)
-    if raw_w <= 0 or raw_h <= 0:
-        raw_w = limits.preferred_w
-        raw_h = limits.preferred_h
-    min_scale = max(limits.min_w / raw_w, limits.min_h / raw_h)
-    max_scale = min(limits.max_w / raw_w, limits.max_h / raw_h)
-    if min_scale > max_scale:
-        return limits.preferred_w, limits.preferred_h
-    scale = min(1, max_scale)
-    if scale < min_scale:
-        scale = min_scale
-    return raw_w * scale, raw_h * scale
-
-
-def _role(
-    device_type: str,
-    is_root: bool,
-    explicit_role: Optional[str] = None,
-    config: Optional[LayoutConfig] = None,
-) -> str:
-    if config is None:
-        config = _load_layout_config()
-    if explicit_role:
-        return explicit_role
-    if is_root:
-        return config.root_role_name
-    for name, entry in config.roles.items():
-        if name == config.root_role_name or name == "default":
-            continue
-        for keyword in entry.keywords:
-            if keyword and keyword in device_type:
-                return name
-    return "default"
-
-
-def _material_map(controls: list[dict]) -> dict[str, dict]:
-    result = {}
-    for control in controls:
-        if not _is_control_material(control):
-            continue
-        name = str(control.get("displayName") or "")
-        if name and name not in result:
-            result[name] = control
-    return result
-
-
-def _is_control_material(control: dict) -> bool:
-    if not isinstance(control, dict):
-        return False
-    if _is_canvas_json(control):
-        return False
-    name = str(control.get("displayName") or "")
-    if not name:
-        return False
-    image = str(control.get("image") or "")
-    if image and _is_canvas_json_path(image):
-        return False
-    return True
-
-
-def _is_canvas_json(data: dict) -> bool:
-    if not isinstance(data, dict):
-        return False
-    props = data.get("p")
-    attrs = data.get("a")
-    return (
-        isinstance(data.get("v"), str)
-        and isinstance(props, dict)
-        and isinstance(attrs, dict)
-        and isinstance(data.get("d"), list)
-        and isinstance(data.get("contentRect"), dict)
-        and "width" in attrs
-        and "height" in attrs
-    )
-
-
-def _is_canvas_json_path(image: str) -> bool:
-    if not image.lower().endswith(".json"):
-        return False
-    path = Path(image)
-    candidates = (
-        [path]
-        if path.is_absolute()
-        else [Path.cwd() / path, Path(__file__).resolve().parents[2] / path]
-    )
-    for candidate in candidates:
-        if not candidate.is_file():
-            continue
-        try:
-            data = json.loads(candidate.read_text(encoding="utf-8"))
-        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
-            return False
-        return _is_canvas_json(data)
-    return False
-
-
-def _match_material(device_type: str, material_map: dict[str, dict]) -> dict:
-    material = _find_material(device_type, material_map)
-    if material is None:
-        raise MissingMaterialError("query_results 缺少控件素材：" + device_type)
-    return material
-
-
-def _find_material(device_type: str, material_map: dict[str, dict]) -> Optional[dict]:
-    if device_type in material_map:
-        return material_map[device_type]
-    for name, material in material_map.items():
-        if device_type in name or name in device_type:
-            return material
-    return None
 
 
 def _gap_for(gap_hint: Optional[str]) -> int:
@@ -671,13 +502,6 @@ def _display_name(base: str, counts: dict[str, int]) -> str:
     if counts[base] == 1:
         return base
     return "%s%s" % (base, counts[base])
-
-
-def _number(value, default: float) -> float:
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return default
 
 
 def _round(value: float):

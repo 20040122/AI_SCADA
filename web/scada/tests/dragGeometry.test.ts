@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { captureDragSnapshot, computeDragPositions } from "../src/utils/dragGeometry.ts";
+import { captureDragSnapshot, computeDragPositions, computeRatioResize } from "../src/utils/dragGeometry.ts";
 
 test("single node moves cumulative delta = final delta", () => {
   const snapshot = captureDragSnapshot(["n1"], [{ id: "n1", x: 100, y: 200 }]);
@@ -119,4 +119,86 @@ test("empty snapshot returns empty array", () => {
   const sizes = new Map();
   const result = computeDragPositions(snapshot, sizes, 10, 10, 1000, 800);
   assert.equal(result.length, 0);
+});
+
+test("se corner resize keeps ratio and opposite corner anchored", () => {
+  const node = { x: 300, y: 300, width: 200, height: 100 };
+  const result = computeRatioResize("se", node, 100, 50, 1000, 800, 2);
+  assert.equal(result.width, 300);
+  assert.equal(result.height, 150);
+  assert.equal(result.x, 350);
+  assert.equal(result.y, 325);
+  assert.equal(result.x - result.width / 2, 200, "left edge anchored");
+  assert.equal(result.y - result.height / 2, 250, "top edge anchored");
+});
+
+test("nw corner inward drag keeps ratio and opposite corner anchored", () => {
+  const node = { x: 300, y: 300, width: 200, height: 100 };
+  const result = computeRatioResize("nw", node, -50, -30, 1000, 800, 2);
+  assert.equal(result.width, 250);
+  assert.equal(result.height, 125);
+  assert.equal(result.x, 275);
+  assert.equal(result.y, 287.5);
+  assert.equal(result.x + result.width / 2, 400, "right edge anchored");
+  assert.equal(result.y + result.height / 2, 350, "bottom edge anchored");
+});
+
+test("e edge drag shrink keeps ratio and left edge anchored", () => {
+  const node = { x: 300, y: 300, width: 200, height: 100 };
+  const result = computeRatioResize("e", node, -60, 0, 1000, 800, 2);
+  assert.equal(result.width, 140);
+  assert.equal(result.height, 70);
+  assert.equal(result.x, 270);
+  assert.equal(result.y, 300, "vertical center unchanged");
+  assert.equal(result.x - result.width / 2, 200, "left edge anchored");
+});
+
+test("e edge drag grows ratio-mismatched node toward material ratio", () => {
+  const node = { x: 300, y: 300, width: 200, height: 100 };
+  const result = computeRatioResize("e", node, 100, 0, 1000, 800, 2.2);
+  assert.equal(result.width, 220);
+  assert.equal(result.height, 100);
+  assert.equal(result.x, 310);
+  assert.equal(result.y, 300);
+  assert.equal(result.x - result.width / 2, 200, "left edge anchored");
+});
+
+test("s edge drag keeps ratio and top edge anchored", () => {
+  const node = { x: 300, y: 300, width: 200, height: 100 };
+  const result = computeRatioResize("s", node, 0, -40, 1000, 800, 2);
+  assert.equal(result.width, 120);
+  assert.equal(result.height, 60);
+  assert.equal(result.x, 300, "horizontal center unchanged");
+  assert.equal(result.y, 280);
+  assert.equal(result.y - result.height / 2, 250, "top edge anchored");
+});
+
+test("oversized drag is clipped by uniform scale only", () => {
+  const node = { x: 150, y: 150, width: 100, height: 50 };
+  const result = computeRatioResize("se", node, 1000, 1000, 300, 300, 2);
+  assert.equal(result.width, 300);
+  assert.equal(result.height, 150);
+  assert.equal(result.width / result.height, 2);
+  assert.ok(result.x >= result.width / 2);
+  assert.ok(result.x <= 300 - result.width / 2);
+  assert.ok(result.y >= result.height / 2);
+  assert.ok(result.y <= 300 - result.height / 2);
+});
+
+test("height-bound drag inscribes largest in-box ratio rect", () => {
+  const node = { x: 300, y: 300, width: 200, height: 100 };
+  const result = computeRatioResize("se", node, 100, 200, 1000, 800, 2.2);
+  assert.equal(result.width, 300);
+  assert.equal(result.height, 136.36);
+  assert.ok(Math.abs(result.width / result.height - 2.2) < 0.001);
+});
+
+test("invalid aspect falls back to ratio 1", () => {
+  const node = { x: 300, y: 300, width: 200, height: 100 };
+  const result = computeRatioResize("se", node, 100, 50, 1000, 800, 0);
+  assert.equal(result.width, 150);
+  assert.equal(result.height, 150);
+  const result2 = computeRatioResize("se", node, 100, 50, 1000, 800, NaN);
+  assert.equal(result2.width, 150);
+  assert.equal(result2.height, 150);
 });
