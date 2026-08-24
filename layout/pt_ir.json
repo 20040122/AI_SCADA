@@ -3,286 +3,308 @@
     "c": "ht.Node",
     "i": 20399,
     "p": {
-      "displayName": "空气罐",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "溢流阀",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
       "position": {
-        "x": 386,
-        "y": 623.5
+        "x": 188.33,
+        "y": 212.5
       },
-      "width": 160,
-      "height": 240
+      "width": 153.6,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "air_tank",
+      "layout.group": "group-1",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "空气罐",
-      "layout.sourceWidth": 160,
-      "layout.sourceHeight": 240
+      "layout.materialName": "溢流阀",
+      "layout.sourceWidth": 64,
+      "layout.sourceHeight": 50
     }
   },
   {
     "c": "ht.Node",
     "i": 20400,
     "p": {
-      "displayName": "阀门",
-      "image": "symbols/Agent/阀门.json",
+      "displayName": "溢流阀2",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
       "position": {
-        "x": 386,
-        "y": 431.5
+        "x": 188.33,
+        "y": 447.5
       },
-      "width": 64,
-      "height": 64
+      "width": 153.6,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "valve_air",
-      "layout.instance": 1,
-      "layout.materialName": "阀门",
+      "layout.group": "group-1",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "溢流阀",
       "layout.sourceWidth": 64,
-      "layout.sourceHeight": 64
+      "layout.sourceHeight": 50
     }
   },
   {
     "c": "ht.Node",
     "i": 20401,
     "p": {
-      "displayName": "流量计",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "溢流阀3",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
       "position": {
-        "x": 483,
-        "y": 431.5
+        "x": 188.33,
+        "y": 682.5
       },
-      "width": 50,
-      "height": 68.75
+      "width": 153.6,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "flow_air_1",
-      "layout.instance": 1,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.group": "group-1",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "溢流阀",
+      "layout.sourceWidth": 64,
+      "layout.sourceHeight": 50
     }
   },
   {
     "c": "ht.Node",
     "i": 20402,
     "p": {
-      "displayName": "压力传感器",
-      "image": "assets/现场控制系统/设备图片/压力传感器.png",
+      "displayName": "溢流阀4",
+      "image": "assets/现场控制系统/设备图片/溢流阀.png",
       "position": {
-        "x": 573,
-        "y": 431.5
+        "x": 188.33,
+        "y": 917.5
       },
-      "width": 50,
-      "height": 90
+      "width": 153.6,
+      "height": 120
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "pressure_air",
-      "layout.instance": 1,
-      "layout.materialName": "压力传感器",
-      "layout.sourceWidth": 25,
-      "layout.sourceHeight": 45
+      "layout.group": "group-1",
+      "layout.node": "root",
+      "layout.instance": 4,
+      "layout.materialName": "溢流阀",
+      "layout.sourceWidth": 64,
+      "layout.sourceHeight": 50
     }
   },
   {
     "c": "ht.Node",
     "i": 20403,
     "p": {
-      "displayName": "流量计2",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "液压泵",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
       "position": {
-        "x": 663,
-        "y": 431.5
+        "x": 497,
+        "y": 212.5
       },
-      "width": 50,
-      "height": 68.75
+      "width": 180,
+      "height": 81.82
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "flow_air_2",
+      "layout.group": "group-2",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
     }
   },
   {
     "c": "ht.Node",
     "i": 20404,
     "p": {
-      "displayName": "氮气罐",
-      "image": "symbols/Agent/氮气罐.json",
+      "displayName": "液压泵2",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
       "position": {
-        "x": 1357,
-        "y": 391.75
+        "x": 497,
+        "y": 447.5
       },
-      "width": 160,
-      "height": 240
+      "width": 180,
+      "height": 81.82
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "nitrogen_tank_1",
-      "layout.instance": 1,
-      "layout.materialName": "氮气罐",
-      "layout.sourceWidth": 160,
-      "layout.sourceHeight": 240
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
     }
   },
   {
     "c": "ht.Node",
     "i": 20405,
     "p": {
-      "displayName": "阀门2",
-      "image": "symbols/Agent/阀门.json",
+      "displayName": "液压泵3",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
       "position": {
-        "x": 1357,
-        "y": 199.75
+        "x": 497,
+        "y": 682.5
       },
-      "width": 64,
-      "height": 64
+      "width": 180,
+      "height": 81.82
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "valve_n1",
-      "layout.instance": 1,
-      "layout.materialName": "阀门",
-      "layout.sourceWidth": 64,
-      "layout.sourceHeight": 64
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
     }
   },
   {
     "c": "ht.Node",
     "i": 20406,
     "p": {
-      "displayName": "流量计3",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "液压泵4",
+      "image": "assets/现场控制系统/设备图片/液压泵.png",
       "position": {
-        "x": 1454,
-        "y": 199.75
+        "x": 497,
+        "y": 917.5
       },
-      "width": 50,
-      "height": 68.75
+      "width": 180,
+      "height": 81.82
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "flow_n1",
-      "layout.instance": 1,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 4,
+      "layout.materialName": "液压泵",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 70
     }
   },
   {
     "c": "ht.Node",
     "i": 20407,
     "p": {
-      "displayName": "压力传感器2",
-      "image": "assets/现场控制系统/设备图片/压力传感器.png",
+      "displayName": "电机",
+      "image": "assets/现场控制系统/设备图片/液压电机.png",
       "position": {
-        "x": 1544,
-        "y": 199.75
+        "x": 805.67,
+        "y": 330
       },
-      "width": 50,
-      "height": 90
+      "width": 180,
+      "height": 93.51
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "pressure_n1",
+      "layout.group": "group-3",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "压力传感器",
-      "layout.sourceWidth": 25,
-      "layout.sourceHeight": 45
+      "layout.materialName": "电机",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 80
     }
   },
   {
     "c": "ht.Node",
     "i": 20408,
     "p": {
-      "displayName": "氮气罐2",
-      "image": "symbols/Agent/氮气罐.json",
+      "displayName": "电机2",
+      "image": "assets/现场控制系统/设备图片/液压电机.png",
       "position": {
-        "x": 1357,
-        "y": 855.25
+        "x": 805.67,
+        "y": 800
       },
-      "width": 160,
-      "height": 240
+      "width": 180,
+      "height": 93.51
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "nitrogen_tank_2",
-      "layout.instance": 1,
-      "layout.materialName": "氮气罐",
-      "layout.sourceWidth": 160,
-      "layout.sourceHeight": 240
+      "layout.group": "group-3",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "电机",
+      "layout.sourceWidth": 154,
+      "layout.sourceHeight": 80
     }
   },
   {
     "c": "ht.Node",
     "i": 20409,
     "p": {
-      "displayName": "阀门3",
-      "image": "symbols/Agent/阀门.json",
+      "displayName": "吸油过滤器",
+      "image": "assets/现场控制系统/设备图片/吸油过滤器.png",
       "position": {
-        "x": 1357,
-        "y": 663.25
+        "x": 1114.33,
+        "y": 330
       },
-      "width": 64,
-      "height": 64
+      "width": 111.43,
+      "height": 260
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "valve_n2",
+      "layout.group": "group-4",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "阀门",
-      "layout.sourceWidth": 64,
-      "layout.sourceHeight": 64
+      "layout.materialName": "吸油过滤器",
+      "layout.sourceWidth": 30,
+      "layout.sourceHeight": 70
     }
   },
   {
     "c": "ht.Node",
     "i": 20410,
     "p": {
-      "displayName": "流量计4",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "吸油过滤器2",
+      "image": "assets/现场控制系统/设备图片/吸油过滤器.png",
       "position": {
-        "x": 1454,
-        "y": 663.25
+        "x": 1114.33,
+        "y": 800
       },
-      "width": 50,
-      "height": 68.75
+      "width": 111.43,
+      "height": 260
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "flow_n2",
-      "layout.instance": 1,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.group": "group-4",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "吸油过滤器",
+      "layout.sourceWidth": 30,
+      "layout.sourceHeight": 70
     }
   },
   {
     "c": "ht.Node",
     "i": 20411,
     "p": {
-      "displayName": "压力传感器3",
-      "image": "assets/现场控制系统/设备图片/压力传感器.png",
+      "displayName": "回油单向阀",
+      "image": "assets/现场控制系统/设备图片/回油单向阀.png",
       "position": {
-        "x": 1544,
-        "y": 663.25
+        "x": 1423,
+        "y": 565
       },
-      "width": 50,
-      "height": 90
+      "width": 180,
+      "height": 96.92
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "pressure_n2",
+      "layout.group": "group-5",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "压力传感器",
-      "layout.sourceWidth": 25,
-      "layout.sourceHeight": 45
+      "layout.materialName": "回油单向阀",
+      "layout.sourceWidth": 65,
+      "layout.sourceHeight": 35
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 20412,
+    "p": {
+      "displayName": "油箱",
+      "image": "assets/Agent/油箱.png",
+      "position": {
+        "x": 1731.67,
+        "y": 565
+      },
+      "width": 180,
+      "height": 99.68
+    },
+    "a": {
+      "layout.group": "group-6",
+      "layout.node": "root",
+      "layout.instance": 1,
+      "layout.materialName": "油箱",
+      "layout.sourceWidth": 316,
+      "layout.sourceHeight": 175
     }
   }
 ]
