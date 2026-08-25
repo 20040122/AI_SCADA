@@ -155,10 +155,7 @@ class TestBindingRoutes:
             {"row_number": 2, "binding_id": "air_tank_temperature"},
             {"row_number": 3, "binding_id": "air_tank_pressure"},
         ]})
-        assert r.status_code == 200
-        data = r.json()["data"]
-        assert data["bound_json"] is None
-        assert any("Canvas Schema" in e for e in data["errors"])
+        assert r.status_code == 422
 
     def test_build_rejects_invalid_assignment_shape(self):
         canvas = _panel_canvas("状态面板")

@@ -12,6 +12,7 @@ from typing import Optional
 import jsonschema
 
 from data.sqlite.material_db import MaterialDB
+from app.services.validation_service import ValidationService
 from model.layout_tools.control_size import material_map as control_material_map
 from model.layout_tools.geometry import content_rect_of_nodes
 from model.layout_tools.get_background import generate_layout
@@ -30,6 +31,10 @@ class LayoutResult:
     ir_data: dict
     nodes: list[dict]
     pipe_data: Optional[dict] = None
+
+
+class LayoutOutputError(ValueError):
+    pass
 
 
 def _llm_text(resp) -> str:
@@ -173,9 +178,10 @@ class LayoutAgent:
         out["contentRect"] = _calc_content_rect(flat)
         out["modified"] = _format_modified()
 
-        errors = await _schema_validate(out)
-        if errors:
-            logger.warning("schema 校验失败: %s", errors)
+        cerrs, _ = ValidationService.instance().validate("canvas", out)
+        if cerrs:
+            detail = "; ".join(f"{e.path} {e.message}" for e in cerrs)
+            raise LayoutOutputError(detail)
 
         async with _LOCK:
             LAYOUT_DIR.mkdir(parents=True, exist_ok=True)

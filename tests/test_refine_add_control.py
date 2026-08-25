@@ -921,7 +921,13 @@ async def test_layout_generate_writes_material_snapshot(monkeypatch, tmp_path):
     monkeypatch.setattr("model.layout_agent.LAYOUT_DIR", tmp_path)
 
     agent = LayoutAgent(db=FakeDB(rows), client=FakeAsyncClient(), model="test")
-    canvas = {"a": {"width": 1920, "height": 1080}, "d": [], "contentRect": {"x": 0, "y": 0, "width": 0, "height": 0}}
+    canvas = {
+        "v": "1",
+        "p": {"layers": [{"name": "0", "visible": True, "selectable": True, "movable": True, "editable": True}], "autoAdjustIndex": True, "hierarchicalRendering": True},
+        "a": {"width": 1920, "height": 1080, "fitContent": True, "rectSelectable": True, "pannable": True, "zoomable": True},
+        "d": [],
+        "contentRect": {"x": 0, "y": 0, "width": 0, "height": 0},
+    }
 
     async def fake_create_canvas(title, width, height):
         return canvas

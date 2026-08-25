@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { ValidateResponse } from "../api/validate";
-import { validateRequest } from "../api/validate";
+import type { RuleCategoryMeta, ValidateResponse } from "../api/validate";
+import { getRules, validateRequest } from "../api/validate";
 
 interface RuleStore {
   activeCategory: string;
@@ -8,9 +8,12 @@ interface RuleStore {
   result: ValidateResponse | null;
   loading: boolean;
   error: string | null;
+  categories: RuleCategoryMeta[];
+  categoriesLoaded: boolean;
   setActiveCategory: (id: string) => void;
   setValidatorInput: (input: string) => void;
   runValidate: (category: string) => Promise<void>;
+  loadCategories: () => Promise<void>;
 }
 
 export const useRuleStore = create<RuleStore>((set) => ({
@@ -19,6 +22,8 @@ export const useRuleStore = create<RuleStore>((set) => ({
   result: null,
   loading: false,
   error: null,
+  categories: [],
+  categoriesLoaded: false,
 
   setActiveCategory: (id: string) => set({ activeCategory: id }),
 
@@ -38,6 +43,27 @@ export const useRuleStore = create<RuleStore>((set) => ({
       set({ result, loading: false });
     } catch (err) {
       set({ loading: false, error: err instanceof Error ? err.message : "校验请求失败" });
+    }
+  },
+
+  loadCategories: async () => {
+    set({ loading: true, error: null });
+    try {
+      const response = await getRules();
+      const active = useRuleStore.getState().activeCategory;
+      const exists = response.categories.some((c) => c.category === active);
+      set({
+        categories: response.categories,
+        categoriesLoaded: true,
+        activeCategory: exists ? active : response.categories[0]?.category ?? "control",
+        loading: false,
+      });
+    } catch (err) {
+      set({
+        loading: false,
+        error: err instanceof Error ? err.message : "规则加载失败",
+        categoriesLoaded: true,
+      });
     }
   },
 }));

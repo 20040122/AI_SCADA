@@ -1,13 +1,19 @@
+import { useEffect } from "react";
 import { useRuleStore } from "../../stores/ruleStore";
-import { ruleCategories } from "../../data/rules";
 import { layoutConfig } from "../../data/layoutConfig";
 import ValidatorPanel from "./ValidatorPanel";
 
 export default function RuleLibraryPage() {
-  const { activeCategory, setActiveCategory } = useRuleStore();
+  const { activeCategory, setActiveCategory, categories, categoriesLoaded, loadCategories } = useRuleStore();
 
-  const cat = ruleCategories.find((c) => c.id === activeCategory);
-  if (!cat) return null;
+  useEffect(() => {
+    if (!categoriesLoaded) {
+      void loadCategories();
+    }
+  }, [categoriesLoaded, loadCategories]);
+
+  const cat = categories.find((c) => c.category === activeCategory);
+  if (!cat) return <div className="flex flex-1 h-full" />;
 
   return (
     <div className="flex flex-1 h-full">
@@ -16,17 +22,16 @@ export default function RuleLibraryPage() {
         <div className="px-3 py-2 text-[11px] font-semibold text-[var(--text3)] uppercase tracking-wider border-b border-[var(--border)]">
           规则分类
         </div>
-        {ruleCategories.map((c) => (
+        {categories.map((c) => (
           <button
-            key={c.id}
+            key={c.category}
             className={`flex items-center gap-2 px-3 py-2 text-[12px] text-left transition-colors ${
-              activeCategory === c.id
+              activeCategory === c.category
                 ? "bg-[var(--accent)]/10 text-[var(--accent)] font-medium border-r-2 border-[var(--accent)]"
                 : "text-[var(--text2)] hover:bg-[var(--bg2)]"
             }`}
-            onClick={() => setActiveCategory(c.id)}
+            onClick={() => setActiveCategory(c.category)}
           >
-            <span className="text-[14px]">{c.icon}</span>
             <span>{c.label}</span>
           </button>
         ))}
@@ -35,14 +40,14 @@ export default function RuleLibraryPage() {
       {/* Center content */}
       <div className="flex-1 overflow-y-auto p-4 bg-[var(--bg2)]">
         <div className="max-w-[800px] mx-auto">
-          <h1 className="text-[18px] font-bold text-[var(--text)] mb-1">{cat.schema.title}</h1>
-          <p className="text-[12px] text-[var(--text3)] mb-4">{cat.schema.description}</p>
+          <h1 className="text-[18px] font-bold text-[var(--text)] mb-1">{cat.title}</h1>
+          <p className="text-[12px] text-[var(--text3)] mb-4">{cat.description}</p>
 
           {/* Schema fields */}
-          {cat.schema.properties.length > 0 && (
+          {cat.properties.length > 0 && (
             <section className="mb-6">
               <h2 className="text-[13px] font-semibold text-[var(--text)] mb-2">字段定义</h2>
-                  <div className="border border-[var(--border)] rounded overflow-hidden">
+              <div className="border border-[var(--border)] rounded overflow-hidden">
                 <table className="w-full text-[11px]">
                   <thead>
                     <tr className="bg-[var(--bg)]">
@@ -53,9 +58,9 @@ export default function RuleLibraryPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {cat.schema.properties.map((p) => (
-                      <tr key={p.name} className="border-t border-[var(--border)]">
-                        <td className="px-3 py-1.5 font-mono text-[var(--accent)]">{p.name}</td>
+                    {cat.properties.map((p) => (
+                      <tr key={p.path} className="border-t border-[var(--border)]">
+                        <td className="px-3 py-1.5 font-mono text-[var(--accent)]">{p.path}</td>
                         <td className="px-3 py-1.5 text-[var(--text2)]">{p.type}</td>
                         <td className="px-3 py-1.5">
                           <span className={`px-1.5 py-0.5 rounded text-[10px] ${p.required ? "bg-[rgba(224,85,85,0.14)] text-[var(--error)]" : "bg-[var(--bg3)] text-[var(--text3)]"}`}>
@@ -64,7 +69,9 @@ export default function RuleLibraryPage() {
                         </td>
                         <td className="px-3 py-1.5 text-[var(--text2)]">
                           {p.description}
-                          {p.enum && <span className="block text-[var(--text3)] mt-0.5">枚举值: {p.enum.join(", ")}</span>}
+                          {p.enum && p.enum.length > 0 && (
+                            <span className="block text-[var(--text3)] mt-0.5">枚举值: {p.enum.join(", ")}</span>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -74,11 +81,11 @@ export default function RuleLibraryPage() {
             </section>
           )}
 
-          {/* Layout role limits (only for layout category) */}
+          {/* Layout role limits (layout config, not a rule mirror) */}
           {activeCategory === "layout" && (
             <section className="mb-6">
               <h2 className="text-[13px] font-semibold text-[var(--text)] mb-2">角色尺寸约束</h2>
-                  <div className="border border-[var(--border)] rounded overflow-hidden">
+              <div className="border border-[var(--border)] rounded overflow-hidden">
                 <table className="w-full text-[11px]">
                   <thead>
                     <tr className="bg-[var(--bg)]">
@@ -109,8 +116,8 @@ export default function RuleLibraryPage() {
           <section className="mb-6">
             <h2 className="text-[13px] font-semibold text-[var(--text)] mb-2">派生规则</h2>
             <div className="border border-[var(--border)] rounded divide-y divide-[var(--border)]">
-              {cat.derivedRules.map((rule, i) => (
-              <div key={i} className="px-3 py-1.5 text-[11px] text-[var(--text2)]">
+              {cat.derived_rules.map((rule, i) => (
+                <div key={i} className="px-3 py-1.5 text-[11px] text-[var(--text2)]">
                   {i + 1}. {rule}
                 </div>
               ))}
@@ -124,13 +131,13 @@ export default function RuleLibraryPage() {
               <div>
                 <div className="text-[11px] font-medium text-[var(--success)] mb-1">✓ 合法示例</div>
                 <pre className="text-[10px] p-2 rounded border border-[rgba(62,207,122,0.45)] bg-[rgba(62,207,122,0.08)] text-[var(--text)] overflow-x-auto max-h-[160px]">
-                  {JSON.stringify(cat.sampleOk, null, 2)}
+                  {JSON.stringify(cat.sample_valid, null, 2)}
                 </pre>
               </div>
               <div>
                 <div className="text-[11px] font-medium text-[var(--error)] mb-1">✗ 非法示例</div>
                 <pre className="text-[10px] p-2 rounded border border-[rgba(224,85,85,0.45)] bg-[rgba(224,85,85,0.08)] text-[var(--text)] overflow-x-auto max-h-[160px]">
-                  {JSON.stringify(cat.sampleBad, null, 2)}
+                  {JSON.stringify(cat.sample_invalid, null, 2)}
                 </pre>
               </div>
             </div>

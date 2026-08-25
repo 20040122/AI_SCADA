@@ -1,14 +1,39 @@
+import { useEffect } from "react";
 import { useRuleStore } from "../../stores/ruleStore";
-import { ruleCategories } from "../../data/rules";
+
+const SOURCE_LABELS: Record<string, string> = {
+  schema: "schema",
+  semantic: "semantic",
+  ai: "ai",
+  system: "system",
+};
 
 export default function ValidatorPanel() {
-  const { activeCategory, validatorInput, result, loading, error, setValidatorInput, runValidate, setActiveCategory } = useRuleStore();
+  const {
+    activeCategory,
+    validatorInput,
+    result,
+    loading,
+    error,
+    categories,
+    categoriesLoaded,
+    setValidatorInput,
+    runValidate,
+    setActiveCategory,
+    loadCategories,
+  } = useRuleStore();
 
-  const cat = ruleCategories.find((c) => c.id === activeCategory);
+  useEffect(() => {
+    if (!categoriesLoaded) {
+      void loadCategories();
+    }
+  }, [categoriesLoaded, loadCategories]);
 
-  const handleSample = (type: "ok" | "bad") => {
+  const cat = categories.find((c) => c.category === activeCategory);
+
+  const handleSample = (type: "valid" | "invalid") => {
     if (!cat) return;
-    const sample = type === "ok" ? cat.sampleOk : cat.sampleBad;
+    const sample = type === "valid" ? cat.sample_valid : cat.sample_invalid;
     setValidatorInput(JSON.stringify(sample, null, 2));
   };
 
@@ -24,8 +49,8 @@ export default function ValidatorPanel() {
           value={activeCategory}
           onChange={(e) => setActiveCategory(e.target.value)}
         >
-          {ruleCategories.map((c) => (
-            <option key={c.id} value={c.id}>{c.label}</option>
+          {categories.map((c) => (
+            <option key={c.category} value={c.category}>{c.label}</option>
           ))}
         </select>
       </div>
@@ -44,20 +69,24 @@ export default function ValidatorPanel() {
             disabled={loading || !validatorInput.trim()}
             onClick={() => runValidate(activeCategory)}
           >
-            {loading ? "校验中..." : "AI 校验"}
+            {loading ? "校验中..." : "开始校验"}
           </button>
-          <button
-            className="px-2 py-1 text-[11px] rounded border border-[var(--border)] text-[var(--text2)] hover:bg-[var(--bg2)]"
-            onClick={() => handleSample("ok")}
-          >
-            合法例
-          </button>
-          <button
-            className="px-2 py-1 text-[11px] rounded border border-[var(--border)] text-[var(--text2)] hover:bg-[var(--bg2)]"
-            onClick={() => handleSample("bad")}
-          >
-            非法例
-          </button>
+          {cat && (
+            <>
+              <button
+                className="px-2 py-1 text-[11px] rounded border border-[var(--border)] text-[var(--text2)] hover:bg-[var(--bg2)]"
+                onClick={() => handleSample("valid")}
+              >
+                合法例
+              </button>
+              <button
+                className="px-2 py-1 text-[11px] rounded border border-[var(--border)] text-[var(--text2)] hover:bg-[var(--bg2)]"
+                onClick={() => handleSample("invalid")}
+              >
+                非法例
+              </button>
+            </>
+          )}
         </div>
 
         {error && (
@@ -77,7 +106,7 @@ export default function ValidatorPanel() {
                 <div className="font-medium text-[var(--error)] mb-1">错误 ({result.errors.length})</div>
                 {result.errors.map((e, i) => (
                   <div key={i} className="mb-1 last:mb-0">
-                    <span className="text-[var(--error)]">[err]</span>{" "}
+                    <span className="text-[var(--error)]">[{SOURCE_LABELS[e.source] ?? e.source}]</span>{" "}
                     {e.path && <span className="text-[var(--text3)]">{e.path}: </span>}
                     {e.message}
                   </div>
@@ -89,7 +118,7 @@ export default function ValidatorPanel() {
                 <div className="font-medium text-[var(--warn)] mb-1">警告 ({result.warnings.length})</div>
                 {result.warnings.map((w, i) => (
                   <div key={i} className="mb-1 last:mb-0">
-                    <span className="text-[var(--warn)]">[warn]</span>{" "}
+                    <span className="text-[var(--warn)]">[{SOURCE_LABELS[w.source] ?? w.source}]</span>{" "}
                     {w.path && <span className="text-[var(--text3)]">{w.path}: </span>}
                     {w.message}
                   </div>

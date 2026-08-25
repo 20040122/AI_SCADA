@@ -12,6 +12,7 @@ import chromadb
 
 from data.chroma.control_chunk import QUERY_PREFIX
 from data.chroma.embedding import get_embedding_function
+from app.services.validation_service import ValidationService
 from model.control_tools.extract import normalize_term
 
 logger = logging.getLogger(__name__)
@@ -63,6 +64,10 @@ def load_canonical_controls(jsonl_path) -> list[dict]:
         name = item.get("displayName")
         if not isinstance(name, str) or not name:
             raise CatalogConfigError("无效控件行（缺少 displayName）")
+        errors, _ = ValidationService.instance().validate("control", item)
+        if errors:
+            detail = "; ".join(f"{e.path} {e.message}" for e in errors)
+            raise CatalogConfigError(f"无效控件行（{name}）：{detail}")
         if name in seen:
             logger.warning("control.jsonl 重复 displayName，最后一条为规范素材: %s", name)
         seen.add(name)

@@ -1,21 +1,15 @@
 from __future__ import annotations
 
 import copy
-import json
 import re
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-import jsonschema
-
 from app.services.binding_config_service import BindingConfigError, load_binding_registry
 from app.services.semantic import get_similarity
+from app.services.validation_service import ValidationService
 
 Validator = Callable[[dict[str, Any]], list[str]]
-
-_REPO_ROOT = Path(__file__).resolve().parent.parent
-_CANVAS_SCHEMA_PATH = _REPO_ROOT / "data" / "schema" / "canvas_schema.json"
-_BINDING_SCHEMA_PATH = _REPO_ROOT / "data" / "schema" / "binding_schema.json"
 
 
 class BindingHandler:
@@ -123,8 +117,6 @@ class BindingAgent:
                 names = [r["propertyName"] for r in recs]
                 if names:
                     self._catalog_vectors[key] = self._similarity.encode(names)
-        self._canvas_schema = json.loads(_CANVAS_SCHEMA_PATH.read_text(encoding="utf-8"))
-        self._binding_schema = json.loads(_BINDING_SCHEMA_PATH.read_text(encoding="utf-8"))
 
     def _register_handlers(self) -> dict[str, BindingHandler]:
         return {PanelListHandler.handler_id: PanelListHandler()}
@@ -487,9 +479,9 @@ class BindingAgent:
         }
 
     def _validate_canvas(self, json_data: dict[str, Any]) -> list[str]:
-        validator = jsonschema.Draft7Validator(self._canvas_schema)
-        return [e.message for e in validator.iter_errors(json_data)]
+        errors, _ = ValidationService.instance().validate("canvas", json_data)
+        return [f"{e.path} {e.message}" for e in errors]
 
     def _validate_binding(self, data: dict[str, Any]) -> list[str]:
-        validator = jsonschema.Draft7Validator(self._binding_schema)
-        return [e.message for e in validator.iter_errors(data)]
+        errors, _ = ValidationService.instance().validate("binding", data)
+        return [f"{e.path} {e.message}" for e in errors]

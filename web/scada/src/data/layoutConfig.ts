@@ -42,36 +42,3 @@ export const layoutConfig: {
     },
   },
 };
-
-export const layoutDerivedRules = [
-  "groups 不能为空",
-  "group.id 必须唯一",
-  "group.count >= 1",
-  "当 arrangement=grid 时，columns 或 rows 至少一个 >= 1，且 columns*rows >= count",
-  "attachment.relativeTo 必须引用本组已声明的节点",
-  "角色尺寸约束：root(120-180x120-260)、pipe(80-180x20-50)、valve(40-80x40-80)、meter(50-100x50-100)、sensor(50-110x40-90)",
-];
-
-export const layoutSampleOk = {
-  layoutIntent: {
-    groups: [
-      {
-        id: "group1",
-        region: "center",
-        unit: {
-          root: { id: "valve_1", deviceType: "电动调节阀", role: "valve" },
-          attachments: [{ id: "sensor_1", deviceType: "压力传感器", role: "sensor", relativeTo: "valve_1", side: "right" }],
-        },
-        count: 2,
-        arrangement: "horizontal",
-        gapHint: "normal",
-      },
-    ],
-  },
-};
-
-export const layoutSampleBad = {
-  layoutIntent: {
-    groups: [],
-  },
-};

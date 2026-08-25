@@ -94,6 +94,8 @@ async def _upload(
     file_name: str = "画面.json",
     pipe_data: Optional[dict] = None,
 ) -> UploadResult:
+    if client is None:
+        client = _mock_client(lambda request: httpx.Response(200, text="ok"))
     service = CanvasUploadService(client=client)
     return await service.upload_canvas(file_name, json_data, library or LIBRARY, pipe_data=pipe_data)
 
