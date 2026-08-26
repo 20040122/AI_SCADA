@@ -1,2 +1,0 @@
-[permissions]
-allow = ["Bash=cd /Users/zhangchangming/Documents/Code/SCADA/.worktrees/opt/web/scada && export PATH=\"/opt/homebrew/bin:$PATH\" && npm test 2>&1 | tail -12", "Bash=cd /Users/zhangchangming/Documents/Code/SCADA/.worktrees/opt/web/scada && export PATH=\"/opt/homebrew/bin:$PATH\" && npx tsc -b 2>&1 | tail -10 && echo TSC_OK"]

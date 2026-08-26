@@ -60,6 +60,5 @@ temp/
 
 output/
 
-PLAN.md
-PROGRESS.md
-REVIEW.md
+/reasonix.toml
+/AGENTS.md
