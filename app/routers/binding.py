@@ -78,4 +78,16 @@ async def binding_build(
         applied_count=result["applied_count"],
         skipped_count=result["skipped_count"],
     )
+    if _has_schema_failure(result["errors"]):
+        raise HTTPException(
+            status_code=422,
+            detail={},
+        )
     return ApiResponse(data=resp.model_dump())
+
+
+def _has_schema_failure(errors: list[str]) -> bool:
+    for message in errors:
+        if message.startswith("Canvas Schema:") or message.startswith("Binding Schema"):
+            return True
+    return False

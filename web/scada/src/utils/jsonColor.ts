@@ -4,8 +4,8 @@ export function colorJson(obj: unknown): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"([^"]+)":/g, '<span class="text-[#7ec8f0]">"$1"</span>:')
-    .replace(/: "([^"]*)"/g, ': <span class="text-[#a8e6a3]">"$1"</span>')
-    .replace(/: (-?[\d.]+)/g, ': <span class="text-[#ffcc80]">$1</span>')
-    .replace(/: (true|false)/g, ': <span class="text-[#ff8a80]">$1</span>');
+    .replace(/"([^"]+)":/g, '<span class="text-[var(--json-key)]">"$1"</span>:')
+    .replace(/: "([^"]*)"/g, ': <span class="text-[var(--json-string)]">"$1"</span>')
+    .replace(/: (-?[\d.]+)/g, ': <span class="text-[var(--json-number)]">$1</span>')
+    .replace(/: (true|false)/g, ': <span class="text-[var(--json-boolean)]">$1</span>');
 }

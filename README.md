@@ -1,7 +1,6 @@
 # AI-SCADA
 
 ## 后端
-
 ```bash
 # 1. 安装依赖
 pip install -r requirements.txt
@@ -11,12 +10,9 @@ pip install -r requirements.txt
 # 3. 启动服务
 python main.py
 ```
-
 ## 前端
-
 ```bash
 cd web/scada
-
 rm -rf node_modules
 npm ci
 npm run dev

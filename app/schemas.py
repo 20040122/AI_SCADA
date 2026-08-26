@@ -248,6 +248,7 @@ class ValidationErrorItem(BaseModel):
     path: str = ""
     message: str
     error_type: str = ""
+    source: str = "schema"
 
 
 class ValidateResponse(BaseModel):
@@ -255,6 +256,29 @@ class ValidateResponse(BaseModel):
     summary: str = ""
     errors: list[ValidationErrorItem] = []
     warnings: list[ValidationErrorItem] = []
+
+
+class RuleProperty(BaseModel):
+    path: str
+    type: str
+    required: bool = False
+    description: str = ""
+    enum: list[str] = []
+
+
+class RuleCategoryMeta(BaseModel):
+    category: str
+    label: str
+    title: str
+    description: str
+    properties: list[RuleProperty] = []
+    derived_rules: list[str] = []
+    sample_valid: Any = None
+    sample_invalid: Any = None
+
+
+class RulesResponse(BaseModel):
+    categories: list[RuleCategoryMeta]
 
 
 class MaterialItem(BaseModel):

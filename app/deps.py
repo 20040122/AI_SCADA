@@ -9,6 +9,7 @@ from app.services.generation_service import (
     GenerationManager,
     make_default_generator,
 )
+from app.services.validation_service import ValidationService
 from data.sqlite.material_db import MaterialDB
 from model.binding_agent import BindingAgent
 from model.control_agent import ControlAgent
@@ -29,6 +30,8 @@ _generation_manager: Optional[GenerationManager] = None
 
 async def init_resources() -> None:
     global _material_db, _control_agent, _control_catalog, _layout_agent, _refine_agent, _validate_agent, _binding_agent, _generation_manager
+
+    ValidationService.instance()
 
     db = MaterialDB()
     await db.init_db()

@@ -27,22 +27,23 @@ async def test_validate_agent_returns_expected_structure():
     )])
     agent = ValidateAgent(client=fake)
     result = await agent.validate("canvas", {"test": True})
-    assert "valid" in result
-    assert "summary" in result
     assert "errors" in result
     assert "warnings" in result
-    assert result["valid"] is True
+    assert result["errors"] == []
+    assert result["warnings"] == []
 
 
 @pytest.mark.asyncio
-async def test_validate_agent_returns_expected_structure_with_errors():
+async def test_validate_agent_returns_findings_as_warnings():
     fake = FakeAsyncClient([make_fake_completion(
         '{"valid": false, "summary": "has issues", "errors": [{"path": "x", "message": "bad"}], "warnings": []}'
     )])
     agent = ValidateAgent(client=fake)
     result = await agent.validate("canvas", {"test": True})
-    assert result["valid"] is False
-    assert len(result["errors"]) == 1
+    assert result["errors"] == []
+    assert len(result["warnings"]) == 1
+    assert result["warnings"][0]["message"] == "bad"
+    assert result["warnings"][0]["error_type"] == "ai"
 
 
 @pytest.mark.asyncio
@@ -81,7 +82,6 @@ async def test_validate_agent_unknown_category():
     )])
     agent = ValidateAgent(client=fake)
     result = await agent.validate("unknown_cat", {})
-    assert "valid" in result
-    assert "summary" in result
     assert "errors" in result
     assert "warnings" in result
+    assert any("未知类别" in w["message"] for w in result["warnings"])

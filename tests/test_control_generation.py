@@ -161,7 +161,7 @@ def test_validate_name_rejects_invalid():
 @pytest.mark.asyncio
 async def test_create_rejects_normalized_same_name(tmp_path):
     jsonl, mappings, catalog, db = await _make_env(
-        tmp_path, controls=[{"displayName": "阀门", "image": "s/v.json", "width": 10, "height": 10}]
+        tmp_path, controls=[{"displayName": "阀门", "image": "symbols/v.json", "width": 10, "height": 10}]
     )
     mgr = _make_manager(tmp_path, catalog, db)
     mgr.start()

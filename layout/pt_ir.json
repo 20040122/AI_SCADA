@@ -13,8 +13,8 @@
       "height": 240
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "air_tank",
+      "layout.group": "air-group",
+      "layout.node": "air-tank",
       "layout.instance": 1,
       "layout.materialName": "空气罐",
       "layout.sourceWidth": 160,
@@ -35,8 +35,8 @@
       "height": 64
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "valve_air",
+      "layout.group": "air-group",
+      "layout.node": "air-valve",
       "layout.instance": 1,
       "layout.materialName": "阀门",
       "layout.sourceWidth": 64,
@@ -57,8 +57,8 @@
       "height": 68.75
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "flow_air_1",
+      "layout.group": "air-group",
+      "layout.node": "air-meter1",
       "layout.instance": 1,
       "layout.materialName": "流量计",
       "layout.sourceWidth": 32,
@@ -79,8 +79,8 @@
       "height": 90
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "pressure_air",
+      "layout.group": "air-group",
+      "layout.node": "air-sensor",
       "layout.instance": 1,
       "layout.materialName": "压力传感器",
       "layout.sourceWidth": 25,
@@ -101,8 +101,8 @@
       "height": 68.75
     },
     "a": {
-      "layout.group": "group_air",
-      "layout.node": "flow_air_2",
+      "layout.group": "air-group",
+      "layout.node": "air-meter2",
       "layout.instance": 1,
       "layout.materialName": "流量计",
       "layout.sourceWidth": 32,
@@ -117,14 +117,14 @@
       "image": "symbols/Agent/氮气罐.json",
       "position": {
         "x": 1357,
-        "y": 391.75
+        "y": 388.5
       },
       "width": 160,
       "height": 240
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "nitrogen_tank_1",
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-tank",
       "layout.instance": 1,
       "layout.materialName": "氮气罐",
       "layout.sourceWidth": 160,
@@ -139,14 +139,14 @@
       "image": "symbols/Agent/阀门.json",
       "position": {
         "x": 1357,
-        "y": 199.75
+        "y": 196.5
       },
       "width": 64,
       "height": 64
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "valve_n1",
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-valve",
       "layout.instance": 1,
       "layout.materialName": "阀门",
       "layout.sourceWidth": 64,
@@ -161,14 +161,14 @@
       "image": "symbols/Agent/流量计.json",
       "position": {
         "x": 1454,
-        "y": 199.75
+        "y": 196.5
       },
       "width": 50,
       "height": 68.75
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "flow_n1",
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-meter",
       "layout.instance": 1,
       "layout.materialName": "流量计",
       "layout.sourceWidth": 32,
@@ -183,14 +183,14 @@
       "image": "assets/现场控制系统/设备图片/压力传感器.png",
       "position": {
         "x": 1544,
-        "y": 199.75
+        "y": 196.5
       },
       "width": 50,
       "height": 90
     },
     "a": {
-      "layout.group": "group_nitrogen_top",
-      "layout.node": "pressure_n1",
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-sensor",
       "layout.instance": 1,
       "layout.materialName": "压力传感器",
       "layout.sourceWidth": 25,
@@ -205,15 +205,15 @@
       "image": "symbols/Agent/氮气罐.json",
       "position": {
         "x": 1357,
-        "y": 855.25
+        "y": 858.5
       },
       "width": 160,
       "height": 240
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "nitrogen_tank_2",
-      "layout.instance": 1,
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-tank",
+      "layout.instance": 2,
       "layout.materialName": "氮气罐",
       "layout.sourceWidth": 160,
       "layout.sourceHeight": 240
@@ -227,15 +227,15 @@
       "image": "symbols/Agent/阀门.json",
       "position": {
         "x": 1357,
-        "y": 663.25
+        "y": 666.5
       },
       "width": 64,
       "height": 64
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "valve_n2",
-      "layout.instance": 1,
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-valve",
+      "layout.instance": 2,
       "layout.materialName": "阀门",
       "layout.sourceWidth": 64,
       "layout.sourceHeight": 64
@@ -249,15 +249,15 @@
       "image": "symbols/Agent/流量计.json",
       "position": {
         "x": 1454,
-        "y": 663.25
+        "y": 666.5
       },
       "width": 50,
       "height": 68.75
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "flow_n2",
-      "layout.instance": 1,
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-meter",
+      "layout.instance": 2,
       "layout.materialName": "流量计",
       "layout.sourceWidth": 32,
       "layout.sourceHeight": 44
@@ -271,15 +271,15 @@
       "image": "assets/现场控制系统/设备图片/压力传感器.png",
       "position": {
         "x": 1544,
-        "y": 663.25
+        "y": 666.5
       },
       "width": 50,
       "height": 90
     },
     "a": {
-      "layout.group": "group_nitrogen_bottom",
-      "layout.node": "pressure_n2",
-      "layout.instance": 1,
+      "layout.group": "nitrogen-group",
+      "layout.node": "nitrogen-sensor",
+      "layout.instance": 2,
       "layout.materialName": "压力传感器",
       "layout.sourceWidth": 25,
       "layout.sourceHeight": 45

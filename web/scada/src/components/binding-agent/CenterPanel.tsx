@@ -83,7 +83,7 @@ export default function CenterPanel({ blocked }: { blocked: string | null }) {
         key={cand.binding_id}
         className={`border rounded-[4px] p-[6px_8px] mb-1 ${
           isSelected
-            ? "border-[var(--accent2)] bg-[rgba(77,184,212,0.1)]"
+            ? "border-[var(--accent2)] bg-[var(--accent-soft)]"
             : "border-[var(--border)] bg-[var(--bg2)]"
         }`}
       >
@@ -141,7 +141,7 @@ export default function CenterPanel({ blocked }: { blocked: string | null }) {
         <span className="text-[13px] font-medium text-[var(--text)]">匹配评审</span>
         <button
           type="button"
-          className="px-[10px] py-[4px] rounded-[3px] text-[11px] cursor-pointer border border-[var(--accent2)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-[10px] py-[4px] rounded-[3px] text-[11px] cursor-pointer border border-[var(--accent2)] bg-[var(--accent-soft)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[var(--accent-soft-hover)] disabled:opacity-40 disabled:cursor-not-allowed"
           disabled={
             isLoading || !match || match.blocked || blocked !== null || confirmableCount === 0
           }

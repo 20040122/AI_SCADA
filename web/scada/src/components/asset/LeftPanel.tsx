@@ -23,7 +23,7 @@ export default function LeftPanel() {
             Query 输入
           </label>
           <input
-            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
             placeholder="如：水泵、运行状态指示灯"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -33,14 +33,14 @@ export default function LeftPanel() {
 
         <div className="flex gap-2 mb-3">
           <button
-            className="flex-1 px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-50"
+            className="flex-1 px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[var(--accent-soft-hover)] disabled:opacity-50"
             onClick={search}
             disabled={isLoading}
           >
             🔍 {isLoading ? "检索中..." : "检索/生成"}
           </button>
           <button
-            className="px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)]"
+            className="px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[var(--accent-soft-hover)]"
             onClick={() => {
               setQuery("");
               notify("已清空输入", "s");

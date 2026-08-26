@@ -84,10 +84,10 @@ export default function RightPanel() {
     const str = JSON.stringify(workingJson, null, 2);
     let html = colorJson(str);
     for (const nodeI of selectedNodeIs) {
-      const pattern = `<span class="text-[#7ec8f0]">"i"</span>: <span class="text-[#ffcc80]">${nodeI}</span>`;
+      const pattern = `<span class="text-[var(--json-key)]">"i"</span>: <span class="text-[var(--json-number)]">${nodeI}</span>`;
       html = html.replace(
         pattern,
-        '<span style="background:rgba(77,184,212,0.15);border-radius:2px;outline:1px solid rgba(77,184,212,0.5)">' + pattern + '</span>'
+        '<span style="background:var(--accentglow);border-radius:2px;outline:1px solid var(--accent-border)">' + pattern + '</span>'
       );
     }
     return html;
@@ -296,7 +296,7 @@ export default function RightPanel() {
                 className={`p-[8px_11px] rounded-[5px] text-[11px] leading-[1.5] ${
                   msg.role === 'ai'
                     ? 'bg-[var(--bg3)] border border-[var(--border)] text-[var(--text2)] rounded-bl-[1px]'
-                    : 'bg-[rgba(77,184,212,0.1)] border border-[rgba(77,184,212,0.22)] text-[var(--text)] rounded-br-[1px]'
+                    : 'bg-[var(--accent-soft)] border border-[var(--accent-border)] text-[var(--text)] rounded-br-[1px]'
                 }`}
               >
                 {renderMessageContent(msg)}
@@ -343,7 +343,7 @@ export default function RightPanel() {
               disabled={interactionLocked}
             />
             <button
-              className="px-[12px] py-[6px] bg-[rgba(77,184,212,0.1)] border border-[var(--accent)] rounded-[4px] text-[var(--accent)] text-[11px] cursor-pointer font-mono hover:bg-[rgba(77,184,212,0.22)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-[12px] py-[6px] bg-[var(--accent-soft)] border border-[var(--accent)] rounded-[4px] text-[var(--accent)] text-[11px] cursor-pointer font-mono hover:bg-[var(--accent-soft-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleSend}
               disabled={interactionLocked}
             >
@@ -370,7 +370,7 @@ export default function RightPanel() {
         />
         <div className="shrink-0 p-[10px] border-t border-[var(--border)] bg-[var(--bg2)]">
           <button
-            className="w-full px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[var(--accent-soft-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleUpload}
             disabled={uploadDisabled}
           >

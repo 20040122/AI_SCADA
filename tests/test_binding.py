@@ -36,7 +36,7 @@ def _csv(rows: list[list[str]]) -> bytes:
 def _panel_canvas(*display_names: str) -> dict:
     return {
         "v": "1",
-        "p": {"layers": [], "autoAdjustIndex": True, "hierarchicalRendering": False},
+        "p": {"layers": [{"name": "0", "visible": True, "selectable": True, "movable": True, "editable": True}], "autoAdjustIndex": True, "hierarchicalRendering": False},
         "a": {"width": 1920, "fitContent": True, "rectSelectable": True, "pannable": True, "zoomable": True, "height": 1080},
         "contentRect": {"x": 0, "y": 0, "width": 1920, "height": 1080},
         "d": [

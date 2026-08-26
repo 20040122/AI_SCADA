@@ -24,6 +24,7 @@ from app.services.canvas_upload_service import (
 )
 from data.sqlite.material_db import MaterialDB
 from model.layout_agent import LayoutAgent
+from model.layout_agent import LayoutOutputError
 from model.layout_tools.compute_position import MissingMaterialError
 from model.layout_tools.get_intent import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
 from model.layout_tools.get_connection import ConnectionModelError as PipingModelError
@@ -56,6 +57,8 @@ async def canvas_layout(
             title=req.title.strip(),
         )
     except MissingMaterialError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except LayoutOutputError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except StructuredPromptError as exc:
         raise HTTPException(

@@ -31,7 +31,7 @@ export default function MainTabs() {
               shrink-0 relative transition-[0.12s]
               ${isActive
                 ? "text-[var(--accent)] bg-[var(--bg)] border-[var(--border)] border-b-[var(--bg)]"
-                : "text-[var(--text2)] bg-transparent hover:text-[var(--text)] hover:bg-[rgba(255,255,255,0.04)]"
+                : "text-[var(--text2)] bg-transparent hover:text-[var(--text)] hover:bg-[var(--hover)]"
               }
             `}
             onClick={() => setActiveTab(tab.id)}

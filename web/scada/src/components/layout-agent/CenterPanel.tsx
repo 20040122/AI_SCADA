@@ -37,7 +37,7 @@ export function WorkflowSteps() {
             key={step.id}
             className="flex items-center gap-2 p-[6px_8px] bg-[var(--bg3)] border border-[var(--border)] rounded-[4px]"
           >
-            <div className="w-5 h-5 rounded-full bg-[rgba(77,184,212,0.1)] border border-[var(--accent2)] text-[var(--accent)] text-[9px] font-mono flex items-center justify-center shrink-0">
+            <div className="w-5 h-5 rounded-full bg-[var(--accent-soft)] border border-[var(--accent2)] text-[var(--accent)] text-[9px] font-mono flex items-center justify-center shrink-0">
               {step.id}
             </div>
             <span className="flex-1 text-[11px] text-[var(--text)]">{step.name}</span>
