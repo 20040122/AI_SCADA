@@ -13,7 +13,7 @@ import { apiErrorStatus } from "../../utils/apiError.ts";
 const BTN_BASE =
   "text-[9px] px-[8px] py-[2px] rounded-[3px] border font-mono cursor-pointer transition-[0.15s]";
 const BTN_DEFAULT = `${BTN_BASE} border-[var(--border2)] bg-[var(--bg3)] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]`;
-const BTN_PRIMARY = `${BTN_BASE} border-[var(--accent)] bg-[var(--accent)] text-white hover:opacity-80`;
+const BTN_PRIMARY = `${BTN_BASE} border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)] hover:opacity-80`;
 const BTN_DANGER = `${BTN_BASE} border-[var(--warn)] text-[var(--warn)] hover:bg-[rgba(232,168,64,0.1)]`;
 
 export default function AiGenerationRow({
@@ -172,7 +172,7 @@ export default function AiGenerationRow({
   if (gen.status === "failed") {
     return (
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] text-[#e05555] font-mono">
+        <span className="text-[10px] text-[var(--error)] font-mono">
           {gen.error || "生成失败"}
         </span>
         <button className={BTN_DEFAULT} onClick={handleRegenerate} disabled={busy}>

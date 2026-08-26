@@ -242,7 +242,7 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
 
         <div className="flex gap-2 mb-3">
           <button
-            className="flex-1 px-[12px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-50"
+            className="flex-1 px-[12px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[var(--accent-soft-hover)] disabled:opacity-50"
             onClick={handleBuild}
             disabled={building || !canBuild}
           >
@@ -308,7 +308,7 @@ export default function RightPanel({ blocked }: { blocked: string | null }) {
 
       {confirmPlan !== null && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.45)]"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--overlay)]"
           onClick={() => setConfirmPlan(null)}
         >
           <div

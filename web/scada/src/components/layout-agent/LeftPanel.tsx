@@ -119,7 +119,7 @@ export default function LeftPanel() {
             画面标题
           </label>
           <input
-            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
             placeholder="如：冷却水循环系统"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -133,7 +133,7 @@ export default function LeftPanel() {
             </label>
             <input
               type="number"
-              className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+              className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
               value={canvasWidth}
               onChange={(e) => setCanvasWidth(Number(e.target.value))}
             />
@@ -144,7 +144,7 @@ export default function LeftPanel() {
             </label>
             <input
               type="number"
-              className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+              className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
               value={canvasHeight}
               onChange={(e) => setCanvasHeight(Number(e.target.value))}
             />
@@ -156,7 +156,7 @@ export default function LeftPanel() {
             控件
           </label>
           <textarea
-            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
             rows={2}
             style={{ minHeight: "48px", lineHeight: 1.5 }}
             placeholder="如：3台冷却塔、3台冷却泵、3台冷水机、4台冷冻泵"
@@ -170,7 +170,7 @@ export default function LeftPanel() {
             流程
           </label>
           <textarea
-            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
             rows={2}
             style={{ minHeight: "48px", lineHeight: 1.5 }}
             placeholder="如：冷却塔-冷却泵-冷水机-冷冻泵"
@@ -184,7 +184,7 @@ export default function LeftPanel() {
             结构
           </label>
           <textarea
-            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
             rows={3}
             style={{ minHeight: "64px", lineHeight: 1.5 }}
             placeholder="如：冷却塔在左侧纵向排列，冷水机在页面中部纵向排列"
@@ -198,7 +198,7 @@ export default function LeftPanel() {
             管道
           </label>
           <textarea
-            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_rgba(77,184,212,0.07)]"
+            className="w-full bg-[var(--bg3)] border border-[var(--border2)] rounded-[4px] px-[10px] py-[7px] text-[12px] text-[var(--text)] font-[var(--sans)] outline-none resize-y focus:border-[var(--accent2)] focus:shadow-[0_0_0_2px_var(--focus-ring)]"
             rows={3}
             style={{ minHeight: "64px", lineHeight: 1.5 }}
             placeholder="如：管道采用正交连接，相同设备保持等间距和上下对齐"
@@ -209,7 +209,7 @@ export default function LeftPanel() {
 
         <div className="flex gap-2 mb-3">
           <button
-            className="flex-1 px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[rgba(77,184,212,0.2)] disabled:opacity-50"
+            className="flex-1 px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[var(--accent-soft-hover)] disabled:opacity-50"
             onClick={handleGenerate}
             disabled={isGenerating}
           >

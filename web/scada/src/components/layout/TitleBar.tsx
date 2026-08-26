@@ -1,4 +1,8 @@
+import { useThemeStore } from "../../stores/themeStore";
+
 export default function TitleBar() {
+  const { theme, toggleTheme } = useThemeStore();
+
   return (
     <div className="h-[30px] bg-[var(--bg4)] border-b border-[var(--border)] flex items-center px-3 gap-3 shrink-0 z-[200]">
       <div
@@ -7,23 +11,6 @@ export default function TitleBar() {
       >
         SCADA<span style={{ color: "var(--text3)" }}>·</span>AI
       </div>
-      {[""].map((m) => (
-        <div
-          key={m}
-          className="text-[11px] px-2 h-[30px] flex items-center cursor-pointer transition-[0.12s]"
-          style={{ color: "var(--text2)" }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "var(--text)";
-            e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--text2)";
-            e.currentTarget.style.background = "transparent";
-          }}
-        >
-          {m}
-        </div>
-      ))}
       <div className="ml-auto flex items-center gap-2">
         <div
           className="w-[5px] h-[5px] rounded-full"
@@ -32,6 +19,15 @@ export default function TitleBar() {
         <span className="text-[10px] font-mono" style={{ color: "var(--text3)" }}>
           AI引擎就绪
         </span>
+        <button
+          type="button"
+          className="h-[22px] px-2 rounded-[4px] border border-[var(--border2)] bg-[var(--bg2)] text-[10px] text-[var(--text2)] font-mono cursor-pointer transition-[0.12s] hover:text-[var(--text)] hover:bg-[var(--hover)]"
+          onClick={toggleTheme}
+          aria-label={`切换到${theme === "dark" ? "浅色" : "深色"}主题`}
+          title={`切换到${theme === "dark" ? "浅色" : "深色"}主题`}
+        >
+          {theme === "dark" ? "☀ 浅色" : "◐ 深色"}
+        </button>
       </div>
     </div>
   );

@@ -2,91 +2,86 @@
   "layoutIntent": {
     "groups": [
       {
-        "id": "group-1",
-        "region": "center",
+        "id": "air-group",
+        "region": "left",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "溢流阀"
+            "id": "air-tank",
+            "deviceType": "空气罐"
           },
-          "attachments": []
+          "attachments": [
+            {
+              "id": "air-valve",
+              "deviceType": "阀门",
+              "role": "valve",
+              "relativeTo": "air-tank",
+              "side": "top"
+            },
+            {
+              "id": "air-meter1",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "air-valve",
+              "side": "right"
+            },
+            {
+              "id": "air-sensor",
+              "deviceType": "压力传感器",
+              "role": "sensor",
+              "relativeTo": "air-meter1",
+              "side": "right"
+            },
+            {
+              "id": "air-meter2",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "air-sensor",
+              "side": "right"
+            }
+          ]
         },
-        "count": 4,
+        "count": 1,
+        "arrangement": "horizontal",
+        "gapHint": "normal",
         "topology": "single"
       },
       {
-        "id": "group-2",
-        "region": "center",
+        "id": "nitrogen-group",
+        "region": "right",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "液压泵"
+            "id": "nitrogen-tank",
+            "deviceType": "氮气罐"
           },
-          "attachments": []
-        },
-        "count": 4,
-        "topology": "single",
-        "relativeTo": "group-1",
-        "side": "right"
-      },
-      {
-        "id": "group-3",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "电机"
-          },
-          "attachments": []
-        },
-        "count": 2,
-        "topology": "single",
-        "relativeTo": "group-2",
-        "side": "right"
-      },
-      {
-        "id": "group-4",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "吸油过滤器"
-          },
-          "attachments": []
+          "attachments": [
+            {
+              "id": "nitrogen-valve",
+              "deviceType": "阀门",
+              "role": "valve",
+              "relativeTo": "nitrogen-tank",
+              "side": "top"
+            },
+            {
+              "id": "nitrogen-meter",
+              "deviceType": "流量计",
+              "role": "meter",
+              "relativeTo": "nitrogen-valve",
+              "side": "right"
+            },
+            {
+              "id": "nitrogen-sensor",
+              "deviceType": "压力传感器",
+              "role": "sensor",
+              "relativeTo": "nitrogen-meter",
+              "side": "right"
+            }
+          ]
         },
         "count": 2,
+        "arrangement": "vertical",
+        "gapHint": "normal",
         "topology": "single",
-        "relativeTo": "group-3",
-        "side": "right"
-      },
-      {
-        "id": "group-5",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "回油单向阀"
-          },
-          "attachments": []
-        },
-        "count": 1,
-        "topology": "single",
-        "relativeTo": "group-4",
-        "side": "right"
-      },
-      {
-        "id": "group-6",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "油箱"
-          },
-          "attachments": []
-        },
-        "count": 1,
-        "topology": "single",
-        "relativeTo": "group-5",
+        "relativeTo": "air-group",
         "side": "right"
       }
     ],

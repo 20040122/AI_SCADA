@@ -23,15 +23,15 @@ export default function MetadataView({ asset }: { asset: MaterialItem | null }) 
         </div>
         <div>
           <span className="text-[var(--text3)]">image: </span>
-          <span className="text-[#a8e6a3]">{asset.image}</span>
+          <span className="text-[var(--json-string)]">{asset.image}</span>
         </div>
         <div>
           <span className="text-[var(--text3)]">width: </span>
-          <span className="text-[#ffcc80]">{asset.width}</span>
+          <span className="text-[var(--json-number)]">{asset.width}</span>
         </div>
         <div>
           <span className="text-[var(--text3)]">height: </span>
-          <span className="text-[#ffcc80]">{asset.height}</span>
+          <span className="text-[var(--json-number)]">{asset.height}</span>
         </div>
         <div>
           <span className="text-[var(--text3)]">source: </span>

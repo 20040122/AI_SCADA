@@ -98,10 +98,10 @@ const CanvasWidget = memo(function CanvasWidget({ node, scale, offsetX, offsetY,
           willChange: "transform",
           touchAction: draggable ? "none" : undefined,
           boxShadow: isSelected
-            ? "0 0 0 2px var(--accent), 0 0 0 4px rgba(77,184,212,.15)"
+            ? "0 0 0 2px var(--accent), 0 0 0 4px var(--accentglow)"
             : hasPreview
               ? "none"
-              : "0 8px 18px rgba(15,23,42,0.08)",
+              : "0 8px 18px var(--canvas-shadow)",
           zIndex: isSelected ? 20 : undefined,
         }}
         onPointerDown={draggable ? handlePointerDown : undefined}
@@ -162,8 +162,8 @@ const ResizeHandle = memo(function ResizeHandle({ cx, cy, cursor, onPointerDown 
       onPointerDown={onPointerDown}
     >
       <div
-        className="w-full h-full rounded-sm border-2 border-white"
-        style={{ background: "var(--accent)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }}
+        className="w-full h-full rounded-sm border-2 border-[var(--on-accent)]"
+        style={{ background: "var(--accent)", boxShadow: "0 1px 3px var(--canvas-shadow)" }}
       />
     </div>
   );
@@ -345,7 +345,7 @@ const PipesLayer = memo(function PipesLayer({ pipeData, nodes, canvasW, canvasH,
           </g>
         ))}
       </svg>
-      <div className="absolute bottom-2 right-2 text-[9px] text-[var(--text3)] font-mono bg-[rgba(255,255,255,0.72)] px-2 py-1 rounded-[4px]">
+      <div className="absolute bottom-2 right-2 text-[9px] text-[var(--text3)] font-mono bg-[var(--canvas-card)] px-2 py-1 rounded-[4px]">
         {pathDefs.entries.length} 条管线
         {duplicateCount > 0 && ` · 合并 ${duplicateCount} 条重复`}
         {pathDefs.invalid > 0 && ` · 跳过 ${pathDefs.invalid} 条无效`}
@@ -649,14 +649,14 @@ const ResizableCanvas = memo(function ResizableCanvas({
 
   return (
     <div className="absolute inset-0 flex flex-col overflow-hidden">
-      <div className="shrink-0 px-4 py-3 border-b border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.64)] backdrop-blur-[10px]">
+      <div className="shrink-0 px-4 py-3 border-b border-[var(--border)] bg-[var(--canvas-toolbar)] backdrop-blur-[10px]">
         <div className="flex items-center gap-2">
           <span className="text-[10px] tracking-[0.14em] uppercase text-[var(--text3)] font-mono">
             Preview
           </span>
           <div className="ml-auto flex items-center gap-2">
             <button
-              className="w-7 h-7 rounded-[8px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[14px] text-[var(--text2)] cursor-pointer transition-[0.15s] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-7 h-7 rounded-[8px] border border-[var(--canvas-control-border)] bg-[var(--canvas-control)] text-[14px] text-[var(--text2)] cursor-pointer transition-[0.15s] hover:border-[var(--accent-border)] hover:text-[var(--accent)] disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={() => updateManualZoom(scale - 0.12)}
               disabled={scale <= MIN_ZOOM}
               type="button"
@@ -667,7 +667,7 @@ const ResizableCanvas = memo(function ResizableCanvas({
               {formatZoom(scale)}
             </span>
             <button
-              className="w-7 h-7 rounded-[8px] border border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[14px] text-[var(--text2)] cursor-pointer transition-[0.15s] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)] disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-7 h-7 rounded-[8px] border border-[var(--canvas-control-border)] bg-[var(--canvas-control)] text-[14px] text-[var(--text2)] cursor-pointer transition-[0.15s] hover:border-[var(--accent-border)] hover:text-[var(--accent)] disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={() => updateManualZoom(scale + 0.12)}
               disabled={scale >= MAX_ZOOM}
               type="button"
@@ -677,8 +677,8 @@ const ResizableCanvas = memo(function ResizableCanvas({
             <button
               className={`px-[10px] h-7 rounded-[8px] border text-[10px] font-mono cursor-pointer transition-[0.15s] ${
                 zoomMode === "fit"
-                  ? "border-[rgba(77,184,212,0.4)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)]"
-                  : "border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[var(--text3)] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)]"
+                  ? "border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                  : "border-[var(--canvas-control-border)] bg-[var(--canvas-control)] text-[var(--text3)] hover:border-[var(--accent-border)] hover:text-[var(--accent)]"
               }`}
               onClick={() => setZoomMode("fit")}
               type="button"
@@ -688,8 +688,8 @@ const ResizableCanvas = memo(function ResizableCanvas({
             <button
               className={`px-[10px] h-7 rounded-[8px] border text-[10px] font-mono cursor-pointer transition-[0.15s] ${
                 zoomMode === "actual"
-                  ? "border-[rgba(77,184,212,0.4)] bg-[rgba(77,184,212,0.1)] text-[var(--accent)]"
-                  : "border-[rgba(148,163,184,0.24)] bg-[rgba(255,255,255,0.82)] text-[var(--text3)] hover:border-[rgba(77,184,212,0.45)] hover:text-[var(--accent)]"
+                  ? "border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                  : "border-[var(--canvas-control-border)] bg-[var(--canvas-control)] text-[var(--text3)] hover:border-[var(--accent-border)] hover:text-[var(--accent)]"
               }`}
               onClick={() => setZoomMode("actual")}
               type="button"
@@ -710,9 +710,9 @@ const ResizableCanvas = memo(function ResizableCanvas({
                 width: scaledW,
                 height: scaledH,
                 borderRadius: "18px",
-                border: "1px solid rgba(148,163,184,0.24)",
-                background: "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)",
-                boxShadow: "0 24px 48px rgba(15,23,42,0.14)",
+                border: "1px solid var(--canvas-control-border)",
+                background: "linear-gradient(180deg, var(--canvas-surface-start) 0%, var(--canvas-surface-end) 100%)",
+                boxShadow: "0 24px 48px var(--canvas-shadow)",
               }}
             >
             </div>
@@ -752,7 +752,7 @@ export default function AgentCanvas(props: AgentCanvasProps) {
         <div className="ml-auto flex gap-2 items-center">
           {hasResult ? (
             <>
-              <span className="text-[9px] px-[6px] py-[2px] rounded-[10px] border border-[rgba(77,184,212,0.3)] text-[var(--text3)] font-mono">
+              <span className="text-[9px] px-[6px] py-[2px] rounded-[10px] border border-[var(--accent-border)] text-[var(--text3)] font-mono">
                 {nodes.length} 个控件
               </span>
               {selectedNodeIds && selectedNodeIds.length > 0 && (
@@ -767,7 +767,7 @@ export default function AgentCanvas(props: AgentCanvasProps) {
 
       <div
         className="flex-1 min-h-0 relative overflow-hidden"
-        style={{ background: "linear-gradient(180deg, #eef3f9 0%, #e8edf5 100%)" }}
+        style={{ background: "linear-gradient(180deg, var(--canvas-bg-start) 0%, var(--canvas-bg-end) 100%)" }}
       >
         {hasResult && canvasWidth > 0 && canvasHeight > 0 && (
           <CanvasContent
@@ -787,7 +787,7 @@ export default function AgentCanvas(props: AgentCanvasProps) {
 
         {!hasResult && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center rounded-[18px] border border-[rgba(148,163,184,0.18)] bg-[rgba(255,255,255,0.72)] shadow-[0_14px_40px_rgba(15,23,42,0.08)] px-8 py-7">
+            <div className="text-center rounded-[18px] border border-[var(--canvas-control-border)] bg-[var(--canvas-card)] px-8 py-7" style={{ boxShadow: "0 14px 40px var(--canvas-shadow)" }}>
               <div className="text-[36px] opacity-20 mb-2">{emptyIcon || '🎨'}</div>
               <div className="text-[11px] text-[var(--text3)] font-mono">
                 {emptyText}

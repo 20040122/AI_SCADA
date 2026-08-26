@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-:root {
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #1a2135;
   --bg2: #212b40;
   --bg3: #283248;
@@ -11,6 +13,9 @@
   --accent: #4db8d4;
   --accent2: #2e8fa8;
   --accentglow: rgba(77, 184, 212, 0.2);
+  --accent-soft: rgba(77, 184, 212, 0.1);
+  --accent-soft-hover: rgba(77, 184, 212, 0.2);
+  --accent-border: rgba(77, 184, 212, 0.45);
   --teal: #3ecfb8;
   --warn: #e8a840;
   --error: #e05555;
@@ -19,8 +24,69 @@
   --text: #b8cce4;
   --text2: #7090b4;
   --text3: #3a5068;
+  --on-accent: #ffffff;
+  --hover: rgba(255, 255, 255, 0.04);
+  --overlay: rgba(0, 0, 0, 0.45);
+  --shadow: rgba(0, 0, 0, 0.5);
+  --focus-ring: rgba(77, 184, 212, 0.07);
+  --canvas-bg-start: #182033;
+  --canvas-bg-end: #141b2b;
+  --canvas-toolbar: rgba(33, 43, 64, 0.82);
+  --canvas-control: rgba(40, 50, 72, 0.92);
+  --canvas-control-border: rgba(112, 144, 180, 0.28);
+  --canvas-surface-start: rgba(40, 50, 72, 0.98);
+  --canvas-surface-end: rgba(28, 36, 56, 0.98);
+  --canvas-card: rgba(33, 43, 64, 0.86);
+  --canvas-shadow: rgba(0, 0, 0, 0.3);
+  --json-key: #7ec8f0;
+  --json-string: #a8e6a3;
+  --json-number: #ffcc80;
+  --json-boolean: #ff8a80;
   --mono: "JetBrains Mono", monospace;
   --sans: "Noto Sans SC", sans-serif;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f7fa;
+  --bg2: #edf1f5;
+  --bg3: #ffffff;
+  --bg4: #e6ebf1;
+  --panel: #fafbfd;
+  --border: #d7dfe8;
+  --border2: #b7c5d4;
+  --accent: #167f9c;
+  --accent2: #0f6f89;
+  --accentglow: rgba(22, 127, 156, 0.16);
+  --accent-soft: rgba(22, 127, 156, 0.1);
+  --accent-soft-hover: rgba(22, 127, 156, 0.18);
+  --accent-border: rgba(22, 127, 156, 0.42);
+  --teal: #087f72;
+  --warn: #a96508;
+  --error: #c43f48;
+  --success: #16804a;
+  --blue2: #287cac;
+  --text: #26394d;
+  --text2: #526b84;
+  --text3: #71859a;
+  --on-accent: #ffffff;
+  --hover: rgba(38, 57, 77, 0.06);
+  --overlay: rgba(25, 39, 54, 0.34);
+  --shadow: rgba(25, 45, 65, 0.18);
+  --focus-ring: rgba(22, 127, 156, 0.12);
+  --canvas-bg-start: #eef3f9;
+  --canvas-bg-end: #e8edf5;
+  --canvas-toolbar: rgba(255, 255, 255, 0.64);
+  --canvas-control: rgba(255, 255, 255, 0.82);
+  --canvas-control-border: rgba(113, 133, 154, 0.28);
+  --canvas-surface-start: rgba(255, 255, 255, 0.98);
+  --canvas-surface-end: rgba(248, 250, 252, 0.98);
+  --canvas-card: rgba(255, 255, 255, 0.72);
+  --canvas-shadow: rgba(15, 23, 42, 0.14);
+  --json-key: #176f9f;
+  --json-string: #25733d;
+  --json-number: #9b5d00;
+  --json-boolean: #b52f39;
 }
 
 html, body, #root {
@@ -55,7 +121,7 @@ html, body, #root {
   font-size: 11px;
   color: var(--text);
   font-family: var(--mono);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 16px var(--shadow);
   z-index: 9999;
   opacity: 0;
   transition: opacity 0.25s;

@@ -24,7 +24,7 @@ function getInitialColor(name: string): string {
 function SimBadge({ similarity, source }: { similarity: number; source: string }) {
   if (source === "sqlite") {
     return (
-      <span className="text-[8px] px-[3px] py-[1px] rounded-[2px] bg-[rgba(232,168,64,0.15)] text-[#e8a840] font-mono">
+      <span className="text-[8px] px-[3px] py-[1px] rounded-[2px] bg-[rgba(232,168,64,0.15)] text-[var(--warn)] font-mono">
         sqlite
       </span>
     );
@@ -35,7 +35,7 @@ function SimBadge({ similarity, source }: { similarity: number; source: string }
       className={`text-[8px] px-[3px] py-[1px] rounded-[2px] font-mono ${
         isHigh
           ? "bg-[rgba(62,207,122,0.13)] text-[var(--success)]"
-          : "bg-[rgba(232,168,64,0.15)] text-[#e8a840]"
+          : "bg-[rgba(232,168,64,0.15)] text-[var(--warn)]"
       }`}
     >
       {similarity.toFixed(2)}

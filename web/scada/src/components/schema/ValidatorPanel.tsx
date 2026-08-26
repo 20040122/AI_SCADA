@@ -65,7 +65,7 @@ export default function ValidatorPanel() {
 
         <div className="flex gap-1">
           <button
-            className="flex-1 px-2 py-1 text-[11px] rounded bg-[var(--accent)] text-white font-medium disabled:opacity-40"
+            className="flex-1 px-2 py-1 text-[11px] rounded bg-[var(--accent)] text-[var(--on-accent)] font-medium disabled:opacity-40"
             disabled={loading || !validatorInput.trim()}
             onClick={() => runValidate(activeCategory)}
           >
@@ -97,7 +97,7 @@ export default function ValidatorPanel() {
 
         {result && (
           <div className="text-[11px] border border-[var(--border)] rounded overflow-hidden">
-            <div className={`px-2 py-1 font-medium text-white ${result.valid ? "bg-[var(--success)]" : "bg-[var(--error)]"}`}>
+            <div className={`px-2 py-1 font-medium text-[var(--on-accent)] ${result.valid ? "bg-[var(--success)]" : "bg-[var(--error)]"}`}>
               {result.valid ? "✓ 校验通过" : "✗ 校验未通过"}
               {result.summary && ` — ${result.summary}`}
             </div>
