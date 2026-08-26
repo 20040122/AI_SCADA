@@ -6,7 +6,6 @@
 pip install -r requirements.txt
 # 2. 配置环境变量
  创建.env.local，格式参考 env.local.example内容
-# 编辑 .env.local，填入 DEEPSEEK_API_KEY
 # 3. 启动服务
 python main.py
 ```
