@@ -67,6 +67,24 @@ class ConnectionTemplate:
     target: TemplateEnd
 
 
+def _spec_to_dict(spec: ConnectionSpec) -> dict:
+    return {
+        "id": spec.id,
+        "source": {
+            "group": spec.source.group,
+            "node": spec.source.node,
+            "instance": spec.source.instance,
+            "port": spec.source.port,
+        },
+        "target": {
+            "group": spec.target.group,
+            "node": spec.target.node,
+            "instance": spec.target.instance,
+            "port": spec.target.port,
+        },
+    }
+
+
 def _extract_piping_section(query: str) -> str:
     matches = list(_SECTION_PATTERN.finditer(query))
     for i, m in enumerate(matches):
@@ -493,6 +511,14 @@ async def generate_connections(
     device_dir = _build_device_directory(ir_data, pt_ir_nodes) if ir_data else None
     chains = _try_parse_chains(piping_text, device_dir) if device_dir else None
 
+    if chains is not None:
+        expanded = _deduplicate_specs(
+            _normalize_ports(chains_to_specs(chains), pt_ir_nodes)
+        )
+        for i, spec in enumerate(expanded, 1):
+            spec.id = f"pipe-{i}"
+        return {"connections": [_spec_to_dict(spec) for spec in expanded]}
+
     model = model or _CONNECTION_MODEL
     llm_input = _build_llm_input(pt_ir_nodes, piping_text)
 
@@ -563,54 +589,10 @@ async def generate_connections(
     expanded = _deduplicate_specs(expanded)
     expanded = _normalize_ports(expanded, pt_ir_nodes)
 
-    if chains is not None:
-        expected = chains_to_specs(chains)
-        _validate_exact_edges(expanded, expected)
-        spec_map = {}
-        for s in expanded:
-            fwd = (s.source.group, s.source.node, s.source.instance,
-                   s.target.group, s.target.node, s.target.instance)
-            rev = (s.target.group, s.target.node, s.target.instance,
-                   s.source.group, s.source.node, s.source.instance)
-            spec_map[fwd] = (s.source.port, s.target.port)
-            spec_map[rev] = (s.target.port, s.source.port)
-        ordered = []
-        idx = 1
-        for chain in chains:
-            for edge in chain:
-                ports = spec_map.get(edge)
-                if ports is None:
-                    continue
-                ordered.append(ConnectionSpec(
-                    id=f"pipe-{idx}",
-                    source=ConnectionEnd(group=edge[0], node=edge[1], instance=edge[2], port=ports[0]),
-                    target=ConnectionEnd(group=edge[3], node=edge[4], instance=edge[5], port=ports[1]),
-                ))
-                idx += 1
-        expanded = ordered
-    else:
-        if not expanded:
-            raise ConnectionValidationError("展开结果为空，无有效连接")
+    if not expanded:
+        raise ConnectionValidationError("展开结果为空，无有效连接")
 
     for i, spec in enumerate(expanded, 1):
         spec.id = f"pipe-{i}"
 
-    connections_out = []
-    for spec in expanded:
-        connections_out.append({
-            "id": spec.id,
-            "source": {
-                "group": spec.source.group,
-                "node": spec.source.node,
-                "instance": spec.source.instance,
-                "port": spec.source.port,
-            },
-            "target": {
-                "group": spec.target.group,
-                "node": spec.target.node,
-                "instance": spec.target.instance,
-                "port": spec.target.port,
-            },
-        })
-
-    return {"connections": connections_out}
+    return {"connections": [_spec_to_dict(spec) for spec in expanded]}

@@ -883,7 +883,7 @@ async def test_layout_generate_writes_material_snapshot(monkeypatch, tmp_path):
         {"displayName": "阀门", "image": "symbols/valve.json", "width": 64, "height": 64},
     ]
 
-    async def fake_intent(query, materials, client, model):
+    async def fake_intent(query, materials, client, model, **kwargs):
         return _layout_file()
 
     def fake_convert(data, controls, width, height):

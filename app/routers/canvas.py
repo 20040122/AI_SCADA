@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from app.deps import get_layout_agent, get_material_db, get_refine_agent
 from app.schemas import (
@@ -26,7 +26,7 @@ from data.sqlite.material_db import MaterialDB
 from model.layout_agent import LayoutAgent
 from model.layout_agent import LayoutOutputError
 from model.layout_tools.compute_position import MissingMaterialError
-from model.layout_tools.get_intent import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
+from model.layout_tools.get_intent import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError, image_to_structured_prompt
 from model.layout_tools.get_connection import ConnectionModelError as PipingModelError
 from model.layout_tools.get_connection import ConnectionModelTimeoutError as PipingModelTimeoutError
 from model.layout_tools.get_connection import ConnectionModelUnavailableError as PipingModelUnavailableError
@@ -44,17 +44,21 @@ from model.refine_agent import (
 router = APIRouter(prefix="/api/canvas", tags=["canvas"])
 
 
-@router.post("/layout", response_model=ApiResponse)
-async def canvas_layout(
-    req: CanvasLayoutRequest,
-    agent: LayoutAgent = Depends(get_layout_agent),
+async def _generate_layout(
+    agent: LayoutAgent,
+    query: str,
+    width: int,
+    height: int,
+    title: str,
+    skip_structure_count: bool = False,
 ):
     try:
-        result = await agent.generate(
-            query=req.query,
-            width=req.canvas_width,
-            height=req.canvas_height,
-            title=req.title.strip(),
+        return await agent.generate(
+            query=query,
+            width=width,
+            height=height,
+            title=title,
+            skip_structure_count=skip_structure_count,
         )
     except MissingMaterialError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -87,7 +91,9 @@ async def canvas_layout(
     except IntentModelTimeoutError as exc:
         raise HTTPException(status_code=504, detail=str(exc)) from exc
 
-    safe = re.sub(r'[\\/:*?"<>|]', "_", req.title.strip())
+
+def _persist_and_respond(result, title: str) -> ApiResponse:
+    safe = re.sub(r'[\\/:*?"<>|]', "_", title.strip() or "测试系统")
     ts = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     file_name = f"{safe}_{ts}.json"
     output_path = Path(__file__).resolve().parent.parent.parent / "output" / file_name
@@ -106,6 +112,65 @@ async def canvas_layout(
         pipe_data=result.pipe_data,
     )
     return ApiResponse(data=resp.model_dump())
+
+
+@router.post("/layout", response_model=ApiResponse)
+async def canvas_layout(
+    req: CanvasLayoutRequest,
+    agent: LayoutAgent = Depends(get_layout_agent),
+):
+    result = await _generate_layout(
+        agent,
+        query=req.query,
+        width=req.canvas_width,
+        height=req.canvas_height,
+        title=req.title.strip(),
+    )
+    return _persist_and_respond(result, req.title)
+
+
+@router.post("/layout/image", response_model=ApiResponse)
+async def canvas_layout_image(
+    file: UploadFile = File(...),
+    title: str = Form(""),
+    canvas_width: int = Form(1920),
+    canvas_height: int = Form(1080),
+    agent: LayoutAgent = Depends(get_layout_agent),
+    db: MaterialDB = Depends(get_material_db),
+):
+    materials = await db.list_query_results("")
+    if not materials:
+        raise HTTPException(status_code=422, detail="query_results 表为空")
+
+    image = await file.read()
+    try:
+        prompt = await image_to_structured_prompt(image, materials)
+    except StructuredPromptError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "errors": [
+                    {"path": item.path, "message": item.message}
+                    for item in exc.errors
+                ]
+            },
+        ) from exc
+    except IntentModelOutputError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except IntentModelUnavailableError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    result = await _generate_layout(
+        agent,
+        query=prompt,
+        width=canvas_width,
+        height=canvas_height,
+        title=title.strip(),
+        skip_structure_count=True,
+    )
+    return _persist_and_respond(result, title)
 
 
 @router.post("/refine", response_model=ApiResponse)

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLayoutStore } from "../../stores/layoutStore";
-import { generateLayout } from "../../api/layout";
+import { generateLayout, generateLayoutFromImage } from "../../api/layout";
+import type { LayoutGenerateResponse } from "../../types/layout";
 import { notify } from "../../utils/notification";
 import { extractNodesFromJsonData } from "../../utils/layoutNodes";
 
@@ -27,6 +28,42 @@ export default function LeftPanel() {
   const [flow, setFlow] = useState("");
   const [structure, setStructure] = useState("");
   const [requirements, setRequirements] = useState("");
+
+  const imageRef = useRef<HTMLInputElement>(null);
+
+  const applyResult = (result: LayoutGenerateResponse) => {
+    setWorkflowStep(1, "done");
+    setWorkflowStep(2, "done");
+    setWorkflowStep(3, "done");
+    setWorkflowStep(4, "done");
+    setWorkflowStep(5, "done");
+    setWorkflowStatus("success");
+    setLayoutResult(result);
+
+    const nodeCount = extractNodesFromJsonData(result.json_data).length;
+    const missingCount = result.missing_controls.length || 0;
+    const warnCount = result.quality_issues.filter((q) => q.severity === "warning").length;
+    const errCount = result.quality_issues.filter((q) => q.severity === "error").length;
+
+    if (nodeCount === 0 && missingCount === 0) {
+      notify("未生成控件，请检查场景描述或先入库控件", "w");
+    } else if (nodeCount === 0 && missingCount > 0) {
+      notify(`未找到可用控件：${result.missing_controls.join(", ")}`, "w");
+    } else if (errCount > 0) {
+      notify(`${nodeCount} 个控件, ${errCount} 项不合格, ${warnCount} 项警告`, "w");
+    } else if (missingCount > 0) {
+      notify(`${nodeCount} 个控件生成完成，未找到 ${missingCount} 个控件`, "w");
+    } else {
+      notify(`${nodeCount} 个控件生成成功`, "s");
+    }
+  };
+
+  const applyError = (e: unknown) => {
+    const msg = e instanceof Error ? e.message : String(e);
+    setError(msg);
+    setWorkflowStatus("error");
+    notify("AI 布局异常，请检查后端服务", "e");
+  };
 
   const handleGenerate = async () => {
     const structuredQuery = [
@@ -60,36 +97,31 @@ export default function LeftPanel() {
         canvasHeight,
         title: title.trim(),
       });
-
-      setWorkflowStep(1, "done");
-      setWorkflowStep(2, "done");
-      setWorkflowStep(3, "done");
-      setWorkflowStep(4, "done");
-      setWorkflowStep(5, "done");
-      setWorkflowStatus("success");
-      setLayoutResult(result);
-
-      const nodeCount = extractNodesFromJsonData(result.json_data).length;
-      const missingCount = result.missing_controls.length || 0;
-      const warnCount = result.quality_issues.filter((q) => q.severity === "warning").length;
-      const errCount = result.quality_issues.filter((q) => q.severity === "error").length;
-
-      if (nodeCount === 0 && missingCount === 0) {
-        notify("未生成控件，请检查场景描述或先入库控件", "w");
-      } else if (nodeCount === 0 && missingCount > 0) {
-        notify(`未找到可用控件：${result.missing_controls.join(", ")}`, "w");
-      } else if (errCount > 0) {
-        notify(`${nodeCount} 个控件, ${errCount} 项不合格, ${warnCount} 项警告`, "w");
-      } else if (missingCount > 0) {
-        notify(`${nodeCount} 个控件生成完成，未找到 ${missingCount} 个控件`, "w");
-      } else {
-        notify(`${nodeCount} 个控件生成成功`, "s");
-      }
+      applyResult(result);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      setError(msg);
-      setWorkflowStatus("error");
-      notify("AI 布局异常，请检查后端服务", "e");
+      applyError(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePickImage = async (file: File | null) => {
+    if (!file) return;
+    resetWorkflow();
+    setQuery(`图片：${file.name}`);
+    setIsLoading(true);
+    setError(null);
+    setWorkflowStatus("running");
+
+    try {
+      const result = await generateLayoutFromImage(file, {
+        title: title.trim(),
+        canvasWidth,
+        canvasHeight,
+      });
+      applyResult(result);
+    } catch (e) {
+      applyError(e);
     } finally {
       setIsLoading(false);
     }
@@ -149,6 +181,27 @@ export default function LeftPanel() {
               onChange={(e) => setCanvasHeight(Number(e.target.value))}
             />
           </div>
+        </div>
+
+        <div className="mb-3">
+          <input
+            ref={imageRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              e.target.value = "";
+              void handlePickImage(file);
+            }}
+          />
+          <button
+            className="w-full px-[16px] py-[7px] rounded-[4px] text-[11px] cursor-pointer border border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] font-[var(--sans)] transition-[0.15s] hover:bg-[var(--accent-soft-hover)] disabled:opacity-50"
+            onClick={() => imageRef.current?.click()}
+            disabled={isGenerating}
+          >
+            🖼️ {isGenerating ? "生成中..." : "上传图片生成布局"}
+          </button>
         </div>
 
         <div className="mb-3">

@@ -93,6 +93,7 @@ class LayoutAgent:
         width: int,
         height: int,
         title: Optional[str] = None,
+        skip_structure_count: bool = False,
     ) -> LayoutResult:
         from model.layout_tools.get_intent import generate_intent
         from model.layout_tools.compute_position import MissingMaterialError, convert_layout_file
@@ -108,7 +109,13 @@ class LayoutAgent:
             self.create_canvas(title, width, height)
         )
         intent_task = asyncio.create_task(
-            generate_intent(query, materials, self._client, self._model)
+            generate_intent(
+                query,
+                materials,
+                self._client,
+                self._model,
+                skip_structure_count=skip_structure_count,
+            )
         )
         canvas, layout_file = await asyncio.gather(canvas_task, intent_task)
         ir_data = layout_file.model_dump(exclude_none=True)
@@ -163,6 +170,9 @@ class LayoutAgent:
         pipe_edges = []
         if pipe_data is not None:
             pipe_edges = serialize_pipes(pipe_data, nodes, next_edge_i(nodes))
+        if pipe_edges:
+            d.extend(pipe_edges)
+            out["d"] = d
 
         flat = []
         for n in nodes:
