@@ -7,6 +7,8 @@ import re
 from dataclasses import dataclass
 from typing import Any, List, Optional, Tuple, Union
 
+from model.layout_tools.observability import StageTimer
+
 logger = logging.getLogger(__name__)
 
 _CONNECTION_MODEL = "deepseek-v4-flash"
@@ -499,13 +501,36 @@ async def generate_connections(
     model: Optional[str] = None,
     ir_data: Optional[dict] = None,
 ) -> Optional[dict]:
+    timer = StageTimer("连线生成")
+    with timer:
+        return await _generate_connections_impl(
+            query,
+            pt_ir_nodes,
+            client,
+            model,
+            ir_data,
+            timer=timer,
+        )
+
+
+async def _generate_connections_impl(
+    query: str,
+    pt_ir_nodes: list[dict],
+    client,
+    model: Optional[str] = None,
+    ir_data: Optional[dict] = None,
+    *,
+    timer: StageTimer,
+) -> Optional[dict]:
     piping_text = _extract_piping_section(query)
     if not piping_text:
         logger.info("管道段缺失或为空，跳过连接生成")
+        timer.set(local_parse=False, model_calls=0, edge_count=0, skipped="no_piping")
         return None
 
     if not pt_ir_nodes:
         logger.warning("pt_ir 节点为空，跳过连接生成")
+        timer.set(local_parse=False, model_calls=0, edge_count=0, skipped="no_nodes")
         return None
 
     device_dir = _build_device_directory(ir_data, pt_ir_nodes) if ir_data else None
@@ -517,12 +542,15 @@ async def generate_connections(
         )
         for i, spec in enumerate(expanded, 1):
             spec.id = f"pipe-{i}"
+        timer.set(local_parse=True, model_calls=0, edge_count=len(expanded))
         return {"connections": [_spec_to_dict(spec) for spec in expanded]}
 
     model = model or _CONNECTION_MODEL
     llm_input = _build_llm_input(pt_ir_nodes, piping_text)
 
     from model.layout_agent import _llm_text, _parse_json_lenient
+
+    timer.set(local_parse=False, model_calls=1)
 
     system_prompt = (
         "你是SCADA管线拓扑识别器。根据设备列表和用户管道描述，识别管道连接模板。\n"
@@ -595,4 +623,5 @@ async def generate_connections(
     for i, spec in enumerate(expanded, 1):
         spec.id = f"pipe-{i}"
 
+    timer.set(local_parse=False, model_calls=1, edge_count=len(expanded))
     return {"connections": [_spec_to_dict(spec) for spec in expanded]}

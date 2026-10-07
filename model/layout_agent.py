@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import time
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
@@ -16,6 +17,7 @@ from app.services.validation_service import ValidationService
 from model.layout_tools.control_size import material_map as control_material_map
 from model.layout_tools.geometry import content_rect_of_nodes
 from model.layout_tools.get_background import generate_layout
+from model.layout_tools.observability import StageTimer, log_stage
 from model.layout_tools.pipe_serializer import next_edge_i, serialize_pipes
 from model.llm_client import default_client
 
@@ -87,6 +89,15 @@ class LayoutAgent:
     ) -> dict:
         return generate_layout(title or "测试系统", width, height)
 
+    async def _timed_canvas(
+        self,
+        title: Optional[str],
+        width: int,
+        height: int,
+    ) -> dict:
+        with StageTimer("背景画布"):
+            return await self.create_canvas(title, width, height)
+
     async def generate(
         self,
         query: str,
@@ -94,19 +105,31 @@ class LayoutAgent:
         height: int,
         title: Optional[str] = None,
         skip_structure_count: bool = False,
+        materials: Optional[list] = None,
     ) -> LayoutResult:
         from model.layout_tools.get_intent import generate_intent
         from model.layout_tools.compute_position import MissingMaterialError, convert_layout_file
 
         if self._db is None:
             raise ValueError("database required for position computation")
-        materials = await self._db.list_query_results("")
+        total_started = time.perf_counter()
+        materials_started = time.perf_counter()
+        materials_provided = materials is not None
+        if materials is None:
+            materials = await self._db.list_query_results("")
+        assert materials is not None
+        log_stage(
+            "素材读取",
+            (time.perf_counter() - materials_started) * 1000,
+            material_count=len(materials),
+            materials_provided=materials_provided,
+        )
         if not materials:
             raise MissingMaterialError("query_results 表为空")
 
         logger.info("Step 1/2: 并行生成背景画布和布局意图 IR...")
         canvas_task = asyncio.create_task(
-            self.create_canvas(title, width, height)
+            self._timed_canvas(title, width, height)
         )
         intent_task = asyncio.create_task(
             generate_intent(
@@ -121,7 +144,13 @@ class LayoutAgent:
         ir_data = layout_file.model_dump(exclude_none=True)
 
         logger.info("Step 3: 从 query_results 计算坐标...")
+        coord_started = time.perf_counter()
         nodes = convert_layout_file(ir_data, materials, width, height)
+        log_stage(
+            "坐标计算",
+            (time.perf_counter() - coord_started) * 1000,
+            node_count=len(nodes),
+        )
 
         if self._debug:
             position_path = LAYOUT_DIR / "position.json"
@@ -141,6 +170,7 @@ class LayoutAgent:
         )
 
         logger.info("Step 5: 拼装最终 JSON...")
+        assembly_started = time.perf_counter()
         out = deepcopy(canvas)
         d = list(out.get("d", []))
 
@@ -187,6 +217,12 @@ class LayoutAgent:
             })
         out["contentRect"] = _calc_content_rect(flat)
         out["modified"] = _format_modified()
+        log_stage(
+            "拼装输出",
+            (time.perf_counter() - assembly_started) * 1000,
+            node_count=len(nodes),
+            edge_count=len(pipe_edges),
+        )
 
         cerrs, _ = ValidationService.instance().validate("canvas", out)
         if cerrs:
@@ -214,6 +250,12 @@ class LayoutAgent:
             )
             tmp.replace(pipe_path)
 
+        log_stage(
+            "布局总流程",
+            (time.perf_counter() - total_started) * 1000,
+            node_count=len(nodes),
+            edge_count=len(pipe_edges),
+        )
         return LayoutResult(
             json_data=out,
             content_rect=out["contentRect"],

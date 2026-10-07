@@ -3,7 +3,7 @@
     "groups": [
       {
         "id": "group-1",
-        "region": "center",
+        "region": "left",
         "unit": {
           "root": {
             "id": "root",
@@ -12,6 +12,7 @@
           "attachments": []
         },
         "count": 3,
+        "arrangement": "vertical",
         "topology": "single"
       },
       {
@@ -25,6 +26,7 @@
           "attachments": []
         },
         "count": 3,
+        "arrangement": "vertical",
         "topology": "single",
         "relativeTo": "group-1",
         "side": "right"
@@ -40,13 +42,14 @@
           "attachments": []
         },
         "count": 3,
+        "arrangement": "vertical",
         "topology": "single",
         "relativeTo": "group-2",
         "side": "right"
       },
       {
         "id": "group-4",
-        "region": "center",
+        "region": "right",
         "unit": {
           "root": {
             "id": "root",
@@ -55,6 +58,7 @@
           "attachments": []
         },
         "count": 4,
+        "arrangement": "vertical",
         "topology": "single",
         "relativeTo": "group-3",
         "side": "right"

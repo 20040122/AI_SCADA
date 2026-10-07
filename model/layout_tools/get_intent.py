@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import logging
 import re
@@ -11,7 +12,8 @@ from openai import APITimeoutError
 from pydantic import BaseModel, Field, ValidationError
 
 from model.layout_agent import _llm_text, _parse_json_lenient
-from model.llm_client import default_client
+from model.layout_tools.observability import StageTimer
+from model.llm_client import default_client, default_model
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +33,9 @@ _INTENT_CACHE = OrderedDict()
 _INTENT_CACHE_VERSION = 2
 _MAX_INTENT_ATTEMPTS = 5
 _INTENT_ERROR_SUMMARY_LIMIT = 2000
+_IMAGE_CACHE = OrderedDict()
+_IMAGE_CACHE_VERSION = 1
+_IMAGE_CACHE_MAX = 32
 
 
 class DeviceNode(BaseModel):
@@ -581,6 +586,29 @@ async def generate_intent(
     model_caller=None,
     skip_structure_count: bool = False,
 ) -> LayoutFile:
+    timer = StageTimer("布局意图")
+    with timer:
+        return await _generate_intent_impl(
+            prompt,
+            materials,
+            client,
+            model,
+            model_caller,
+            skip_structure_count,
+            timer=timer,
+        )
+
+
+async def _generate_intent_impl(
+    prompt: str,
+    materials: List[dict],
+    client=None,
+    model=None,
+    model_caller=None,
+    skip_structure_count: bool = False,
+    *,
+    timer: StageTimer,
+) -> LayoutFile:
     source = parse_structured_prompt(
         prompt, check_structure_counts=not skip_structure_count
     )
@@ -602,6 +630,7 @@ async def generate_intent(
     cache_key = (_INTENT_CACHE_VERSION, section_text, tuple(sorted(vocab)), model)
     cached = _INTENT_CACHE.get(cache_key)
     if cached is not None:
+        timer.set(source="cache", cache_hit=True, model_calls=0, retries=0)
         return cached.model_copy(deep=True)
     from model.layout_tools.layout_intent_rules import build_rule_layout
     rule = build_rule_layout(source)
@@ -611,6 +640,7 @@ async def generate_intent(
         if not errors:
             _strip_constraints(layout_file)
             _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
+            timer.set(source="rule", cache_hit=False, model_calls=0, retries=0)
             return layout_file
 
     example = _load_intent_example()
@@ -661,6 +691,7 @@ async def generate_intent(
     last_error: Optional[IntentModelOutputError] = None
     while True:
         attempt += 1
+        timer.set(model_calls=attempt, retries=attempt - 1)
         attempt_messages = list(messages)
         if attempt > 1:
             assert last_error is not None
@@ -701,6 +732,7 @@ async def generate_intent(
                 ) from exc
             continue
         logger.info("布局意图第 %d/%d 次尝试成功", attempt, _MAX_INTENT_ATTEMPTS)
+        timer.set(source="model", cache_hit=False)
         _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
         return layout_file
 
@@ -809,6 +841,37 @@ def _prompt_from_image_payload(payload: object, raw_output: str = "") -> str:
     return prompt
 
 
+def _image_byte_size(image) -> Optional[int]:
+    if isinstance(image, (bytes, bytearray, memoryview)):
+        return len(image)
+    if isinstance(image, str):
+        return len(image.encode("utf-8"))
+    return None
+
+
+def _image_digest(image) -> str:
+    if isinstance(image, (bytes, bytearray, memoryview)):
+        data = bytes(image)
+    elif isinstance(image, str):
+        try:
+            path = Path(image)
+            data = path.read_bytes() if path.is_file() else image.encode("utf-8")
+        except OSError:
+            data = image.encode("utf-8")
+    else:
+        data = repr(image).encode("utf-8")
+    return hashlib.sha256(data).hexdigest()
+
+
+def _image_cache_key(image, vocab: List[str], image_model=None):
+    return (
+        _IMAGE_CACHE_VERSION,
+        _image_digest(image),
+        tuple(sorted(vocab)),
+        image_model or default_model or "",
+    )
+
+
 async def image_to_structured_prompt(
     image,
     materials: List[dict],
@@ -818,22 +881,40 @@ async def image_to_structured_prompt(
 ) -> str:
     from model.image_intent import image_intent
 
-    vocab = _load_vocab(materials)
-    if not vocab:
-        raise ValueError("query_results 表为空")
-    caller = image_caller or image_intent
-    try:
-        text = await caller(image, _build_image_prompt(vocab), client, image_model)
-    except Exception as exc:
-        logger.exception("图片识别模型调用失败")
-        raise IntentModelUnavailableError("图片识别模型不可用") from exc
-    raw_output = _llm_text(text)
-    payload = _parse_json_lenient(raw_output)
-    if payload is None:
-        raise IntentModelOutputError(
-            "图片识别输出无法解析为 JSON", raw_output, category="image_json_parse"
-        )
-    return _prompt_from_image_payload(payload, raw_output)
+    timer = StageTimer("图片识别")
+    with timer:
+        byte_size = _image_byte_size(image)
+        if byte_size is not None:
+            timer.set(image_bytes=byte_size)
+        vocab = _load_vocab(materials)
+        if not vocab:
+            raise ValueError("query_results 表为空")
+        timer.set(vocab_size=len(vocab))
+        cache_key = _image_cache_key(image, vocab, image_model)
+        cached = _IMAGE_CACHE.get(cache_key)
+        if cached is not None:
+            _IMAGE_CACHE.move_to_end(cache_key)
+            timer.set(cache_hit=True, model_calls=0)
+            return cached
+        caller = image_caller or image_intent
+        try:
+            text = await caller(image, _build_image_prompt(vocab), client, image_model)
+        except Exception as exc:
+            logger.exception("图片识别模型调用失败")
+            raise IntentModelUnavailableError("图片识别模型不可用") from exc
+        timer.set(cache_hit=False, model_calls=1)
+        raw_output = _llm_text(text)
+        payload = _parse_json_lenient(raw_output)
+        if payload is None:
+            raise IntentModelOutputError(
+                "图片识别输出无法解析为 JSON", raw_output, category="image_json_parse"
+            )
+        prompt = _prompt_from_image_payload(payload, raw_output)
+        _IMAGE_CACHE[cache_key] = prompt
+        _IMAGE_CACHE.move_to_end(cache_key)
+        while len(_IMAGE_CACHE) > _IMAGE_CACHE_MAX:
+            _IMAGE_CACHE.popitem(last=False)
+        return prompt
 
 
 async def generate_intent_from_image(

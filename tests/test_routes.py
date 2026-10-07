@@ -48,8 +48,14 @@ def test_layout_image_route_runs_recognition_then_generation(monkeypatch):
     from model.layout_agent import LayoutAgent as AgentClass
 
     class FakeDB:
+        def __init__(self):
+            self.calls = 0
+
         async def list_query_results(self, query):
+            self.calls += 1
             return [{"displayName": "泵"}]
+
+    fake_db = FakeDB()
 
     class FakeResult:
         json_data = {"v": "8.0.5", "a": {}, "d": []}
@@ -63,15 +69,16 @@ def test_layout_image_route_runs_recognition_then_generation(monkeypatch):
         captured["materials"] = materials
         return "控件：1台泵"
 
-    async def fake_generate(self, query, width, height, title=None, skip_structure_count=None):
+    async def fake_generate(self, query, width, height, title=None, skip_structure_count=None, materials=None):
         captured["query"] = query
         captured["title"] = title
         captured["skip_structure_count"] = skip_structure_count
+        captured["generate_materials"] = materials
         return FakeResult()
 
     monkeypatch.setattr(canvas_module, "image_to_structured_prompt", fake_image_to_structured_prompt)
     monkeypatch.setattr(AgentClass, "generate", fake_generate)
-    app.dependency_overrides[deps_module.get_material_db] = lambda: FakeDB()
+    app.dependency_overrides[deps_module.get_material_db] = lambda: fake_db
     app.dependency_overrides[deps_module.get_layout_agent] = lambda: AgentClass(db=None)
     try:
         resp = client.post(
@@ -85,6 +92,8 @@ def test_layout_image_route_runs_recognition_then_generation(monkeypatch):
     assert resp.status_code == 200
     assert captured["image"] == b"fake-bytes"
     assert captured["materials"] == [{"displayName": "泵"}]
+    assert captured["generate_materials"] == [{"displayName": "泵"}]
+    assert fake_db.calls == 1
     assert captured["query"] == "控件：1台泵"
     assert captured["title"] == "image-test"
     assert captured["skip_structure_count"] is True

@@ -9,6 +9,7 @@ from model.layout_tools.get_intent import (
     IntentModelOutputError,
     IntentModelUnavailableError,
     StructuredPromptError,
+    _IMAGE_CACHE,
     _INTENT_CACHE,
     _prompt_from_image_payload,
     generate_intent_from_image,
@@ -16,6 +17,15 @@ from model.layout_tools.get_intent import (
     parse_structured_prompt,
 )
 from tests.conftest import make_fake_completion
+
+
+@pytest.fixture(autouse=True)
+def _reset_caches():
+    _INTENT_CACHE.clear()
+    _IMAGE_CACHE.clear()
+    yield
+    _INTENT_CACHE.clear()
+    _IMAGE_CACHE.clear()
 
 
 def _materials() -> list[dict]:

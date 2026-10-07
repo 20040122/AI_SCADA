@@ -51,6 +51,7 @@ async def _generate_layout(
     height: int,
     title: str,
     skip_structure_count: bool = False,
+    materials=None,
 ):
     try:
         return await agent.generate(
@@ -59,6 +60,7 @@ async def _generate_layout(
             height=height,
             title=title,
             skip_structure_count=skip_structure_count,
+            materials=materials,
         )
     except MissingMaterialError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -169,6 +171,7 @@ async def canvas_layout_image(
         height=canvas_height,
         title=title.strip(),
         skip_structure_count=True,
+        materials=materials,
     )
     return _persist_and_respond(result, title)
 
