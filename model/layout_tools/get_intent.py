@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import logging
 import re
@@ -11,7 +12,8 @@ from openai import APITimeoutError
 from pydantic import BaseModel, Field, ValidationError
 
 from model.layout_agent import _llm_text, _parse_json_lenient
-from model.llm_client import default_client
+from model.layout_tools.observability import StageTimer
+from model.llm_client import default_client, default_model
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +33,9 @@ _INTENT_CACHE = OrderedDict()
 _INTENT_CACHE_VERSION = 2
 _MAX_INTENT_ATTEMPTS = 5
 _INTENT_ERROR_SUMMARY_LIMIT = 2000
+_IMAGE_CACHE = OrderedDict()
+_IMAGE_CACHE_VERSION = 1
+_IMAGE_CACHE_MAX = 32
 
 
 class DeviceNode(BaseModel):
@@ -252,19 +257,22 @@ def _parallel_devices(flow: str, inventory: List[InventoryItem]) -> List[str]:
     return [item.deviceType for item in inventory if item.deviceType in clause]
 
 
-def parse_structured_prompt(prompt: str) -> StructuredLayoutPrompt:
+def parse_structured_prompt(
+    prompt: str, check_structure_counts: bool = True
+) -> StructuredLayoutPrompt:
     sections = _split_sections(prompt)
     inventory = _parse_inventory(sections["控件"])
     errors: List[ValidationErrorItem] = []
-    for item in inventory:
-        structure_count = _structure_count(sections["结构"], item.deviceType)
-        if structure_count is not None and structure_count != item.count:
-            errors.append(
-                ValidationErrorItem(
-                    path=f"结构.{item.deviceType}.count",
-                    message=f"结构声明 {structure_count} 台，与控件声明 {item.count} 台冲突",
+    if check_structure_counts:
+        for item in inventory:
+            structure_count = _structure_count(sections["结构"], item.deviceType)
+            if structure_count is not None and structure_count != item.count:
+                errors.append(
+                    ValidationErrorItem(
+                        path=f"结构.{item.deviceType}.count",
+                        message=f"结构声明 {structure_count} 台，与控件声明 {item.count} 台冲突",
+                    )
                 )
-            )
     if errors:
         raise StructuredPromptError(errors)
     flow_paths = _flow_paths(sections["流程"], inventory)
@@ -576,8 +584,34 @@ async def generate_intent(
     client=None,
     model=None,
     model_caller=None,
+    skip_structure_count: bool = False,
 ) -> LayoutFile:
-    source = parse_structured_prompt(prompt)
+    timer = StageTimer("布局意图")
+    with timer:
+        return await _generate_intent_impl(
+            prompt,
+            materials,
+            client,
+            model,
+            model_caller,
+            skip_structure_count,
+            timer=timer,
+        )
+
+
+async def _generate_intent_impl(
+    prompt: str,
+    materials: List[dict],
+    client=None,
+    model=None,
+    model_caller=None,
+    skip_structure_count: bool = False,
+    *,
+    timer: StageTimer,
+) -> LayoutFile:
+    source = parse_structured_prompt(
+        prompt, check_structure_counts=not skip_structure_count
+    )
     client = client or default_client
     model = model or _GENERATE_GIRD_MODEL
     model_caller = model_caller or _call_intent_model
@@ -596,6 +630,7 @@ async def generate_intent(
     cache_key = (_INTENT_CACHE_VERSION, section_text, tuple(sorted(vocab)), model)
     cached = _INTENT_CACHE.get(cache_key)
     if cached is not None:
+        timer.set(source="cache", cache_hit=True, model_calls=0, retries=0)
         return cached.model_copy(deep=True)
     from model.layout_tools.layout_intent_rules import build_rule_layout
     rule = build_rule_layout(source)
@@ -605,6 +640,7 @@ async def generate_intent(
         if not errors:
             _strip_constraints(layout_file)
             _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
+            timer.set(source="rule", cache_hit=False, model_calls=0, retries=0)
             return layout_file
 
     example = _load_intent_example()
@@ -655,6 +691,7 @@ async def generate_intent(
     last_error: Optional[IntentModelOutputError] = None
     while True:
         attempt += 1
+        timer.set(model_calls=attempt, retries=attempt - 1)
         attempt_messages = list(messages)
         if attempt > 1:
             assert last_error is not None
@@ -695,8 +732,215 @@ async def generate_intent(
                 ) from exc
             continue
         logger.info("布局意图第 %d/%d 次尝试成功", attempt, _MAX_INTENT_ATTEMPTS)
+        timer.set(source="model", cache_hit=False)
         _INTENT_CACHE[cache_key] = layout_file.model_copy(deep=True)
         return layout_file
+
+
+def _build_image_prompt(vocab: List[str]) -> str:
+    from model.image_intent import PROMPT as image_prompt
+
+    if not vocab:
+        return image_prompt
+    return (
+        image_prompt
+        + "\n可用设备类型（deviceType 必须从下列选取，不要生造）：\n"
+        + "、".join(vocab)
+        + "\n"
+    )
+
+
+_CHAIN_SPLIT_PATTERN = re.compile(r"[；;]+")
+_CHAIN_ARROW_PATTERN = re.compile(r"\s*(?:→|->|-)\s*")
+
+
+def _isolated_instance_names(value: object) -> set:
+    if not isinstance(value, list):
+        return set()
+    names = set()
+    for entry in value:
+        if isinstance(entry, str) and entry.strip():
+            names.add(entry.strip())
+    return names
+
+
+def _strip_isolated_chains(piping: str, isolated: set) -> str:
+    if not isolated:
+        return piping
+    kept = []
+    for chain in _CHAIN_SPLIT_PATTERN.split(piping):
+        chain = chain.strip()
+        if not chain:
+            continue
+        tokens = [token.strip() for token in _CHAIN_ARROW_PATTERN.split(chain)]
+        if any(token in isolated for token in tokens):
+            continue
+        kept.append(chain)
+    return "；".join(kept)
+
+
+def _prompt_from_image_payload(payload: object, raw_output: str = "") -> str:
+    if not isinstance(payload, dict):
+        raise IntentModelOutputError(
+            "图片识别输出结构无效", raw_output, category="image_structure"
+        )
+    inventory = payload.get("inventory")
+    flow = payload.get("flow")
+    structure = payload.get("structure")
+    piping = payload.get("piping")
+    errors: List[ValidationErrorItem] = []
+    items: List[InventoryItem] = []
+    if not isinstance(inventory, list) or not inventory:
+        errors.append(ValidationErrorItem(path="控件", message="图片识别未返回设备清单"))
+    else:
+        for index, item in enumerate(inventory):
+            ip = f"控件[{index}]"
+            if not isinstance(item, dict):
+                errors.append(ValidationErrorItem(path=ip, message="设备项格式无效"))
+                continue
+            device_type = item.get("deviceType")
+            count = item.get("count")
+            if not isinstance(device_type, str) or not device_type.strip():
+                errors.append(
+                    ValidationErrorItem(path=f"{ip}.deviceType", message="设备类型不能为空")
+                )
+            if not isinstance(count, int) or isinstance(count, bool) or count < 1:
+                errors.append(
+                    ValidationErrorItem(
+                        path=f"{ip}.count", message="数量必须为大于等于 1 的整数"
+                    )
+                )
+                continue
+            if isinstance(device_type, str) and device_type.strip():
+                items.append(InventoryItem(deviceType=device_type.strip(), count=count))
+    flow_text = flow.strip() if isinstance(flow, str) else ""
+    structure_text = structure.strip() if isinstance(structure, str) else ""
+    piping_text = piping.strip() if isinstance(piping, str) else ""
+    if not flow_text:
+        errors.append(ValidationErrorItem(path="流程", message="图片识别未返回流程"))
+    if not structure_text:
+        errors.append(ValidationErrorItem(path="结构", message="图片识别未返回结构"))
+    if errors:
+        raise IntentModelOutputError(
+            "图片识别输出不符合格式："
+            + "; ".join(f"{item.path}: {item.message}" for item in errors),
+            raw_output,
+            category="image_structure",
+        )
+    prompt = (
+        "控件："
+        + "、".join(f"{item.count}台{item.deviceType}" for item in items)
+        + "\n流程："
+        + flow_text
+        + "\n结构："
+        + structure_text
+    )
+    piping_text = _strip_isolated_chains(piping_text, _isolated_instance_names(payload.get("isolated")))
+    if piping_text:
+        prompt += "\n管道：" + piping_text
+    return prompt
+
+
+def _image_byte_size(image) -> Optional[int]:
+    if isinstance(image, (bytes, bytearray, memoryview)):
+        return len(image)
+    if isinstance(image, str):
+        return len(image.encode("utf-8"))
+    return None
+
+
+def _image_digest(image) -> str:
+    if isinstance(image, (bytes, bytearray, memoryview)):
+        data = bytes(image)
+    elif isinstance(image, str):
+        try:
+            path = Path(image)
+            data = path.read_bytes() if path.is_file() else image.encode("utf-8")
+        except OSError:
+            data = image.encode("utf-8")
+    else:
+        data = repr(image).encode("utf-8")
+    return hashlib.sha256(data).hexdigest()
+
+
+def _image_cache_key(image, vocab: List[str], image_model=None):
+    return (
+        _IMAGE_CACHE_VERSION,
+        _image_digest(image),
+        tuple(sorted(vocab)),
+        image_model or default_model or "",
+    )
+
+
+async def image_to_structured_prompt(
+    image,
+    materials: List[dict],
+    client=None,
+    image_model=None,
+    image_caller=None,
+) -> str:
+    from model.image_intent import image_intent
+
+    timer = StageTimer("图片识别")
+    with timer:
+        byte_size = _image_byte_size(image)
+        if byte_size is not None:
+            timer.set(image_bytes=byte_size)
+        vocab = _load_vocab(materials)
+        if not vocab:
+            raise ValueError("query_results 表为空")
+        timer.set(vocab_size=len(vocab))
+        cache_key = _image_cache_key(image, vocab, image_model)
+        cached = _IMAGE_CACHE.get(cache_key)
+        if cached is not None:
+            _IMAGE_CACHE.move_to_end(cache_key)
+            timer.set(cache_hit=True, model_calls=0)
+            return cached
+        caller = image_caller or image_intent
+        try:
+            text = await caller(image, _build_image_prompt(vocab), client, image_model)
+        except Exception as exc:
+            logger.exception("图片识别模型调用失败")
+            raise IntentModelUnavailableError("图片识别模型不可用") from exc
+        timer.set(cache_hit=False, model_calls=1)
+        raw_output = _llm_text(text)
+        payload = _parse_json_lenient(raw_output)
+        if payload is None:
+            raise IntentModelOutputError(
+                "图片识别输出无法解析为 JSON", raw_output, category="image_json_parse"
+            )
+        prompt = _prompt_from_image_payload(payload, raw_output)
+        _IMAGE_CACHE[cache_key] = prompt
+        _IMAGE_CACHE.move_to_end(cache_key)
+        while len(_IMAGE_CACHE) > _IMAGE_CACHE_MAX:
+            _IMAGE_CACHE.popitem(last=False)
+        return prompt
+
+
+async def generate_intent_from_image(
+    image,
+    materials: List[dict],
+    client=None,
+    model=None,
+    image_model=None,
+    model_caller=None,
+    image_caller=None,
+) -> LayoutFile:
+    prompt = await image_to_structured_prompt(
+        image,
+        materials,
+        client=client,
+        image_model=image_model,
+        image_caller=image_caller,
+    )
+    return await generate_intent(
+        prompt,
+        materials,
+        client=client,
+        model=model,
+        model_caller=model_caller,
+        skip_structure_count=True,
+    )
 
 
 

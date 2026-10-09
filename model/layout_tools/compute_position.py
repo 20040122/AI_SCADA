@@ -125,8 +125,9 @@ def _compute_related_group_slots(
     groups: list[LayoutGroup], content_rect: dict, relations: dict[str, tuple[str, str]]
 ) -> dict[str, list[dict]]:
     groups_by_id = {group.id: group for group in groups}
+    column_cache: dict[str, int] = {}
     columns = {
-        group.id: _group_column(group, groups_by_id, relations, {})
+        group.id: _group_column(group, groups_by_id, relations, column_cache)
         for group in groups
     }
     levels = sorted(set(columns.values()))

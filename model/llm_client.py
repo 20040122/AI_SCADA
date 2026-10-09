@@ -1,12 +1,21 @@
 from __future__ import annotations
 
+import logging
 import os
 
 from dotenv import load_dotenv
 from openai import APIConnectionError, APITimeoutError, AsyncOpenAI, RateLimitError
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import (
+    before_sleep_log,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 load_dotenv(".env.local")
+
+logger = logging.getLogger(__name__)
 
 default_client = AsyncOpenAI(
     api_key=os.environ.get("DEEPSEEK_API_KEY"),
@@ -23,6 +32,7 @@ _RETRYABLE_EXCEPTIONS = (APIConnectionError, APITimeoutError, RateLimitError)
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=2, max=10),
     retry=retry_if_exception_type(_RETRYABLE_EXCEPTIONS),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
     reraise=True,
 )
 async def call_llm(client, model, messages, **kwargs):

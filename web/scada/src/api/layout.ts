@@ -1,4 +1,4 @@
-import { post } from "./client.ts";
+import { post, postForm } from "./client.ts";
 import { buildUploadBody } from "./uploadBody.ts";
 import type { LayoutGenerateRequest, LayoutGenerateResponse, RefineRequest, RefineResponse, LayoutJsonData, PipeData, UploadCanvasResponse } from "../types/layout";
 
@@ -13,6 +13,20 @@ export function generateLayout(req: LayoutGenerateRequest): Promise<LayoutGenera
     },
     { timeoutMs: 120000 }
   );
+}
+
+export function generateLayoutFromImage(
+  file: File,
+  req: Omit<LayoutGenerateRequest, "query">
+): Promise<LayoutGenerateResponse> {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("title", req.title);
+  form.append("canvas_width", String(req.canvasWidth));
+  form.append("canvas_height", String(req.canvasHeight));
+  return postForm<LayoutGenerateResponse>("/api/canvas/layout/image", form, {
+    timeoutMs: 120000,
+  });
 }
 
 export function refineLayout(req: RefineRequest): Promise<RefineResponse> {

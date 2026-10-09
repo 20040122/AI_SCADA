@@ -3,286 +3,286 @@
     "c": "ht.Node",
     "i": 20399,
     "p": {
-      "displayName": "空气罐",
-      "image": "symbols/Agent/空气罐.json",
+      "displayName": "冷却塔",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 386,
-        "y": 623.5
+        "x": 265.5,
+        "y": 251.67
       },
-      "width": 160,
-      "height": 240
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "air-group",
-      "layout.node": "air-tank",
+      "layout.group": "group-1",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "空气罐",
-      "layout.sourceWidth": 160,
-      "layout.sourceHeight": 240
+      "layout.materialName": "冷却塔",
+      "layout.sourceWidth": 240,
+      "layout.sourceHeight": 228
     }
   },
   {
     "c": "ht.Node",
     "i": 20400,
     "p": {
-      "displayName": "阀门",
-      "image": "symbols/Agent/阀门.json",
+      "displayName": "冷却塔2",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 386,
-        "y": 431.5
+        "x": 265.5,
+        "y": 565
       },
-      "width": 64,
-      "height": 64
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "air-group",
-      "layout.node": "air-valve",
-      "layout.instance": 1,
-      "layout.materialName": "阀门",
-      "layout.sourceWidth": 64,
-      "layout.sourceHeight": 64
+      "layout.group": "group-1",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "冷却塔",
+      "layout.sourceWidth": 240,
+      "layout.sourceHeight": 228
     }
   },
   {
     "c": "ht.Node",
     "i": 20401,
     "p": {
-      "displayName": "流量计",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "冷却塔3",
+      "image": "symbols/Agent/冷却塔.json",
       "position": {
-        "x": 483,
-        "y": 431.5
+        "x": 265.5,
+        "y": 878.33
       },
-      "width": 50,
-      "height": 68.75
+      "width": 180,
+      "height": 171
     },
     "a": {
-      "layout.group": "air-group",
-      "layout.node": "air-meter1",
-      "layout.instance": 1,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.group": "group-1",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "冷却塔",
+      "layout.sourceWidth": 240,
+      "layout.sourceHeight": 228
     }
   },
   {
     "c": "ht.Node",
     "i": 20402,
     "p": {
-      "displayName": "压力传感器",
-      "image": "assets/现场控制系统/设备图片/压力传感器.png",
+      "displayName": "冷却泵",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 573,
-        "y": 431.5
+        "x": 728.5,
+        "y": 251.67
       },
-      "width": 50,
-      "height": 90
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "air-group",
-      "layout.node": "air-sensor",
+      "layout.group": "group-2",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "压力传感器",
-      "layout.sourceWidth": 25,
-      "layout.sourceHeight": 45
+      "layout.materialName": "冷却泵",
+      "layout.sourceWidth": 144,
+      "layout.sourceHeight": 116
     }
   },
   {
     "c": "ht.Node",
     "i": 20403,
     "p": {
-      "displayName": "流量计2",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "冷却泵2",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 663,
-        "y": 431.5
+        "x": 728.5,
+        "y": 565
       },
-      "width": 50,
-      "height": 68.75
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "air-group",
-      "layout.node": "air-meter2",
-      "layout.instance": 1,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "冷却泵",
+      "layout.sourceWidth": 144,
+      "layout.sourceHeight": 116
     }
   },
   {
     "c": "ht.Node",
     "i": 20404,
     "p": {
-      "displayName": "氮气罐",
-      "image": "symbols/Agent/氮气罐.json",
+      "displayName": "冷却泵3",
+      "image": "symbols/Agent/冷却泵.json",
       "position": {
-        "x": 1357,
-        "y": 388.5
+        "x": 728.5,
+        "y": 878.33
       },
-      "width": 160,
-      "height": 240
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-tank",
-      "layout.instance": 1,
-      "layout.materialName": "氮气罐",
-      "layout.sourceWidth": 160,
-      "layout.sourceHeight": 240
+      "layout.group": "group-2",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "冷却泵",
+      "layout.sourceWidth": 144,
+      "layout.sourceHeight": 116
     }
   },
   {
     "c": "ht.Node",
     "i": 20405,
     "p": {
-      "displayName": "阀门2",
-      "image": "symbols/Agent/阀门.json",
+      "displayName": "冷水机",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 1357,
-        "y": 196.5
+        "x": 1191.5,
+        "y": 251.67
       },
-      "width": 64,
-      "height": 64
+      "width": 180,
+      "height": 105.52
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-valve",
+      "layout.group": "group-3",
+      "layout.node": "root",
       "layout.instance": 1,
-      "layout.materialName": "阀门",
-      "layout.sourceWidth": 64,
-      "layout.sourceHeight": 64
+      "layout.materialName": "冷水机",
+      "layout.sourceWidth": 232,
+      "layout.sourceHeight": 136
     }
   },
   {
     "c": "ht.Node",
     "i": 20406,
     "p": {
-      "displayName": "流量计3",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "冷水机2",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 1454,
-        "y": 196.5
+        "x": 1191.5,
+        "y": 565
       },
-      "width": 50,
-      "height": 68.75
+      "width": 180,
+      "height": 105.52
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-meter",
-      "layout.instance": 1,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.group": "group-3",
+      "layout.node": "root",
+      "layout.instance": 2,
+      "layout.materialName": "冷水机",
+      "layout.sourceWidth": 232,
+      "layout.sourceHeight": 136
     }
   },
   {
     "c": "ht.Node",
     "i": 20407,
     "p": {
-      "displayName": "压力传感器2",
-      "image": "assets/现场控制系统/设备图片/压力传感器.png",
+      "displayName": "冷水机3",
+      "image": "symbols/Agent/冷水机.json",
       "position": {
-        "x": 1544,
-        "y": 196.5
+        "x": 1191.5,
+        "y": 878.33
       },
-      "width": 50,
-      "height": 90
+      "width": 180,
+      "height": 105.52
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-sensor",
-      "layout.instance": 1,
-      "layout.materialName": "压力传感器",
-      "layout.sourceWidth": 25,
-      "layout.sourceHeight": 45
+      "layout.group": "group-3",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "冷水机",
+      "layout.sourceWidth": 232,
+      "layout.sourceHeight": 136
     }
   },
   {
     "c": "ht.Node",
     "i": 20408,
     "p": {
-      "displayName": "氮气罐2",
-      "image": "symbols/Agent/氮气罐.json",
+      "displayName": "冷冻泵",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1357,
-        "y": 858.5
+        "x": 1654.5,
+        "y": 212.5
       },
-      "width": 160,
-      "height": 240
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-tank",
-      "layout.instance": 2,
-      "layout.materialName": "氮气罐",
-      "layout.sourceWidth": 160,
-      "layout.sourceHeight": 240
+      "layout.group": "group-4",
+      "layout.node": "root",
+      "layout.instance": 1,
+      "layout.materialName": "冷冻泵",
+      "layout.sourceWidth": 144,
+      "layout.sourceHeight": 116
     }
   },
   {
     "c": "ht.Node",
     "i": 20409,
     "p": {
-      "displayName": "阀门3",
-      "image": "symbols/Agent/阀门.json",
+      "displayName": "冷冻泵2",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1357,
-        "y": 666.5
+        "x": 1654.5,
+        "y": 447.5
       },
-      "width": 64,
-      "height": 64
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-valve",
+      "layout.group": "group-4",
+      "layout.node": "root",
       "layout.instance": 2,
-      "layout.materialName": "阀门",
-      "layout.sourceWidth": 64,
-      "layout.sourceHeight": 64
+      "layout.materialName": "冷冻泵",
+      "layout.sourceWidth": 144,
+      "layout.sourceHeight": 116
     }
   },
   {
     "c": "ht.Node",
     "i": 20410,
     "p": {
-      "displayName": "流量计4",
-      "image": "symbols/Agent/流量计.json",
+      "displayName": "冷冻泵3",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1454,
-        "y": 666.5
+        "x": 1654.5,
+        "y": 682.5
       },
-      "width": 50,
-      "height": 68.75
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-meter",
-      "layout.instance": 2,
-      "layout.materialName": "流量计",
-      "layout.sourceWidth": 32,
-      "layout.sourceHeight": 44
+      "layout.group": "group-4",
+      "layout.node": "root",
+      "layout.instance": 3,
+      "layout.materialName": "冷冻泵",
+      "layout.sourceWidth": 144,
+      "layout.sourceHeight": 116
     }
   },
   {
     "c": "ht.Node",
     "i": 20411,
     "p": {
-      "displayName": "压力传感器3",
-      "image": "assets/现场控制系统/设备图片/压力传感器.png",
+      "displayName": "冷冻泵4",
+      "image": "symbols/Agent/冷冻泵.json",
       "position": {
-        "x": 1544,
-        "y": 666.5
+        "x": 1654.5,
+        "y": 917.5
       },
-      "width": 50,
-      "height": 90
+      "width": 148.97,
+      "height": 120
     },
     "a": {
-      "layout.group": "nitrogen-group",
-      "layout.node": "nitrogen-sensor",
-      "layout.instance": 2,
-      "layout.materialName": "压力传感器",
-      "layout.sourceWidth": 25,
-      "layout.sourceHeight": 45
+      "layout.group": "group-4",
+      "layout.node": "root",
+      "layout.instance": 4,
+      "layout.materialName": "冷冻泵",
+      "layout.sourceWidth": 144,
+      "layout.sourceHeight": 116
     }
   }
 ]

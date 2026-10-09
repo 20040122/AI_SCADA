@@ -54,11 +54,15 @@ export function post<T>(path: string, body: unknown, options?: PostOptions): Pro
   );
 }
 
-export function postForm<T>(path: string, body: FormData): Promise<T> {
-  return request<T>(path, {
-    method: "POST",
-    body,
-  });
+export function postForm<T>(path: string, body: FormData, options?: PostOptions): Promise<T> {
+  return request<T>(
+    path,
+    {
+      method: "POST",
+      body,
+    },
+    options?.timeoutMs
+  );
 }
 
 export function get<T>(path: string): Promise<T> {

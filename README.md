@@ -7,7 +7,7 @@ pip install -r requirements.txt
 # 2. 配置环境变量
  创建.env.local，格式参考 env.local.example内容
 # 3. 启动服务
-python main.py
+python3 -m uvicorn app.main:app --reload --port 8000
 ```
 ## 前端
 ```bash
