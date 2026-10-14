@@ -1,0 +1,2158 @@
+[
+  {
+    "id": "controls_1",
+    "type": "controls",
+    "bbox": [
+      981,
+      94,
+      65,
+      19
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_2",
+    "type": "controls",
+    "bbox": [
+      746,
+      111,
+      66,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_3",
+    "type": "controls",
+    "bbox": [
+      917,
+      115,
+      174,
+      140
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_4",
+    "type": "controls",
+    "bbox": [
+      747,
+      138,
+      67,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_5",
+    "type": "controls",
+    "bbox": [
+      365,
+      147,
+      43,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_6",
+    "type": "controls",
+    "bbox": [
+      1142,
+      173,
+      73,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_7",
+    "type": "controls",
+    "bbox": [
+      370,
+      175,
+      37,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_8",
+    "type": "controls",
+    "bbox": [
+      217,
+      183,
+      42,
+      19
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_9",
+    "type": "controls",
+    "bbox": [
+      1142,
+      201,
+      72,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_10",
+    "type": "controls",
+    "bbox": [
+      115,
+      206,
+      70,
+      87
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_11",
+    "type": "controls",
+    "bbox": [
+      231,
+      209,
+      20,
+      31
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_12",
+    "type": "controls",
+    "bbox": [
+      622,
+      229,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_13",
+    "type": "controls",
+    "bbox": [
+      491,
+      239,
+      98,
+      108
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_14",
+    "type": "controls",
+    "bbox": [
+      830,
+      244,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_15",
+    "type": "controls",
+    "bbox": [
+      750,
+      253,
+      57,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_16",
+    "type": "controls",
+    "bbox": [
+      620,
+      255,
+      45,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_17",
+    "type": "controls",
+    "bbox": [
+      1425,
+      260,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_18",
+    "type": "controls",
+    "bbox": [
+      29,
+      264,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_19",
+    "type": "controls",
+    "bbox": [
+      851,
+      264,
+      21,
+      40
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_20",
+    "type": "controls",
+    "bbox": [
+      436,
+      270,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_21",
+    "type": "controls",
+    "bbox": [
+      288,
+      280,
+      43,
+      22
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_22",
+    "type": "controls",
+    "bbox": [
+      749,
+      280,
+      56,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_23",
+    "type": "controls",
+    "bbox": [
+      1407,
+      280,
+      99,
+      107
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_24",
+    "type": "controls",
+    "bbox": [
+      620,
+      282,
+      44,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_25",
+    "type": "controls",
+    "bbox": [
+      1085,
+      297,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_26",
+    "type": "controls",
+    "bbox": [
+      1357,
+      297,
+      45,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_27",
+    "type": "controls",
+    "bbox": [
+      974,
+      300,
+      55,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_28",
+    "type": "controls",
+    "bbox": [
+      300,
+      308,
+      22,
+      44
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_29",
+    "type": "controls",
+    "bbox": [
+      1164,
+      309,
+      54,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_30",
+    "type": "controls",
+    "bbox": [
+      1105,
+      319,
+      20,
+      28
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_31",
+    "type": "controls",
+    "bbox": [
+      1358,
+      320,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_32",
+    "type": "controls",
+    "bbox": [
+      974,
+      325,
+      56,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_33",
+    "type": "controls",
+    "bbox": [
+      1725,
+      329,
+      70,
+      100
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_34",
+    "type": "controls",
+    "bbox": [
+      1162,
+      335,
+      55,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_35",
+    "type": "controls",
+    "bbox": [
+      974,
+      348,
+      56,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_36",
+    "type": "controls",
+    "bbox": [
+      1629,
+      368,
+      52,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_37",
+    "type": "controls",
+    "bbox": [
+      212,
+      375,
+      43,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_38",
+    "type": "controls",
+    "bbox": [
+      973,
+      375,
+      55,
+      19
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_39",
+    "type": "controls",
+    "bbox": [
+      118,
+      378,
+      71,
+      87
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_40",
+    "type": "controls",
+    "bbox": [
+      620,
+      380,
+      44,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_41",
+    "type": "controls",
+    "bbox": [
+      1830,
+      385,
+      43,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_42",
+    "type": "controls",
+    "bbox": [
+      492,
+      395,
+      99,
+      92
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_43",
+    "type": "controls",
+    "bbox": [
+      222,
+      397,
+      20,
+      43
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_44",
+    "type": "controls",
+    "bbox": [
+      1648,
+      399,
+      21,
+      35
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_45",
+    "type": "controls",
+    "bbox": [
+      620,
+      405,
+      44,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_46",
+    "type": "controls",
+    "bbox": [
+      759,
+      408,
+      62,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_47",
+    "type": "controls",
+    "bbox": [
+      1420,
+      411,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_48",
+    "type": "controls",
+    "bbox": [
+      1397,
+      431,
+      104,
+      112
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_49",
+    "type": "controls",
+    "bbox": [
+      434,
+      432,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_50",
+    "type": "controls",
+    "bbox": [
+      620,
+      432,
+      44,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_51",
+    "type": "controls",
+    "bbox": [
+      760,
+      435,
+      63,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_52",
+    "type": "controls",
+    "bbox": [
+      975,
+      435,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_53",
+    "type": "controls",
+    "bbox": [
+      1358,
+      444,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_54",
+    "type": "controls",
+    "bbox": [
+      1819,
+      446,
+      55,
+      23
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_55",
+    "type": "controls",
+    "bbox": [
+      1141,
+      451,
+      68,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_56",
+    "type": "controls",
+    "bbox": [
+      287,
+      453,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_57",
+    "type": "controls",
+    "bbox": [
+      33,
+      456,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_58",
+    "type": "controls",
+    "bbox": [
+      1574,
+      457,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_59",
+    "type": "controls",
+    "bbox": [
+      910,
+      459,
+      174,
+      135
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_60",
+    "type": "controls",
+    "bbox": [
+      1358,
+      468,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_61",
+    "type": "controls",
+    "bbox": [
+      1141,
+      477,
+      69,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_62",
+    "type": "controls",
+    "bbox": [
+      301,
+      478,
+      20,
+      30
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_63",
+    "type": "controls",
+    "bbox": [
+      1579,
+      482,
+      37,
+      35
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_64",
+    "type": "controls",
+    "bbox": [
+      830,
+      504,
+      64,
+      17
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_65",
+    "type": "controls",
+    "bbox": [
+      851,
+      523,
+      21,
+      46
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_66",
+    "type": "controls",
+    "bbox": [
+      625,
+      527,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_67",
+    "type": "controls",
+    "bbox": [
+      753,
+      527,
+      54,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_68",
+    "type": "controls",
+    "bbox": [
+      212,
+      539,
+      42,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_69",
+    "type": "controls",
+    "bbox": [
+      489,
+      542,
+      99,
+      109
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_70",
+    "type": "controls",
+    "bbox": [
+      1601,
+      550,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_71",
+    "type": "controls",
+    "bbox": [
+      624,
+      553,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_72",
+    "type": "controls",
+    "bbox": [
+      753,
+      554,
+      55,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_73",
+    "type": "controls",
+    "bbox": [
+      224,
+      564,
+      20,
+      30
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_74",
+    "type": "controls",
+    "bbox": [
+      1423,
+      567,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_75",
+    "type": "controls",
+    "bbox": [
+      1597,
+      570,
+      68,
+      84
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_76",
+    "type": "controls",
+    "bbox": [
+      1098,
+      574,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_77",
+    "type": "controls",
+    "bbox": [
+      436,
+      580,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_78",
+    "type": "controls",
+    "bbox": [
+      624,
+      580,
+      42,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_79",
+    "type": "controls",
+    "bbox": [
+      1403,
+      587,
+      99,
+      108
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_80",
+    "type": "controls",
+    "bbox": [
+      1356,
+      588,
+      43,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_81",
+    "type": "controls",
+    "bbox": [
+      122,
+      590,
+      70,
+      87
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_82",
+    "type": "controls",
+    "bbox": [
+      974,
+      594,
+      58,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_83",
+    "type": "controls",
+    "bbox": [
+      1120,
+      594,
+      21,
+      29
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_84",
+    "type": "controls",
+    "bbox": [
+      1192,
+      600,
+      42,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_85",
+    "type": "controls",
+    "bbox": [
+      1357,
+      612,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_86",
+    "type": "controls",
+    "bbox": [
+      974,
+      624,
+      59,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_87",
+    "type": "controls",
+    "bbox": [
+      1176,
+      626,
+      54,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_88",
+    "type": "controls",
+    "bbox": [
+      285,
+      644,
+      44,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_89",
+    "type": "controls",
+    "bbox": [
+      974,
+      648,
+      58,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_90",
+    "type": "controls",
+    "bbox": [
+      40,
+      658,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_91",
+    "type": "controls",
+    "bbox": [
+      301,
+      669,
+      21,
+      45
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_92",
+    "type": "controls",
+    "bbox": [
+      974,
+      673,
+      57,
+      19
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_93",
+    "type": "controls",
+    "bbox": [
+      759,
+      678,
+      65,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_94",
+    "type": "controls",
+    "bbox": [
+      628,
+      679,
+      43,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_95",
+    "type": "controls",
+    "bbox": [
+      1607,
+      683,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_96",
+    "type": "controls",
+    "bbox": [
+      488,
+      691,
+      99,
+      91
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_97",
+    "type": "controls",
+    "bbox": [
+      627,
+      705,
+      44,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_98",
+    "type": "controls",
+    "bbox": [
+      759,
+      705,
+      65,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_99",
+    "type": "controls",
+    "bbox": [
+      1605,
+      705,
+      68,
+      76
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_100",
+    "type": "controls",
+    "bbox": [
+      975,
+      716,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_101",
+    "type": "controls",
+    "bbox": [
+      1425,
+      720,
+      63,
+      16
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_102",
+    "type": "controls",
+    "bbox": [
+      436,
+      724,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_103",
+    "type": "controls",
+    "bbox": [
+      1355,
+      726,
+      43,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_104",
+    "type": "controls",
+    "bbox": [
+      1148,
+      728,
+      69,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_105",
+    "type": "controls",
+    "bbox": [
+      627,
+      732,
+      44,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_106",
+    "type": "controls",
+    "bbox": [
+      1402,
+      738,
+      98,
+      91
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_107",
+    "type": "controls",
+    "bbox": [
+      1721,
+      738,
+      71,
+      87
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_108",
+    "type": "controls",
+    "bbox": [
+      906,
+      741,
+      174,
+      134
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_109",
+    "type": "controls",
+    "bbox": [
+      1355,
+      750,
+      43,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_110",
+    "type": "controls",
+    "bbox": [
+      1148,
+      755,
+      69,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_111",
+    "type": "controls",
+    "bbox": [
+      97,
+      773,
+      35,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_112",
+    "type": "controls",
+    "bbox": [
+      1844,
+      780,
+      42,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_113",
+    "type": "controls",
+    "bbox": [
+      821,
+      788,
+      64,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_114",
+    "type": "controls",
+    "bbox": [
+      222,
+      795,
+      43,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_115",
+    "type": "controls",
+    "bbox": [
+      749,
+      801,
+      59,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_116",
+    "type": "controls",
+    "bbox": [
+      840,
+      808,
+      21,
+      29
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_117",
+    "type": "controls",
+    "bbox": [
+      222,
+      824,
+      43,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_118",
+    "type": "controls",
+    "bbox": [
+      749,
+      828,
+      60,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_119",
+    "type": "controls",
+    "bbox": [
+      1142,
+      830,
+      65,
+      18
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_120",
+    "type": "controls",
+    "bbox": [
+      1164,
+      850,
+      20,
+      47
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_121",
+    "type": "controls",
+    "bbox": [
+      222,
+      851,
+      43,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_122",
+    "type": "controls",
+    "bbox": [
+      1213,
+      853,
+      65,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_123",
+    "type": "controls",
+    "bbox": [
+      1213,
+      880,
+      66,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_124",
+    "type": "controls",
+    "bbox": [
+      979,
+      882,
+      54,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_125",
+    "type": "controls",
+    "bbox": [
+      1424,
+      893,
+      109,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_126",
+    "type": "controls",
+    "bbox": [
+      1550,
+      893,
+      109,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_127",
+    "type": "controls",
+    "bbox": [
+      1670,
+      893,
+      108,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_128",
+    "type": "controls",
+    "bbox": [
+      1792,
+      893,
+      109,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_129",
+    "type": "controls",
+    "bbox": [
+      1303,
+      894,
+      108,
+      35
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_130",
+    "type": "controls",
+    "bbox": [
+      978,
+      908,
+      54,
+      21
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_131",
+    "type": "controls",
+    "bbox": [
+      979,
+      936,
+      54,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_132",
+    "type": "controls",
+    "bbox": [
+      1424,
+      936,
+      108,
+      38
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_133",
+    "type": "controls",
+    "bbox": [
+      1670,
+      936,
+      108,
+      37
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_134",
+    "type": "controls",
+    "bbox": [
+      1792,
+      936,
+      109,
+      37
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_135",
+    "type": "controls",
+    "bbox": [
+      1304,
+      937,
+      108,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_136",
+    "type": "controls",
+    "bbox": [
+      1550,
+      937,
+      109,
+      36
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_137",
+    "type": "controls",
+    "bbox": [
+      190,
+      940,
+      69,
+      30
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_138",
+    "type": "controls",
+    "bbox": [
+      447,
+      940,
+      68,
+      30
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_139",
+    "type": "controls",
+    "bbox": [
+      577,
+      940,
+      68,
+      30
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_140",
+    "type": "controls",
+    "bbox": [
+      319,
+      941,
+      69,
+      30
+    ],
+    "value": null
+  },
+  {
+    "id": "controls_141",
+    "type": "controls",
+    "bbox": [
+      978,
+      960,
+      54,
+      20
+    ],
+    "value": null
+  },
+  {
+    "id": "text_1",
+    "type": "text",
+    "bbox": [
+      830,
+      172,
+      78,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_2",
+    "type": "text",
+    "bbox": [
+      832,
+      216,
+      78,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_3",
+    "type": "text",
+    "bbox": [
+      577,
+      231,
+      25,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_4",
+    "type": "text",
+    "bbox": [
+      1223,
+      232,
+      78,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_5",
+    "type": "text",
+    "bbox": [
+      577,
+      257,
+      24,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_6",
+    "type": "text",
+    "bbox": [
+      1255,
+      270,
+      78,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_7",
+    "type": "text",
+    "bbox": [
+      577,
+      283,
+      24,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_8",
+    "type": "text",
+    "bbox": [
+      1320,
+      301,
+      31,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_9",
+    "type": "text",
+    "bbox": [
+      934,
+      303,
+      25,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_10",
+    "type": "text",
+    "bbox": [
+      1321,
+      324,
+      30,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_11",
+    "type": "text",
+    "bbox": [
+      934,
+      328,
+      25,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_12",
+    "type": "text",
+    "bbox": [
+      1717,
+      328,
+      52,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_13",
+    "type": "text",
+    "bbox": [
+      1782,
+      328,
+      35,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_14",
+    "type": "text",
+    "bbox": [
+      931,
+      351,
+      29,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_15",
+    "type": "text",
+    "bbox": [
+      1841,
+      359,
+      30,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_16",
+    "type": "text",
+    "bbox": [
+      1540,
+      371,
+      78,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_17",
+    "type": "text",
+    "bbox": [
+      919,
+      375,
+      46,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_18",
+    "type": "text",
+    "bbox": [
+      576,
+      380,
+      25,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_19",
+    "type": "text",
+    "bbox": [
+      576,
+      406,
+      24,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_20",
+    "type": "text",
+    "bbox": [
+      576,
+      433,
+      24,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_21",
+    "type": "text",
+    "bbox": [
+      1320,
+      447,
+      31,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_22",
+    "type": "text",
+    "bbox": [
+      1322,
+      471,
+      29,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_23",
+    "type": "text",
+    "bbox": [
+      1811,
+      479,
+      78,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_24",
+    "type": "text",
+    "bbox": [
+      580,
+      529,
+      25,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_25",
+    "type": "text",
+    "bbox": [
+      580,
+      554,
+      24,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_26",
+    "type": "text",
+    "bbox": [
+      580,
+      581,
+      24,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_27",
+    "type": "text",
+    "bbox": [
+      1319,
+      591,
+      30,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_28",
+    "type": "text",
+    "bbox": [
+      940,
+      597,
+      25,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_29",
+    "type": "text",
+    "bbox": [
+      1321,
+      615,
+      29,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_30",
+    "type": "text",
+    "bbox": [
+      937,
+      627,
+      25,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_31",
+    "type": "text",
+    "bbox": [
+      935,
+      651,
+      29,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_32",
+    "type": "text",
+    "bbox": [
+      920,
+      673,
+      46,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_33",
+    "type": "text",
+    "bbox": [
+      583,
+      681,
+      25,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_34",
+    "type": "text",
+    "bbox": [
+      583,
+      707,
+      24,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_35",
+    "type": "text",
+    "bbox": [
+      1718,
+      715,
+      52,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_36",
+    "type": "text",
+    "bbox": [
+      1782,
+      715,
+      36,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_37",
+    "type": "text",
+    "bbox": [
+      1317,
+      729,
+      31,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_38",
+    "type": "text",
+    "bbox": [
+      583,
+      733,
+      24,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_39",
+    "type": "text",
+    "bbox": [
+      1319,
+      753,
+      29,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_40",
+    "type": "text",
+    "bbox": [
+      1849,
+      755,
+      31,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_41",
+    "type": "text",
+    "bbox": [
+      175,
+      797,
+      36,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_42",
+    "type": "text",
+    "bbox": [
+      84,
+      822,
+      62,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_43",
+    "type": "text",
+    "bbox": [
+      175,
+      826,
+      36,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_44",
+    "type": "text",
+    "bbox": [
+      175,
+      854,
+      35,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_45",
+    "type": "text",
+    "bbox": [
+      943,
+      885,
+      25,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_46",
+    "type": "text",
+    "bbox": [
+      942,
+      911,
+      25,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_47",
+    "type": "text",
+    "bbox": [
+      142,
+      929,
+      30,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_48",
+    "type": "text",
+    "bbox": [
+      46,
+      937,
+      69,
+      26
+    ],
+    "value": null
+  },
+  {
+    "id": "text_49",
+    "type": "text",
+    "bbox": [
+      938,
+      937,
+      30,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_50",
+    "type": "text",
+    "bbox": [
+      273,
+      948,
+      36,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_51",
+    "type": "text",
+    "bbox": [
+      401,
+      948,
+      36,
+      15
+    ],
+    "value": null
+  },
+  {
+    "id": "text_52",
+    "type": "text",
+    "bbox": [
+      532,
+      949,
+      35,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_53",
+    "type": "text",
+    "bbox": [
+      672,
+      949,
+      52,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_54",
+    "type": "text",
+    "bbox": [
+      142,
+      952,
+      36,
+      14
+    ],
+    "value": null
+  },
+  {
+    "id": "text_55",
+    "type": "text",
+    "bbox": [
+      928,
+      965,
+      46,
+      15
+    ],
+    "value": null
+  }
+]

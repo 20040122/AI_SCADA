@@ -3,65 +3,18 @@
     "groups": [
       {
         "id": "group-1",
-        "region": "left",
+        "region": "center",
         "unit": {
           "root": {
-            "id": "root",
-            "deviceType": "冷却塔"
+            "id": "pump-1",
+            "deviceType": "冷冻泵",
+            "role": "root"
           },
           "attachments": []
         },
-        "count": 3,
+        "count": 1,
         "arrangement": "vertical",
         "topology": "single"
-      },
-      {
-        "id": "group-2",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "冷却泵"
-          },
-          "attachments": []
-        },
-        "count": 3,
-        "arrangement": "vertical",
-        "topology": "single",
-        "relativeTo": "group-1",
-        "side": "right"
-      },
-      {
-        "id": "group-3",
-        "region": "center",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "冷水机"
-          },
-          "attachments": []
-        },
-        "count": 3,
-        "arrangement": "vertical",
-        "topology": "single",
-        "relativeTo": "group-2",
-        "side": "right"
-      },
-      {
-        "id": "group-4",
-        "region": "right",
-        "unit": {
-          "root": {
-            "id": "root",
-            "deviceType": "冷冻泵"
-          },
-          "attachments": []
-        },
-        "count": 4,
-        "arrangement": "vertical",
-        "topology": "single",
-        "relativeTo": "group-3",
-        "side": "right"
       }
     ],
     "constraints": {

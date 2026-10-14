@@ -4,12 +4,16 @@
 {"displayName":"空气罐","image":"symbols/Agent/空气罐.json","width":160,"height":240}
 {"displayName":"流量计","image":"symbols/Agent/流量计.json","width":32,"height":44}
 {"displayName":"冷却泵","image":"symbols/Agent/冷却泵.json","width":144,"height":116}
-{"displayName":"冷冻泵","image":"symbols/Agent/冷冻泵.json","width":144,"height":116}
+{"displayName":"冷冻泵","image":"assets/Agent/冷冻泵.png","width":99,"height":94}
 {"displayName":"水压计","image":"symbols/Agent/水压计.json","width":118,"height":129}
 {"displayName":"冷却塔","image":"symbols/Agent/冷却塔.json","width":240,"height":228}
 {"displayName":"冷水机","image":"symbols/Agent/冷水机.json","width":232,"height":136}
 {"displayName":"真空罐体","image":"symbols/Agent/真空罐体.json","width":184,"height":155}
 {"displayName":"状态面板","image":"symbols/Agent/状态面板.json","width":162,"height":60}
+{"displayName":"数值显示","image":"symbols/Agent/数值显示.json","width":78,"height":24}
+{"displayName":"按钮","image":"symbols/Agent/按钮.json","width":160,"height":50}
+{"displayName":"绿色状态","image":"symbols/Agent/绿色状态.json","width":65,"height":18}
+{"displayName":"状态显示","image":"symbols/Agent/状态显示.json","width":70,"height":31}
 {"displayName":"高低温试验箱","image":"symbols/zdk18s/devices/高低温试验箱.json","width":500,"height":800}
 {"displayName":"轮播","image":"symbols/公共资源/HT/carousels/carousel.json","width":138,"height":200}
 {"displayName":"下行控制","image":"symbols/test/wangj/下行控制.json","width":100,"height":20}
@@ -162,3 +166,9 @@
 {"displayName":"溢流阀","image":"assets/现场控制系统/设备图片/溢流阀.png","width":64,"height":50}
 {"displayName":"开关阀","image":"symbols/Agent/开关阀.json","width":32,"height":32}
 {"displayName":"回油过滤器","image":"symbols/Agent/回油过滤器.json","width":76,"height":60}
+{"displayName":"电动阀","image":"assets/Agent/电动阀.png","width":20,"height":30}
+{"displayName":"调节阀","image":"assets/Agent/调节阀.png","width":20,"height":30}
+{"displayName":"旁通阀","image":"assets/Agent/旁通阀.png","width":53,"height":25}
+{"displayName":"补水箱","image":"assets/Agent/补水箱.png","width":69,"height":70}
+{"displayName":"流量计","image":"assets/Agent/流量计.png","width":20,"height":30}
+{"displayName":"室外环境图标","image":"assets/Agent/室外环境图标.png","width":20,"height":30}   
