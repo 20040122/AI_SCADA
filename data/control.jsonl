@@ -170,5 +170,9 @@
 {"displayName":"调节阀","image":"assets/Agent/调节阀.png","width":20,"height":30}
 {"displayName":"旁通阀","image":"assets/Agent/旁通阀.png","width":53,"height":25}
 {"displayName":"补水箱","image":"assets/Agent/补水箱.png","width":69,"height":70}
+{"displayName":"补水泵","image":"assets/Agent/补水泵.png","width":69,"height":70}
 {"displayName":"流量计","image":"assets/Agent/流量计.png","width":20,"height":30}
 {"displayName":"室外环境图标","image":"assets/Agent/室外环境图标.png","width":20,"height":30}   
+{"displayName":"冷却塔","image":"assets/Agent/冷却塔.png","width":115,"height":120} 
+{"displayName":"冷水机","image":"assets/Agent/冷水机.png","width":180,"height":141} 
+{"displayName":"冷却泵","image":"assets/Agent/冷却泵.png","width":99,"height":94} 

@@ -373,7 +373,9 @@ def annotate(image: np.ndarray, items: List[Dict[str, Any]]) -> np.ndarray:
     return output
 
 
-def detect(input_path: Path, output_dir: Path, ocr: bool = False, language: str = "chi_sim+eng") -> Dict[str, Any]:
+def run_detection(
+    input_path: Path, output_dir: Path, ocr: bool = False, language: str = "chi_sim+eng",
+) -> Tuple[np.ndarray, List[Dict[str, Any]], Dict[str, Any]]:
     image = read_image(input_path)
     output_dir.mkdir(parents=True, exist_ok=True)
     filenames = ["01_grid_mask.png", "02_grid_removed.png", "03_controls.png", "04_text.png", "05_hierarchy.png", "detections_01.json"]
@@ -421,11 +423,16 @@ def detect(input_path: Path, output_dir: Path, ocr: bool = False, language: str 
     for name, rendered in zip(filenames[:-1], images):
         write_image(output_dir / name, rendered)
     exported = [{"id": item["id"], "type": item["layer"], "bbox": item["bbox"], "value": None} for item in controls + texts]
-    (output_dir / "detections_01.json").write_text(json.dumps(exported, ensure_ascii=False, indent=2), encoding="utf-8")
     for name in legacy_filenames:
         legacy_path = output_dir / name
         if legacy_path.is_file():
             legacy_path.unlink()
+    return image, exported, result
+
+
+def detect(input_path: Path, output_dir: Path, ocr: bool = False, language: str = "chi_sim+eng") -> Dict[str, Any]:
+    _, exported, result = run_detection(input_path, output_dir, ocr, language)
+    (output_dir / "detections_01.json").write_text(json.dumps(exported, ensure_ascii=False, indent=2), encoding="utf-8")
     return result
 
 

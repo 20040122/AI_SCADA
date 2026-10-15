@@ -180,13 +180,11 @@ def write_atomic(output_path: Path, items: List[Dict[str, Any]]) -> None:
             temporary.unlink(missing_ok=True)
 
 
-def extract_text(
-    image_path: Path, detections_path: Path, output_path: Path,
+def fill_text_values(
+    image: np.ndarray, items: List[Dict[str, Any]],
     language: str = "chi_sim+eng", psm: int = 7, target_height: int = 48,
     min_confidence: float = 60.0, timeout: float = 30.0,
 ) -> Dict[str, Any]:
-    if output_path.resolve() in (image_path.resolve(), detections_path.resolve()):
-        raise ValueError("输出路径不能覆盖输入图片或检测 JSON。")
     if type(target_height) is not int or target_height <= 0:
         raise ValueError("目标文字高度必须是正整数。")
     if not math.isfinite(timeout) or timeout <= 0:
@@ -195,7 +193,6 @@ def extract_text(
         raise ValueError("置信度阈值必须在 0 到 100 之间。")
     if psm not in (6, 7, 8, 11, 13):
         raise ValueError("分割模式必须是 6、7、8、11 或 13。")
-    image, items = read_inputs(image_path, detections_path)
     texts = [item for item in items if item.get("type") == "text"]
     executable = check_engine(language, timeout) if texts else ""
     unrecognized = []
@@ -214,12 +211,24 @@ def extract_text(
             unrecognized.append(item["id"])
         elif result.confidence < min_confidence:
             low_confidence.append({"id": item["id"], "confidence": round(result.confidence, 2)})
-    write_atomic(output_path, items)
     return {
-        "output": str(output_path.resolve()), "element_count": len(items), "text_count": len(texts),
+        "element_count": len(items), "text_count": len(texts),
         "recognized": len(texts) - len(unrecognized), "unrecognized": unrecognized,
         "low_confidence": low_confidence,
     }
+
+
+def extract_text(
+    image_path: Path, detections_path: Path, output_path: Path,
+    language: str = "chi_sim+eng", psm: int = 7, target_height: int = 48,
+    min_confidence: float = 60.0, timeout: float = 30.0,
+) -> Dict[str, Any]:
+    if output_path.resolve() in (image_path.resolve(), detections_path.resolve()):
+        raise ValueError("输出路径不能覆盖输入图片或检测 JSON。")
+    image, items = read_inputs(image_path, detections_path)
+    summary = fill_text_values(image, items, language, psm, target_height, min_confidence, timeout)
+    write_atomic(output_path, items)
+    return {"output": str(output_path.resolve()), **summary}
 
 
 def main() -> None:

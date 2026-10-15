@@ -8,7 +8,7 @@
       65,
       19
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_2",
@@ -19,7 +19,7 @@
       66,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_3",
@@ -30,7 +30,7 @@
       174,
       140
     ],
-    "value": null
+    "value": "冷水机"
   },
   {
     "id": "controls_4",
@@ -41,7 +41,7 @@
       67,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_5",
@@ -52,7 +52,7 @@
       43,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_6",
@@ -63,7 +63,7 @@
       73,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_7",
@@ -74,7 +74,7 @@
       37,
       36
     ],
-    "value": null
+    "value": "旁通阀"
   },
   {
     "id": "controls_8",
@@ -85,7 +85,7 @@
       42,
       19
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_9",
@@ -96,7 +96,7 @@
       72,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_10",
@@ -107,7 +107,7 @@
       70,
       87
     ],
-    "value": null
+    "value": "冷却塔"
   },
   {
     "id": "controls_11",
@@ -118,7 +118,7 @@
       20,
       31
     ],
-    "value": null
+    "value": "调节阀"
   },
   {
     "id": "controls_12",
@@ -129,7 +129,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_13",
@@ -140,7 +140,7 @@
       98,
       108
     ],
-    "value": null
+    "value": "冷却泵"
   },
   {
     "id": "controls_14",
@@ -151,7 +151,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_15",
@@ -162,7 +162,7 @@
       57,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_16",
@@ -173,7 +173,7 @@
       45,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_17",
@@ -184,7 +184,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_18",
@@ -195,7 +195,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_19",
@@ -206,7 +206,7 @@
       21,
       40
     ],
-    "value": null
+    "value": "电动阀"
   },
   {
     "id": "controls_20",
@@ -217,7 +217,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_21",
@@ -228,7 +228,7 @@
       43,
       22
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_22",
@@ -239,7 +239,7 @@
       56,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_23",
@@ -250,7 +250,7 @@
       99,
       107
     ],
-    "value": null
+    "value": "冷冻泵"
   },
   {
     "id": "controls_24",
@@ -261,7 +261,7 @@
       44,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_25",
@@ -272,7 +272,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_26",
@@ -283,7 +283,7 @@
       45,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_27",
@@ -294,7 +294,7 @@
       55,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_28",
@@ -305,7 +305,7 @@
       22,
       44
     ],
-    "value": null
+    "value": "调节阀"
   },
   {
     "id": "controls_29",
@@ -316,7 +316,7 @@
       54,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_30",
@@ -327,7 +327,7 @@
       20,
       28
     ],
-    "value": null
+    "value": "电动阀"
   },
   {
     "id": "controls_31",
@@ -338,7 +338,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_32",
@@ -349,7 +349,7 @@
       56,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_33",
@@ -360,7 +360,7 @@
       70,
       100
     ],
-    "value": null
+    "value": "补水箱"
   },
   {
     "id": "controls_34",
@@ -371,7 +371,7 @@
       55,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_35",
@@ -382,7 +382,7 @@
       56,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_36",
@@ -393,7 +393,7 @@
       52,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_37",
@@ -404,7 +404,7 @@
       43,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_38",
@@ -415,7 +415,7 @@
       55,
       19
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_39",
@@ -426,7 +426,7 @@
       71,
       87
     ],
-    "value": null
+    "value": "冷却塔"
   },
   {
     "id": "controls_40",
@@ -437,7 +437,7 @@
       44,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_41",
@@ -448,7 +448,7 @@
       43,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_42",
@@ -459,7 +459,7 @@
       99,
       92
     ],
-    "value": null
+    "value": "冷却泵"
   },
   {
     "id": "controls_43",
@@ -470,7 +470,7 @@
       20,
       43
     ],
-    "value": null
+    "value": "调节阀"
   },
   {
     "id": "controls_44",
@@ -481,7 +481,7 @@
       21,
       35
     ],
-    "value": null
+    "value": "流量计"
   },
   {
     "id": "controls_45",
@@ -492,7 +492,7 @@
       44,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_46",
@@ -503,7 +503,7 @@
       62,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_47",
@@ -514,7 +514,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_48",
@@ -525,7 +525,7 @@
       104,
       112
     ],
-    "value": null
+    "value": "冷冻泵"
   },
   {
     "id": "controls_49",
@@ -536,7 +536,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_50",
@@ -547,7 +547,7 @@
       44,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_51",
@@ -558,7 +558,7 @@
       63,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_52",
@@ -569,7 +569,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_53",
@@ -580,7 +580,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_54",
@@ -591,7 +591,7 @@
       55,
       23
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_55",
@@ -602,7 +602,7 @@
       68,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_56",
@@ -613,7 +613,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_57",
@@ -624,7 +624,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_58",
@@ -635,7 +635,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_59",
@@ -646,7 +646,7 @@
       174,
       135
     ],
-    "value": null
+    "value": "冷水机"
   },
   {
     "id": "controls_60",
@@ -657,7 +657,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_61",
@@ -668,7 +668,7 @@
       69,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_62",
@@ -679,7 +679,7 @@
       20,
       30
     ],
-    "value": null
+    "value": "调节阀"
   },
   {
     "id": "controls_63",
@@ -690,7 +690,7 @@
       37,
       35
     ],
-    "value": null
+    "value": "旁通阀"
   },
   {
     "id": "controls_64",
@@ -701,7 +701,7 @@
       64,
       17
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_65",
@@ -712,7 +712,7 @@
       21,
       46
     ],
-    "value": null
+    "value": "电动阀"
   },
   {
     "id": "controls_66",
@@ -723,7 +723,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_67",
@@ -734,7 +734,7 @@
       54,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_68",
@@ -745,7 +745,7 @@
       42,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_69",
@@ -756,7 +756,7 @@
       99,
       109
     ],
-    "value": null
+    "value": "冷却泵"
   },
   {
     "id": "controls_70",
@@ -767,7 +767,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_71",
@@ -778,7 +778,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_72",
@@ -789,7 +789,7 @@
       55,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_73",
@@ -800,7 +800,7 @@
       20,
       30
     ],
-    "value": null
+    "value": "调节阀"
   },
   {
     "id": "controls_74",
@@ -811,7 +811,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_75",
@@ -822,7 +822,7 @@
       68,
       84
     ],
-    "value": null
+    "value": "补水泵"
   },
   {
     "id": "controls_76",
@@ -833,7 +833,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_77",
@@ -844,7 +844,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_78",
@@ -855,7 +855,7 @@
       42,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_79",
@@ -866,7 +866,7 @@
       99,
       108
     ],
-    "value": null
+    "value": "冷冻泵"
   },
   {
     "id": "controls_80",
@@ -877,7 +877,7 @@
       43,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_81",
@@ -888,7 +888,7 @@
       70,
       87
     ],
-    "value": null
+    "value": "冷却塔"
   },
   {
     "id": "controls_82",
@@ -899,7 +899,7 @@
       58,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_83",
@@ -910,7 +910,7 @@
       21,
       29
     ],
-    "value": null
+    "value": "电动阀"
   },
   {
     "id": "controls_84",
@@ -921,7 +921,7 @@
       42,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_85",
@@ -932,7 +932,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_86",
@@ -943,7 +943,7 @@
       59,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_87",
@@ -954,7 +954,7 @@
       54,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_88",
@@ -965,7 +965,7 @@
       44,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_89",
@@ -976,7 +976,7 @@
       58,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_90",
@@ -987,7 +987,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_91",
@@ -998,7 +998,7 @@
       21,
       45
     ],
-    "value": null
+    "value": "调节阀"
   },
   {
     "id": "controls_92",
@@ -1009,7 +1009,7 @@
       57,
       19
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_93",
@@ -1020,7 +1020,7 @@
       65,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_94",
@@ -1031,7 +1031,7 @@
       43,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_95",
@@ -1042,7 +1042,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_96",
@@ -1053,7 +1053,7 @@
       99,
       91
     ],
-    "value": null
+    "value": "冷却泵"
   },
   {
     "id": "controls_97",
@@ -1064,7 +1064,7 @@
       44,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_98",
@@ -1075,7 +1075,7 @@
       65,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_99",
@@ -1086,7 +1086,7 @@
       68,
       76
     ],
-    "value": null
+    "value": "补水泵"
   },
   {
     "id": "controls_100",
@@ -1097,7 +1097,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_101",
@@ -1108,7 +1108,7 @@
       63,
       16
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_102",
@@ -1119,7 +1119,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_103",
@@ -1130,7 +1130,7 @@
       43,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_104",
@@ -1141,7 +1141,7 @@
       69,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_105",
@@ -1152,7 +1152,7 @@
       44,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_106",
@@ -1163,7 +1163,7 @@
       98,
       91
     ],
-    "value": null
+    "value": "冷冻泵"
   },
   {
     "id": "controls_107",
@@ -1174,7 +1174,7 @@
       71,
       87
     ],
-    "value": null
+    "value": "补水箱"
   },
   {
     "id": "controls_108",
@@ -1185,7 +1185,7 @@
       174,
       134
     ],
-    "value": null
+    "value": "冷水机"
   },
   {
     "id": "controls_109",
@@ -1196,7 +1196,7 @@
       43,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_110",
@@ -1207,7 +1207,7 @@
       69,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_111",
@@ -1218,7 +1218,7 @@
       35,
       36
     ],
-    "value": null
+    "value": "室外环境图标"
   },
   {
     "id": "controls_112",
@@ -1229,7 +1229,7 @@
       42,
       18
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_113",
@@ -1240,7 +1240,7 @@
       64,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_114",
@@ -1251,7 +1251,7 @@
       43,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_115",
@@ -1262,7 +1262,7 @@
       59,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_116",
@@ -1273,7 +1273,7 @@
       21,
       29
     ],
-    "value": null
+    "value": "电动阀"
   },
   {
     "id": "controls_117",
@@ -1284,7 +1284,7 @@
       43,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_118",
@@ -1295,7 +1295,7 @@
       60,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_119",
@@ -1306,7 +1306,7 @@
       65,
       18
     ],
-    "value": null
+    "value": "绿色状态"
   },
   {
     "id": "controls_120",
@@ -1317,7 +1317,7 @@
       20,
       47
     ],
-    "value": null
+    "value": "电动阀"
   },
   {
     "id": "controls_121",
@@ -1328,7 +1328,7 @@
       43,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_122",
@@ -1339,7 +1339,7 @@
       65,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_123",
@@ -1350,7 +1350,7 @@
       66,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_124",
@@ -1361,7 +1361,7 @@
       54,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_125",
@@ -1372,7 +1372,7 @@
       109,
       36
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_126",
@@ -1383,7 +1383,7 @@
       109,
       36
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_127",
@@ -1394,7 +1394,7 @@
       108,
       36
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_128",
@@ -1405,7 +1405,7 @@
       109,
       36
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_129",
@@ -1416,7 +1416,7 @@
       108,
       35
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_130",
@@ -1427,7 +1427,7 @@
       54,
       21
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_131",
@@ -1438,7 +1438,7 @@
       54,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "controls_132",
@@ -1449,7 +1449,7 @@
       108,
       38
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_133",
@@ -1460,7 +1460,7 @@
       108,
       37
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_134",
@@ -1471,7 +1471,7 @@
       109,
       37
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_135",
@@ -1482,7 +1482,7 @@
       108,
       36
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_136",
@@ -1493,7 +1493,7 @@
       109,
       36
     ],
-    "value": null
+    "value": "按钮"
   },
   {
     "id": "controls_137",
@@ -1504,7 +1504,7 @@
       69,
       30
     ],
-    "value": null
+    "value": "状态显示"
   },
   {
     "id": "controls_138",
@@ -1515,7 +1515,7 @@
       68,
       30
     ],
-    "value": null
+    "value": "状态显示"
   },
   {
     "id": "controls_139",
@@ -1526,7 +1526,7 @@
       68,
       30
     ],
-    "value": null
+    "value": "状态显示"
   },
   {
     "id": "controls_140",
@@ -1537,7 +1537,7 @@
       69,
       30
     ],
-    "value": null
+    "value": "状态显示"
   },
   {
     "id": "controls_141",
@@ -1548,7 +1548,7 @@
       54,
       20
     ],
-    "value": null
+    "value": "数值显示"
   },
   {
     "id": "text_1",
