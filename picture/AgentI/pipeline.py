@@ -5,6 +5,8 @@ import json
 import sqlite3
 import subprocess
 import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -34,19 +36,47 @@ def run_pipeline(
     concurrency: int = DEFAULT_CONCURRENCY,
     context: float = DEFAULT_CONTEXT,
     dump_crops: Optional[Path] = None,
+    ocr_workers: int = 6,
 ) -> Dict[str, Any]:
     if output_path.resolve() == image_path.resolve():
         raise ValueError("输出路径不能覆盖输入图片。")
+    timing: Dict[str, Any] = {}
+    started = time.perf_counter()
+    stage = time.perf_counter()
     image, items, detection = run_detection(image_path, output_dir)
-    ocr_summary = fill_text_values(image, items, ocr_lang, psm, target_height, min_confidence, timeout)
-    naming_summary = fill_control_names(image, items, db_path, model, concurrency, context, dump_crops)
+    timing["detection_seconds"] = round(time.perf_counter() - stage, 3)
+
+    def timed(label: str, func):
+        stage = time.perf_counter()
+        try:
+            return func()
+        finally:
+            timing[label] = round(time.perf_counter() - stage, 3)
+
+    def run_ocr():
+        return fill_text_values(image, items, ocr_lang, psm, target_height, min_confidence, timeout, ocr_workers)
+
+    def run_naming():
+        return fill_control_names(image, items, db_path, model, concurrency, context, dump_crops)
+
+    stage = time.perf_counter()
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        ocr_future = pool.submit(timed, "ocr_seconds", run_ocr)
+        naming_future = pool.submit(timed, "naming_seconds", run_naming)
+        ocr_summary = ocr_future.result()
+        naming_summary = naming_future.result()
+    timing["parallel_seconds"] = round(time.perf_counter() - stage, 3)
+    stage = time.perf_counter()
     write_atomic(output_path, items)
+    timing["write_seconds"] = round(time.perf_counter() - stage, 3)
+    timing["total_seconds"] = round(time.perf_counter() - started, 3)
     return {
         "output": str(output_path.resolve()),
         "image": str(image_path.resolve()),
         "detection": {"counts": detection["counts"]},
         "ocr": ocr_summary,
         "naming": naming_summary,
+        "timing": timing,
     }
 
 
@@ -65,12 +95,13 @@ def main() -> None:
     parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY, help="控件命名并发请求数")
     parser.add_argument("--context", type=float, default=DEFAULT_CONTEXT, help="控件裁剪图向四周外扩的比例")
     parser.add_argument("--dump-crops", type=Path, default=None, help="导出全部控件裁剪图到该目录，用于人工核对")
+    parser.add_argument("--ocr-workers", type=int, default=6, help="Tesseract 文本识别的并行工作线程数")
     args = parser.parse_args()
     try:
         result = run_pipeline(
             args.image, args.output_dir, args.output, args.db, args.ocr_lang,
             args.psm, args.target_height, args.min_confidence, args.timeout,
-            args.model, args.concurrency, args.context, args.dump_crops,
+            args.model, args.concurrency, args.context, args.dump_crops, args.ocr_workers,
         )
     except (OSError, ValueError, RuntimeError, json.JSONDecodeError, sqlite3.Error, cv2.error, subprocess.TimeoutExpired) as error:
         parser.exit(1, "流程失败: {}\n".format(error))

@@ -8,7 +8,8 @@ import re
 import shutil
 import subprocess
 import tempfile
-from dataclasses import dataclass
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -23,6 +24,7 @@ CJK = "\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff"
 class Recognition:
     value: str
     confidence: float
+    passes: int = 1
 
 
 def normalize_text(value: str) -> str:
@@ -135,9 +137,10 @@ def recognize(image: np.ndarray, executable: str, language: str, psm: int, timeo
     success, encoded = cv2.imencode(".png", image)
     if not success:
         raise ValueError("无法编码 OCR 裁剪图。")
+    environment = dict(os.environ, OMP_THREAD_LIMIT="1")
     process = subprocess.run(
         [executable, "stdin", "stdout", "-l", language, "--psm", str(psm), "tsv"],
-        input=encoded.tobytes(), capture_output=True, timeout=timeout,
+        input=encoded.tobytes(), capture_output=True, timeout=timeout, env=environment,
     )
     if process.returncode:
         raise RuntimeError("Tesseract 识别失败: {}".format(process.stderr.decode("utf-8", errors="replace").strip()))
@@ -161,7 +164,7 @@ def recognize_crop(
         conservative = prepare_crop(crop, target_height, conservative=True)
         results.append(recognize(conservative, executable, language, candidate_mode, timeout))
         best = max(results, key=lambda result: result.confidence if result.value else -1)
-    return best
+    return replace(best, passes=len(results))
 
 
 def write_atomic(output_path: Path, items: List[Dict[str, Any]]) -> None:
@@ -183,7 +186,7 @@ def write_atomic(output_path: Path, items: List[Dict[str, Any]]) -> None:
 def fill_text_values(
     image: np.ndarray, items: List[Dict[str, Any]],
     language: str = "chi_sim+eng", psm: int = 7, target_height: int = 48,
-    min_confidence: float = 60.0, timeout: float = 30.0,
+    min_confidence: float = 60.0, timeout: float = 30.0, workers: int = 6,
 ) -> Dict[str, Any]:
     if type(target_height) is not int or target_height <= 0:
         raise ValueError("目标文字高度必须是正整数。")
@@ -193,20 +196,33 @@ def fill_text_values(
         raise ValueError("置信度阈值必须在 0 到 100 之间。")
     if psm not in (6, 7, 8, 11, 13):
         raise ValueError("分割模式必须是 6、7、8、11 或 13。")
+    if type(workers) is not int or workers <= 0:
+        raise ValueError("并行工作线程数必须是正整数。")
     texts = [item for item in items if item.get("type") == "text"]
     executable = check_engine(language, timeout) if texts else ""
-    unrecognized = []
-    low_confidence = []
-    for item in texts:
+
+    def process(item: Dict[str, Any]) -> Recognition:
         x, y, w, h = item["bbox"]
         crop = image[y:y + h, x:x + w]
         try:
-            result = recognize_crop(crop, executable, language, psm, target_height, min_confidence, timeout)
+            return recognize_crop(crop, executable, language, psm, target_height, min_confidence, timeout)
         except subprocess.TimeoutExpired as error:
             raise RuntimeError("{} 识别超时（{} 秒）。".format(item["id"], timeout)) from error
         except (RuntimeError, ValueError, csv.Error) as error:
             raise RuntimeError("{}: {}".format(item["id"], error)) from error
+
+    if workers == 1 or len(texts) <= 1:
+        results = [process(item) for item in texts]
+    else:
+        with ThreadPoolExecutor(max_workers=min(workers, len(texts))) as pool:
+            futures = [pool.submit(process, item) for item in texts]
+            results = [future.result() for future in futures]
+    unrecognized = []
+    low_confidence = []
+    calls = 0
+    for item, result in zip(texts, results):
         item["value"] = result.value or None
+        calls += result.passes
         if not result.value:
             unrecognized.append(item["id"])
         elif result.confidence < min_confidence:
@@ -214,7 +230,7 @@ def fill_text_values(
     return {
         "element_count": len(items), "text_count": len(texts),
         "recognized": len(texts) - len(unrecognized), "unrecognized": unrecognized,
-        "low_confidence": low_confidence,
+        "low_confidence": low_confidence, "tesseract_calls": calls,
     }
 
 

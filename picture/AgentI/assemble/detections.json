@@ -1,0 +1,2158 @@
+[
+  {
+    "id": "controls_1",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1013.5,
+      "y": 103.5
+    },
+    "width": 65,
+    "height": 19
+  },
+  {
+    "id": "controls_2",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 779.0,
+      "y": 121.0
+    },
+    "width": 66,
+    "height": 20
+  },
+  {
+    "id": "controls_3",
+    "type": "controls",
+    "value": "冷水机",
+    "position": {
+      "x": 1004.0,
+      "y": 185.0
+    },
+    "width": 174,
+    "height": 140
+  },
+  {
+    "id": "controls_4",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 780.5,
+      "y": 148.0
+    },
+    "width": 67,
+    "height": 20
+  },
+  {
+    "id": "controls_5",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 386.5,
+      "y": 157.0
+    },
+    "width": 43,
+    "height": 20
+  },
+  {
+    "id": "controls_6",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1178.5,
+      "y": 183.5
+    },
+    "width": 73,
+    "height": 21
+  },
+  {
+    "id": "controls_7",
+    "type": "controls",
+    "value": "旁通阀",
+    "position": {
+      "x": 388.5,
+      "y": 193.0
+    },
+    "width": 37,
+    "height": 36
+  },
+  {
+    "id": "controls_8",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 238.0,
+      "y": 192.5
+    },
+    "width": 42,
+    "height": 19
+  },
+  {
+    "id": "controls_9",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1178.0,
+      "y": 211.0
+    },
+    "width": 72,
+    "height": 20
+  },
+  {
+    "id": "controls_10",
+    "type": "controls",
+    "value": "冷却塔",
+    "position": {
+      "x": 150.0,
+      "y": 249.5
+    },
+    "width": 70,
+    "height": 87
+  },
+  {
+    "id": "controls_11",
+    "type": "controls",
+    "value": "调节阀",
+    "position": {
+      "x": 241.0,
+      "y": 224.5
+    },
+    "width": 20,
+    "height": 31
+  },
+  {
+    "id": "controls_12",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 644.0,
+      "y": 239.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_13",
+    "type": "controls",
+    "value": "冷却泵",
+    "position": {
+      "x": 540.0,
+      "y": 293.0
+    },
+    "width": 98,
+    "height": 108
+  },
+  {
+    "id": "controls_14",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 862.0,
+      "y": 253.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_15",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 778.5,
+      "y": 263.5
+    },
+    "width": 57,
+    "height": 21
+  },
+  {
+    "id": "controls_16",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 642.5,
+      "y": 265.5
+    },
+    "width": 45,
+    "height": 21
+  },
+  {
+    "id": "controls_17",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1457.5,
+      "y": 269.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_18",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 61.0,
+      "y": 273.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_19",
+    "type": "controls",
+    "value": "电动阀",
+    "position": {
+      "x": 861.5,
+      "y": 284.0
+    },
+    "width": 21,
+    "height": 40
+  },
+  {
+    "id": "controls_20",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 468.5,
+      "y": 279.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_21",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 309.5,
+      "y": 291.0
+    },
+    "width": 43,
+    "height": 22
+  },
+  {
+    "id": "controls_22",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 777.0,
+      "y": 290.5
+    },
+    "width": 56,
+    "height": 21
+  },
+  {
+    "id": "controls_23",
+    "type": "controls",
+    "value": "冷冻泵",
+    "position": {
+      "x": 1456.5,
+      "y": 333.5
+    },
+    "width": 99,
+    "height": 107
+  },
+  {
+    "id": "controls_24",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 642.0,
+      "y": 292.0
+    },
+    "width": 44,
+    "height": 20
+  },
+  {
+    "id": "controls_25",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1117.5,
+      "y": 306.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_26",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1379.5,
+      "y": 307.0
+    },
+    "width": 45,
+    "height": 20
+  },
+  {
+    "id": "controls_27",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1001.5,
+      "y": 310.5
+    },
+    "width": 55,
+    "height": 21
+  },
+  {
+    "id": "controls_28",
+    "type": "controls",
+    "value": "调节阀",
+    "position": {
+      "x": 311.0,
+      "y": 330.0
+    },
+    "width": 22,
+    "height": 44
+  },
+  {
+    "id": "controls_29",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1191.0,
+      "y": 319.5
+    },
+    "width": 54,
+    "height": 21
+  },
+  {
+    "id": "controls_30",
+    "type": "controls",
+    "value": "电动阀",
+    "position": {
+      "x": 1115.0,
+      "y": 333.0
+    },
+    "width": 20,
+    "height": 28
+  },
+  {
+    "id": "controls_31",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1380.0,
+      "y": 330.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_32",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1002.0,
+      "y": 335.0
+    },
+    "width": 56,
+    "height": 20
+  },
+  {
+    "id": "controls_33",
+    "type": "controls",
+    "value": "补水箱",
+    "position": {
+      "x": 1760.0,
+      "y": 379.0
+    },
+    "width": 70,
+    "height": 100
+  },
+  {
+    "id": "controls_34",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1189.5,
+      "y": 345.5
+    },
+    "width": 55,
+    "height": 21
+  },
+  {
+    "id": "controls_35",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1002.0,
+      "y": 358.0
+    },
+    "width": 56,
+    "height": 20
+  },
+  {
+    "id": "controls_36",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1655.0,
+      "y": 378.0
+    },
+    "width": 52,
+    "height": 20
+  },
+  {
+    "id": "controls_37",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 233.5,
+      "y": 385.0
+    },
+    "width": 43,
+    "height": 20
+  },
+  {
+    "id": "controls_38",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1000.5,
+      "y": 384.5
+    },
+    "width": 55,
+    "height": 19
+  },
+  {
+    "id": "controls_39",
+    "type": "controls",
+    "value": "冷却塔",
+    "position": {
+      "x": 153.5,
+      "y": 421.5
+    },
+    "width": 71,
+    "height": 87
+  },
+  {
+    "id": "controls_40",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 642.0,
+      "y": 390.0
+    },
+    "width": 44,
+    "height": 20
+  },
+  {
+    "id": "controls_41",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1851.5,
+      "y": 395.0
+    },
+    "width": 43,
+    "height": 20
+  },
+  {
+    "id": "controls_42",
+    "type": "controls",
+    "value": "冷却泵",
+    "position": {
+      "x": 541.5,
+      "y": 441.0
+    },
+    "width": 99,
+    "height": 92
+  },
+  {
+    "id": "controls_43",
+    "type": "controls",
+    "value": "调节阀",
+    "position": {
+      "x": 232.0,
+      "y": 418.5
+    },
+    "width": 20,
+    "height": 43
+  },
+  {
+    "id": "controls_44",
+    "type": "controls",
+    "value": "流量计",
+    "position": {
+      "x": 1658.5,
+      "y": 416.5
+    },
+    "width": 21,
+    "height": 35
+  },
+  {
+    "id": "controls_45",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 642.0,
+      "y": 415.0
+    },
+    "width": 44,
+    "height": 20
+  },
+  {
+    "id": "controls_46",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 790.0,
+      "y": 418.0
+    },
+    "width": 62,
+    "height": 20
+  },
+  {
+    "id": "controls_47",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1452.5,
+      "y": 420.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_48",
+    "type": "controls",
+    "value": "冷冻泵",
+    "position": {
+      "x": 1449.0,
+      "y": 487.0
+    },
+    "width": 104,
+    "height": 112
+  },
+  {
+    "id": "controls_49",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 466.5,
+      "y": 441.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_50",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 642.0,
+      "y": 442.0
+    },
+    "width": 44,
+    "height": 20
+  },
+  {
+    "id": "controls_51",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 791.5,
+      "y": 445.0
+    },
+    "width": 63,
+    "height": 20
+  },
+  {
+    "id": "controls_52",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1007.0,
+      "y": 444.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_53",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1380.0,
+      "y": 454.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_54",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1846.5,
+      "y": 457.5
+    },
+    "width": 55,
+    "height": 23
+  },
+  {
+    "id": "controls_55",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1175.0,
+      "y": 461.0
+    },
+    "width": 68,
+    "height": 20
+  },
+  {
+    "id": "controls_56",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 309.0,
+      "y": 463.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_57",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 65.0,
+      "y": 465.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_58",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1596.0,
+      "y": 467.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_59",
+    "type": "controls",
+    "value": "冷水机",
+    "position": {
+      "x": 997.0,
+      "y": 526.5
+    },
+    "width": 174,
+    "height": 135
+  },
+  {
+    "id": "controls_60",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1380.0,
+      "y": 478.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_61",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1175.5,
+      "y": 487.5
+    },
+    "width": 69,
+    "height": 21
+  },
+  {
+    "id": "controls_62",
+    "type": "controls",
+    "value": "调节阀",
+    "position": {
+      "x": 311.0,
+      "y": 493.0
+    },
+    "width": 20,
+    "height": 30
+  },
+  {
+    "id": "controls_63",
+    "type": "controls",
+    "value": "旁通阀",
+    "position": {
+      "x": 1597.5,
+      "y": 499.5
+    },
+    "width": 37,
+    "height": 35
+  },
+  {
+    "id": "controls_64",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 862.0,
+      "y": 512.5
+    },
+    "width": 64,
+    "height": 17
+  },
+  {
+    "id": "controls_65",
+    "type": "controls",
+    "value": "电动阀",
+    "position": {
+      "x": 861.5,
+      "y": 546.0
+    },
+    "width": 21,
+    "height": 46
+  },
+  {
+    "id": "controls_66",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 647.0,
+      "y": 537.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_67",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 780.0,
+      "y": 537.5
+    },
+    "width": 54,
+    "height": 21
+  },
+  {
+    "id": "controls_68",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 233.0,
+      "y": 549.0
+    },
+    "width": 42,
+    "height": 20
+  },
+  {
+    "id": "controls_69",
+    "type": "controls",
+    "value": "冷却泵",
+    "position": {
+      "x": 538.5,
+      "y": 596.5
+    },
+    "width": 99,
+    "height": 109
+  },
+  {
+    "id": "controls_70",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1633.5,
+      "y": 559.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_71",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 646.0,
+      "y": 563.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_72",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 780.5,
+      "y": 564.0
+    },
+    "width": 55,
+    "height": 20
+  },
+  {
+    "id": "controls_73",
+    "type": "controls",
+    "value": "调节阀",
+    "position": {
+      "x": 234.0,
+      "y": 579.0
+    },
+    "width": 20,
+    "height": 30
+  },
+  {
+    "id": "controls_74",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1455.5,
+      "y": 576.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_75",
+    "type": "controls",
+    "value": "补水泵",
+    "position": {
+      "x": 1631.0,
+      "y": 612.0
+    },
+    "width": 68,
+    "height": 84
+  },
+  {
+    "id": "controls_76",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1130.5,
+      "y": 583.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_77",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 468.5,
+      "y": 589.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_78",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 645.0,
+      "y": 590.5
+    },
+    "width": 42,
+    "height": 21
+  },
+  {
+    "id": "controls_79",
+    "type": "controls",
+    "value": "冷冻泵",
+    "position": {
+      "x": 1452.5,
+      "y": 641.0
+    },
+    "width": 99,
+    "height": 108
+  },
+  {
+    "id": "controls_80",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1377.5,
+      "y": 598.5
+    },
+    "width": 43,
+    "height": 21
+  },
+  {
+    "id": "controls_81",
+    "type": "controls",
+    "value": "冷却塔",
+    "position": {
+      "x": 157.0,
+      "y": 633.5
+    },
+    "width": 70,
+    "height": 87
+  },
+  {
+    "id": "controls_82",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1003.0,
+      "y": 604.5
+    },
+    "width": 58,
+    "height": 21
+  },
+  {
+    "id": "controls_83",
+    "type": "controls",
+    "value": "电动阀",
+    "position": {
+      "x": 1130.5,
+      "y": 608.5
+    },
+    "width": 21,
+    "height": 29
+  },
+  {
+    "id": "controls_84",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1213.0,
+      "y": 610.0
+    },
+    "width": 42,
+    "height": 20
+  },
+  {
+    "id": "controls_85",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1379.0,
+      "y": 622.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_86",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1003.5,
+      "y": 634.0
+    },
+    "width": 59,
+    "height": 20
+  },
+  {
+    "id": "controls_87",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1203.0,
+      "y": 636.5
+    },
+    "width": 54,
+    "height": 21
+  },
+  {
+    "id": "controls_88",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 307.0,
+      "y": 654.0
+    },
+    "width": 44,
+    "height": 20
+  },
+  {
+    "id": "controls_89",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1003.0,
+      "y": 658.0
+    },
+    "width": 58,
+    "height": 20
+  },
+  {
+    "id": "controls_90",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 72.0,
+      "y": 667.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_91",
+    "type": "controls",
+    "value": "调节阀",
+    "position": {
+      "x": 311.5,
+      "y": 691.5
+    },
+    "width": 21,
+    "height": 45
+  },
+  {
+    "id": "controls_92",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1002.5,
+      "y": 682.5
+    },
+    "width": 57,
+    "height": 19
+  },
+  {
+    "id": "controls_93",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 791.5,
+      "y": 688.5
+    },
+    "width": 65,
+    "height": 21
+  },
+  {
+    "id": "controls_94",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 649.5,
+      "y": 689.5
+    },
+    "width": 43,
+    "height": 21
+  },
+  {
+    "id": "controls_95",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1639.0,
+      "y": 692.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_96",
+    "type": "controls",
+    "value": "冷却泵",
+    "position": {
+      "x": 537.5,
+      "y": 736.5
+    },
+    "width": 99,
+    "height": 91
+  },
+  {
+    "id": "controls_97",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 649.0,
+      "y": 715.5
+    },
+    "width": 44,
+    "height": 21
+  },
+  {
+    "id": "controls_98",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 791.5,
+      "y": 715.5
+    },
+    "width": 65,
+    "height": 21
+  },
+  {
+    "id": "controls_99",
+    "type": "controls",
+    "value": "补水泵",
+    "position": {
+      "x": 1639.0,
+      "y": 743.0
+    },
+    "width": 68,
+    "height": 76
+  },
+  {
+    "id": "controls_100",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1007.0,
+      "y": 725.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_101",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1456.5,
+      "y": 728.0
+    },
+    "width": 63,
+    "height": 16
+  },
+  {
+    "id": "controls_102",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 468.5,
+      "y": 733.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_103",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1376.5,
+      "y": 736.5
+    },
+    "width": 43,
+    "height": 21
+  },
+  {
+    "id": "controls_104",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1182.5,
+      "y": 738.0
+    },
+    "width": 69,
+    "height": 20
+  },
+  {
+    "id": "controls_105",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 649.0,
+      "y": 742.0
+    },
+    "width": 44,
+    "height": 20
+  },
+  {
+    "id": "controls_106",
+    "type": "controls",
+    "value": "冷冻泵",
+    "position": {
+      "x": 1451.0,
+      "y": 783.5
+    },
+    "width": 98,
+    "height": 91
+  },
+  {
+    "id": "controls_107",
+    "type": "controls",
+    "value": "补水箱",
+    "position": {
+      "x": 1756.5,
+      "y": 781.5
+    },
+    "width": 71,
+    "height": 87
+  },
+  {
+    "id": "controls_108",
+    "type": "controls",
+    "value": "冷水机",
+    "position": {
+      "x": 993.0,
+      "y": 808.0
+    },
+    "width": 174,
+    "height": 134
+  },
+  {
+    "id": "controls_109",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1376.5,
+      "y": 760.5
+    },
+    "width": 43,
+    "height": 21
+  },
+  {
+    "id": "controls_110",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1182.5,
+      "y": 765.0
+    },
+    "width": 69,
+    "height": 20
+  },
+  {
+    "id": "controls_111",
+    "type": "controls",
+    "value": "室外环境图标",
+    "position": {
+      "x": 114.5,
+      "y": 791.0
+    },
+    "width": 35,
+    "height": 36
+  },
+  {
+    "id": "controls_112",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1865.0,
+      "y": 789.0
+    },
+    "width": 42,
+    "height": 18
+  },
+  {
+    "id": "controls_113",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 853.0,
+      "y": 797.0
+    },
+    "width": 64,
+    "height": 18
+  },
+  {
+    "id": "controls_114",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 243.5,
+      "y": 805.5
+    },
+    "width": 43,
+    "height": 21
+  },
+  {
+    "id": "controls_115",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 778.5,
+      "y": 811.5
+    },
+    "width": 59,
+    "height": 21
+  },
+  {
+    "id": "controls_116",
+    "type": "controls",
+    "value": "电动阀",
+    "position": {
+      "x": 850.5,
+      "y": 822.5
+    },
+    "width": 21,
+    "height": 29
+  },
+  {
+    "id": "controls_117",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 243.5,
+      "y": 834.0
+    },
+    "width": 43,
+    "height": 20
+  },
+  {
+    "id": "controls_118",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 779.0,
+      "y": 838.5
+    },
+    "width": 60,
+    "height": 21
+  },
+  {
+    "id": "controls_119",
+    "type": "controls",
+    "value": "绿色状态",
+    "position": {
+      "x": 1174.5,
+      "y": 839.0
+    },
+    "width": 65,
+    "height": 18
+  },
+  {
+    "id": "controls_120",
+    "type": "controls",
+    "value": "电动阀",
+    "position": {
+      "x": 1174.0,
+      "y": 873.5
+    },
+    "width": 20,
+    "height": 47
+  },
+  {
+    "id": "controls_121",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 243.5,
+      "y": 861.5
+    },
+    "width": 43,
+    "height": 21
+  },
+  {
+    "id": "controls_122",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1245.5,
+      "y": 863.5
+    },
+    "width": 65,
+    "height": 21
+  },
+  {
+    "id": "controls_123",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1246.0,
+      "y": 890.5
+    },
+    "width": 66,
+    "height": 21
+  },
+  {
+    "id": "controls_124",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1006.0,
+      "y": 892.0
+    },
+    "width": 54,
+    "height": 20
+  },
+  {
+    "id": "controls_125",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1478.5,
+      "y": 911.0
+    },
+    "width": 109,
+    "height": 36
+  },
+  {
+    "id": "controls_126",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1604.5,
+      "y": 911.0
+    },
+    "width": 109,
+    "height": 36
+  },
+  {
+    "id": "controls_127",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1724.0,
+      "y": 911.0
+    },
+    "width": 108,
+    "height": 36
+  },
+  {
+    "id": "controls_128",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1846.5,
+      "y": 911.0
+    },
+    "width": 109,
+    "height": 36
+  },
+  {
+    "id": "controls_129",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1357.0,
+      "y": 911.5
+    },
+    "width": 108,
+    "height": 35
+  },
+  {
+    "id": "controls_130",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1005.0,
+      "y": 918.5
+    },
+    "width": 54,
+    "height": 21
+  },
+  {
+    "id": "controls_131",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1006.0,
+      "y": 946.0
+    },
+    "width": 54,
+    "height": 20
+  },
+  {
+    "id": "controls_132",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1478.0,
+      "y": 955.0
+    },
+    "width": 108,
+    "height": 38
+  },
+  {
+    "id": "controls_133",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1724.0,
+      "y": 954.5
+    },
+    "width": 108,
+    "height": 37
+  },
+  {
+    "id": "controls_134",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1846.5,
+      "y": 954.5
+    },
+    "width": 109,
+    "height": 37
+  },
+  {
+    "id": "controls_135",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1358.0,
+      "y": 955.0
+    },
+    "width": 108,
+    "height": 36
+  },
+  {
+    "id": "controls_136",
+    "type": "controls",
+    "value": "按钮",
+    "position": {
+      "x": 1604.5,
+      "y": 955.0
+    },
+    "width": 109,
+    "height": 36
+  },
+  {
+    "id": "controls_137",
+    "type": "controls",
+    "value": "状态显示",
+    "position": {
+      "x": 224.5,
+      "y": 955.0
+    },
+    "width": 69,
+    "height": 30
+  },
+  {
+    "id": "controls_138",
+    "type": "controls",
+    "value": "状态显示",
+    "position": {
+      "x": 481.0,
+      "y": 955.0
+    },
+    "width": 68,
+    "height": 30
+  },
+  {
+    "id": "controls_139",
+    "type": "controls",
+    "value": "状态显示",
+    "position": {
+      "x": 611.0,
+      "y": 955.0
+    },
+    "width": 68,
+    "height": 30
+  },
+  {
+    "id": "controls_140",
+    "type": "controls",
+    "value": "状态显示",
+    "position": {
+      "x": 353.5,
+      "y": 956.0
+    },
+    "width": 69,
+    "height": 30
+  },
+  {
+    "id": "controls_141",
+    "type": "controls",
+    "value": "数值显示",
+    "position": {
+      "x": 1005.0,
+      "y": 970.0
+    },
+    "width": 54,
+    "height": 20
+  },
+  {
+    "id": "text_1",
+    "type": "text",
+    "value": "冷却水回水",
+    "position": {
+      "x": 869.0,
+      "y": 179.5
+    },
+    "width": 78,
+    "height": 15
+  },
+  {
+    "id": "text_2",
+    "type": "text",
+    "value": "冷却水供水",
+    "position": {
+      "x": 871.0,
+      "y": 223.5
+    },
+    "width": 78,
+    "height": 15
+  },
+  {
+    "id": "text_3",
+    "type": "text",
+    "value": "R相",
+    "position": {
+      "x": 589.5,
+      "y": 238.0
+    },
+    "width": 25,
+    "height": 14
+  },
+  {
+    "id": "text_4",
+    "type": "text",
+    "value": "冷冻水供水",
+    "position": {
+      "x": 1262.0,
+      "y": 239.0
+    },
+    "width": 78,
+    "height": 14
+  },
+  {
+    "id": "text_5",
+    "type": "text",
+    "value": "S相",
+    "position": {
+      "x": 589.0,
+      "y": 264.0
+    },
+    "width": 24,
+    "height": 14
+  },
+  {
+    "id": "text_6",
+    "type": "text",
+    "value": "冷冻水回水",
+    "position": {
+      "x": 1294.0,
+      "y": 277.5
+    },
+    "width": 78,
+    "height": 15
+  },
+  {
+    "id": "text_7",
+    "type": "text",
+    "value": "T相",
+    "position": {
+      "x": 589.0,
+      "y": 290.5
+    },
+    "width": 24,
+    "height": 15
+  },
+  {
+    "id": "text_8",
+    "type": "text",
+    "value": "频率",
+    "position": {
+      "x": 1335.5,
+      "y": 308.0
+    },
+    "width": 31,
+    "height": 14
+  },
+  {
+    "id": "text_9",
+    "type": "text",
+    "value": "U相",
+    "position": {
+      "x": 946.5,
+      "y": 310.0
+    },
+    "width": 25,
+    "height": 14
+  },
+  {
+    "id": "text_10",
+    "type": "text",
+    "value": "电流",
+    "position": {
+      "x": 1336.0,
+      "y": 331.0
+    },
+    "width": 30,
+    "height": 14
+  },
+  {
+    "id": "text_11",
+    "type": "text",
+    "value": "V相",
+    "position": {
+      "x": 946.5,
+      "y": 335.5
+    },
+    "width": 25,
+    "height": 15
+  },
+  {
+    "id": "text_12",
+    "type": "text",
+    "value": "总高度:",
+    "position": {
+      "x": 1743.0,
+      "y": 335.5
+    },
+    "width": 52,
+    "height": 15
+  },
+  {
+    "id": "text_13",
+    "type": "text",
+    "value": "1.5米",
+    "position": {
+      "x": 1799.5,
+      "y": 335.0
+    },
+    "width": 35,
+    "height": 14
+  },
+  {
+    "id": "text_14",
+    "type": "text",
+    "value": "W相",
+    "position": {
+      "x": 945.5,
+      "y": 358.0
+    },
+    "width": 29,
+    "height": 14
+  },
+  {
+    "id": "text_15",
+    "type": "text",
+    "value": "液位",
+    "position": {
+      "x": 1856.0,
+      "y": 366.5
+    },
+    "width": 30,
+    "height": 15
+  },
+  {
+    "id": "text_16",
+    "type": "text",
+    "value": "冷冻水供水",
+    "position": {
+      "x": 1579.0,
+      "y": 378.0
+    },
+    "width": 78,
+    "height": 14
+  },
+  {
+    "id": "text_17",
+    "type": "text",
+    "value": "负载率",
+    "position": {
+      "x": 942.0,
+      "y": 382.5
+    },
+    "width": 46,
+    "height": 15
+  },
+  {
+    "id": "text_18",
+    "type": "text",
+    "value": "R相",
+    "position": {
+      "x": 588.5,
+      "y": 387.0
+    },
+    "width": 25,
+    "height": 14
+  },
+  {
+    "id": "text_19",
+    "type": "text",
+    "value": "S相",
+    "position": {
+      "x": 588.0,
+      "y": 413.0
+    },
+    "width": 24,
+    "height": 14
+  },
+  {
+    "id": "text_20",
+    "type": "text",
+    "value": "T相",
+    "position": {
+      "x": 588.0,
+      "y": 440.5
+    },
+    "width": 24,
+    "height": 15
+  },
+  {
+    "id": "text_21",
+    "type": "text",
+    "value": "频率",
+    "position": {
+      "x": 1335.5,
+      "y": 454.5
+    },
+    "width": 31,
+    "height": 15
+  },
+  {
+    "id": "text_22",
+    "type": "text",
+    "value": "电流",
+    "position": {
+      "x": 1336.5,
+      "y": 478.5
+    },
+    "width": 29,
+    "height": 15
+  },
+  {
+    "id": "text_23",
+    "type": "text",
+    "value": "供回水压差",
+    "position": {
+      "x": 1850.0,
+      "y": 486.5
+    },
+    "width": 78,
+    "height": 15
+  },
+  {
+    "id": "text_24",
+    "type": "text",
+    "value": "R相",
+    "position": {
+      "x": 592.5,
+      "y": 536.0
+    },
+    "width": 25,
+    "height": 14
+  },
+  {
+    "id": "text_25",
+    "type": "text",
+    "value": "S相",
+    "position": {
+      "x": 592.0,
+      "y": 561.5
+    },
+    "width": 24,
+    "height": 15
+  },
+  {
+    "id": "text_26",
+    "type": "text",
+    "value": "T相",
+    "position": {
+      "x": 592.0,
+      "y": 588.5
+    },
+    "width": 24,
+    "height": 15
+  },
+  {
+    "id": "text_27",
+    "type": "text",
+    "value": "频率",
+    "position": {
+      "x": 1334.0,
+      "y": 598.5
+    },
+    "width": 30,
+    "height": 15
+  },
+  {
+    "id": "text_28",
+    "type": "text",
+    "value": "U相",
+    "position": {
+      "x": 952.5,
+      "y": 604.5
+    },
+    "width": 25,
+    "height": 15
+  },
+  {
+    "id": "text_29",
+    "type": "text",
+    "value": "电流",
+    "position": {
+      "x": 1335.5,
+      "y": 622.5
+    },
+    "width": 29,
+    "height": 15
+  },
+  {
+    "id": "text_30",
+    "type": "text",
+    "value": "V相",
+    "position": {
+      "x": 949.5,
+      "y": 634.5
+    },
+    "width": 25,
+    "height": 15
+  },
+  {
+    "id": "text_31",
+    "type": "text",
+    "value": "W相",
+    "position": {
+      "x": 949.5,
+      "y": 658.0
+    },
+    "width": 29,
+    "height": 14
+  },
+  {
+    "id": "text_32",
+    "type": "text",
+    "value": "负载率",
+    "position": {
+      "x": 943.0,
+      "y": 680.5
+    },
+    "width": 46,
+    "height": 15
+  },
+  {
+    "id": "text_33",
+    "type": "text",
+    "value": "R相",
+    "position": {
+      "x": 595.5,
+      "y": 688.0
+    },
+    "width": 25,
+    "height": 14
+  },
+  {
+    "id": "text_34",
+    "type": "text",
+    "value": "S相",
+    "position": {
+      "x": 595.0,
+      "y": 714.0
+    },
+    "width": 24,
+    "height": 14
+  },
+  {
+    "id": "text_35",
+    "type": "text",
+    "value": "总高度:",
+    "position": {
+      "x": 1744.0,
+      "y": 722.5
+    },
+    "width": 52,
+    "height": 15
+  },
+  {
+    "id": "text_36",
+    "type": "text",
+    "value": "1.5米",
+    "position": {
+      "x": 1800.0,
+      "y": 722.5
+    },
+    "width": 36,
+    "height": 15
+  },
+  {
+    "id": "text_37",
+    "type": "text",
+    "value": "频率",
+    "position": {
+      "x": 1332.5,
+      "y": 736.5
+    },
+    "width": 31,
+    "height": 15
+  },
+  {
+    "id": "text_38",
+    "type": "text",
+    "value": "T相",
+    "position": {
+      "x": 595.0,
+      "y": 740.5
+    },
+    "width": 24,
+    "height": 15
+  },
+  {
+    "id": "text_39",
+    "type": "text",
+    "value": "电流",
+    "position": {
+      "x": 1333.5,
+      "y": 760.5
+    },
+    "width": 29,
+    "height": 15
+  },
+  {
+    "id": "text_40",
+    "type": "text",
+    "value": "液位",
+    "position": {
+      "x": 1864.5,
+      "y": 762.5
+    },
+    "width": 31,
+    "height": 15
+  },
+  {
+    "id": "text_41",
+    "type": "text",
+    "value": "温度:",
+    "position": {
+      "x": 193.0,
+      "y": 804.5
+    },
+    "width": 36,
+    "height": 15
+  },
+  {
+    "id": "text_42",
+    "type": "text",
+    "value": "室外环境",
+    "position": {
+      "x": 115.0,
+      "y": 829.5
+    },
+    "width": 62,
+    "height": 15
+  },
+  {
+    "id": "text_43",
+    "type": "text",
+    "value": "湿度:",
+    "position": {
+      "x": 193.0,
+      "y": 833.0
+    },
+    "width": 36,
+    "height": 14
+  },
+  {
+    "id": "text_44",
+    "type": "text",
+    "value": "露点:",
+    "position": {
+      "x": 192.5,
+      "y": 861.0
+    },
+    "width": 35,
+    "height": 14
+  },
+  {
+    "id": "text_45",
+    "type": "text",
+    "value": "U相",
+    "position": {
+      "x": 955.5,
+      "y": 892.0
+    },
+    "width": 25,
+    "height": 14
+  },
+  {
+    "id": "text_46",
+    "type": "text",
+    "value": "V相",
+    "position": {
+      "x": 954.5,
+      "y": 918.0
+    },
+    "width": 25,
+    "height": 14
+  },
+  {
+    "id": "text_47",
+    "type": "text",
+    "value": "上电",
+    "position": {
+      "x": 157.0,
+      "y": 936.5
+    },
+    "width": 30,
+    "height": 15
+  },
+  {
+    "id": "text_48",
+    "type": "text",
+    "value": "AC6",
+    "position": {
+      "x": 80.5,
+      "y": 950.0
+    },
+    "width": 69,
+    "height": 26
+  },
+  {
+    "id": "text_49",
+    "type": "text",
+    "value": "W相",
+    "position": {
+      "x": 953.0,
+      "y": 944.5
+    },
+    "width": 30,
+    "height": 15
+  },
+  {
+    "id": "text_50",
+    "type": "text",
+    "value": "近控:",
+    "position": {
+      "x": 291.0,
+      "y": 955.5
+    },
+    "width": 36,
+    "height": 15
+  },
+  {
+    "id": "text_51",
+    "type": "text",
+    "value": "远控:",
+    "position": {
+      "x": 419.0,
+      "y": 955.5
+    },
+    "width": 36,
+    "height": 15
+  },
+  {
+    "id": "text_52",
+    "type": "text",
+    "value": "运行:",
+    "position": {
+      "x": 549.5,
+      "y": 956.0
+    },
+    "width": 35,
+    "height": 14
+  },
+  {
+    "id": "text_53",
+    "type": "text",
+    "value": "手自动;",
+    "position": {
+      "x": 698.0,
+      "y": 956.0
+    },
+    "width": 52,
+    "height": 14
+  },
+  {
+    "id": "text_54",
+    "type": "text",
+    "value": "状态:",
+    "position": {
+      "x": 160.0,
+      "y": 959.0
+    },
+    "width": 36,
+    "height": 14
+  },
+  {
+    "id": "text_55",
+    "type": "text",
+    "value": "负载率",
+    "position": {
+      "x": 951.0,
+      "y": 972.5
+    },
+    "width": 46,
+    "height": 15
+  }
+]

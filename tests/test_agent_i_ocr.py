@@ -44,8 +44,13 @@ class OCRTests(unittest.TestCase):
 
     def test_updates_only_text_and_preserves_source(self):
         original = self.detections.read_bytes()
+        replies = {(68, 230): ocr.Recognition("冷却水回水", 95), (68, 236): ocr.Recognition("Pump A", 88)}
+
+        def fake_recognize(image, *args):
+            return replies[image.shape[:2]]
+
         with patch.object(ocr, "check_engine", return_value="tesseract"), patch.object(
-            ocr, "recognize", side_effect=[ocr.Recognition("冷却水回水", 95), ocr.Recognition("Pump A", 88)],
+            ocr, "recognize", side_effect=fake_recognize,
         ) as recognize:
             summary = self.extract(psm=6)
         result = json.loads(self.output.read_text(encoding="utf-8"))
@@ -58,18 +63,37 @@ class OCRTests(unittest.TestCase):
         self.assertEqual(summary["recognized"], 2)
 
     def test_empty_and_low_confidence_candidates(self):
-        results = [ocr.Recognition("", 0), ocr.Recognition("1.5米", 40), ocr.Recognition("1.5米", 30), ocr.Recognition("", 0), ocr.Recognition("", 0), ocr.Recognition("", 0)]
-        with patch.object(ocr, "check_engine", return_value="tesseract"), patch.object(ocr, "recognize", side_effect=results):
+        queues = {
+            (68, 230): [ocr.Recognition("", 0), ocr.Recognition("1.5米", 40), ocr.Recognition("1.5米", 30)],
+            (68, 236): [ocr.Recognition("", 0), ocr.Recognition("", 0), ocr.Recognition("", 0)],
+        }
+
+        def fake_recognize(image, *args):
+            return queues[image.shape[:2]].pop(0)
+
+        with patch.object(ocr, "check_engine", return_value="tesseract"), patch.object(
+            ocr, "recognize", side_effect=fake_recognize,
+        ):
             summary = self.extract(psm=6)
         result = json.loads(self.output.read_text(encoding="utf-8"))
         self.assertEqual(result[1]["value"], "1.5米")
         self.assertIsNone(result[2]["value"])
         self.assertEqual(summary["unrecognized"], ["label_2"])
         self.assertEqual(summary["low_confidence"], [{"id": "label_17", "confidence": 40}])
+        self.assertEqual(summary["tesseract_calls"], 6)
 
     def test_fallback_selects_higher_confidence_without_overwriting_good_result(self):
-        results = [ocr.Recognition("AC6", 55), ocr.Recognition("ACG", 30), ocr.Recognition("ACG", 40), ocr.Recognition("R相", 42), ocr.Recognition("R相", 91)]
-        with patch.object(ocr, "check_engine", return_value="tesseract"), patch.object(ocr, "recognize", side_effect=results):
+        queues = {
+            (68, 230): [ocr.Recognition("AC6", 55), ocr.Recognition("ACG", 30), ocr.Recognition("ACG", 40)],
+            (68, 236): [ocr.Recognition("R相", 42), ocr.Recognition("R相", 91)],
+        }
+
+        def fake_recognize(image, *args):
+            return queues[image.shape[:2]].pop(0)
+
+        with patch.object(ocr, "check_engine", return_value="tesseract"), patch.object(
+            ocr, "recognize", side_effect=fake_recognize,
+        ):
             self.extract(psm=6)
         result = json.loads(self.output.read_text(encoding="utf-8"))
         self.assertEqual([item["value"] for item in result[1:]], ["AC6", "R相"])
@@ -78,8 +102,12 @@ class OCRTests(unittest.TestCase):
         original = self.detections.read_bytes()
         self.output.write_bytes(b"previous output")
         for error in (RuntimeError("failed"), subprocess.TimeoutExpired("tesseract", 1)):
+            def fake_recognize(image, *args, error=error):
+                if image.shape[:2] == (68, 236):
+                    raise error
+                return ocr.Recognition("first", 95)
             with self.subTest(error=type(error).__name__), patch.object(ocr, "check_engine", return_value="tesseract"), patch.object(
-                ocr, "recognize", side_effect=[ocr.Recognition("first", 95), error],
+                ocr, "recognize", side_effect=fake_recognize,
             ):
                 with self.assertRaisesRegex(RuntimeError, "label_2"):
                     self.extract(psm=6)

@@ -4,10 +4,12 @@ import argparse
 import asyncio
 import base64
 import json
+import math
 import os
 import sqlite3
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -212,6 +214,7 @@ async def recognize_control(
     whitelist: List[str],
     prompt: str,
     context: float,
+    durations: Optional[List[float]] = None,
 ) -> Tuple[str, bool]:
     box = item["bbox"]
     image_bytes = encode_image(crop_control(image, box, context))
@@ -231,7 +234,12 @@ async def recognize_control(
         },
     ]
     async with semaphore:
-        response = await call_llm(client, model, messages, temperature=TEMPERATURE)
+        started = time.perf_counter()
+        try:
+            response = await call_llm(client, model, messages, temperature=TEMPERATURE)
+        finally:
+            if durations is not None:
+                durations.append(round(time.perf_counter() - started, 3))
     content = response.choices[0].message.content or ""
     value = normalize(parse_name(content), whitelist)
     return value, value in whitelist
@@ -249,8 +257,9 @@ async def recognize_all(
 ) -> Dict[str, Any]:
     semaphore = asyncio.Semaphore(concurrency)
     targets = [item for item in items if item.get("type") == "controls"]
+    durations: List[float] = []
     results = await asyncio.gather(*[
-        recognize_control(client, model, semaphore, item, image, whitelist, prompt, context) for item in targets
+        recognize_control(client, model, semaphore, item, image, whitelist, prompt, context, durations) for item in targets
     ], return_exceptions=True)
     matched = []
     unknown = []
@@ -265,7 +274,16 @@ async def recognize_all(
             matched.append(item["id"])
         else:
             unknown.append(item["id"])
-    return {"controls": len(targets), "matched": matched, "unknown": unknown, "failed": failed}
+    summary = {"controls": len(targets), "matched": matched, "unknown": unknown, "failed": failed}
+    if durations:
+        ordered = sorted(durations)
+        summary["llm_seconds"] = {
+            "min": ordered[0],
+            "avg": round(sum(ordered) / len(ordered), 3),
+            "p95": ordered[min(len(ordered) - 1, math.ceil(len(ordered) * 0.95) - 1)],
+            "max": ordered[-1],
+        }
+    return summary
 
 
 def write_atomic(output_path: Path, items: List[Dict[str, Any]]) -> None:

@@ -1,0 +1,18 @@
+    {
+      "c": "ht.Text",
+      "i": 16756,
+      "p": {
+        "position": {
+          "x": 1266,
+          "y": 173
+        },
+        "width": 68,
+        "height": 20
+      },
+      "s": {
+        "text": "文本内容",
+        "text.color": "rgb(0,0,0)",
+        "text.align": "center",
+        "text.font": "16px arial, sans-serif"
+      }
+    }
