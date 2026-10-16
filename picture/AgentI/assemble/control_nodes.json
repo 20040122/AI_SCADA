@@ -1,0 +1,1976 @@
+[
+  {
+    "c": "ht.Node",
+    "i": 16861,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1013.5,
+        "y": 103.5
+      },
+      "width": 65,
+      "height": 19
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16862,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 779.0,
+        "y": 121.0
+      },
+      "width": 66,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16863,
+    "p": {
+      "displayName": "冷水机",
+      "image": "assets/Agent/冷水机.png",
+      "position": {
+        "x": 1004.0,
+        "y": 185.0
+      },
+      "width": 174,
+      "height": 140
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16864,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 780.5,
+        "y": 148.0
+      },
+      "width": 67,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16865,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 386.5,
+        "y": 157.0
+      },
+      "width": 43,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16866,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1178.5,
+        "y": 183.5
+      },
+      "width": 73,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16867,
+    "p": {
+      "displayName": "旁通阀",
+      "image": "assets/Agent/旁通阀.png",
+      "position": {
+        "x": 388.5,
+        "y": 193.0
+      },
+      "width": 37,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16868,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 238.0,
+        "y": 192.5
+      },
+      "width": 42,
+      "height": 19
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16869,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1178.0,
+        "y": 211.0
+      },
+      "width": 72,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16870,
+    "p": {
+      "displayName": "冷却塔",
+      "image": "assets/Agent/冷却塔.png",
+      "position": {
+        "x": 150.0,
+        "y": 249.5
+      },
+      "width": 70,
+      "height": 87
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16871,
+    "p": {
+      "displayName": "调节阀",
+      "image": "assets/Agent/调节阀.png",
+      "position": {
+        "x": 241.0,
+        "y": 224.5
+      },
+      "width": 20,
+      "height": 31
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16872,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 644.0,
+        "y": 239.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16873,
+    "p": {
+      "displayName": "冷却泵",
+      "image": "assets/Agent/冷却泵.png",
+      "position": {
+        "x": 540.0,
+        "y": 293.0
+      },
+      "width": 98,
+      "height": 108
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16874,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 862.0,
+        "y": 253.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16875,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 778.5,
+        "y": 263.5
+      },
+      "width": 57,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16876,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 642.5,
+        "y": 265.5
+      },
+      "width": 45,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16877,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1457.5,
+        "y": 269.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16878,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 61.0,
+        "y": 273.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16879,
+    "p": {
+      "displayName": "电动阀",
+      "image": "assets/Agent/电动阀.png",
+      "position": {
+        "x": 861.5,
+        "y": 284.0
+      },
+      "width": 21,
+      "height": 40
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16880,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 468.5,
+        "y": 279.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16881,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 309.5,
+        "y": 291.0
+      },
+      "width": 43,
+      "height": 22
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16882,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 777.0,
+        "y": 290.5
+      },
+      "width": 56,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16883,
+    "p": {
+      "displayName": "冷冻泵",
+      "image": "assets/Agent/冷冻泵.png",
+      "position": {
+        "x": 1456.5,
+        "y": 333.5
+      },
+      "width": 99,
+      "height": 107
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16884,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 642.0,
+        "y": 292.0
+      },
+      "width": 44,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16885,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1117.5,
+        "y": 306.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16886,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1379.5,
+        "y": 307.0
+      },
+      "width": 45,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16887,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1001.5,
+        "y": 310.5
+      },
+      "width": 55,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16888,
+    "p": {
+      "displayName": "调节阀",
+      "image": "assets/Agent/调节阀.png",
+      "position": {
+        "x": 311.0,
+        "y": 330.0
+      },
+      "width": 22,
+      "height": 44
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16889,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1191.0,
+        "y": 319.5
+      },
+      "width": 54,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16890,
+    "p": {
+      "displayName": "电动阀",
+      "image": "assets/Agent/电动阀.png",
+      "position": {
+        "x": 1115.0,
+        "y": 333.0
+      },
+      "width": 20,
+      "height": 28
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16891,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1380.0,
+        "y": 330.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16892,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1002.0,
+        "y": 335.0
+      },
+      "width": 56,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16893,
+    "p": {
+      "displayName": "补水箱",
+      "image": "assets/Agent/补水箱.png",
+      "position": {
+        "x": 1760.0,
+        "y": 379.0
+      },
+      "width": 70,
+      "height": 100
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16894,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1189.5,
+        "y": 345.5
+      },
+      "width": 55,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16895,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1002.0,
+        "y": 358.0
+      },
+      "width": 56,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16896,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1655.0,
+        "y": 378.0
+      },
+      "width": 52,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16897,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 233.5,
+        "y": 385.0
+      },
+      "width": 43,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16898,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1000.5,
+        "y": 384.5
+      },
+      "width": 55,
+      "height": 19
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16899,
+    "p": {
+      "displayName": "冷却塔",
+      "image": "assets/Agent/冷却塔.png",
+      "position": {
+        "x": 153.5,
+        "y": 421.5
+      },
+      "width": 71,
+      "height": 87
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16900,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 642.0,
+        "y": 390.0
+      },
+      "width": 44,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16901,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1851.5,
+        "y": 395.0
+      },
+      "width": 43,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16902,
+    "p": {
+      "displayName": "冷却泵",
+      "image": "assets/Agent/冷却泵.png",
+      "position": {
+        "x": 541.5,
+        "y": 441.0
+      },
+      "width": 99,
+      "height": 92
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16903,
+    "p": {
+      "displayName": "调节阀",
+      "image": "assets/Agent/调节阀.png",
+      "position": {
+        "x": 232.0,
+        "y": 418.5
+      },
+      "width": 20,
+      "height": 43
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16904,
+    "p": {
+      "displayName": "流量计",
+      "image": "assets/Agent/流量计.png",
+      "position": {
+        "x": 1658.5,
+        "y": 416.5
+      },
+      "width": 21,
+      "height": 35
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16905,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 642.0,
+        "y": 415.0
+      },
+      "width": 44,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16906,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 790.0,
+        "y": 418.0
+      },
+      "width": 62,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16907,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1452.5,
+        "y": 420.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16908,
+    "p": {
+      "displayName": "冷冻泵",
+      "image": "assets/Agent/冷冻泵.png",
+      "position": {
+        "x": 1449.0,
+        "y": 487.0
+      },
+      "width": 104,
+      "height": 112
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16909,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 466.5,
+        "y": 441.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16910,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 642.0,
+        "y": 442.0
+      },
+      "width": 44,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16911,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 791.5,
+        "y": 445.0
+      },
+      "width": 63,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16912,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1007.0,
+        "y": 444.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16913,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1380.0,
+        "y": 454.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16914,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1846.5,
+        "y": 457.5
+      },
+      "width": 55,
+      "height": 23
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16915,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1175.0,
+        "y": 461.0
+      },
+      "width": 68,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16916,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 309.0,
+        "y": 463.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16917,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 65.0,
+        "y": 465.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16918,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1596.0,
+        "y": 467.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16919,
+    "p": {
+      "displayName": "冷水机",
+      "image": "assets/Agent/冷水机.png",
+      "position": {
+        "x": 997.0,
+        "y": 526.5
+      },
+      "width": 174,
+      "height": 135
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16920,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1380.0,
+        "y": 478.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16921,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1175.5,
+        "y": 487.5
+      },
+      "width": 69,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16922,
+    "p": {
+      "displayName": "调节阀",
+      "image": "assets/Agent/调节阀.png",
+      "position": {
+        "x": 311.0,
+        "y": 493.0
+      },
+      "width": 20,
+      "height": 30
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16923,
+    "p": {
+      "displayName": "旁通阀",
+      "image": "assets/Agent/旁通阀.png",
+      "position": {
+        "x": 1597.5,
+        "y": 499.5
+      },
+      "width": 37,
+      "height": 35
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16924,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 862.0,
+        "y": 512.5
+      },
+      "width": 64,
+      "height": 17
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16925,
+    "p": {
+      "displayName": "电动阀",
+      "image": "assets/Agent/电动阀.png",
+      "position": {
+        "x": 861.5,
+        "y": 546.0
+      },
+      "width": 21,
+      "height": 46
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16926,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 647.0,
+        "y": 537.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16927,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 780.0,
+        "y": 537.5
+      },
+      "width": 54,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16928,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 233.0,
+        "y": 549.0
+      },
+      "width": 42,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16929,
+    "p": {
+      "displayName": "冷却泵",
+      "image": "assets/Agent/冷却泵.png",
+      "position": {
+        "x": 538.5,
+        "y": 596.5
+      },
+      "width": 99,
+      "height": 109
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16930,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1633.5,
+        "y": 559.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16931,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 646.0,
+        "y": 563.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16932,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 780.5,
+        "y": 564.0
+      },
+      "width": 55,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16933,
+    "p": {
+      "displayName": "调节阀",
+      "image": "assets/Agent/调节阀.png",
+      "position": {
+        "x": 234.0,
+        "y": 579.0
+      },
+      "width": 20,
+      "height": 30
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16934,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1455.5,
+        "y": 576.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16935,
+    "p": {
+      "displayName": "补水泵",
+      "image": "assets/Agent/补水泵.png",
+      "position": {
+        "x": 1631.0,
+        "y": 612.0
+      },
+      "width": 68,
+      "height": 84
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16936,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1130.5,
+        "y": 583.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16937,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 468.5,
+        "y": 589.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16938,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 645.0,
+        "y": 590.5
+      },
+      "width": 42,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16939,
+    "p": {
+      "displayName": "冷冻泵",
+      "image": "assets/Agent/冷冻泵.png",
+      "position": {
+        "x": 1452.5,
+        "y": 641.0
+      },
+      "width": 99,
+      "height": 108
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16940,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1377.5,
+        "y": 598.5
+      },
+      "width": 43,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16941,
+    "p": {
+      "displayName": "冷却塔",
+      "image": "assets/Agent/冷却塔.png",
+      "position": {
+        "x": 157.0,
+        "y": 633.5
+      },
+      "width": 70,
+      "height": 87
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16942,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1003.0,
+        "y": 604.5
+      },
+      "width": 58,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16943,
+    "p": {
+      "displayName": "电动阀",
+      "image": "assets/Agent/电动阀.png",
+      "position": {
+        "x": 1130.5,
+        "y": 608.5
+      },
+      "width": 21,
+      "height": 29
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16944,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1213.0,
+        "y": 610.0
+      },
+      "width": 42,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16945,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1379.0,
+        "y": 622.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16946,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1003.5,
+        "y": 634.0
+      },
+      "width": 59,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16947,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1203.0,
+        "y": 636.5
+      },
+      "width": 54,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16948,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 307.0,
+        "y": 654.0
+      },
+      "width": 44,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16949,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1003.0,
+        "y": 658.0
+      },
+      "width": 58,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16950,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 72.0,
+        "y": 667.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16951,
+    "p": {
+      "displayName": "调节阀",
+      "image": "assets/Agent/调节阀.png",
+      "position": {
+        "x": 311.5,
+        "y": 691.5
+      },
+      "width": 21,
+      "height": 45
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16952,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1002.5,
+        "y": 682.5
+      },
+      "width": 57,
+      "height": 19
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16953,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 791.5,
+        "y": 688.5
+      },
+      "width": 65,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16954,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 649.5,
+        "y": 689.5
+      },
+      "width": 43,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16955,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1639.0,
+        "y": 692.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16956,
+    "p": {
+      "displayName": "冷却泵",
+      "image": "assets/Agent/冷却泵.png",
+      "position": {
+        "x": 537.5,
+        "y": 736.5
+      },
+      "width": 99,
+      "height": 91
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16957,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 649.0,
+        "y": 715.5
+      },
+      "width": 44,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16958,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 791.5,
+        "y": 715.5
+      },
+      "width": 65,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16959,
+    "p": {
+      "displayName": "补水泵",
+      "image": "assets/Agent/补水泵.png",
+      "position": {
+        "x": 1639.0,
+        "y": 743.0
+      },
+      "width": 68,
+      "height": 76
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16960,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1007.0,
+        "y": 725.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16961,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1456.5,
+        "y": 728.0
+      },
+      "width": 63,
+      "height": 16
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16962,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 468.5,
+        "y": 733.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16963,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1376.5,
+        "y": 736.5
+      },
+      "width": 43,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16964,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1182.5,
+        "y": 738.0
+      },
+      "width": 69,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16965,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 649.0,
+        "y": 742.0
+      },
+      "width": 44,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16966,
+    "p": {
+      "displayName": "冷冻泵",
+      "image": "assets/Agent/冷冻泵.png",
+      "position": {
+        "x": 1451.0,
+        "y": 783.5
+      },
+      "width": 98,
+      "height": 91
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16967,
+    "p": {
+      "displayName": "补水箱",
+      "image": "assets/Agent/补水箱.png",
+      "position": {
+        "x": 1756.5,
+        "y": 781.5
+      },
+      "width": 71,
+      "height": 87
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16968,
+    "p": {
+      "displayName": "冷水机",
+      "image": "assets/Agent/冷水机.png",
+      "position": {
+        "x": 993.0,
+        "y": 808.0
+      },
+      "width": 174,
+      "height": 134
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16969,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1376.5,
+        "y": 760.5
+      },
+      "width": 43,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16970,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1182.5,
+        "y": 765.0
+      },
+      "width": 69,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16971,
+    "p": {
+      "displayName": "室外环境图标",
+      "image": "assets/Agent/室外环境图标.png",
+      "position": {
+        "x": 114.5,
+        "y": 791.0
+      },
+      "width": 35,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16972,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1865.0,
+        "y": 789.0
+      },
+      "width": 42,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16973,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 853.0,
+        "y": 797.0
+      },
+      "width": 64,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16974,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 243.5,
+        "y": 805.5
+      },
+      "width": 43,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16975,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 778.5,
+        "y": 811.5
+      },
+      "width": 59,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16976,
+    "p": {
+      "displayName": "电动阀",
+      "image": "assets/Agent/电动阀.png",
+      "position": {
+        "x": 850.5,
+        "y": 822.5
+      },
+      "width": 21,
+      "height": 29
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16977,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 243.5,
+        "y": 834.0
+      },
+      "width": 43,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16978,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 779.0,
+        "y": 838.5
+      },
+      "width": 60,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16979,
+    "p": {
+      "displayName": "绿色状态",
+      "image": "symbols/Agent/绿色状态.json",
+      "position": {
+        "x": 1174.5,
+        "y": 839.0
+      },
+      "width": 65,
+      "height": 18
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16980,
+    "p": {
+      "displayName": "电动阀",
+      "image": "assets/Agent/电动阀.png",
+      "position": {
+        "x": 1174.0,
+        "y": 873.5
+      },
+      "width": 20,
+      "height": 47
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16981,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 243.5,
+        "y": 861.5
+      },
+      "width": 43,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16982,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1245.5,
+        "y": 863.5
+      },
+      "width": 65,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16983,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1246.0,
+        "y": 890.5
+      },
+      "width": 66,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16984,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1006.0,
+        "y": 892.0
+      },
+      "width": 54,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16985,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1478.5,
+        "y": 911.0
+      },
+      "width": 109,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16986,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1604.5,
+        "y": 911.0
+      },
+      "width": 109,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16987,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1724.0,
+        "y": 911.0
+      },
+      "width": 108,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16988,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1846.5,
+        "y": 911.0
+      },
+      "width": 109,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16989,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1357.0,
+        "y": 911.5
+      },
+      "width": 108,
+      "height": 35
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16990,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1005.0,
+        "y": 918.5
+      },
+      "width": 54,
+      "height": 21
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16991,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1006.0,
+        "y": 946.0
+      },
+      "width": 54,
+      "height": 20
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16992,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1478.0,
+        "y": 955.0
+      },
+      "width": 108,
+      "height": 38
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16993,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1724.0,
+        "y": 954.5
+      },
+      "width": 108,
+      "height": 37
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16994,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1846.5,
+        "y": 954.5
+      },
+      "width": 109,
+      "height": 37
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16995,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1358.0,
+        "y": 955.0
+      },
+      "width": 108,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16996,
+    "p": {
+      "displayName": "按钮",
+      "image": "symbols/Agent/按钮.json",
+      "position": {
+        "x": 1604.5,
+        "y": 955.0
+      },
+      "width": 109,
+      "height": 36
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16997,
+    "p": {
+      "displayName": "状态显示",
+      "image": "symbols/现场控制系统/样式修改/状态显示.json",
+      "position": {
+        "x": 224.5,
+        "y": 955.0
+      },
+      "width": 69,
+      "height": 30
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16998,
+    "p": {
+      "displayName": "状态显示",
+      "image": "symbols/现场控制系统/样式修改/状态显示.json",
+      "position": {
+        "x": 481.0,
+        "y": 955.0
+      },
+      "width": 68,
+      "height": 30
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 16999,
+    "p": {
+      "displayName": "状态显示",
+      "image": "symbols/现场控制系统/样式修改/状态显示.json",
+      "position": {
+        "x": 611.0,
+        "y": 955.0
+      },
+      "width": 68,
+      "height": 30
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17000,
+    "p": {
+      "displayName": "状态显示",
+      "image": "symbols/现场控制系统/样式修改/状态显示.json",
+      "position": {
+        "x": 353.5,
+        "y": 956.0
+      },
+      "width": 69,
+      "height": 30
+    }
+  },
+  {
+    "c": "ht.Node",
+    "i": 17001,
+    "p": {
+      "displayName": "数值显示",
+      "image": "symbols/现场控制系统/样式修改/数值显示2-小.json",
+      "position": {
+        "x": 1005.0,
+        "y": 970.0
+      },
+      "width": 54,
+      "height": 20
+    }
+  }
+]

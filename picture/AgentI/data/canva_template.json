@@ -1,0 +1,33 @@
+{
+  "v": "8.0.5",
+  "p": {
+    "layers": [
+      {
+        "name": "0",
+        "visible": true,
+        "selectable": true,
+        "movable": true,
+        "editable": true
+      }
+    ],
+    "autoAdjustIndex": true,
+    "hierarchicalRendering": true
+  },
+  "a": {
+    "width": 1920,
+    "height": 1080,
+    "fitContent": true,
+    "rectSelectable": false,
+    "zoomable": false,
+    "pannable": false
+  },
+  "d": [
+    
+  ],
+  "contentRect": {
+    "x": 0,
+    "y": 0,
+    "width": 1920,
+    "height": 1080
+  }
+}
