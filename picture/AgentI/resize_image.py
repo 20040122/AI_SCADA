@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from typing import Optional
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
@@ -68,11 +69,16 @@ def resize_image(
     background: str = "white",
     *,
     grid_step: int = 20,
+    clean_output_path: Optional[Path] = None,
 ) -> None:
     input_path = Path(input_path)
     output_path = Path(output_path)
     if input_path.resolve() == output_path.resolve():
         raise ValueError("输入和输出路径不能相同，以免覆盖原图。")
+    if clean_output_path is not None:
+        clean_output_path = Path(clean_output_path)
+        if clean_output_path.resolve() in (input_path.resolve(), output_path.resolve()):
+            raise ValueError("干净图路径不能与输入图片或网格图路径相同。")
     if not isinstance(grid_step, int) or grid_step <= 0:
         raise ValueError("网格间距必须为正整数。")
 
@@ -89,6 +95,9 @@ def resize_image(
         (target_size[1] - scaled.height) // 2,
     )
     canvas.alpha_composite(scaled, dest=offset)
+    if clean_output_path is not None:
+        clean_output_path.parent.mkdir(parents=True, exist_ok=True)
+        canvas.convert("RGB").save(clean_output_path, format="PNG")
     reference = create_grid_image(canvas, grid_step)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     reference.save(output_path, format="PNG")
@@ -96,10 +105,11 @@ def resize_image(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="等比例缩放并居中补边，仅输出 1920×1080 带坐标网格的 PNG 图片。"
+        description="等比例缩放并居中补边，生成 1920×1080 网格参考图，可同时输出无网格识别图。"
     )
     parser.add_argument("input", type=Path, help="输入图片路径")
     parser.add_argument("output", type=Path, nargs="?", help="网格图片输出路径（建议使用 .png）")
+    parser.add_argument("--clean-output", type=Path, default=None, help="同时输出用于识别的无网格缩放图")
     parser.add_argument(
         "--background", default="white", help="补边颜色，默认 white，可使用 '#ffffff' 等颜色值"
     )
@@ -113,6 +123,7 @@ def main() -> None:
         resize_image(
             args.input, output, args.background,
             grid_step=args.grid_step,
+            clean_output_path=args.clean_output,
         )
     except (OSError, ValueError) as error:
         parser.exit(1, f"处理失败：{error}\n")

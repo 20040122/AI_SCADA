@@ -61,17 +61,7 @@ def match_material(value: str, materials: List[Dict[str, Any]]) -> Optional[Dict
     exact = {material["displayName"]: material for material in materials}
     if name in exact:
         return exact[name]
-    name = _strip_unknown(name)
-    if name in exact:
-        return exact[name]
-    contained = [
-        material for material in materials
-        if name and (name in material["displayName"] or material["displayName"] in name)
-    ]
-    if not contained:
-        return None
-    prefixed = [material for material in contained if material["displayName"].startswith(name)]
-    return max(prefixed or contained, key=lambda material: len(material["displayName"]))
+    return exact.get(_strip_unknown(name))
 
 
 def convert_control_nodes(

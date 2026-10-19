@@ -12,8 +12,12 @@ PROJECT = ROOT.parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from control import convert_control_nodes, load_query_results
-from text import convert_text_nodes
+if __package__:
+    from .control import convert_control_nodes, load_query_results
+    from .text import convert_text_nodes
+else:
+    from control import convert_control_nodes, load_query_results
+    from text import convert_text_nodes
 
 
 def compile_canvas(
@@ -23,8 +27,9 @@ def compile_canvas(
     control_template: Dict[str, Any],
     materials: List[Dict[str, Any]],
 ) -> Tuple[Dict[str, Any], List[str]]:
-    control_nodes, unmatched = convert_control_nodes(detections, control_template, materials)
-    text_nodes = convert_text_nodes(detections, text_template)
+    start_id = min(control_template["i"], text_template["i"])
+    control_nodes, unmatched = convert_control_nodes(detections, control_template, materials, start_id=start_id)
+    text_nodes = convert_text_nodes(detections, text_template, start_id=start_id + len(control_nodes))
     canvas = deepcopy(canvas_template)
     canvas["d"] = control_nodes + text_nodes
     return canvas, unmatched

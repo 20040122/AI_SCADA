@@ -54,20 +54,24 @@ def line_groups(values: np.ndarray) -> List[Tuple[int, int]]:
     return [(int(g[0]), int(g[-1] - g[0] + 1)) for g in groups]
 
 
-def grid_detection(image: np.ndarray) -> Tuple[Dict[str, Any], np.ndarray, np.ndarray]:
+def grid_detection(image: np.ndarray, enabled: bool = True) -> Tuple[Dict[str, Any], np.ndarray, np.ndarray]:
     height, width = image.shape[:2]
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    cyan = cv2.inRange(hsv, (82, 15, 115), (103, 255, 255))
-    horizontal = cv2.morphologyEx(cyan, cv2.MORPH_OPEN, np.ones((1, max(20, width // 4)), np.uint8))
-    vertical = cv2.morphologyEx(cyan, cv2.MORPH_OPEN, np.ones((max(20, height // 4), 1), np.uint8))
-    xs = line_groups((np.count_nonzero(vertical, axis=0) > height * 0.4) | (np.count_nonzero(cyan, axis=0) > height * 0.55))
-    ys = line_groups((np.count_nonzero(horizontal, axis=1) > width * 0.4) | (np.count_nonzero(cyan, axis=1) > width * 0.55))
-    geometry = np.zeros((height, width), np.uint8)
-    for x, thickness in xs:
-        geometry[:, x:x + thickness] = 255
-    for y, thickness in ys:
-        geometry[y:y + thickness, :] = 255
-    mask = cv2.bitwise_and(geometry, cyan)
+    xs = []
+    ys = []
+    mask = np.zeros((height, width), np.uint8)
+    if enabled:
+        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        cyan = cv2.inRange(hsv, (82, 15, 115), (103, 255, 255))
+        horizontal = cv2.morphologyEx(cyan, cv2.MORPH_OPEN, np.ones((1, max(20, width // 4)), np.uint8))
+        vertical = cv2.morphologyEx(cyan, cv2.MORPH_OPEN, np.ones((max(20, height // 4), 1), np.uint8))
+        xs = line_groups((np.count_nonzero(vertical, axis=0) > height * 0.4) | (np.count_nonzero(cyan, axis=0) > height * 0.55))
+        ys = line_groups((np.count_nonzero(horizontal, axis=1) > width * 0.4) | (np.count_nonzero(cyan, axis=1) > width * 0.55))
+        geometry = np.zeros((height, width), np.uint8)
+        for x, thickness in xs:
+            geometry[:, x:x + thickness] = 255
+        for y, thickness in ys:
+            geometry[y:y + thickness, :] = 255
+        mask = cv2.bitwise_and(geometry, cyan)
     cleaned = cv2.inpaint(image, mask, 2, cv2.INPAINT_TELEA) if np.any(mask) else image.copy()
     info = {
         "id": "grid_1",
@@ -375,15 +379,16 @@ def annotate(image: np.ndarray, items: List[Dict[str, Any]]) -> np.ndarray:
 
 def run_detection(
     input_path: Path, output_dir: Path, ocr: bool = False, language: str = "chi_sim+eng",
+    remove_grid: bool = True,
 ) -> Tuple[np.ndarray, List[Dict[str, Any]], Dict[str, Any]]:
     image = read_image(input_path)
     output_dir.mkdir(parents=True, exist_ok=True)
-    filenames = ["01_grid_mask.png", "02_grid_removed.png", "03_controls.png", "04_text.png", "05_hierarchy.png", "detections_01.json"]
+    filenames = ["01_controls.png", "02_text.png", "03_hierarchy.png", "detections_01.json"]
     legacy_filenames = ["03_components.png", "04_controls.png", "05_text.png", "06_hierarchy.png"]
     if input_path.resolve() in [(output_dir / name).resolve() for name in filenames + legacy_filenames]:
         raise ValueError("输入路径与结果文件路径冲突。")
     scale = image.shape[1] / 1920.0
-    grid, grid_mask, cleaned = grid_detection(image)
+    grid, _, cleaned = grid_detection(image, enabled=remove_grid)
     controls, occupied = controls_detection(cleaned, scale)
     components, component_mask = components_detection(cleaned, occupied, scale)
     controls = sorted(components + controls, key=lambda item: (item["bbox"][1], item["bbox"][0]))
@@ -419,7 +424,7 @@ def run_detection(
         "counts": {"controls": len(controls), "texts": len(texts)},
         "nodes": items,
     }
-    images = [grid_mask, cleaned, annotate(image, controls), annotate(image, texts), annotate(image, controls + texts)]
+    images = [annotate(image, controls), annotate(image, texts), annotate(image, controls + texts)]
     for name, rendered in zip(filenames[:-1], images):
         write_image(output_dir / name, rendered)
     exported = [{"id": item["id"], "type": item["layer"], "bbox": item["bbox"], "value": None} for item in controls + texts]

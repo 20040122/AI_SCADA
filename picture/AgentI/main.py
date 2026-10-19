@@ -33,10 +33,12 @@ def run_all(
     background: str = "white",
     grid_step: int = 20,
     model: Optional[str] = None,
+    clean_image: Optional[Path] = None,
 ) -> Tuple[Dict[str, Any], List[str]]:
-    resize_image(input_image, grid_image, background, grid_step=grid_step)
-    print("[1/4] 网格图已生成：{}".format(grid_image))
-    run_pipeline(grid_image, opencv_dir, detections_path, db_path, model=model)
+    clean_image = clean_image or grid_image.with_name("{}_clean.png".format(grid_image.stem))
+    resize_image(input_image, grid_image, background, grid_step=grid_step, clean_output_path=clean_image)
+    print("[1/4] 识别图已生成：{}，坐标参考图：{}".format(clean_image, grid_image))
+    run_pipeline(clean_image, opencv_dir, detections_path, db_path, model=model, remove_grid=False)
     print("[2/4] 检测、文字识别与控件命名完成：{}".format(detections_path))
     detections = convert_detections(json.loads(detections_path.read_text(encoding="utf-8")))
     print("[3/4] 已转换 {} 条检测结果".format(len(detections)))
@@ -56,9 +58,10 @@ def run_all(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="SCADA 一键流程：缩放补网格 → 检测识别命名 → 拼装画布 JSON")
+    parser = argparse.ArgumentParser(description="SCADA 一键流程：缩放补边 → 无网格图检测识别命名 → 拼装画布 JSON")
     parser.add_argument("--input", type=Path, default=ROOT / "data" / "input.png", help="输入图片路径")
     parser.add_argument("--grid-image", type=Path, default=ROOT / "data" / "output.png", help="1920×1080 网格图输出路径")
+    parser.add_argument("--clean-image", type=Path, default=None, help="无网格识别图路径，默认在网格图文件名后添加 _clean")
     parser.add_argument("--opencv-dir", type=Path, default=ROOT / "opencv_output", help="OpenCV 中间结果目录")
     parser.add_argument("--detections", type=Path, default=ROOT / "opencv_output" / "detections.json", help="检测结果 JSON 路径")
     parser.add_argument("--db", type=Path, default=PROJECT / "data" / "sqlite" / "material.db", help="物料数据库路径")
@@ -73,7 +76,7 @@ def main() -> None:
     try:
         run_all(
             args.input, args.grid_image, args.opencv_dir, args.detections,
-            args.db, canvas_output, args.background, args.grid_step, args.model,
+            args.db, canvas_output, args.background, args.grid_step, args.model, args.clean_image,
         )
     except (OSError, ValueError, RuntimeError, json.JSONDecodeError, sqlite3.Error, cv2.error, subprocess.TimeoutExpired) as error:
         parser.exit(1, "流程失败：{}\n".format(error))

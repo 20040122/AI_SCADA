@@ -37,13 +37,14 @@ def run_pipeline(
     context: float = DEFAULT_CONTEXT,
     dump_crops: Optional[Path] = None,
     ocr_workers: int = 6,
+    remove_grid: bool = True,
 ) -> Dict[str, Any]:
     if output_path.resolve() == image_path.resolve():
         raise ValueError("输出路径不能覆盖输入图片。")
     timing: Dict[str, Any] = {}
     started = time.perf_counter()
     stage = time.perf_counter()
-    image, items, detection = run_detection(image_path, output_dir)
+    image, items, detection = run_detection(image_path, output_dir, remove_grid=remove_grid)
     timing["detection_seconds"] = round(time.perf_counter() - stage, 3)
 
     def timed(label: str, func):
@@ -82,7 +83,8 @@ def run_pipeline(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="SCADA 全流程：OpenCV 检测 → Tesseract 文字识别 → DeepSeek 控件命名，仅写出最终 detections.json")
-    parser.add_argument("--image", type=Path, default=ROOT / "data" / "output.png")
+    parser.add_argument("--image", type=Path, default=ROOT / "data" / "output_clean.png")
+    parser.add_argument("--remove-grid", action="store_true", help="输入图片自带网格时启用网格检测和去除")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "opencv_output")
     parser.add_argument("--output", type=Path, default=ROOT / "opencv_output" / "detections.json")
     parser.add_argument("--db", type=Path, default=PROJECT / "data" / "sqlite" / "material.db")
@@ -102,6 +104,7 @@ def main() -> None:
             args.image, args.output_dir, args.output, args.db, args.ocr_lang,
             args.psm, args.target_height, args.min_confidence, args.timeout,
             args.model, args.concurrency, args.context, args.dump_crops, args.ocr_workers,
+            remove_grid=args.remove_grid,
         )
     except (OSError, ValueError, RuntimeError, json.JSONDecodeError, sqlite3.Error, cv2.error, subprocess.TimeoutExpired) as error:
         parser.exit(1, "流程失败: {}\n".format(error))
