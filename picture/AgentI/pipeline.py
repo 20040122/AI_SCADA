@@ -17,7 +17,7 @@ PROJECT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from name import DEFAULT_CONCURRENCY, DEFAULT_CONTEXT, fill_control_names
+from name import DEFAULT_CONCURRENCY, DEFAULT_CONTEXT, fill_control_names, refine_label_values
 from ocr import fill_text_values, write_atomic
 from opencv import run_detection
 
@@ -38,6 +38,7 @@ def run_pipeline(
     dump_crops: Optional[Path] = None,
     ocr_workers: int = 6,
     remove_grid: bool = True,
+    refine_labels: bool = True,
 ) -> Dict[str, Any]:
     if output_path.resolve() == image_path.resolve():
         raise ValueError("输出路径不能覆盖输入图片。")
@@ -67,6 +68,7 @@ def run_pipeline(
         ocr_summary = ocr_future.result()
         naming_summary = naming_future.result()
     timing["parallel_seconds"] = round(time.perf_counter() - stage, 3)
+    label_summary = timed("label_refinement_seconds", lambda: refine_label_values(image, items, model, concurrency)) if refine_labels else {"enabled": False}
     stage = time.perf_counter()
     write_atomic(output_path, items)
     timing["write_seconds"] = round(time.perf_counter() - stage, 3)
@@ -77,6 +79,7 @@ def run_pipeline(
         "detection": {"counts": detection["counts"]},
         "ocr": ocr_summary,
         "naming": naming_summary,
+        "label_refinement": label_summary,
         "timing": timing,
     }
 
@@ -98,6 +101,7 @@ def main() -> None:
     parser.add_argument("--context", type=float, default=DEFAULT_CONTEXT, help="控件裁剪图向四周外扩的比例")
     parser.add_argument("--dump-crops", type=Path, default=None, help="导出全部控件裁剪图到该目录，用于人工核对")
     parser.add_argument("--ocr-workers", type=int, default=6, help="Tesseract 文本识别的并行工作线程数")
+    parser.add_argument("--no-refine-labels", action="store_true", help="关闭设备标签的视觉转写复核")
     args = parser.parse_args()
     try:
         result = run_pipeline(
@@ -105,6 +109,7 @@ def main() -> None:
             args.psm, args.target_height, args.min_confidence, args.timeout,
             args.model, args.concurrency, args.context, args.dump_crops, args.ocr_workers,
             remove_grid=args.remove_grid,
+            refine_labels=not args.no_refine_labels,
         )
     except (OSError, ValueError, RuntimeError, json.JSONDecodeError, sqlite3.Error, cv2.error, subprocess.TimeoutExpired) as error:
         parser.exit(1, "流程失败: {}\n".format(error))

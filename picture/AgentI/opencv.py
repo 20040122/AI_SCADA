@@ -95,7 +95,6 @@ def controls_detection(image: np.ndarray, scale: float) -> Tuple[List[Dict[str, 
     blue = cv2.inRange(hsv, (88, 75, 130), (112, 255, 255))
     red = cv2.bitwise_or(cv2.inRange(hsv, (0, 100, 100), (25, 255, 255)), cv2.inRange(hsv, (170, 100, 100), (179, 255, 255)))
     gray_indicator = cv2.inRange(hsv, (0, 0, 110), (179, 30, 225))
-    gray_indicator[:round(height * 0.84), :] = 0
     b, g, r = cv2.split(image)
     pale = np.where((b.astype(np.int16) - r.astype(np.int16) > 3) & (b.astype(np.int16) - g.astype(np.int16) > 2) & (r > 170) & (hsv[:, :, 1] < 65), 255, 0).astype(np.uint8)
     results = []
@@ -113,7 +112,9 @@ def controls_detection(image: np.ndarray, scale: float) -> Tuple[List[Dict[str, 
                     valid = valid and w >= 55 * scale and h >= 23 * scale
             else:
                 valid = 65 * scale <= w <= 160 * scale and 23 * scale <= h <= 55 * scale and ratio >= 1.6
-            if not valid or area / (w * h) < 0.38 or y < 18 * scale or x < 20 * scale:
+            if not valid or area / (w * h) < 0.38:
+                continue
+            if kind == "indicator" and area / (w * h) < 0.65:
                 continue
             actual_kind = "indicator" if kind == "status" and h > 24 * scale else kind
             item = node("controls", len(results) + 1, actual_kind, (x, y, w, h), min(0.95, 0.55 + area / (w * h) * 0.4))
@@ -129,32 +130,49 @@ def controls_detection(image: np.ndarray, scale: float) -> Tuple[List[Dict[str, 
 
 
 def components_detection(image: np.ndarray, occupied: np.ndarray, scale: float) -> Tuple[List[Dict[str, Any]], np.ndarray]:
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    foreground = cv2.inRange(hsv, (0, 45, 35), (179, 255, 255))
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    neutral = np.where((gray < 200) & (hsv[:, :, 1] < 45), 255, 0).astype(np.uint8)
-    expanded_controls = cv2.dilate(occupied, np.ones((max(3, round(5 * scale)), max(3, round(5 * scale))), np.uint8))
-    neutral[expanded_controls > 0] = 0
-    neutral = cv2.morphologyEx(neutral, cv2.MORPH_CLOSE, np.ones((max(2, round(3 * scale)), max(2, round(3 * scale))), np.uint8))
-    neutral_boxes = boxes(neutral)
-    for x, y, w, h, area in list(neutral_boxes):
-        if 35 * scale < w <= 100 * scale and 35 * scale <= h <= 65 * scale:
-            top = neutral[y:y + max(1, h - round(18 * scale)), x:x + w]
-            neutral_boxes.extend((x + bx, y + by, bw, bh, size) for bx, by, bw, bh, size in boxes(top))
-    for x, y, w, h, area in neutral_boxes:
-        if 10 * scale <= w <= 35 * scale and 20 * scale <= h <= 45 * scale and area >= 100 * scale * scale:
-            foreground[y:y + h, x:x + w] |= neutral[y:y + h, x:x + w]
+    border = np.concatenate((image[0], image[-1], image[:, 0], image[:, -1]))
+    background = np.median(border, axis=0)
+    difference = np.max(np.abs(image.astype(np.float32) - background), axis=2)
+    foreground = np.where(difference > 28, 255, 0).astype(np.uint8)
+    expanded_controls = cv2.dilate(occupied, np.ones((3, 3), np.uint8))
     foreground[expanded_controls > 0] = 0
-    foreground[:max(1, round(18 * scale)), :] = 0
-    foreground[:, :max(1, round(40 * scale))] = 0
-    kernel_size = max(3, round(7 * scale))
-    merged = cv2.morphologyEx(foreground, cv2.MORPH_CLOSE, np.ones((kernel_size, kernel_size), np.uint8))
+    seeds = np.zeros_like(foreground)
+    separated = cv2.morphologyEx(foreground, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
+    candidates = []
+    raw_boxes = boxes(foreground)
+    substantial = [box for box in raw_boxes if box[2] >= 10 * scale and box[3] >= 23 * scale and box[4] / (box[2] * box[3]) >= 0.3]
+    for x, y, w, h, area in raw_boxes:
+        if w < 10 * scale or h < 23 * scale or area < 100 * scale * scale:
+            continue
+        if area / (w * h) < 0.18 and not any(contains([x, y, w, h], list(box[:4])) for box in substantial):
+            continue
+        if h <= 60 * scale:
+            body = foreground[y:y + h, x:x + w]
+            upper_height = max(1, round(h * 0.6))
+            upper_width = np.count_nonzero(np.any(body[:upper_height], axis=0))
+            row_widths = np.array([np.ptp(np.flatnonzero(row)) + 1 if np.any(row) else 0 for row in body])
+            widened = np.flatnonzero((np.arange(h) >= upper_height) & (row_widths > upper_width * 1.6))
+            if upper_width < w * 0.65 and widened.size:
+                bx, by, bw, bh = tight_box(body[:int(widened[0])])
+                x, y, w, h = x + bx, y + by, bw, bh
+            parts = [part for part in boxes(separated[y:y + h, x:x + w]) if part[3] >= 23 * scale and part[4] >= 100 * scale * scale]
+            if len(parts) == 1 and parts[0][3] < h - 5 * scale and parts[0][2] <= w * 0.75:
+                px, py, pw, ph, area = parts[0]
+                x, y, w, h = x + max(0, px - 1), y + max(0, py - 1), pw, ph
+        candidates.append((x, y, w, h, area))
+    for x, y, w, h, area in candidates:
+        aligned = [other for other in candidates if abs(other[1] - y) <= 3 * scale and abs(other[3] - h) <= 3 * scale and abs(other[0] - x) <= 3 * max(w, other[2]) and other[3] <= 30 * scale]
+        if h <= 30 * scale and len(aligned) >= 3:
+            continue
+        seeds[y:y + h, x:x + w] |= foreground[y:y + h, x:x + w]
+    kernel_size = max(2, round(3 * scale))
+    merged = cv2.morphologyEx(seeds, cv2.MORPH_CLOSE, np.ones((kernel_size, kernel_size), np.uint8))
     results = []
     mask = np.zeros(image.shape[:2], np.uint8)
     for x, y, w, h, area in boxes(merged):
-        if w < 13 * scale or h < 17 * scale or area < 160 * scale * scale:
+        if w < 10 * scale or h < 23 * scale or area < 100 * scale * scale:
             continue
-        if w > 270 * scale or h > 230 * scale or y > image.shape[0] * 0.84:
+        if w * h > image.shape[0] * image.shape[1] * 0.5:
             continue
         if w / h > 5 or h / w > 8:
             continue
@@ -162,6 +180,25 @@ def components_detection(image: np.ndarray, occupied: np.ndarray, scale: float) 
         item["parent_id"] = "grid_1"
         results.append(item)
         mask[y:y + h, x:x + w] |= foreground[y:y + h, x:x + w]
+    for item in list(results):
+        x, y, w, h = item["bbox"]
+        if w / h >= 0.5:
+            continue
+        nearby = []
+        for other in results:
+            if other is item:
+                continue
+            ox, oy, ow, oh = other["bbox"]
+            overlap = max(0, min(y + h, oy + oh) - max(y, oy)) / h
+            gap = max(ox - x - w, x - ox - ow, 0)
+            if ow >= 2 * w and oh >= h and overlap >= 0.7 and gap <= max(3 * scale, ow * 0.2):
+                nearby.append((gap, other))
+        if nearby:
+            other = min(nearby, key=lambda pair: pair[0])[1]
+            ox, oy, ow, oh = other["bbox"]
+            left, top = min(x, ox), min(y, oy)
+            other["bbox"] = [left, top, max(x + w, ox + ow) - left, max(y + h, oy + oh) - top]
+            results.remove(item)
     return results, mask
 
 
@@ -179,87 +216,42 @@ def tight_box(mask: np.ndarray, offset: Tuple[int, int] = (0, 0)) -> Tuple[int, 
     return int(xs.min()) + offset[0], int(ys.min()) + offset[1], int(xs.max() - xs.min() + 1), int(ys.max() - ys.min() + 1)
 
 
-def contains_hash(mask: np.ndarray, scale: float) -> bool:
-    pattern = ["00110010", "00110010", "00110110", "11111111", "01100110", "01100100", "01100110", "11111111", "01001100", "01001100", "11001000"]
-    reference = np.array([[int(pixel) for pixel in row] for row in pattern], np.uint8)
-    for x, y, w, h, area in boxes(mask):
-        if not (6 * scale <= h <= 24 * scale and 0.4 <= w / h <= 1.0 and x >= mask.shape[1] * 0.45):
-            continue
-        symbol = cv2.resize((mask[y:y + h, x:x + w] > 0).astype(np.uint8), (8, 11), interpolation=cv2.INTER_NEAREST)
-        intersection = np.count_nonzero(symbol & reference)
-        union = np.count_nonzero(symbol | reference)
-        if intersection / max(1, union) >= 0.62:
-            return True
-    height, width = mask.shape
-    for template_height in range(max(5, round(9 * scale)), min(height, round(15 * scale)) + 1):
-        for template_width in range(max(3, round(template_height * 0.55)), round(template_height * 0.85) + 1):
-            if template_width > width:
-                continue
-            template = cv2.resize(reference * 255, (template_width, template_height), interpolation=cv2.INTER_NEAREST)
-            scores = cv2.matchTemplate(mask, template, cv2.TM_CCOEFF_NORMED)
-            start = max(round(width * 0.55), width - template_width - round(12 * scale))
-            stop = width - template_width - max(2, round(3 * scale))
-            if start <= stop and float(scores[:, start:stop + 1].max()) >= 0.57:
-                return True
-    return False
-
-
-def is_unit(box: Tuple[int, ...], controls: List[Dict[str, Any]], scale: float) -> bool:
-    x, y, w, h = box[:4]
-    if w > 45 * scale or h > 14 * scale:
-        return False
-    for control in controls:
-        if control["type"] not in ("value_field", "equipment_candidate"):
-            continue
-        cx, cy, cw, ch = control["bbox"]
-        gap = x - cx - cw
-        if -2 * scale <= gap <= 40 * scale and abs(y + h / 2 - cy - ch / 2) <= max(8 * scale, ch * 0.5):
-            return True
-    return False
-
-
 def text_detection(image: np.ndarray, component_mask: np.ndarray, controls: List[Dict[str, Any]], scale: float) -> List[Dict[str, Any]]:
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    dark = np.where((gray < 135) & ((hsv[:, :, 1] < 110) | (gray < 105)), 255, 0).astype(np.uint8)
-    external = dark.copy()
-    opened = cv2.morphologyEx(component_mask, cv2.MORPH_OPEN, np.ones((max(2, round(3 * scale)), max(2, round(3 * scale))), np.uint8))
-    equipment_body = np.zeros_like(external)
-    for control in controls:
-        if control["type"] != "equipment_candidate":
-            continue
-        x, y, w, h = control["bbox"]
-        parts = boxes(opened[y:y + h, x:x + w])
-        if not parts:
-            continue
-        minimum_area = max(9, round(12 * scale * scale))
-        substantial_area = max(part[4] for part in parts) * 0.15
-        parts = [part for part in parts if part[4] >= minimum_area and (part[4] >= substantial_area or part[1] < h * 0.6)]
-        if not parts:
-            continue
-        body = np.zeros((h, w), np.uint8)
-        for px, py, pw, ph, _ in parts:
-            body[py:py + ph, px:px + pw] |= opened[y + py:y + py + ph, x + px:x + px + pw]
-        rows = np.flatnonzero(np.any(body, axis=1))
-        left_edges = [int(np.flatnonzero(body[row])[0]) for row in rows]
-        right_edges = [int(np.flatnonzero(body[row])[-1]) for row in rows]
-        for row in range(int(rows[0]), int(rows[-1]) + 1):
-            left = round(float(np.interp(row, rows, left_edges)))
-            right = round(float(np.interp(row, rows, right_edges)))
-            equipment_body[y + row, x + left:x + right + 1] = 255
-    margin = max(1, round(2 * scale))
-    equipment_body = cv2.dilate(equipment_body, np.ones((2 * margin + 1, 2 * margin + 1), np.uint8))
-    external[equipment_body > 0] = 0
-    results = []
+    dark = np.where((gray < 150) & ((hsv[:, :, 1] < 90) | (gray < 105)), 255, 0).astype(np.uint8)
+    bright = np.where((gray > 225) & (hsv[:, :, 1] < 45), 255, 0).astype(np.uint8)
+    candidates = np.zeros_like(gray)
+    for source, light in [(dark, False), (bright, True)]:
+        glyphs = boxes(glyph_mask(source, scale))
+        if not light:
+            separated = cv2.morphologyEx(source, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
+            glyphs.extend((max(0, x - 1), max(0, y - 1), w, h, area) for x, y, w, h, area in boxes(glyph_mask(separated, scale)))
+        for x, y, w, h, area in glyphs:
+            margin = max(2, round(3 * scale))
+            left, top = max(0, x - margin), max(0, y - margin)
+            right, bottom = min(image.shape[1], x + w + margin), min(image.shape[0], y + h + margin)
+            patch = gray[top:bottom, left:right]
+            ring = np.ones(patch.shape, bool)
+            ring[y - top:y - top + h, x - left:x - left + w] = False
+            surrounding = patch[ring]
+            if not surrounding.size:
+                continue
+            if light:
+                valid = np.median(surrounding) < 215 and np.any(component_mask[y:y + h, x:x + w])
+            else:
+                valid = np.median(surrounding) > 215
+            if valid:
+                candidates[y:y + h, x:x + w] |= source[y:y + h, x:x + w]
     for control in controls:
         x, y, w, h = control["bbox"]
         if control["type"] == "equipment_candidate":
+            if h < 80 * scale and w < h * 2.5:
+                candidates[y:y + h, x:x + w] = 0
             continue
-        external[max(0, y - 2):y + h + 2, max(0, x - 2):x + w + 2] = 0
-    external[:max(1, round(18 * scale)), :] = 0
-    external[:, :max(1, round(45 * scale))] = 0
-    candidates = glyph_mask(external, scale)
-    merged = cv2.dilate(candidates, np.ones((max(2, round(3 * scale)), max(3, round(9 * scale))), np.uint8))
+        candidates[max(0, y - 2):y + h + 2, max(0, x - 2):x + w + 2] = 0
+    results = []
+    merged = cv2.dilate(candidates, np.ones((max(1, round(2 * scale)), max(3, round(9 * scale))), np.uint8))
     for x, y, w, h, area in boxes(merged):
         selected = candidates[y:y + h, x:x + w]
         if not np.any(selected):
@@ -267,9 +259,8 @@ def text_detection(image: np.ndarray, component_mask: np.ndarray, controls: List
         box = tight_box(selected, (x, y))
         if not (4 * scale <= box[2] <= 260 * scale and 5 * scale <= box[3] <= 28 * scale):
             continue
-        if any(contains(control["bbox"], list(box)) for control in controls):
-            continue
-        if is_unit(box, controls, scale) or contains_hash(dark[box[1]:box[1] + box[3], box[0]:box[0] + box[2]], scale):
+        interior = any(contains(control["bbox"], list(box)) for control in controls if control["type"] == "equipment_candidate")
+        if interior and (box[2] < 2.5 * box[3] or box[3] < 10 * scale):
             continue
         item = node("text", len(results) + 1, "text_region", box, 0.6)
         item.update(recognition_status="not_requested", detection_method="aligned_glyphs")
@@ -285,8 +276,6 @@ def ocr_detection(image: np.ndarray, language: str, scale: float) -> List[Dict[s
     if executable is None:
         raise RuntimeError("--ocr 需要安装 Tesseract 和相应语言包；不加 --ocr 可仅检测文字区域。")
     enlarged = cv2.resize(image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-    enlarged[:max(1, round(36 * scale)), :] = 255
-    enlarged[:, :max(1, round(90 * scale))] = 255
     with tempfile.TemporaryDirectory(prefix="scada-ocr-") as directory:
         path = Path(directory) / "input.png"
         write_image(path, enlarged)
@@ -294,7 +283,7 @@ def ocr_detection(image: np.ndarray, language: str, scale: float) -> List[Dict[s
     if process.returncode:
         raise RuntimeError("Tesseract 识别失败: {}".format(process.stderr.strip()))
     results = []
-    for row in csv.DictReader(io.StringIO(process.stdout), delimiter="\t"):
+    for row in csv.DictReader(io.StringIO(process.stdout), delimiter="\t", quoting=csv.QUOTE_NONE):
         value = (row.get("text") or "").strip()
         score = float(row["conf"])
         if not value or score < 0:
@@ -333,17 +322,10 @@ def apply_ocr(texts: List[Dict[str, Any]], recognized: List[Dict[str, Any]]) -> 
             region["recognition_confidence"] = round(sum(word["confidence"] for word in words) / len(words), 3)
 
 
-def distance(a: List[int], b: List[int]) -> float:
-    x, y, w, h = a
-    bx, by, bw, bh = b
-    dx = max(x - bx - bw, bx - x - w, 0)
-    dy = max(y - by - bh, by - y - h, 0)
-    return float(np.hypot(dx, dy))
-
-
 def assign_parents(controls: List[Dict[str, Any]], texts: List[Dict[str, Any]], scale: float) -> None:
     for control in controls:
         control["parent_id"] = "grid_1"
+        control["label_bboxes"] = []
     controls_by_id = {control["id"]: control for control in controls}
     equipment = [control for control in controls if control["type"] == "equipment_candidate"]
     for item in texts:
@@ -353,13 +335,24 @@ def assign_parents(controls: List[Dict[str, Any]], texts: List[Dict[str, Any]], 
             parent = min(possible, key=lambda c: c["bbox"][2] * c["bbox"][3])
             item["parent_id"] = parent["id"]
             item["association"] = {"method": "containment", "confidence": 0.9}
+            parent["label_bboxes"].append(item["bbox"])
             continue
-        nearby = sorted(equipment, key=lambda c: distance(item["bbox"], c["bbox"]))
-        limit = 60 * scale
-        if nearby and distance(item["bbox"], nearby[0]["bbox"]) <= limit and item["bbox"][1] < 880 * scale:
-            gap = distance(item["bbox"], nearby[0]["bbox"])
-            item["parent_id"] = nearby[0]["id"]
-            item["association"] = {"method": "nearest_candidate", "confidence": round(0.7 * (1 - gap / (limit * 1.5)), 3), "distance": round(gap, 2)}
+        x, y, w, h = item["bbox"]
+        ranked = []
+        for control in equipment:
+            cx, cy, cw, ch = control["bbox"]
+            offset = abs(x + w / 2 - cx - cw / 2)
+            gap = max(cy - y - h, y - cy - ch, 0)
+            aligned = offset <= max(8 * scale, cw * 0.35, h * 0.5)
+            outside = y >= cy + ch * 0.8 or y + h <= cy + 3 * scale
+            if aligned and outside and gap <= max(12 * scale, h * 1.5, ch * 0.15) and w >= 2.5 * h:
+                ranked.append((gap / max(h, 1) + offset / max(cw, h), control))
+        ranked.sort(key=lambda pair: pair[0])
+        if ranked and (len(ranked) == 1 or ranked[1][0] - ranked[0][0] >= 0.25):
+            parent = ranked[0][1]
+            item["parent_id"] = parent["id"]
+            item["association"] = {"method": "aligned_label", "confidence": round(0.9 / (1 + ranked[0][0]), 3)}
+            parent["label_bboxes"].append(item["bbox"])
         else:
             item["parent_id"] = "grid_1"
             item["association"] = {"method": "page", "confidence": 1.0}
@@ -402,7 +395,6 @@ def run_detection(
             ocr_image[y:y + h, x:x + w] = image[y:y + h, x:x + w]
         recognized = ocr_detection(ocr_image, language, scale)
         apply_ocr(texts, recognized)
-        texts = [region for region in texts if "#" not in (region["text"] or "")]
         for i, region in enumerate(texts, 1):
             region["id"] = "text_{}".format(i)
     assign_parents(controls, texts, scale)
@@ -419,15 +411,22 @@ def run_detection(
         "image_size": {"width": image.shape[1], "height": image.shape[0]},
         "bbox_format": "x_y_width_height",
         "ocr": {"enabled": ocr, "language": language if ocr else None},
-        "text_filters": {"exclude_control_interior": True, "exclude_trailing_units": True, "exclude_hash_names": True, "hash_detection": "glyph_template"},
-        "limitations": ["设备为几何候选，未进行设备类别识别。", "邻近归属为启发式推断，需要人工核验。", "网格修复图用于检测，原图保持不变。", "小单位通过尺寸与邻近位置过滤，带 # 名称通过字形模板过滤；其他字体和布局需要核验。"],
+        "text_filters": {"exclude_control_interior": False, "exclude_trailing_units": False, "exclude_hash_names": False},
+        "limitations": ["设备为几何候选，未进行设备类别识别。", "邻近归属为启发式推断，需要人工核验。", "网格修复图用于检测，原图保持不变。", "设备检测假设背景大致均匀，连接管线与复杂背景需要核验。"],
         "counts": {"controls": len(controls), "texts": len(texts)},
         "nodes": items,
     }
     images = [annotate(image, controls), annotate(image, texts), annotate(image, controls + texts)]
     for name, rendered in zip(filenames[:-1], images):
         write_image(output_dir / name, rendered)
-    exported = [{"id": item["id"], "type": item["layer"], "bbox": item["bbox"], "value": None} for item in controls + texts]
+    exported = []
+    for item in controls + texts:
+        entry = {"id": item["id"], "type": item["layer"], "bbox": item["bbox"], "value": None}
+        if item["layer"] == "controls":
+            entry["label_bboxes"] = item["label_bboxes"]
+        else:
+            entry["parent_id"] = item["parent_id"] if item["parent_id"] != "grid_1" else None
+        exported.append(entry)
     for name in legacy_filenames:
         legacy_path = output_dir / name
         if legacy_path.is_file():

@@ -36,7 +36,7 @@ def normalize_text(value: str) -> str:
 def parse_tsv(value: str) -> Recognition:
     lines = {}
     scores = []
-    for row in csv.DictReader(io.StringIO(value), delimiter="\t"):
+    for row in csv.DictReader(io.StringIO(value), delimiter="\t", quoting=csv.QUOTE_NONE):
         word = (row.get("text") or "").strip()
         if row.get("level") != "5" or not word:
             continue

@@ -34,11 +34,12 @@ def run_all(
     grid_step: int = 20,
     model: Optional[str] = None,
     clean_image: Optional[Path] = None,
+    refine_labels: bool = True,
 ) -> Tuple[Dict[str, Any], List[str]]:
     clean_image = clean_image or grid_image.with_name("{}_clean.png".format(grid_image.stem))
     resize_image(input_image, grid_image, background, grid_step=grid_step, clean_output_path=clean_image)
     print("[1/4] 识别图已生成：{}，坐标参考图：{}".format(clean_image, grid_image))
-    run_pipeline(clean_image, opencv_dir, detections_path, db_path, model=model, remove_grid=False)
+    run_pipeline(clean_image, opencv_dir, detections_path, db_path, model=model, remove_grid=False, refine_labels=refine_labels)
     print("[2/4] 检测、文字识别与控件命名完成：{}".format(detections_path))
     detections = convert_detections(json.loads(detections_path.read_text(encoding="utf-8")))
     print("[3/4] 已转换 {} 条检测结果".format(len(detections)))
@@ -69,6 +70,7 @@ def main() -> None:
     parser.add_argument("--background", default="white", help="网格图补边颜色，默认 white")
     parser.add_argument("--grid-step", type=int, default=20, help="网格图小网格间距（像素，默认 20）")
     parser.add_argument("--model", default=None, help="DeepSeek 模型，默认取 DEEPSEEK_MODEL")
+    parser.add_argument("--no-refine-labels", action="store_true", help="关闭设备标签的视觉转写复核")
     args = parser.parse_args()
     canvas_output = args.canvas_output or PROJECT / "output" / "canvas_{}.json".format(
         datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -77,6 +79,7 @@ def main() -> None:
         run_all(
             args.input, args.grid_image, args.opencv_dir, args.detections,
             args.db, canvas_output, args.background, args.grid_step, args.model, args.clean_image,
+            not args.no_refine_labels,
         )
     except (OSError, ValueError, RuntimeError, json.JSONDecodeError, sqlite3.Error, cv2.error, subprocess.TimeoutExpired) as error:
         parser.exit(1, "流程失败：{}\n".format(error))

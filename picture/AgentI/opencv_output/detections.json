@@ -3,2156 +3,405 @@
     "id": "controls_1",
     "type": "controls",
     "bbox": [
-      981,
-      94,
-      65,
-      19
+      638,
+      334,
+      27,
+      28
     ],
-    "value": "绿色状态"
+    "value": "冷冻泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_2",
     "type": "controls",
     "bbox": [
-      746,
-      111,
-      65,
-      19
+      667,
+      334,
+      26,
+      28
     ],
-    "value": "数值显示"
+    "value": "冷却泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_3",
     "type": "controls",
     "bbox": [
-      915,
-      120,
-      176,
-      135
+      1104,
+      334,
+      27,
+      28
     ],
-    "value": "冷水机"
+    "value": "冷冻泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_4",
     "type": "controls",
     "bbox": [
-      747,
-      138,
-      66,
-      19
+      1133,
+      334,
+      57,
+      28
     ],
-    "value": "数值显示"
+    "value": "冷水机",
+    "label_bboxes": []
   },
   {
     "id": "controls_5",
     "type": "controls",
     "bbox": [
-      365,
-      147,
-      42,
-      19
+      696,
+      335,
+      26,
+      27
     ],
-    "value": "数值显示"
+    "value": "冷却泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_6",
     "type": "controls",
     "bbox": [
-      1142,
-      173,
-      72,
-      20
+      726,
+      337,
+      13,
+      23
     ],
-    "value": "数值显示"
+    "value": "数值显示",
+    "label_bboxes": []
   },
   {
     "id": "controls_7",
     "type": "controls",
     "bbox": [
-      370,
-      175,
-      36,
-      36
+      302,
+      345,
+      27,
+      29
     ],
-    "value": "旁通阀"
+    "value": "冷却塔",
+    "label_bboxes": []
   },
   {
     "id": "controls_8",
     "type": "controls",
     "bbox": [
-      217,
-      183,
-      42,
-      19
+      244,
+      346,
+      56,
+      27
     ],
-    "value": "数值显示"
+    "value": "冷却塔",
+    "label_bboxes": []
   },
   {
     "id": "controls_9",
     "type": "controls",
     "bbox": [
-      1142,
-      200,
-      72,
-      20
+      332,
+      348,
+      13,
+      23
     ],
-    "value": "数值显示"
+    "value": "数值显示",
+    "label_bboxes": []
   },
   {
     "id": "controls_10",
     "type": "controls",
     "bbox": [
-      115,
-      206,
-      70,
-      87
+      1650,
+      500,
+      16,
+      23
     ],
-    "value": "冷却塔"
+    "value": "数值显示",
+    "label_bboxes": []
   },
   {
     "id": "controls_11",
     "type": "controls",
     "bbox": [
-      231,
-      209,
-      20,
-      30
+      1104,
+      575,
+      27,
+      28
     ],
-    "value": "调节阀"
+    "value": "冷冻泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_12",
     "type": "controls",
     "bbox": [
-      622,
-      229,
-      42,
-      20
+      1133,
+      575,
+      73,
+      28
     ],
-    "value": "数值显示"
+    "value": "冷水机",
+    "label_bboxes": []
   },
   {
     "id": "controls_13",
     "type": "controls",
     "bbox": [
-      491,
-      239,
-      98,
-      91
+      638,
+      577,
+      55,
+      28
     ],
-    "value": "冷却泵"
+    "value": "冷却泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_14",
     "type": "controls",
     "bbox": [
-      830,
-      244,
-      64,
-      18
+      695,
+      579,
+      44,
+      26
     ],
-    "value": "绿色状态"
+    "value": "冷却泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_15",
     "type": "controls",
     "bbox": [
-      750,
-      253,
-      55,
-      19
+      244,
+      615,
+      56,
+      28
     ],
-    "value": "数值显示"
+    "value": "冷却塔",
+    "label_bboxes": []
   },
   {
     "id": "controls_16",
     "type": "controls",
     "bbox": [
-      621,
-      255,
-      42,
-      19
+      302,
+      615,
+      27,
+      28
     ],
-    "value": "数值显示"
+    "value": "冷却塔",
+    "label_bboxes": []
   },
   {
     "id": "controls_17",
     "type": "controls",
     "bbox": [
-      1425,
-      260,
-      65,
-      18
+      1651,
+      733,
+      14,
+      23
     ],
-    "value": "绿色状态"
+    "value": "数值显示",
+    "label_bboxes": []
   },
   {
     "id": "controls_18",
     "type": "controls",
     "bbox": [
-      29,
-      264,
-      64,
-      18
+      1530,
+      819,
+      175,
+      126
     ],
-    "value": "绿色状态"
+    "value": "冷冻泵",
+    "label_bboxes": [
+      [
+        1565,
+        960,
+        83,
+        26
+      ]
+    ]
   },
   {
     "id": "controls_19",
     "type": "controls",
     "bbox": [
-      851,
-      265,
-      21,
-      30
+      1191,
+      826,
+      15,
+      23
     ],
-    "value": "电动阀"
+    "value": "数值显示",
+    "label_bboxes": []
   },
   {
     "id": "controls_20",
     "type": "controls",
     "bbox": [
-      436,
-      270,
-      65,
-      18
+      638,
+      838,
+      55,
+      28
     ],
-    "value": "绿色状态"
+    "value": "冷却泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_21",
     "type": "controls",
     "bbox": [
-      749,
-      280,
-      56,
-      19
+      695,
+      839,
+      44,
+      27
     ],
-    "value": "数值显示"
+    "value": "冷却泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_22",
     "type": "controls",
     "bbox": [
-      288,
-      281,
-      42,
-      20
+      330,
+      894,
+      15,
+      24
     ],
-    "value": "数值显示"
+    "value": "冷冻泵",
+    "label_bboxes": []
   },
   {
     "id": "controls_23",
     "type": "controls",
     "bbox": [
-      1407,
-      281,
-      99,
-      90
-    ],
-    "value": "冷冻泵"
-  },
-  {
-    "id": "controls_24",
-    "type": "controls",
-    "bbox": [
-      621,
-      282,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_25",
-    "type": "controls",
-    "bbox": [
-      1085,
-      297,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_26",
-    "type": "controls",
-    "bbox": [
-      1358,
-      297,
-      42,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_27",
-    "type": "controls",
-    "bbox": [
-      974,
-      301,
-      54,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_28",
-    "type": "controls",
-    "bbox": [
-      300,
-      308,
-      22,
-      29
-    ],
-    "value": "调节阀"
-  },
-  {
-    "id": "controls_29",
-    "type": "controls",
-    "bbox": [
-      1164,
-      309,
-      53,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_30",
-    "type": "controls",
-    "bbox": [
-      1105,
-      319,
-      20,
-      28
-    ],
-    "value": "电动阀"
-  },
-  {
-    "id": "controls_31",
-    "type": "controls",
-    "bbox": [
-      1358,
-      321,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_32",
-    "type": "controls",
-    "bbox": [
-      974,
-      325,
-      55,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_33",
-    "type": "controls",
-    "bbox": [
-      1162,
-      335,
-      54,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_34",
-    "type": "controls",
-    "bbox": [
-      1725,
-      346,
-      68,
-      70
-    ],
-    "value": "补水箱"
-  },
-  {
-    "id": "controls_35",
-    "type": "controls",
-    "bbox": [
-      974,
-      348,
-      55,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_36",
-    "type": "controls",
-    "bbox": [
-      1629,
-      368,
-      52,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_37",
-    "type": "controls",
-    "bbox": [
-      212,
-      375,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_38",
-    "type": "controls",
-    "bbox": [
-      973,
-      375,
-      55,
-      18
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_39",
-    "type": "controls",
-    "bbox": [
-      118,
-      378,
-      71,
-      87
-    ],
-    "value": "冷却塔"
-  },
-  {
-    "id": "controls_40",
-    "type": "controls",
-    "bbox": [
-      621,
-      380,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_41",
-    "type": "controls",
-    "bbox": [
-      1831,
-      385,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_42",
-    "type": "controls",
-    "bbox": [
-      492,
-      395,
-      98,
-      91
-    ],
-    "value": "冷却泵"
-  },
-  {
-    "id": "controls_43",
-    "type": "controls",
-    "bbox": [
-      223,
-      397,
-      19,
-      27
-    ],
-    "value": "调节阀"
-  },
-  {
-    "id": "controls_44",
-    "type": "controls",
-    "bbox": [
-      1648,
-      399,
-      19,
-      27
-    ],
-    "value": "流量计"
-  },
-  {
-    "id": "controls_45",
-    "type": "controls",
-    "bbox": [
-      620,
-      405,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_46",
-    "type": "controls",
-    "bbox": [
-      759,
-      408,
-      62,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_47",
-    "type": "controls",
-    "bbox": [
-      1420,
-      411,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_48",
-    "type": "controls",
-    "bbox": [
-      1397,
-      431,
-      103,
-      94
-    ],
-    "value": "冷冻泵"
-  },
-  {
-    "id": "controls_49",
-    "type": "controls",
-    "bbox": [
-      434,
-      432,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_50",
-    "type": "controls",
-    "bbox": [
-      620,
-      432,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_51",
-    "type": "controls",
-    "bbox": [
-      760,
-      435,
-      62,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_52",
-    "type": "controls",
-    "bbox": [
-      975,
-      435,
-      64,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_53",
-    "type": "controls",
-    "bbox": [
-      1358,
-      444,
-      42,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_54",
-    "type": "controls",
-    "bbox": [
-      1819,
-      446,
-      54,
-      22
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_55",
-    "type": "controls",
-    "bbox": [
-      1141,
-      451,
-      67,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_56",
-    "type": "controls",
-    "bbox": [
-      287,
-      453,
-      43,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_57",
-    "type": "controls",
-    "bbox": [
-      33,
-      456,
-      64,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_58",
-    "type": "controls",
-    "bbox": [
-      1574,
-      457,
-      43,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_59",
-    "type": "controls",
-    "bbox": [
-      908,
-      459,
-      176,
-      135
-    ],
-    "value": "冷水机"
-  },
-  {
-    "id": "controls_60",
-    "type": "controls",
-    "bbox": [
-      1358,
-      468,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_61",
-    "type": "controls",
-    "bbox": [
-      1141,
-      477,
-      68,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_62",
-    "type": "controls",
-    "bbox": [
-      300,
-      478,
-      20,
-      30
-    ],
-    "value": "调节阀"
-  },
-  {
-    "id": "controls_63",
-    "type": "controls",
-    "bbox": [
-      1579,
-      482,
-      37,
-      35
-    ],
-    "value": "旁通阀"
-  },
-  {
-    "id": "controls_64",
-    "type": "controls",
-    "bbox": [
-      830,
-      504,
-      64,
-      17
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_65",
-    "type": "controls",
-    "bbox": [
-      625,
-      527,
-      42,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_66",
-    "type": "controls",
-    "bbox": [
-      753,
-      527,
-      53,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_67",
-    "type": "controls",
-    "bbox": [
-      851,
-      529,
-      21,
-      28
-    ],
-    "value": "电动阀"
-  },
-  {
-    "id": "controls_68",
-    "type": "controls",
-    "bbox": [
-      212,
-      539,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_69",
-    "type": "controls",
-    "bbox": [
-      489,
-      542,
-      98,
-      91
-    ],
-    "value": "冷却泵"
-  },
-  {
-    "id": "controls_70",
-    "type": "controls",
-    "bbox": [
-      1601,
-      550,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_71",
-    "type": "controls",
-    "bbox": [
-      624,
-      553,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_72",
-    "type": "controls",
-    "bbox": [
-      753,
-      554,
-      53,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_73",
-    "type": "controls",
-    "bbox": [
-      224,
-      564,
-      20,
-      29
-    ],
-    "value": "调节阀"
-  },
-  {
-    "id": "controls_74",
-    "type": "controls",
-    "bbox": [
-      1423,
-      567,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_75",
-    "type": "controls",
-    "bbox": [
-      1597,
-      570,
-      68,
-      69
-    ],
-    "value": "补水泵"
-  },
-  {
-    "id": "controls_76",
-    "type": "controls",
-    "bbox": [
-      1098,
-      574,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_77",
-    "type": "controls",
-    "bbox": [
-      436,
-      580,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_78",
-    "type": "controls",
-    "bbox": [
-      624,
-      580,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_79",
-    "type": "controls",
-    "bbox": [
-      1403,
-      587,
-      98,
-      90
-    ],
-    "value": "冷冻泵"
-  },
-  {
-    "id": "controls_80",
-    "type": "controls",
-    "bbox": [
-      1357,
-      588,
-      42,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_81",
-    "type": "controls",
-    "bbox": [
-      122,
-      590,
-      70,
-      87
-    ],
-    "value": "冷却塔"
-  },
-  {
-    "id": "controls_82",
-    "type": "controls",
-    "bbox": [
-      974,
-      594,
-      58,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_83",
-    "type": "controls",
-    "bbox": [
-      1120,
-      594,
-      20,
-      28
-    ],
-    "value": "电动阀"
-  },
-  {
-    "id": "controls_84",
-    "type": "controls",
-    "bbox": [
-      1192,
-      600,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_85",
-    "type": "controls",
-    "bbox": [
-      1357,
-      612,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_86",
-    "type": "controls",
-    "bbox": [
-      974,
-      624,
-      58,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_87",
-    "type": "controls",
-    "bbox": [
-      1176,
-      626,
-      53,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_88",
-    "type": "controls",
-    "bbox": [
-      285,
-      644,
-      43,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_89",
-    "type": "controls",
-    "bbox": [
-      974,
-      648,
-      57,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_90",
-    "type": "controls",
-    "bbox": [
-      40,
-      658,
-      64,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_91",
-    "type": "controls",
-    "bbox": [
-      302,
-      669,
-      20,
-      30
-    ],
-    "value": "调节阀"
-  },
-  {
-    "id": "controls_92",
-    "type": "controls",
-    "bbox": [
-      974,
-      673,
-      56,
-      18
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_93",
-    "type": "controls",
-    "bbox": [
-      759,
-      678,
-      64,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_94",
-    "type": "controls",
-    "bbox": [
-      628,
-      679,
-      42,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_95",
-    "type": "controls",
-    "bbox": [
-      1607,
-      683,
-      64,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_96",
-    "type": "controls",
-    "bbox": [
-      488,
-      691,
-      98,
-      91
-    ],
-    "value": "冷却泵"
-  },
-  {
-    "id": "controls_97",
-    "type": "controls",
-    "bbox": [
-      627,
-      705,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_98",
-    "type": "controls",
-    "bbox": [
-      759,
-      705,
-      64,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_99",
-    "type": "controls",
-    "bbox": [
-      1605,
-      705,
-      67,
-      69
-    ],
-    "value": "补水泵"
-  },
-  {
-    "id": "controls_100",
-    "type": "controls",
-    "bbox": [
-      975,
-      716,
-      64,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_101",
-    "type": "controls",
-    "bbox": [
-      1425,
-      720,
-      63,
-      16
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_102",
-    "type": "controls",
-    "bbox": [
-      436,
-      724,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_103",
-    "type": "controls",
-    "bbox": [
-      1355,
-      726,
-      42,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_104",
-    "type": "controls",
-    "bbox": [
-      1148,
-      728,
-      68,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_105",
-    "type": "controls",
-    "bbox": [
-      627,
-      732,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_106",
-    "type": "controls",
-    "bbox": [
-      1401,
-      738,
-      99,
-      90
-    ],
-    "value": "冷冻泵"
-  },
-  {
-    "id": "controls_107",
-    "type": "controls",
-    "bbox": [
-      1722,
-      738,
-      68,
-      69
-    ],
-    "value": "补水箱"
-  },
-  {
-    "id": "controls_108",
-    "type": "controls",
-    "bbox": [
-      904,
-      740,
-      176,
-      135
-    ],
-    "value": "冷水机"
-  },
-  {
-    "id": "controls_109",
-    "type": "controls",
-    "bbox": [
-      1355,
-      750,
-      42,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_110",
-    "type": "controls",
-    "bbox": [
-      1148,
-      755,
-      68,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_111",
-    "type": "controls",
-    "bbox": [
-      97,
-      773,
-      35,
-      36
-    ],
-    "value": "室外环境图标"
-  },
-  {
-    "id": "controls_112",
-    "type": "controls",
-    "bbox": [
-      1844,
-      780,
-      42,
-      17
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_113",
-    "type": "controls",
-    "bbox": [
-      821,
-      788,
-      64,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_114",
-    "type": "controls",
-    "bbox": [
-      222,
-      795,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_115",
-    "type": "controls",
-    "bbox": [
-      749,
-      801,
-      59,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_116",
-    "type": "controls",
-    "bbox": [
-      842,
-      808,
-      19,
-      29
-    ],
-    "value": "电动阀"
-  },
-  {
-    "id": "controls_117",
-    "type": "controls",
-    "bbox": [
-      222,
-      824,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_118",
-    "type": "controls",
-    "bbox": [
-      749,
-      828,
-      59,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_119",
-    "type": "controls",
-    "bbox": [
-      1142,
-      830,
-      65,
-      18
-    ],
-    "value": "绿色状态"
-  },
-  {
-    "id": "controls_120",
-    "type": "controls",
-    "bbox": [
-      222,
-      851,
-      42,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_121",
-    "type": "controls",
-    "bbox": [
-      1164,
-      853,
-      20,
-      29
-    ],
-    "value": "电动阀"
-  },
-  {
-    "id": "controls_122",
-    "type": "controls",
-    "bbox": [
-      1213,
-      853,
-      64,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_123",
-    "type": "controls",
-    "bbox": [
-      1213,
-      880,
-      66,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_124",
-    "type": "controls",
-    "bbox": [
-      979,
-      882,
-      54,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_125",
-    "type": "controls",
-    "bbox": [
-      1424,
-      893,
-      108,
-      36
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_126",
-    "type": "controls",
-    "bbox": [
-      1550,
-      893,
-      108,
-      35
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_127",
-    "type": "controls",
-    "bbox": [
-      1670,
-      893,
-      108,
-      36
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_128",
-    "type": "controls",
-    "bbox": [
-      1792,
-      893,
-      108,
-      35
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_129",
-    "type": "controls",
-    "bbox": [
-      1303,
-      894,
-      108,
-      35
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_130",
-    "type": "controls",
-    "bbox": [
-      978,
-      908,
-      52,
-      20
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_131",
-    "type": "controls",
-    "bbox": [
-      979,
-      936,
-      53,
-      19
-    ],
-    "value": "数值显示"
-  },
-  {
-    "id": "controls_132",
-    "type": "controls",
-    "bbox": [
-      1424,
-      936,
-      108,
-      37
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_133",
-    "type": "controls",
-    "bbox": [
-      1670,
-      936,
-      108,
-      37
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_134",
-    "type": "controls",
-    "bbox": [
-      1792,
-      936,
-      108,
-      37
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_135",
-    "type": "controls",
-    "bbox": [
-      1304,
-      937,
-      108,
-      35
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_136",
-    "type": "controls",
-    "bbox": [
-      1550,
-      937,
-      108,
-      35
-    ],
-    "value": "按钮"
-  },
-  {
-    "id": "controls_137",
-    "type": "controls",
-    "bbox": [
-      190,
-      940,
-      69,
-      30
-    ],
-    "value": "状态显示"
-  },
-  {
-    "id": "controls_138",
-    "type": "controls",
-    "bbox": [
-      319,
-      940,
-      69,
-      30
-    ],
-    "value": "状态显示"
-  },
-  {
-    "id": "controls_139",
-    "type": "controls",
-    "bbox": [
-      447,
-      940,
-      68,
-      30
-    ],
-    "value": "状态显示"
-  },
-  {
-    "id": "controls_140",
-    "type": "controls",
-    "bbox": [
-      577,
-      940,
-      68,
-      30
-    ],
-    "value": "状态显示"
-  },
-  {
-    "id": "controls_141",
-    "type": "controls",
-    "bbox": [
-      978,
-      961,
-      54,
-      18
-    ],
-    "value": "数值显示"
+      1650,
+      962,
+      16,
+      23
+    ],
+    "value": "数值显示",
+    "label_bboxes": []
   },
   {
     "id": "text_1",
     "type": "text",
     "bbox": [
-      830,
-      172,
-      78,
-      15
+      1566,
+      277,
+      99,
+      26
     ],
-    "value": "冷却水回水"
+    "value": "冷冻泵1",
+    "parent_id": null
   },
   {
     "id": "text_2",
     "type": "text",
     "bbox": [
-      832,
-      216,
-      78,
-      15
+      1193,
+      337,
+      13,
+      22
     ],
-    "value": "冷却水供水"
+    "value": "1",
+    "parent_id": null
   },
   {
     "id": "text_3",
     "type": "text",
     "bbox": [
-      577,
-      231,
-      25,
-      14
+      1565,
+      498,
+      84,
+      27
     ],
-    "value": "R相"
+    "value": "冷冻泵",
+    "parent_id": null
   },
   {
     "id": "text_4",
     "type": "text",
     "bbox": [
-      1223,
-      232,
-      78,
-      14
+      1537,
+      592,
+      14,
+      10
     ],
-    "value": "冷冻水供水"
+    "value": "—",
+    "parent_id": null
   },
   {
     "id": "text_5",
     "type": "text",
     "bbox": [
-      577,
-      257,
-      24,
-      14
+      331,
+      618,
+      14,
+      22
     ],
-    "value": "S相"
+    "value": "2",
+    "parent_id": null
   },
   {
     "id": "text_6",
     "type": "text",
     "bbox": [
-      1255,
-      270,
-      78,
-      15
+      1565,
+      730,
+      84,
+      27
     ],
-    "value": "冷冻水回水"
+    "value": "冷冻泵",
+    "parent_id": null
   },
   {
     "id": "text_7",
     "type": "text",
     "bbox": [
-      577,
-      283,
-      24,
-      15
+      1104,
+      824,
+      40,
+      26
     ],
-    "value": "T相"
+    "value": "冷7",
+    "parent_id": null
   },
   {
     "id": "text_8",
     "type": "text",
     "bbox": [
-      1320,
-      300,
-      31,
-      15
+      1171,
+      825,
+      18,
+      25
     ],
-    "value": "频率"
+    "value": "IL",
+    "parent_id": null
   },
   {
     "id": "text_9",
     "type": "text",
     "bbox": [
-      934,
-      303,
-      25,
-      14
+      245,
+      892,
+      83,
+      27
     ],
-    "value": "U相"
+    "value": "冷却塔",
+    "parent_id": null
   },
   {
     "id": "text_10",
     "type": "text",
     "bbox": [
-      1321,
-      324,
-      30,
-      14
-    ],
-    "value": "电流"
-  },
-  {
-    "id": "text_11",
-    "type": "text",
-    "bbox": [
-      934,
-      328,
-      25,
-      15
-    ],
-    "value": "V相"
-  },
-  {
-    "id": "text_12",
-    "type": "text",
-    "bbox": [
-      1717,
-      328,
-      52,
-      15
-    ],
-    "value": "总高度:"
-  },
-  {
-    "id": "text_13",
-    "type": "text",
-    "bbox": [
-      1782,
-      328,
-      35,
-      14
-    ],
-    "value": "1.5米"
-  },
-  {
-    "id": "text_14",
-    "type": "text",
-    "bbox": [
-      931,
-      351,
-      29,
-      14
-    ],
-    "value": "W相"
-  },
-  {
-    "id": "text_15",
-    "type": "text",
-    "bbox": [
-      1841,
-      359,
-      30,
-      15
-    ],
-    "value": "液位"
-  },
-  {
-    "id": "text_16",
-    "type": "text",
-    "bbox": [
-      1540,
-      371,
-      78,
-      14
-    ],
-    "value": "冷冻水供水"
-  },
-  {
-    "id": "text_17",
-    "type": "text",
-    "bbox": [
-      919,
-      375,
-      46,
-      15
-    ],
-    "value": "负载率"
-  },
-  {
-    "id": "text_18",
-    "type": "text",
-    "bbox": [
-      576,
-      380,
-      25,
-      14
-    ],
-    "value": "R相"
-  },
-  {
-    "id": "text_19",
-    "type": "text",
-    "bbox": [
-      576,
-      406,
-      24,
-      14
-    ],
-    "value": "S 相"
-  },
-  {
-    "id": "text_20",
-    "type": "text",
-    "bbox": [
-      576,
-      433,
-      24,
-      15
-    ],
-    "value": "T相"
-  },
-  {
-    "id": "text_21",
-    "type": "text",
-    "bbox": [
-      1320,
-      447,
-      31,
-      15
-    ],
-    "value": "频率"
-  },
-  {
-    "id": "text_22",
-    "type": "text",
-    "bbox": [
-      1322,
-      471,
-      29,
-      15
-    ],
-    "value": "电流"
-  },
-  {
-    "id": "text_23",
-    "type": "text",
-    "bbox": [
-      1811,
-      479,
-      78,
-      15
-    ],
-    "value": "供回水压差"
-  },
-  {
-    "id": "text_24",
-    "type": "text",
-    "bbox": [
-      580,
-      529,
-      25,
-      14
-    ],
-    "value": "R相"
-  },
-  {
-    "id": "text_25",
-    "type": "text",
-    "bbox": [
-      580,
-      554,
-      24,
-      15
-    ],
-    "value": "S相"
-  },
-  {
-    "id": "text_26",
-    "type": "text",
-    "bbox": [
-      580,
-      581,
-      24,
-      15
-    ],
-    "value": "T相"
-  },
-  {
-    "id": "text_27",
-    "type": "text",
-    "bbox": [
-      1319,
-      591,
-      31,
-      15
-    ],
-    "value": "频率"
-  },
-  {
-    "id": "text_28",
-    "type": "text",
-    "bbox": [
-      940,
-      597,
-      25,
-      15
-    ],
-    "value": "U相"
-  },
-  {
-    "id": "text_29",
-    "type": "text",
-    "bbox": [
-      1320,
-      615,
-      30,
-      15
-    ],
-    "value": "电流"
-  },
-  {
-    "id": "text_30",
-    "type": "text",
-    "bbox": [
-      937,
-      627,
-      25,
-      15
-    ],
-    "value": "V相"
-  },
-  {
-    "id": "text_31",
-    "type": "text",
-    "bbox": [
-      935,
-      651,
-      29,
-      14
-    ],
-    "value": "W相"
-  },
-  {
-    "id": "text_32",
-    "type": "text",
-    "bbox": [
-      920,
-      673,
-      46,
-      15
-    ],
-    "value": "负载率"
-  },
-  {
-    "id": "text_33",
-    "type": "text",
-    "bbox": [
-      583,
-      681,
-      25,
-      14
-    ],
-    "value": "R相"
-  },
-  {
-    "id": "text_34",
-    "type": "text",
-    "bbox": [
-      583,
-      707,
-      24,
-      14
-    ],
-    "value": "S 相"
-  },
-  {
-    "id": "text_35",
-    "type": "text",
-    "bbox": [
-      1718,
-      715,
-      52,
-      15
-    ],
-    "value": "总高度:"
-  },
-  {
-    "id": "text_36",
-    "type": "text",
-    "bbox": [
-      1782,
-      715,
-      36,
-      15
-    ],
-    "value": "1.5米"
-  },
-  {
-    "id": "text_37",
-    "type": "text",
-    "bbox": [
-      1317,
-      729,
-      31,
-      15
-    ],
-    "value": "频率"
-  },
-  {
-    "id": "text_38",
-    "type": "text",
-    "bbox": [
-      583,
-      733,
-      24,
-      15
-    ],
-    "value": "T相"
-  },
-  {
-    "id": "text_39",
-    "type": "text",
-    "bbox": [
-      1319,
-      753,
-      29,
-      15
-    ],
-    "value": "电流"
-  },
-  {
-    "id": "text_40",
-    "type": "text",
-    "bbox": [
-      1849,
-      755,
-      31,
-      15
-    ],
-    "value": "液位"
-  },
-  {
-    "id": "text_41",
-    "type": "text",
-    "bbox": [
-      175,
-      797,
-      36,
-      15
-    ],
-    "value": "温度:"
-  },
-  {
-    "id": "text_42",
-    "type": "text",
-    "bbox": [
-      84,
-      822,
-      62,
-      15
-    ],
-    "value": "室外环境"
-  },
-  {
-    "id": "text_43",
-    "type": "text",
-    "bbox": [
-      175,
-      826,
-      36,
-      14
-    ],
-    "value": "湿度:"
-  },
-  {
-    "id": "text_44",
-    "type": "text",
-    "bbox": [
-      175,
-      854,
-      35,
-      14
-    ],
-    "value": "露点:"
-  },
-  {
-    "id": "text_45",
-    "type": "text",
-    "bbox": [
-      943,
-      885,
-      25,
-      14
-    ],
-    "value": "U相"
-  },
-  {
-    "id": "text_46",
-    "type": "text",
-    "bbox": [
-      942,
-      911,
-      25,
-      14
-    ],
-    "value": "V相"
-  },
-  {
-    "id": "text_47",
-    "type": "text",
-    "bbox": [
-      142,
-      929,
-      30,
-      15
-    ],
-    "value": "上电"
-  },
-  {
-    "id": "text_48",
-    "type": "text",
-    "bbox": [
-      46,
-      937,
-      69,
+      1565,
+      960,
+      83,
       26
     ],
-    "value": "AC6"
-  },
-  {
-    "id": "text_49",
-    "type": "text",
-    "bbox": [
-      938,
-      937,
-      30,
-      15
-    ],
-    "value": "W相"
-  },
-  {
-    "id": "text_50",
-    "type": "text",
-    "bbox": [
-      273,
-      948,
-      36,
-      15
-    ],
-    "value": "近控:"
-  },
-  {
-    "id": "text_51",
-    "type": "text",
-    "bbox": [
-      401,
-      948,
-      36,
-      15
-    ],
-    "value": "远控:"
-  },
-  {
-    "id": "text_52",
-    "type": "text",
-    "bbox": [
-      532,
-      949,
-      35,
-      14
-    ],
-    "value": "运行:"
-  },
-  {
-    "id": "text_53",
-    "type": "text",
-    "bbox": [
-      672,
-      949,
-      52,
-      14
-    ],
-    "value": "手自动:"
-  },
-  {
-    "id": "text_54",
-    "type": "text",
-    "bbox": [
-      142,
-      952,
-      36,
-      14
-    ],
-    "value": "状态:"
-  },
-  {
-    "id": "text_55",
-    "type": "text",
-    "bbox": [
-      928,
-      965,
-      46,
-      15
-    ],
-    "value": "负载率"
+    "value": "冷冻泵",
+    "parent_id": "controls_18",
+    "ocr_value": "冷冻泵",
+    "recognition_status": "vision_transcribed"
   }
 ]

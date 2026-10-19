@@ -155,6 +155,15 @@ def crop_control(image: np.ndarray, bbox: List[int], context: float = 0.0) -> np
     return image[y:y + h, x:x + w]
 
 
+def crop_named_control(image: np.ndarray, item: Dict[str, Any], context: float) -> np.ndarray:
+    x, y, w, h = expand_bbox(image, item["bbox"], context)
+    right, bottom = x + w, y + h
+    for lx, ly, lw, lh in item.get("label_bboxes", []):
+        x, y = min(x, max(0, lx - 3)), min(y, max(0, ly - 3))
+        right, bottom = max(right, lx + lw + 3), max(bottom, ly + lh + 3)
+    return image[y:min(image.shape[0], bottom), x:min(image.shape[1], right)]
+
+
 def encode_image(image: np.ndarray) -> bytes:
     success, encoded = cv2.imencode(".png", image)
     if not success:
@@ -173,7 +182,7 @@ def write_crops(image: np.ndarray, items: List[Dict[str, Any]], directory: Path,
     for item in items:
         if item.get("type") != "controls":
             continue
-        (directory / "{}.png".format(item["id"])).write_bytes(encode_image(crop_control(image, item["bbox"], context)))
+        (directory / "{}.png".format(item["id"])).write_bytes(encode_image(crop_named_control(image, item, context)))
         written += 1
     return written
 
@@ -217,7 +226,7 @@ async def recognize_control(
     durations: Optional[List[float]] = None,
 ) -> Tuple[str, bool]:
     box = item["bbox"]
-    image_bytes = encode_image(crop_control(image, box, context))
+    image_bytes = encode_image(crop_named_control(image, item, context))
     url = "data:image/png;base64,{}".format(base64.b64encode(image_bytes).decode("ascii"))
     if context > 0:
         size_hint = "这是一张带上下文边距的裁剪图，其中控件本体约 {}x{} 像素。只输出 JSON。".format(box[2], box[3])
@@ -332,6 +341,60 @@ def fill_control_names(
         "dump_crops": dumped,
         **summary,
     }
+
+
+def refine_label_values(
+    image: np.ndarray,
+    items: List[Dict[str, Any]],
+    model: Optional[str] = None,
+    concurrency: int = DEFAULT_CONCURRENCY,
+) -> Dict[str, Any]:
+    label_boxes = {tuple(box) for item in items if item.get("type") == "controls" for box in item.get("label_bboxes", [])}
+    controls = {item["id"]: item for item in items if item.get("type") == "controls"}
+    targets = [item for item in items if item.get("type") == "text" and tuple(item["bbox"]) in label_boxes]
+    if not targets:
+        return {"labels": 0, "refined": [], "failed": []}
+
+    async def run_all():
+        semaphore = asyncio.Semaphore(concurrency)
+
+        async def transcribe(item):
+            x, y, w, h = item["bbox"]
+            crop = image[max(0, y - 2):min(image.shape[0], y + h + 2), max(0, x - 2):min(image.shape[1], x + w + 2)]
+            factor = max(1.0, min(4.0, 64 / crop.shape[0]))
+            crop = cv2.resize(crop, None, fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC)
+            url = "data:image/png;base64,{}".format(base64.b64encode(encode_image(crop)).decode("ascii"))
+            category = controls.get(item.get("parent_id"), {}).get("value")
+            hint = "关联设备类别为 {}，仅用于辨别形近字，标签原文以图片为准。".format(category) if category else "逐字读取图片。"
+            messages = [
+                {"role": "system", "content": '逐字转写图片中的文字，保留原始中文、符号、# 和实例编号，不添加图中没有的标点或文字。类别参考仅用于辨别形近字，不得根据常识补写内容。只输出 JSON：{"text":"图片原文"}；不能确定时输出 {"text":null}。'},
+                {"role": "user", "content": [{"type": "text", "text": hint}, {"type": "image_url", "image_url": {"url": url}}]},
+            ]
+            async with semaphore:
+                response = await call_llm(default_client, model or default_model, messages, temperature=TEMPERATURE)
+            content = response.choices[0].message.content or ""
+            start, end = content.find("{"), content.rfind("}")
+            if start < 0 or end <= start:
+                raise ValueError("标签复核没有返回 JSON")
+            value = json.loads(content[start:end + 1]).get("text")
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError("标签复核未能确定文字")
+            return value.strip()
+
+        return await asyncio.gather(*(transcribe(item) for item in targets), return_exceptions=True)
+
+    results = asyncio.run(run_all())
+    refined, failed = [], []
+    for item, result in zip(targets, results):
+        if isinstance(result, BaseException):
+            item["recognition_status"] = "needs_review"
+            failed.append(item["id"])
+        else:
+            item["ocr_value"] = item.get("value")
+            item["value"] = result
+            item["recognition_status"] = "vision_transcribed"
+            refined.append(item["id"])
+    return {"labels": len(targets), "refined": refined, "failed": failed}
 
 
 def run(
