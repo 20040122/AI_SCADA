@@ -111,8 +111,10 @@ def controls_detection(image: np.ndarray, scale: float) -> Tuple[List[Dict[str, 
                 if kind == "indicator":
                     valid = valid and w >= 55 * scale and h >= 23 * scale
             else:
-                valid = 65 * scale <= w <= 160 * scale and 23 * scale <= h <= 55 * scale and ratio >= 1.6
+                valid = 65 * scale <= w <= 240 * scale and 23 * scale <= h <= 55 * scale and ratio >= 1.6
             if not valid or area / (w * h) < 0.38:
+                continue
+            if kind == "value_field" and np.count_nonzero(raw[y:y + h, x:x + w]) / (w * h) < 0.6:
                 continue
             if kind == "indicator" and area / (w * h) < 0.65:
                 continue
@@ -425,6 +427,7 @@ def run_detection(
         entry = {"id": item["id"], "type": item["layer"], "bbox": item["bbox"], "value": None}
         if item["layer"] == "controls":
             entry["label_bboxes"] = item["label_bboxes"]
+            entry["control_kind"] = item["type"]
         else:
             entry["parent_id"] = item["parent_id"] if item["parent_id"] != "grid_1" else None
         exported.append(entry)

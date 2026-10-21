@@ -18,7 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from name import DEFAULT_CONCURRENCY, DEFAULT_CONTEXT, fill_control_names, refine_label_values
-from ocr import fill_text_values, write_atomic
+from ocr import fill_text_values, infer_text_style, write_atomic
 from opencv import run_detection
 from semantic import review_detection
 
@@ -63,7 +63,7 @@ def run_pipeline(
     )
 
     def run_ocr():
-        return fill_text_values(image, items, ocr_lang, psm, target_height, min_confidence, timeout, ocr_workers)
+        return fill_text_values(image, items, ocr_lang, psm, target_height, min_confidence, timeout, ocr_workers, True)
 
     def run_naming():
         return fill_control_names(image, items, db_path, model, concurrency, context, dump_crops)
@@ -76,6 +76,10 @@ def run_pipeline(
         naming_summary = naming_future.result()
     timing["parallel_seconds"] = round(time.perf_counter() - stage, 3)
     label_summary = timed("label_refinement_seconds", lambda: refine_label_values(image, items, model, concurrency)) if refine_labels else {"enabled": False}
+    for item in items:
+        if item.get("type") == "text":
+            item["text_style"] = infer_text_style(image, item)
+    detection["semantic"] = semantic_summary
     stage = time.perf_counter()
     write_atomic(output_path, items)
     (output_dir / "detection_details.json").write_text(json.dumps(detection, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

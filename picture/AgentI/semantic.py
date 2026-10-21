@@ -119,9 +119,9 @@ def parse_layout(content: str, width: int, height: int) -> List[Dict[str, Any]]:
             if not isinstance(label, dict) or not isinstance(label.get("text"), str) or not label["text"].strip():
                 raise ValueError("语义定位标签文字无效")
             label_box = pixel_box(label.get("bbox"), width, height)
-            cx, cy = box[0] + box[2] / 2, box[1] + box[3] / 2
-            lx, ly = label_box[0] + label_box[2] / 2, label_box[1] + label_box[3] / 2
-            if abs(cx - lx) > max(box[2], label_box[2]) or abs(cy - ly) > box[3] + label_box[3] * 3:
+            gap_x = max(box[0] - label_box[0] - label_box[2], label_box[0] - box[0] - box[2], 0)
+            gap_y = max(box[1] - label_box[1] - label_box[3], label_box[1] - box[1] - box[3], 0)
+            if gap_x > max(box[2], label_box[2], label_box[3]) * 4 or gap_y > max(box[3], label_box[3]) * 4:
                 raise ValueError("语义定位标签与设备距离异常")
             parsed.append({"text": label["text"].strip(), "bbox": label_box})
         if any(overlap(box, device["bbox"]) / max(1, box[2] * box[3] + device["bbox"][2] * device["bbox"][3] - overlap(box, device["bbox"])) > 0.75 for device in devices):
@@ -140,6 +140,34 @@ async def locate_devices(image: np.ndarray, categories: List[str], model: Option
     return response.choices[0].message.content or ""
 
 
+def anchor_devices(devices: List[Dict[str, Any]], detection: Dict[str, Any]) -> List[Dict[str, Any]]:
+    ui_boxes = [node["bbox"] for node in detection["nodes"] if node["layer"] == "controls" and node["type"] != "equipment_candidate"]
+    candidates = [node["bbox"] for node in detection["nodes"] if node["type"] == "equipment_candidate" and not any(overlap(node["bbox"], box) / max(1, node["bbox"][2] * node["bbox"][3]) > 0.5 for box in ui_boxes)]
+    if not candidates or len(candidates) != len(devices):
+        return devices
+    from scipy.optimize import linear_sum_assignment
+
+    centers = np.array([[box[0] + box[2] / 2, box[1] + box[3] / 2] for box in candidates])
+    proposed = np.array([[device["bbox"][0] + device["bbox"][2] / 2, device["bbox"][1] + device["bbox"][3] / 2] for device in devices])
+    distances = np.linalg.norm(proposed[:, None] - centers[None, :], axis=2)
+    rows, columns = linear_sum_assignment(distances)
+    for row, column in zip(rows, columns):
+        box, target = devices[row]["bbox"], candidates[column]
+        if not (0.5 <= target[2] / box[2] <= 2 and 0.5 <= target[3] / box[3] <= 2) or distances[row, column] > max(box[2], box[3]) * 4:
+            return devices
+    updated = deepcopy(devices)
+    for row, column in zip(rows, columns):
+        device, target = updated[row], candidates[column]
+        box = device["bbox"]
+        dx, dy = target[0] + target[2] / 2 - box[0] - box[2] / 2, target[1] + target[3] / 2 - box[1] - box[3] / 2
+        device["bbox"] = list(target)
+        device["geometry_source"] = "opencv"
+        for label in device["labels"]:
+            x, y, w, h = label["bbox"]
+            label["bbox"] = [max(0, min(detection["image_size"]["width"] - w, x + round(dx))), max(0, min(detection["image_size"]["height"] - h, y + round(dy))), w, h]
+    return updated
+
+
 def refine_boxes(image: np.ndarray, devices: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[int]]:
     updated = deepcopy(devices)
     border = np.concatenate((image[0], image[-1], image[:, 0], image[:, -1]))
@@ -151,6 +179,8 @@ def refine_boxes(image: np.ndarray, devices: List[Dict[str, Any]]) -> Tuple[List
         return np.split(ids, np.where(np.diff(ids) > 1)[0] + 1) if ids.size else []
 
     for index, device in enumerate(updated):
+        if device.get("geometry_source") == "opencv":
+            continue
         x, y, w, h = device["bbox"]
         left, top = max(0, x - round(w * 0.3)), max(0, y - round(h * 0.65))
         right, bottom = min(image.shape[1], x + w + round(w * 0.3)), min(image.shape[0], y + h + round(h * 0.65))
@@ -173,28 +203,50 @@ def refine_boxes(image: np.ndarray, devices: List[Dict[str, Any]]) -> Tuple[List
         new_left, new_top = max(0, left + x1 - pad_x), max(0, top + int(rows[0]) - pad_y)
         new_right, new_bottom = min(image.shape[1], left + x2 + pad_x), min(image.shape[0], top + int(rows[-1]) + 1 + pad_y)
         box = [new_left, new_top, new_right - new_left, new_bottom - new_top]
-        if box[2] > w * 1.6 or box[3] > h * 1.8:
+        if box[2] > w * 1.6 or box[3] > h * 1.8 or box[2] < w * 0.6 or box[3] < h * 0.6:
             failed.append(index)
             continue
-        dx = new_left + box[2] / 2 - x - w / 2
-        dy = new_top + box[3] / 2 - y - h / 2
         device["bbox"] = box
-        for label in device["labels"]:
-            lx, ly, lw, lh = label["bbox"]
-            label["bbox"] = [max(0, min(image.shape[1] - lw, lx + round(dx))), max(0, min(image.shape[0] - lh, ly + round(dy))), lw, lh]
     return updated, failed
 
 
-def align_labels(image: np.ndarray, devices: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def align_labels(image: np.ndarray, devices: List[Dict[str, Any]], text_regions: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
     updated = deepcopy(devices)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = np.where((gray < 150) & (hsv[:, :, 1] < 90), 255, 0).astype(np.uint8)
     count, _, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
     glyphs = [tuple(int(value) for value in stats[index]) for index in range(1, count)]
+    assigned_regions = set()
     for device in updated:
         for label in device["labels"]:
             x, y, w, h = label["bbox"]
+            parts = label["text"].split()
+            nearby = []
+            for region in text_regions or []:
+                rx, ry, rw, rh = region["bbox"]
+                if tuple(region["bbox"]) in assigned_regions:
+                    continue
+                minimum_width = max(w * (0.25 if len(parts) > 1 else 0.5), min(h, 20) * 0.7)
+                if rw < minimum_width or not h * 0.2 <= rh <= h * 1.8:
+                    continue
+                if re.fullmatch(r"[\u3400-\u9fff]+", label["text"]) and not len(label["text"]) * 0.6 <= rw / rh <= len(label["text"]) * 1.6:
+                    continue
+                dx, dy = abs(rx + rw / 2 - x - w / 2), abs(ry + rh / 2 - y - h / 2)
+                if dx <= max(w, device["bbox"][2]) * 1.5 and dy <= max(h * 3, device["bbox"][3]):
+                    nearby.append((dx / max(w, 1) + dy / max(h, 1), region["bbox"]))
+            nearby.sort(key=lambda candidate: candidate[0])
+            selected = [box for _, box in nearby[:max(1, len(parts))]]
+            selected.sort(key=lambda box: box[1])
+            multiline = len(parts) > 1 and len(selected) == len(parts) and all(0 <= b[1] - a[1] - a[3] <= max(a[3], b[3]) * 2 for a, b in zip(selected, selected[1:]))
+            if selected and (len(parts) == 1 or multiline):
+                left, top = min(box[0] for box in selected), min(box[1] for box in selected)
+                right, bottom = max(box[0] + box[2] for box in selected), max(box[1] + box[3] for box in selected)
+                label["bbox"] = [left, top, right - left, bottom - top]
+                assigned_regions.update(tuple(box) for box in selected)
+                if multiline:
+                    label["text"] = "\n".join(parts)
+                continue
             candidates = []
             for gx, gy, gw, gh, area in glyphs:
                 if not (h * 0.4 <= gh <= h * 1.8 and h * 0.1 <= gw <= h * 2 and area >= h * h * 0.03):
@@ -239,7 +291,7 @@ def merge_layout(detection: Dict[str, Any], devices: List[Dict[str, Any]]) -> Tu
         if any(overlap(device["bbox"], item["bbox"]) / max(1, device["bbox"][2] * device["bbox"][3]) > 0.8 for item in controls):
             raise ValueError("语义设备框与已有界面控件重叠")
         identifier = "semantic_{}".format(index)
-        semantic_controls.append({"id": identifier, "layer": "controls", "type": "equipment_candidate", "bbox": device["bbox"], "parent_id": grid["id"], "confidence": None, "confidence_source": "vision", "semantic_name": device["name"]})
+        semantic_controls.append({"id": identifier, "layer": "controls", "type": "equipment_candidate", "bbox": device["bbox"], "parent_id": grid["id"], "confidence": None, "confidence_source": "vision", "semantic_name": device["name"], "semantic_labels": [label["text"] for label in device["labels"]]})
         for label in device["labels"]:
             semantic_texts.append({"id": "label_{}".format(len(semantic_texts)), "layer": "text", "type": "text_region", "bbox": label["bbox"], "text": label["text"], "source_control_id": identifier, "confidence": None, "confidence_source": "vision", "recognition_status": "not_requested", "detection_method": "semantic"})
     texts = []
@@ -277,8 +329,14 @@ def merge_layout(detection: Dict[str, Any], devices: List[Dict[str, Any]]) -> Tu
         entry = {"id": item["id"], "type": item["layer"], "bbox": item["bbox"], "value": None}
         if item["layer"] == "controls":
             entry["label_bboxes"] = item["label_bboxes"]
+            entry["control_kind"] = item["type"]
+            if item.get("semantic_name"):
+                entry["semantic_name"] = item["semantic_name"]
+                entry["semantic_labels"] = item.get("semantic_labels", [])
         else:
             entry["parent_id"] = item["parent_id"] if item["parent_id"] != grid["id"] else None
+            if item.get("detection_method") == "semantic":
+                entry["vision_value"] = item["text"]
         exported.append(entry)
     return exported, updated
 
@@ -314,9 +372,9 @@ def review_detection(
         content = asyncio.run(locate_devices(image, load_whitelist(db_path), model))
         output_dir.mkdir(parents=True, exist_ok=True)
         (output_dir / "semantic_response.json").write_text(content, encoding="utf-8")
-        devices = parse_layout(content, image.shape[1], image.shape[0])
+        devices = anchor_devices(parse_layout(content, image.shape[1], image.shape[0]), detection)
         devices, failed_refinements = refine_boxes(image, devices)
-        devices = align_labels(image, devices)
+        devices = align_labels(image, devices, [node for node in detection["nodes"] if node["layer"] == "text"])
         summary["refinement_failed"] = failed_refinements
         numbered = [line for line in lines if re.search(r"[\u3400-\u9fff]{2,}#?\d+$", line["text"])]
         uncovered = [line for line in numbered if not any(overlap(line["bbox"], label["bbox"]) / max(1, line["bbox"][2] * line["bbox"][3]) >= 0.3 for device in devices for label in device["labels"])]

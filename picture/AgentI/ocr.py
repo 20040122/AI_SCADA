@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -25,6 +26,7 @@ class Recognition:
     value: str
     confidence: float
     passes: int = 1
+    candidates: Tuple[str, ...] = ()
 
 
 def normalize_text(value: str) -> str:
@@ -159,12 +161,16 @@ def recognize_crop(
     if psm in (7, 13) or not results[0].value or results[0].confidence < min_confidence:
         binary = prepare_crop(crop, target_height, binary=True)
         results.append(recognize(binary, executable, language, candidate_mode, timeout))
-    best = max(results, key=lambda result: result.confidence if result.value else -1)
+    def select():
+        counts = Counter(result.value for result in results if result.value)
+        return max(results, key=lambda result: result.confidence + min(8, (counts[result.value] - 1) * 4) if result.value else -1)
+
+    best = select()
     if not best.value or best.confidence < min_confidence:
         conservative = prepare_crop(crop, target_height, conservative=True)
         results.append(recognize(conservative, executable, language, candidate_mode, timeout))
-        best = max(results, key=lambda result: result.confidence if result.value else -1)
-    return replace(best, passes=len(results))
+        best = select()
+    return replace(best, passes=len(results), candidates=tuple(dict.fromkeys(result.value for result in results if result.value)))
 
 
 def write_atomic(output_path: Path, items: List[Dict[str, Any]]) -> None:
@@ -183,10 +189,31 @@ def write_atomic(output_path: Path, items: List[Dict[str, Any]]) -> None:
             temporary.unlink(missing_ok=True)
 
 
+def infer_text_style(image: np.ndarray, item: Dict[str, Any]) -> Dict[str, Any]:
+    x, y, w, h = item["bbox"]
+    patch = image[max(0, y - 3):min(image.shape[0], y + h + 3), max(0, x - 3):min(image.shape[1], x + w + 3)]
+    background = np.median(np.concatenate((patch[0], patch[-1], patch[:, 0], patch[:, -1])), axis=0)
+    crop = image[y:y + h, x:x + w]
+    difference = np.max(np.abs(crop.astype(np.float32) - background), axis=2)
+    mask = difference > max(40, float(np.max(difference)) * 0.5)
+    pixels = crop[mask]
+    if not pixels.size:
+        return {}
+    blue, green, red = np.median(pixels, axis=0).round().astype(int)
+    active_rows = np.flatnonzero(np.any(mask, axis=1))
+    runs = np.split(active_rows, np.where(np.diff(active_rows) > 1)[0] + 1)
+    glyph_height = max(len(run) for run in runs)
+    lines = str(item.get("value") or "").splitlines()
+    units = max((sum(1.0 if re.match("[" + CJK + "]", char) else 0.55 for char in line) for line in lines), default=1.0)
+    size = max(8, round(min(glyph_height / 0.85, w / max(units, 1))))
+    return {"text.color": "rgb({},{},{})".format(red, green, blue), "text.font": "{}px arial, sans-serif".format(size), "text.align": "center"}
+
+
 def fill_text_values(
     image: np.ndarray, items: List[Dict[str, Any]],
     language: str = "chi_sim+eng", psm: int = 7, target_height: int = 48,
     min_confidence: float = 60.0, timeout: float = 30.0, workers: int = 6,
+    diagnostics: bool = False,
 ) -> Dict[str, Any]:
     if type(target_height) is not int or target_height <= 0:
         raise ValueError("目标文字高度必须是正整数。")
@@ -222,6 +249,15 @@ def fill_text_values(
     calls = 0
     for item, result in zip(texts, results):
         item["value"] = result.value or None
+        if diagnostics:
+            item["recognition_confidence"] = round(result.confidence, 2)
+            item["ocr_candidates"] = list(result.candidates)
+            uncertain = not result.value or result.confidence < min_confidence or len(result.candidates) > 1
+            item["recognition_status"] = "needs_review" if uncertain else "recognized"
+        if item.get("vision_value"):
+            item["ocr_value"] = item["value"]
+            item["value"] = item["vision_value"]
+            item["recognition_status"] = "vision_transcribed"
         calls += result.passes
         if not result.value:
             unrecognized.append(item["id"])

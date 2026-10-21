@@ -7,8 +7,12 @@
 1. 原有检测器生成设备、按钮、状态条、数值框与文字候选。
 2. Tesseract 在完整识别图上独立检测文本行，不依赖设备框或固定字符像素高度。
 3. 候选缺少名称关联、多个候选位于文字区域，或实例名称多于设备时，自动请求整图设备语义定位。
-4. 在每个设备的局部范围内校验前景分布、对齐名称字形，再与现有界面控件合并。
-5. 沿用控件命名、标签转写、素材匹配及画布组装。
+4. 当设备数量和尺寸能够一致匹配时，使用 OpenCV 本体框约束视觉坐标；否则在局部范围内校验前景分布。名称支持上下左右关联和多行对齐，再与现有界面控件合并。
+5. 沿用控件命名、标签转写、素材匹配及画布组装。数值框需要连续背景，避免蓝色文字被误当成控件；相同语义、相同标签且外观接近的设备使用明确多数分类结果保持一致。
+
+OCR 保留不同识别候选，候选冲突、低置信度和空结果会进入视觉转写复核，包括未关联设备的标题等文字。语义定位已经转写的标签保留为 `vision_value`，不被后续 OCR 覆盖。`--no-refine-labels` 可关闭额外的标签及不确定文字复核。
+
+画布文字节点根据原图估计字号和颜色，并保留识别出的换行。检测结果保留 `control_kind`、`semantic_name`、`semantic_labels`、`ocr_candidates`、`recognition_status` 和 `text_style` 等诊断字段，原有 `id/type/bbox/value` 字段继续可用。设备坐标匹配依赖 SciPy，已列入 `requirements.txt`。
 
 连接线不作为检测、删除或重建对象。视觉请求使用原始识别图，局部范围校验只估计设备边界；输入图像像素保持不变。设备框内可能包含相邻线段，不输出连接线节点。
 
@@ -31,7 +35,7 @@ python3 picture/AgentI/main.py --input image03.png --semantic-mode off
 ## 验证与诊断
 
 ```sh
-python3 -m pytest tests/test_agent_i_semantic.py tests/test_agent_i_detection.py tests/test_agent_i_clean_image.py tests/test_agent_i_ocr.py tests/test_agent_i_name.py tests/test_agent_i_assemble.py -q
+python3 -m pytest tests/test_agent_i_semantic.py tests/test_agent_i_detection.py tests/test_agent_i_clean_image.py tests/test_agent_i_ocr.py tests/test_agent_i_name.py tests/test_agent_i_assemble.py tests/test_agent_i_oxygen.py -q
 ```
 
 `pipeline.py` 返回的 `detection.semantic` 描述是否应用补检、触发原因和局部校验失败项。接口或响应校验失败时，保留原有检测结果并记录 `status=failed` 和错误；这表示需要核验，不能视为语义定位成功。

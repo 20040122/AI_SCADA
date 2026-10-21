@@ -26,6 +26,7 @@ def convert_text_nodes(
             "height": item["height"],
         })
         node["s"]["text"] = item["value"]
+        node["s"].update(item.get("text_style", {}))
         nodes.append(node)
         next_id += 1
     return nodes

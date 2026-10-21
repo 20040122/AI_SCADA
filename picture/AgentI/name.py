@@ -10,6 +10,7 @@ import sqlite3
 import sys
 import tempfile
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -267,9 +268,40 @@ async def recognize_all(
     semaphore = asyncio.Semaphore(concurrency)
     targets = [item for item in items if item.get("type") == "controls"]
     durations: List[float] = []
+
+    async def classify(item):
+        category = item.get("semantic_name")
+        if category in whitelist:
+            return category, True
+        category = {"value_field": "数值显示", "button": "按钮", "status": "绿色状态", "indicator": "状态显示"}.get(item.get("control_kind"))
+        if category in whitelist:
+            return category, True
+        return await recognize_control(client, model, semaphore, item, image, whitelist, prompt, context, durations)
+
     results = await asyncio.gather(*[
-        recognize_control(client, model, semaphore, item, image, whitelist, prompt, context, durations) for item in targets
+        classify(item) for item in targets
     ], return_exceptions=True)
+    groups = []
+    for index, item in enumerate(targets):
+        if not item.get("semantic_name") or not item.get("semantic_labels"):
+            continue
+        x, y, w, h = item["bbox"]
+        crop = cv2.resize(image[y:y + h, x:x + w], (32, 32), interpolation=cv2.INTER_AREA).astype(np.float32)
+        key = (item["semantic_name"], tuple(item["semantic_labels"]))
+        for group in groups:
+            if group["key"] == key and abs(w / h - group["ratio"]) < 0.15 and np.mean(np.abs(crop - group["crop"])) < 15:
+                group["indices"].append(index)
+                break
+        else:
+            groups.append({"key": key, "ratio": w / h, "crop": crop, "indices": [index]})
+    for group in groups:
+        votes = Counter(results[index][0] for index in group["indices"] if not isinstance(results[index], BaseException) and results[index][1])
+        if votes:
+            category, count = votes.most_common(1)[0]
+            if count >= 2 and count > len(group["indices"]) / 2:
+                for index in group["indices"]:
+                    if not isinstance(results[index], BaseException):
+                        results[index] = category, True
     matched = []
     unknown = []
     failed = []
@@ -351,7 +383,7 @@ def refine_label_values(
 ) -> Dict[str, Any]:
     label_boxes = {tuple(box) for item in items if item.get("type") == "controls" for box in item.get("label_bboxes", [])}
     controls = {item["id"]: item for item in items if item.get("type") == "controls"}
-    targets = [item for item in items if item.get("type") == "text" and tuple(item["bbox"]) in label_boxes]
+    targets = [item for item in items if item.get("type") == "text" and not item.get("vision_value") and (tuple(item["bbox"]) in label_boxes or item.get("recognition_status") == "needs_review")]
     if not targets:
         return {"labels": 0, "refined": [], "failed": []}
 

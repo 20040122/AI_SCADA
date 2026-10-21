@@ -74,7 +74,7 @@ def main() -> None:
     parser.add_argument("--background", default="white", help="网格图补边颜色，默认 white")
     parser.add_argument("--grid-step", type=int, default=20, help="网格图小网格间距（像素，默认 20）")
     parser.add_argument("--model", default=None, help="DeepSeek 模型，默认取 DEEPSEEK_MODEL")
-    parser.add_argument("--no-refine-labels", action="store_true", help="关闭设备标签的视觉转写复核")
+    parser.add_argument("--no-refine-labels", action="store_true", help="关闭标签与不确定文字的视觉转写复核")
     parser.add_argument("--semantic-mode", choices=("auto", "off", "always"), default="auto", help="设备语义定位模式")
     args = parser.parse_args()
     canvas_output = args.canvas_output or PROJECT / "output" / "canvas_{}.json".format(

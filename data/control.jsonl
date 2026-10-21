@@ -11,6 +11,7 @@
 {"displayName":"真空罐体","image":"symbols/Agent/真空罐体.json","width":184,"height":155}
 {"displayName":"状态面板","image":"symbols/Agent/状态面板.json","width":162,"height":60}
 {"displayName":"数值显示","image":"symbols/Agent/数值显示.json","width":78,"height":24}
+{"displayName":"推拉门","image":"symbols/现场控制系统/推拉门控件/推拉门.json","width":780,"height":352}
 {"displayName":"按钮","image":"symbols/Agent/按钮.json","width":160,"height":50}
 {"displayName":"绿色状态","image":"symbols/Agent/绿色状态.json","width":65,"height":18}
 {"displayName":"状态显示","image":"symbols/Agent/状态显示.json","width":70,"height":31}
@@ -176,3 +177,5 @@
 {"displayName":"冷却塔","image":"assets/Agent/冷却塔.png","width":115,"height":120} 
 {"displayName":"冷水机","image":"assets/Agent/冷水机.png","width":180,"height":141} 
 {"displayName":"冷却泵","image":"assets/Agent/冷却泵.png","width":99,"height":94} 
+{"displayName":"PN探头","image":"assets/Agent/PN探头.png","width":46,"height":48}
+{"displayName":"送风机","image":"assets/Agent/送风机.png","width":45,"height":47}

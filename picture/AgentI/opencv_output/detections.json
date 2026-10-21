@@ -3,462 +3,2513 @@
     "id": "controls_1",
     "type": "controls",
     "bbox": [
-      131,
-      286,
-      111,
-      84
+      66,
+      295,
+      52,
+      21
     ],
-    "value": "溢流阀",
-    "label_bboxes": [
-      [
-        141,
-        378,
-        63,
-        16
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_2",
     "type": "controls",
     "bbox": [
-      375,
-      292,
-      155,
-      71
+      526,
+      300,
+      38,
+      21
     ],
-    "value": "液压泵",
-    "label_bboxes": [
-      [
-        448,
-        371,
-        63,
-        16
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_3",
     "type": "controls",
     "bbox": [
-      667,
-      369,
-      156,
-      81
+      639,
+      300,
+      38,
+      21
     ],
-    "value": "电机",
-    "label_bboxes": [
-      [
-        722,
-        457,
-        46,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_4",
     "type": "controls",
     "bbox": [
-      1097,
-      369,
-      31,
-      71
+      755,
+      300,
+      39,
+      21
     ],
-    "value": "吸油过滤器",
-    "label_bboxes": [
-      [
-        1065,
-        448,
-        94,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_5",
     "type": "controls",
     "bbox": [
-      1511,
-      395,
-      67,
-      35
+      868,
+      300,
+      39,
+      21
     ],
-    "value": "回油单向阀",
-    "label_bboxes": [
-      [
-        1491,
-        443,
-        94,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_6",
     "type": "controls",
     "bbox": [
-      131,
-      452,
-      111,
-      84
+      979,
+      300,
+      38,
+      21
     ],
-    "value": "溢流阀",
-    "label_bboxes": [
-      [
-        141,
-        544,
-        65,
-        16
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_7",
     "type": "controls",
     "bbox": [
-      375,
-      459,
-      155,
-      71
+      1091,
+      300,
+      38,
+      21
     ],
-    "value": "液压泵",
-    "label_bboxes": [
-      [
-        448,
-        544,
-        65,
-        16
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_8",
     "type": "controls",
     "bbox": [
-      131,
-      619,
-      111,
-      83
+      1201,
+      300,
+      39,
+      21
     ],
-    "value": "溢流阀",
-    "label_bboxes": [
-      [
-        141,
-        711,
-        65,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_9",
     "type": "controls",
     "bbox": [
-      375,
-      625,
-      155,
-      71
+      1314,
+      300,
+      38,
+      21
     ],
-    "value": "液压泵",
-    "label_bboxes": [
-      [
-        448,
-        704,
-        65,
-        16
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_10",
     "type": "controls",
     "bbox": [
-      1284,
-      654,
-      587,
-      345
+      1424,
+      300,
+      39,
+      21
     ],
-    "value": "油箱",
-    "label_bboxes": [
-      [
-        1542,
-        1012,
-        46,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_11",
     "type": "controls",
     "bbox": [
-      667,
-      701,
-      156,
-      82
+      1533,
+      300,
+      39,
+      21
     ],
-    "value": "电机",
-    "label_bboxes": [
-      [
-        722,
-        789,
-        48,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_12",
     "type": "controls",
     "bbox": [
-      1097,
-      707,
-      31,
-      71
+      1801,
+      300,
+      38,
+      21
     ],
-    "value": "吸油过滤器",
-    "label_bboxes": [
-      [
-        1065,
-        783,
-        96,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_13",
     "type": "controls",
     "bbox": [
-      131,
-      785,
-      111,
-      83
+      415,
+      301,
+      41,
+      22
     ],
-    "value": "溢流阀",
-    "label_bboxes": [
-      [
-        141,
-        877,
-        65,
-        15
-      ]
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_14",
     "type": "controls",
     "bbox": [
-      375,
-      791,
-      155,
-      71
+      91,
+      324,
+      31,
+      36
     ],
-    "value": "液压泵",
+    "value": "PN探头",
     "label_bboxes": [
       [
-        448,
-        877,
-        65,
+        77,
+        271,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_15",
+    "type": "controls",
+    "bbox": [
+      441,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        428,
+        276,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_16",
+    "type": "controls",
+    "bbox": [
+      552,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        539,
+        276,
+        31,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_17",
+    "type": "controls",
+    "bbox": [
+      665,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        651,
+        276,
+        32,
         15
       ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
     ]
+  },
+  {
+    "id": "controls_18",
+    "type": "controls",
+    "bbox": [
+      782,
+      329,
+      30,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        768,
+        276,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_19",
+    "type": "controls",
+    "bbox": [
+      894,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        881,
+        276,
+        31,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_20",
+    "type": "controls",
+    "bbox": [
+      1005,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        991,
+        276,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_21",
+    "type": "controls",
+    "bbox": [
+      1117,
+      329,
+      30,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1103,
+        276,
+        32,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_22",
+    "type": "controls",
+    "bbox": [
+      1227,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1214,
+        276,
+        31,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_23",
+    "type": "controls",
+    "bbox": [
+      1340,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1327,
+        276,
+        31,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_24",
+    "type": "controls",
+    "bbox": [
+      1451,
+      329,
+      30,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1437,
+        276,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_25",
+    "type": "controls",
+    "bbox": [
+      1559,
+      329,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1546,
+        276,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_26",
+    "type": "controls",
+    "bbox": [
+      1827,
+      329,
+      30,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1813,
+        276,
+        32,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_27",
+    "type": "controls",
+    "bbox": [
+      234,
+      427,
+      52,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_28",
+    "type": "controls",
+    "bbox": [
+      259,
+      456,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        245,
+        403,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_29",
+    "type": "controls",
+    "bbox": [
+      1627,
+      490,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1700,
+        497,
+        32,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_30",
+    "type": "controls",
+    "bbox": [
+      887,
+      494,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        952,
+        501,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_31",
+    "type": "controls",
+    "bbox": [
+      1688,
+      521,
+      38,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_32",
+    "type": "controls",
+    "bbox": [
+      940,
+      526,
+      38,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_33",
+    "type": "controls",
+    "bbox": [
+      234,
+      561,
+      52,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_34",
+    "type": "controls",
+    "bbox": [
+      259,
+      590,
+      31,
+      36
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        245,
+        537,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_35",
+    "type": "controls",
+    "bbox": [
+      595,
+      688,
+      38,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_36",
+    "type": "controls",
+    "bbox": [
+      755,
+      688,
+      39,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_37",
+    "type": "controls",
+    "bbox": [
+      234,
+      695,
+      52,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_38",
+    "type": "controls",
+    "bbox": [
+      1384,
+      695,
+      38,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_39",
+    "type": "controls",
+    "bbox": [
+      1527,
+      695,
+      38,
+      21
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_40",
+    "type": "controls",
+    "bbox": [
+      620,
+      718,
+      30,
+      35
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        606,
+        664,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_41",
+    "type": "controls",
+    "bbox": [
+      782,
+      718,
+      30,
+      35
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        768,
+        664,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_42",
+    "type": "controls",
+    "bbox": [
+      259,
+      724,
+      31,
+      35
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        245,
+        670,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_43",
+    "type": "controls",
+    "bbox": [
+      1410,
+      724,
+      30,
+      35
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1396,
+        670,
+        32,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_44",
+    "type": "controls",
+    "bbox": [
+      1553,
+      724,
+      31,
+      35
+    ],
+    "value": "PN探头",
+    "label_bboxes": [
+      [
+        1540,
+        670,
+        31,
+        16
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "氧气探头",
+    "semantic_labels": [
+      "氧气"
+    ]
+  },
+  {
+    "id": "controls_45",
+    "type": "controls",
+    "bbox": [
+      1417,
+      815,
+      37,
+      41
+    ],
+    "value": "送风机",
+    "label_bboxes": [
+      [
+        1370,
+        802,
+        42,
+        48
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "送风机",
+    "semantic_labels": [
+      "风机 AP12P"
+    ]
+  },
+  {
+    "id": "controls_46",
+    "type": "controls",
+    "bbox": [
+      1466,
+      819,
+      60,
+      34
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_47",
+    "type": "controls",
+    "bbox": [
+      1220,
+      821,
+      37,
+      41
+    ],
+    "value": "送风机",
+    "label_bboxes": [
+      [
+        1170,
+        808,
+        50,
+        48
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "送风机",
+    "semantic_labels": [
+      "风机 AP12SG#1"
+    ]
+  },
+  {
+    "id": "controls_48",
+    "type": "controls",
+    "bbox": [
+      956,
+      823,
+      37,
+      41
+    ],
+    "value": "送风机",
+    "label_bboxes": [
+      [
+        909,
+        810,
+        43,
+        48
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "送风机",
+    "semantic_labels": [
+      "风机 AP21S"
+    ]
+  },
+  {
+    "id": "controls_49",
+    "type": "controls",
+    "bbox": [
+      1266,
+      825,
+      60,
+      35
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_50",
+    "type": "controls",
+    "bbox": [
+      1005,
+      827,
+      60,
+      34
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_51",
+    "type": "controls",
+    "bbox": [
+      759,
+      828,
+      37,
+      41
+    ],
+    "value": "送风机",
+    "label_bboxes": [
+      [
+        715,
+        815,
+        43,
+        48
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "送风机",
+    "semantic_labels": [
+      "风机 AP11P"
+    ]
+  },
+  {
+    "id": "controls_52",
+    "type": "controls",
+    "bbox": [
+      805,
+      832,
+      60,
+      35
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_53",
+    "type": "controls",
+    "bbox": [
+      1221,
+      894,
+      37,
+      41
+    ],
+    "value": "送风机",
+    "label_bboxes": [
+      [
+        1148,
+        899,
+        61,
+        34
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "送风机",
+    "semantic_labels": [
+      "风机\nAP12SG#2"
+    ]
+  },
+  {
+    "id": "controls_54",
+    "type": "controls",
+    "bbox": [
+      1266,
+      898,
+      60,
+      34
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_55",
+    "type": "controls",
+    "bbox": [
+      760,
+      901,
+      37,
+      41
+    ],
+    "value": "送风机",
+    "label_bboxes": [
+      [
+        715,
+        890,
+        43,
+        48
+      ]
+    ],
+    "control_kind": "equipment_candidate",
+    "semantic_name": "送风机",
+    "semantic_labels": [
+      "风机 AP11SG"
+    ]
+  },
+  {
+    "id": "controls_56",
+    "type": "controls",
+    "bbox": [
+      805,
+      905,
+      60,
+      34
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_57",
+    "type": "controls",
+    "bbox": [
+      1393,
+      919,
+      164,
+      51
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_58",
+    "type": "controls",
+    "bbox": [
+      1738,
+      919,
+      147,
+      51
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_59",
+    "type": "controls",
+    "bbox": [
+      1606,
+      920,
+      124,
+      49
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_60",
+    "type": "controls",
+    "bbox": [
+      138,
+      929,
+      81,
+      32
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_61",
+    "type": "controls",
+    "bbox": [
+      303,
+      931,
+      81,
+      32
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_62",
+    "type": "controls",
+    "bbox": [
+      482,
+      931,
+      81,
+      32
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
   },
   {
     "id": "text_1",
     "type": "text",
     "bbox": [
-      448,
-      371,
-      63,
-      16
+      88,
+      154,
+      217,
+      19
     ],
-    "value": "液压泵#1",
-    "parent_id": "controls_2",
-    "ocr_value": "液压泵#1",
-    "recognition_status": "vision_transcribed"
+    "value": "522-B106供气及阀门间",
+    "parent_id": null,
+    "recognition_confidence": 90.06,
+    "ocr_candidates": [
+      "522-B106供气及阀门间"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(50,50,50)",
+      "text.font": "21px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_2",
     "type": "text",
     "bbox": [
-      141,
-      378,
-      63,
-      16
+      1126,
+      154,
+      80,
+      19
     ],
-    "value": "溢流阀#1",
-    "parent_id": "controls_1",
-    "ocr_value": "溢流阀#1",
-    "recognition_status": "vision_transcribed"
+    "value": "地下管廊",
+    "parent_id": null,
+    "recognition_confidence": 85.77,
+    "ocr_candidates": [
+      "地下管底",
+      "地下管匈",
+      "地下管廊"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "地下管底",
+    "text_style": {
+      "text.color": "rgb(47,47,47)",
+      "text.font": "20px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_3",
     "type": "text",
     "bbox": [
-      1491,
-      443,
-      94,
-      15
+      77,
+      271,
+      32,
+      16
     ],
-    "value": "回油单向阀#1",
-    "parent_id": "controls_5",
-    "ocr_value": "回油单向阀#1",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_14",
+    "vision_value": "氧气",
+    "recognition_confidence": 70.04,
+    "ocr_candidates": [
+      "AA",
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "AA",
+    "text_style": {
+      "text.color": "rgb(73,73,73)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_4",
     "type": "text",
     "bbox": [
-      1065,
-      448,
-      94,
-      15
+      428,
+      276,
+      32,
+      16
     ],
-    "value": "吸油过滤器#1",
-    "parent_id": "controls_4",
-    "ocr_value": "吸油过滤器#1",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_15",
+    "vision_value": "氧气",
+    "recognition_confidence": 74.22,
+    "ocr_candidates": [
+      "氯气",
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_5",
     "type": "text",
     "bbox": [
-      722,
-      457,
-      46,
-      15
+      539,
+      276,
+      31,
+      16
     ],
-    "value": "电机#1",
-    "parent_id": "controls_3",
-    "ocr_value": "电机#1",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_16",
+    "vision_value": "氧气",
+    "recognition_confidence": 75.32,
+    "ocr_candidates": [
+      "氧气",
+      "£5"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_6",
     "type": "text",
     "bbox": [
-      141,
-      544,
-      65,
-      16
+      651,
+      276,
+      32,
+      15
     ],
-    "value": "溢流阀#2",
-    "parent_id": "controls_6",
-    "ocr_value": "Ma RHQ",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_17",
+    "vision_value": "氧气",
+    "recognition_confidence": 56.83,
+    "ocr_candidates": [
+      "氮气",
+      "£5"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "£5",
+    "text_style": {
+      "text.color": "rgb(80,80,80)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_7",
     "type": "text",
     "bbox": [
-      448,
-      544,
-      65,
+      768,
+      276,
+      32,
       16
     ],
-    "value": "液压泵#2",
-    "parent_id": "controls_7",
-    "ocr_value": "液压泵殷",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_18",
+    "vision_value": "氧气",
+    "recognition_confidence": 63.67,
+    "ocr_candidates": [
+      "氯气",
+      "氧气",
+      "AS"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "AS",
+    "text_style": {
+      "text.color": "rgb(80,80,80)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_8",
     "type": "text",
     "bbox": [
-      448,
-      704,
-      65,
+      881,
+      276,
+      31,
       16
     ],
-    "value": "液压泵#3",
-    "parent_id": "controls_9",
-    "ocr_value": "液压泵怒",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_19",
+    "vision_value": "氧气",
+    "recognition_confidence": 77.4,
+    "ocr_candidates": [
+      "A",
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_9",
     "type": "text",
     "bbox": [
-      141,
-      711,
-      65,
-      15
+      991,
+      276,
+      32,
+      16
     ],
-    "value": "溢流阀#3",
-    "parent_id": "controls_8",
-    "ocr_value": "Yar LHS",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_20",
+    "vision_value": "氧气",
+    "recognition_confidence": 55.43,
+    "ocr_candidates": [
+      "AA",
+      "AS",
+      "aa"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "AS",
+    "text_style": {
+      "text.color": "rgb(80,80,80)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_10",
     "type": "text",
     "bbox": [
-      1065,
-      783,
-      96,
+      1103,
+      276,
+      32,
       15
     ],
-    "value": "吸油过滤器#2",
-    "parent_id": "controls_12",
-    "ocr_value": "吸油过滤器加",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_21",
+    "vision_value": "氧气",
+    "recognition_confidence": 74.35,
+    "ocr_candidates": [
+      "AS",
+      "氮气",
+      "复气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "复气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_11",
     "type": "text",
     "bbox": [
-      722,
-      789,
-      48,
-      15
+      1214,
+      276,
+      31,
+      16
     ],
-    "value": "电机#2",
-    "parent_id": "controls_11",
-    "ocr_value": "电机#2",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_22",
+    "vision_value": "氧气",
+    "recognition_confidence": 78.22,
+    "ocr_candidates": [
+      "A",
+      "氧气",
+      "AS"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_12",
     "type": "text",
     "bbox": [
-      141,
-      877,
-      65,
-      15
+      1327,
+      276,
+      31,
+      16
     ],
-    "value": "溢流阀#4",
-    "parent_id": "controls_13",
-    "ocr_value": "溢流阀状",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_23",
+    "vision_value": "氧气",
+    "recognition_confidence": 69.43,
+    "ocr_candidates": [
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_13",
     "type": "text",
     "bbox": [
-      448,
-      877,
-      65,
-      15
+      1437,
+      276,
+      32,
+      16
     ],
-    "value": "液压泵#4",
-    "parent_id": "controls_14",
-    "ocr_value": "WE RHA",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_24",
+    "vision_value": "氧气",
+    "recognition_confidence": 61.69,
+    "ocr_candidates": [
+      "A",
+      "氮气",
+      "a5"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "a5",
+    "text_style": {
+      "text.color": "rgb(80,80,80)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   },
   {
     "id": "text_14",
     "type": "text",
     "bbox": [
-      1542,
-      1012,
-      46,
+      1546,
+      276,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_25",
+    "vision_value": "氧气",
+    "recognition_confidence": 77.28,
+    "ocr_candidates": [
+      "毛气",
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_15",
+    "type": "text",
+    "bbox": [
+      1813,
+      276,
+      32,
       15
     ],
-    "value": "油箱#1",
-    "parent_id": "controls_10",
-    "ocr_value": "油箱#1",
-    "recognition_status": "vision_transcribed"
+    "value": "氧气",
+    "parent_id": "controls_26",
+    "vision_value": "氧气",
+    "recognition_confidence": 77.82,
+    "ocr_candidates": [
+      "A",
+      "氮气",
+      "和揽气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "和揽气",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_16",
+    "type": "text",
+    "bbox": [
+      123,
+      298,
+      15,
+      15
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.7,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(65,65,65)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_17",
+    "type": "text",
+    "bbox": [
+      459,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.66,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(80,80,80)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_18",
+    "type": "text",
+    "bbox": [
+      569,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 90.91,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(83,83,83)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_19",
+    "type": "text",
+    "bbox": [
+      682,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 87.7,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(99,99,99)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_20",
+    "type": "text",
+    "bbox": [
+      799,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 88.41,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(90,90,90)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_21",
+    "type": "text",
+    "bbox": [
+      911,
+      307,
+      13,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.12,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(84,84,84)",
+      "text.font": "13px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_22",
+    "type": "text",
+    "bbox": [
+      1022,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 88.78,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(87,87,87)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_23",
+    "type": "text",
+    "bbox": [
+      1134,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 91.76,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(87,87,87)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_24",
+    "type": "text",
+    "bbox": [
+      1245,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.92,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(84,84,84)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_25",
+    "type": "text",
+    "bbox": [
+      1357,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 89.68,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(82,82,82)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_26",
+    "type": "text",
+    "bbox": [
+      1468,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 87.05,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(92,92,92)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_27",
+    "type": "text",
+    "bbox": [
+      1577,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.74,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(78,78,78)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_28",
+    "type": "text",
+    "bbox": [
+      1844,
+      307,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 90.74,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(91,91,91)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_29",
+    "type": "text",
+    "bbox": [
+      245,
+      403,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_28",
+    "vision_value": "氧气",
+    "recognition_confidence": 75.68,
+    "ocr_candidates": [
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(67,67,67)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_30",
+    "type": "text",
+    "bbox": [
+      291,
+      430,
+      15,
+      15
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.96,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(62,62,62)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_31",
+    "type": "text",
+    "bbox": [
+      851,
+      477,
+      21,
+      22
+    ],
+    "value": "供",
+    "parent_id": null,
+    "recognition_confidence": 93.05,
+    "ocr_candidates": [
+      "供"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(16,13,83)",
+      "text.font": "21px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_32",
+    "type": "text",
+    "bbox": [
+      1700,
+      497,
+      32,
+      15
+    ],
+    "value": "氧气",
+    "parent_id": "controls_29",
+    "vision_value": "氧气",
+    "recognition_confidence": 80.95,
+    "ocr_candidates": [
+      "氢气",
+      "氯气",
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(62,62,62)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_33",
+    "type": "text",
+    "bbox": [
+      952,
+      501,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_30",
+    "vision_value": "氧气",
+    "recognition_confidence": 71.04,
+    "ocr_candidates": [
+      "At",
+      "氧气",
+      "A"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(65,65,65)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_34",
+    "type": "text",
+    "bbox": [
+      851,
+      505,
+      21,
+      22
+    ],
+    "value": "气",
+    "parent_id": null,
+    "recognition_confidence": 92.49,
+    "ocr_candidates": [
+      "气"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(22,19,87)",
+      "text.font": "21px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_35",
+    "type": "text",
+    "bbox": [
+      1732,
+      527,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.0,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(90,90,90)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_36",
+    "type": "text",
+    "bbox": [
+      984,
+      533,
+      12,
+      10
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.07,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(82,82,82)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_37",
+    "type": "text",
+    "bbox": [
+      851,
+      534,
+      21,
+      20
+    ],
+    "value": "通",
+    "parent_id": null,
+    "recognition_confidence": 92.58,
+    "ocr_candidates": [
+      "通"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(21,18,87)",
+      "text.font": "21px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_38",
+    "type": "text",
+    "bbox": [
+      245,
+      537,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_34",
+    "vision_value": "氧气",
+    "recognition_confidence": 79.59,
+    "ocr_candidates": [
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(61,61,61)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_39",
+    "type": "text",
+    "bbox": [
+      851,
+      560,
+      21,
+      22
+    ],
+    "value": "廊",
+    "parent_id": null,
+    "recognition_confidence": 75.61,
+    "ocr_candidates": [
+      "让",
+      "ig",
+      "Tg"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "让",
+    "text_style": {
+      "text.color": "rgb(21,18,86)",
+      "text.font": "21px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_40",
+    "type": "text",
+    "bbox": [
+      291,
+      564,
+      15,
+      15
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 93.02,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(68,68,68)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_41",
+    "type": "text",
+    "bbox": [
+      606,
+      664,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_40",
+    "vision_value": "氧气",
+    "recognition_confidence": 56.1,
+    "ocr_candidates": [
+      "氯气",
+      "A",
+      "氧气",
+      "AA"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "A",
+    "text_style": {
+      "text.color": "rgb(79,79,79)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_42",
+    "type": "text",
+    "bbox": [
+      768,
+      664,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_41",
+    "vision_value": "氧气",
+    "recognition_confidence": 62.39,
+    "ocr_candidates": [
+      "氯气",
+      "氧气",
+      "AS"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "AS",
+    "text_style": {
+      "text.color": "rgb(78,78,78)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_43",
+    "type": "text",
+    "bbox": [
+      245,
+      670,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_42",
+    "vision_value": "氧气",
+    "recognition_confidence": 75.53,
+    "ocr_candidates": [
+      "At",
+      "氧气",
+      "AS"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(65,65,65)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_44",
+    "type": "text",
+    "bbox": [
+      1396,
+      670,
+      32,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_43",
+    "vision_value": "氧气",
+    "recognition_confidence": 63.51,
+    "ocr_candidates": [
+      "A",
+      "氧气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "A",
+    "text_style": {
+      "text.color": "rgb(67,67,67)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_45",
+    "type": "text",
+    "bbox": [
+      1540,
+      670,
+      31,
+      16
+    ],
+    "value": "氧气",
+    "parent_id": "controls_44",
+    "vision_value": "氧气",
+    "recognition_confidence": 44.67,
+    "ocr_candidates": [
+      "AS",
+      "氧气",
+      "£4",
+      "氮气"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "氧气",
+    "text_style": {
+      "text.color": "rgb(65,65,65)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_46",
+    "type": "text",
+    "bbox": [
+      638,
+      695,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 86.27,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(96,96,96)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_47",
+    "type": "text",
+    "bbox": [
+      799,
+      695,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 91.38,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(90,90,90)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_48",
+    "type": "text",
+    "bbox": [
+      291,
+      697,
+      15,
+      15
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.12,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(62,62,62)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_49",
+    "type": "text",
+    "bbox": [
+      1427,
+      701,
+      12,
+      11
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 88.7,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(90,90,90)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_50",
+    "type": "text",
+    "bbox": [
+      1570,
+      702,
+      12,
+      10
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 91.7,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(74,74,74)",
+      "text.font": "12px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_51",
+    "type": "text",
+    "bbox": [
+      1370,
+      802,
+      42,
+      48
+    ],
+    "value": "风机 AP12P",
+    "parent_id": "controls_45",
+    "vision_value": "风机 AP12P",
+    "recognition_confidence": 37.69,
+    "ocr_candidates": [
+      "oe"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "oe",
+    "text_style": {
+      "text.color": "rgb(66,68,132)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_52",
+    "type": "text",
+    "bbox": [
+      1170,
+      808,
+      50,
+      48
+    ],
+    "value": "风机 AP12SG#1",
+    "parent_id": "controls_47",
+    "vision_value": "风机 AP12SG#1",
+    "recognition_confidence": 29.57,
+    "ocr_candidates": [
+      "won",
+      "nan"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "nan",
+    "text_style": {
+      "text.color": "rgb(65,66,131)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_53",
+    "type": "text",
+    "bbox": [
+      909,
+      810,
+      43,
+      48
+    ],
+    "value": "风机 AP21S",
+    "parent_id": "controls_48",
+    "vision_value": "风机 AP21S",
+    "recognition_confidence": 39.19,
+    "ocr_candidates": [
+      "pois"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "pois",
+    "text_style": {
+      "text.color": "rgb(53,55,124)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_54",
+    "type": "text",
+    "bbox": [
+      715,
+      815,
+      43,
+      48
+    ],
+    "value": "风机 AP11P",
+    "parent_id": "controls_51",
+    "vision_value": "风机 AP11P",
+    "recognition_confidence": 0.0,
+    "ocr_candidates": [],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": null,
+    "text_style": {
+      "text.color": "rgb(60,62,127)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_55",
+    "type": "text",
+    "bbox": [
+      715,
+      890,
+      43,
+      48
+    ],
+    "value": "风机 AP11SG",
+    "parent_id": "controls_55",
+    "vision_value": "风机 AP11SG",
+    "recognition_confidence": 24.95,
+    "ocr_candidates": [
+      "ne"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "ne",
+    "text_style": {
+      "text.color": "rgb(62,64,129)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_56",
+    "type": "text",
+    "bbox": [
+      1148,
+      899,
+      61,
+      34
+    ],
+    "value": "风机\nAP12SG#2",
+    "parent_id": "controls_53",
+    "vision_value": "风机\nAP12SG#2",
+    "recognition_confidence": 0.0,
+    "ocr_candidates": [
+      "Also",
+      "avrosone",
+      "ee",
+      "serscie"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "Also",
+    "text_style": {
+      "text.color": "rgb(66,67,132)",
+      "text.font": "13px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_57",
+    "type": "text",
+    "bbox": [
+      44,
+      938,
+      79,
+      17
+    ],
+    "value": "上电状态:",
+    "parent_id": null,
+    "recognition_confidence": 91.28,
+    "ocr_candidates": [
+      "上电状态:"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(49,49,49)",
+      "text.font": "17px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_58",
+    "type": "text",
+    "bbox": [
+      241,
+      939,
+      41,
+      18
+    ],
+    "value": "台控：",
+    "parent_id": null,
+    "recognition_confidence": 58.44,
+    "ocr_candidates": [
+      "Als:",
+      "Az:",
+      "OE:",
+      "ef:"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "Als:",
+    "text_style": {
+      "text.color": "rgb(58,58,58)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_59",
+    "type": "text",
+    "bbox": [
+      420,
+      939,
+      42,
+      17
+    ],
+    "value": "柜控:",
+    "parent_id": null,
+    "recognition_confidence": 91.25,
+    "ocr_candidates": [
+      "柜控:"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(68,68,68)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
   }
 ]
