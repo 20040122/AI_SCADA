@@ -55,7 +55,7 @@ export function WorkflowSteps() {
 
 export default function CenterPanel() {
   const { nodes, decorations, jsonData, pipe_data } = useLayoutStore();
-  const hasResult = nodes.length > 0;
+  const hasResult = nodes.length > 0 || decorations.length > 0;
 
   const canvasW = jsonData?.a?.width || 0;
   const canvasH = jsonData?.a?.height || 0;

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import subprocess
+
+import pytest
 from fastapi.testclient import TestClient
 
 import app.deps as deps_module
@@ -43,7 +46,7 @@ def test_validate_route_exists():
     assert resp.status_code in (200, 422, 500)
 
 
-def test_layout_image_route_runs_recognition_then_generation(monkeypatch):
+def test_layout_image_route_uses_agent_i_without_text_generation(monkeypatch):
     from app.routers import canvas as canvas_module
     from model.layout_agent import LayoutAgent as AgentClass
 
@@ -61,22 +64,22 @@ def test_layout_image_route_runs_recognition_then_generation(monkeypatch):
         json_data = {"v": "8.0.5", "a": {}, "d": []}
         content_rect = {"x": 0, "y": 0, "width": 0, "height": 0}
         pipe_data = None
+        missing_controls = ["未知阀"]
+        quality_issues = [{"severity": "warning", "issue_type": "image_recognition", "message": "需要核验", "controls": []}]
 
     captured = {}
 
-    async def fake_image_to_structured_prompt(image, materials):
+    def fake_generate_image_layout(image, materials, width, height, title):
         captured["image"] = image
         captured["materials"] = materials
-        return "控件：1台泵"
-
-    async def fake_generate(self, query, width, height, title=None, skip_structure_count=None, materials=None):
-        captured["query"] = query
+        captured["size"] = (width, height)
         captured["title"] = title
-        captured["skip_structure_count"] = skip_structure_count
-        captured["generate_materials"] = materials
         return FakeResult()
 
-    monkeypatch.setattr(canvas_module, "image_to_structured_prompt", fake_image_to_structured_prompt)
+    async def fake_generate(*args, **kwargs):
+        raise AssertionError("图片入口不能调用文字布局")
+
+    monkeypatch.setattr(canvas_module, "generate_image_layout", fake_generate_image_layout)
     monkeypatch.setattr(AgentClass, "generate", fake_generate)
     app.dependency_overrides[deps_module.get_material_db] = lambda: fake_db
     app.dependency_overrides[deps_module.get_layout_agent] = lambda: AgentClass(db=None)
@@ -92,12 +95,32 @@ def test_layout_image_route_runs_recognition_then_generation(monkeypatch):
     assert resp.status_code == 200
     assert captured["image"] == b"fake-bytes"
     assert captured["materials"] == [{"displayName": "泵"}]
-    assert captured["generate_materials"] == [{"displayName": "泵"}]
     assert fake_db.calls == 1
-    assert captured["query"] == "控件：1台泵"
+    assert captured["size"] == (1920, 1080)
     assert captured["title"] == "image-test"
-    assert captured["skip_structure_count"] is True
     assert resp.json()["data"]["file_name"].startswith("image-test")
+    assert resp.json()["data"]["missing_controls"] == ["未知阀"]
+    assert resp.json()["data"]["quality_issues"][0]["message"] == "需要核验"
+
+
+@pytest.mark.parametrize("error,status", [(ValueError("无效图片"), 422), (RuntimeError("识别失败"), 502), (FileNotFoundError("tesseract"), 503), (subprocess.TimeoutExpired("tesseract", 30), 504)])
+def test_layout_image_route_returns_recognition_errors(monkeypatch, error, status):
+    from app.routers import canvas as canvas_module
+
+    class FakeDB:
+        async def list_query_results(self, query):
+            return [{"displayName": "泵"}]
+
+    def fail(*args):
+        raise error
+
+    monkeypatch.setattr(canvas_module, "generate_image_layout", fail)
+    app.dependency_overrides[deps_module.get_material_db] = lambda: FakeDB()
+    try:
+        response = client.post("/api/canvas/layout/image", files={"file": ("image.png", b"bytes", "image/png")})
+    finally:
+        app.dependency_overrides.clear()
+    assert response.status_code == status
 
 
 def test_layout_image_route_requires_materials(monkeypatch):

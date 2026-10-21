@@ -22,6 +22,14 @@ const INITIAL_WORKFLOW: WorkflowStep[] = [
   { id: 5, name: "拼装最终 JSON 并完成 Schema 校验", detail: "拼装最终 JSON 并完成 Schema 校验", status: "wait" },
 ];
 
+const IMAGE_WORKFLOW: WorkflowStep[] = [
+  { id: 1, name: "加载素材并缩放补边图片", detail: "保持图片比例生成识别图", status: "wait" },
+  { id: 2, name: "检测设备与文字位置", detail: "检测边界并按需执行语义补检", status: "wait" },
+  { id: 3, name: "识别文字与匹配控件素材", detail: "OCR、控件命名及文字复核", status: "wait" },
+  { id: 4, name: "按图片位置和尺寸组装节点", detail: "保留设备和文字位置，不重建管线", status: "wait" },
+  { id: 5, name: "拼装最终 JSON 并完成 Schema 校验", detail: "校验图片识别画布", status: "wait" },
+];
+
 interface LayoutStore {
   query: string;
   title: string;
@@ -58,7 +66,7 @@ interface LayoutStore {
   applyUploadResult: (res: UploadCanvasResponse) => void;
   setWorkflowStep: (id: number, status: WorkflowStep["status"]) => void;
   setWorkflowStatus: (s: WorkflowStatus) => void;
-  resetWorkflow: () => void;
+  resetWorkflow: (source?: "text" | "image") => void;
   clearCanvas: () => void;
   setIsLoading: (v: boolean) => void;
   setError: (e: string | null) => void;
@@ -127,8 +135,8 @@ export const useLayoutStore = create<LayoutStore>((set) => ({
       ),
     })),
   setWorkflowStatus: (s) => set({ workflowStatus: s }),
-  resetWorkflow: () =>
-    set({ workflow: INITIAL_WORKFLOW.map((s) => ({ ...s })), workflowStatus: "idle" }),
+  resetWorkflow: (source = "text") =>
+    set({ workflow: (source === "image" ? IMAGE_WORKFLOW : INITIAL_WORKFLOW).map((s) => ({ ...s })), workflowStatus: "idle" }),
 
   clearCanvas: () =>
     set((s) => ({

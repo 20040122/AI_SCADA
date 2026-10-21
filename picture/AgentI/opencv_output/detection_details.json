@@ -16,12 +16,14 @@
     "exclude_hash_names": false
   },
   "limitations": [
-    "设备由语义定位与局部前景范围校验得到，模型定位误差仍需核验。",
-    "连接线未作为检测对象，也未进行删除或重建。"
+    "设备为几何候选，未进行设备类别识别。",
+    "邻近归属为启发式推断，需要人工核验。",
+    "网格修复图用于检测，原图保持不变。",
+    "设备检测假设背景大致均匀，连接管线与复杂背景需要核验。"
   ],
   "counts": {
-    "controls": 62,
-    "texts": 59
+    "controls": 141,
+    "texts": 148
   },
   "nodes": [
     {
@@ -103,51 +105,210 @@
         "controls_60",
         "controls_61",
         "controls_62",
+        "controls_63",
+        "controls_64",
+        "controls_65",
+        "controls_66",
+        "controls_67",
+        "controls_68",
+        "controls_69",
+        "controls_70",
+        "controls_71",
+        "controls_72",
+        "controls_73",
+        "controls_74",
+        "controls_75",
+        "controls_76",
+        "controls_77",
+        "controls_78",
+        "controls_79",
+        "controls_80",
+        "controls_81",
+        "controls_82",
+        "controls_83",
+        "controls_84",
+        "controls_85",
+        "controls_86",
+        "controls_87",
+        "controls_88",
+        "controls_89",
+        "controls_90",
+        "controls_91",
+        "controls_92",
+        "controls_93",
+        "controls_94",
+        "controls_95",
+        "controls_96",
+        "controls_97",
+        "controls_98",
+        "controls_99",
+        "controls_100",
+        "controls_101",
+        "controls_102",
+        "controls_103",
+        "controls_104",
+        "controls_105",
+        "controls_106",
+        "controls_107",
+        "controls_108",
+        "controls_109",
+        "controls_110",
+        "controls_111",
+        "controls_112",
+        "controls_113",
+        "controls_114",
+        "controls_115",
+        "controls_116",
+        "controls_117",
+        "controls_118",
+        "controls_119",
+        "controls_120",
+        "controls_121",
+        "controls_122",
+        "controls_123",
+        "controls_124",
+        "controls_125",
+        "controls_126",
+        "controls_127",
+        "controls_128",
+        "controls_129",
+        "controls_130",
+        "controls_131",
+        "controls_132",
+        "controls_133",
+        "controls_134",
+        "controls_135",
+        "controls_136",
+        "controls_137",
+        "controls_138",
+        "controls_139",
+        "controls_140",
+        "controls_141",
         "text_1",
         "text_2",
+        "text_3",
+        "text_4",
+        "text_5",
+        "text_6",
+        "text_7",
+        "text_9",
+        "text_10",
+        "text_11",
+        "text_12",
+        "text_15",
         "text_16",
         "text_17",
         "text_18",
         "text_19",
         "text_20",
-        "text_21",
         "text_22",
         "text_23",
         "text_24",
         "text_25",
-        "text_26",
         "text_27",
         "text_28",
-        "text_30",
         "text_31",
         "text_34",
         "text_35",
-        "text_36",
         "text_37",
+        "text_38",
         "text_39",
         "text_40",
+        "text_41",
+        "text_43",
+        "text_44",
+        "text_45",
         "text_46",
         "text_47",
         "text_48",
         "text_49",
         "text_50",
+        "text_54",
+        "text_55",
+        "text_56",
         "text_57",
         "text_58",
-        "text_59"
+        "text_59",
+        "text_60",
+        "text_61",
+        "text_62",
+        "text_63",
+        "text_64",
+        "text_69",
+        "text_71",
+        "text_72",
+        "text_73",
+        "text_74",
+        "text_75",
+        "text_78",
+        "text_79",
+        "text_80",
+        "text_82",
+        "text_83",
+        "text_84",
+        "text_85",
+        "text_87",
+        "text_88",
+        "text_89",
+        "text_92",
+        "text_93",
+        "text_94",
+        "text_95",
+        "text_96",
+        "text_97",
+        "text_99",
+        "text_100",
+        "text_103",
+        "text_104",
+        "text_105",
+        "text_107",
+        "text_108",
+        "text_109",
+        "text_110",
+        "text_111",
+        "text_112",
+        "text_113",
+        "text_114",
+        "text_115",
+        "text_117",
+        "text_119",
+        "text_120",
+        "text_121",
+        "text_124",
+        "text_125",
+        "text_128",
+        "text_129",
+        "text_131",
+        "text_132",
+        "text_134",
+        "text_135",
+        "text_136",
+        "text_137",
+        "text_138",
+        "text_139",
+        "text_140",
+        "text_141",
+        "text_142",
+        "text_143",
+        "text_144",
+        "text_145",
+        "text_146",
+        "text_147",
+        "text_148"
       ]
     },
     {
       "id": "controls_1",
       "layer": "controls",
-      "type": "value_field",
+      "type": "status",
       "bbox": [
-        66,
-        295,
-        52,
-        21
+        981,
+        94,
+        65,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.949,
+      "confidence": 0.918,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -158,13 +319,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        526,
-        300,
-        38,
-        21
+        746,
+        111,
+        65,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.949,
+      "confidence": 0.933,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -173,32 +334,41 @@
     {
       "id": "controls_3",
       "layer": "controls",
-      "type": "value_field",
+      "type": "equipment_candidate",
       "bbox": [
-        639,
-        300,
-        38,
-        21
+        914,
+        117,
+        179,
+        139
       ],
       "parent_id": "grid_1",
-      "confidence": 0.949,
+      "confidence": 0.647,
       "confidence_source": "heuristic",
       "text": null,
-      "label_bboxes": [],
-      "children": []
+      "label_bboxes": [
+        [
+          964,
+          248,
+          78,
+          15
+        ]
+      ],
+      "children": [
+        "text_14"
+      ]
     },
     {
       "id": "controls_4",
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        755,
-        300,
-        39,
-        21
+        747,
+        138,
+        66,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.94,
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -209,13 +379,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        868,
-        300,
-        39,
-        21
+        365,
+        147,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.939,
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -224,29 +394,38 @@
     {
       "id": "controls_6",
       "layer": "controls",
-      "type": "value_field",
+      "type": "equipment_candidate",
       "bbox": [
-        979,
-        300,
-        38,
-        21
+        370,
+        173,
+        37,
+        38
       ],
       "parent_id": "grid_1",
-      "confidence": 0.949,
+      "confidence": 0.679,
       "confidence_source": "heuristic",
       "text": null,
-      "label_bboxes": [],
-      "children": []
+      "label_bboxes": [
+        [
+          358,
+          214,
+          61,
+          15
+        ]
+      ],
+      "children": [
+        "text_8"
+      ]
     },
     {
       "id": "controls_7",
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        1091,
-        300,
-        38,
-        21
+        1142,
+        173,
+        72,
+        20
       ],
       "parent_id": "grid_1",
       "confidence": 0.949,
@@ -260,13 +439,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        1201,
-        300,
-        39,
-        21
+        217,
+        183,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.939,
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -275,29 +454,38 @@
     {
       "id": "controls_9",
       "layer": "controls",
-      "type": "value_field",
+      "type": "equipment_candidate",
       "bbox": [
-        1314,
-        300,
-        38,
-        21
+        94,
+        200,
+        113,
+        119
       ],
       "parent_id": "grid_1",
-      "confidence": 0.949,
+      "confidence": 0.649,
       "confidence_source": "heuristic",
       "text": null,
-      "label_bboxes": [],
-      "children": []
+      "label_bboxes": [
+        [
+          119,
+          320,
+          62,
+          14
+        ]
+      ],
+      "children": [
+        "text_26"
+      ]
     },
     {
       "id": "controls_10",
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        1424,
-        300,
-        39,
-        21
+        1142,
+        200,
+        72,
+        20
       ],
       "parent_id": "grid_1",
       "confidence": 0.94,
@@ -309,32 +497,41 @@
     {
       "id": "controls_11",
       "layer": "controls",
-      "type": "value_field",
+      "type": "equipment_candidate",
       "bbox": [
-        1533,
-        300,
-        39,
-        21
+        231,
+        209,
+        20,
+        30
       ],
       "parent_id": "grid_1",
-      "confidence": 0.939,
+      "confidence": 0.687,
       "confidence_source": "heuristic",
       "text": null,
-      "label_bboxes": [],
-      "children": []
+      "label_bboxes": [
+        [
+          210,
+          242,
+          62,
+          15
+        ]
+      ],
+      "children": [
+        "text_13"
+      ]
     },
     {
       "id": "controls_12",
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        1801,
-        300,
-        38,
-        21
+        622,
+        229,
+        42,
+        20
       ],
       "parent_id": "grid_1",
-      "confidence": 0.949,
+      "confidence": 0.948,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -343,409 +540,280 @@
     {
       "id": "controls_13",
       "layer": "controls",
-      "type": "value_field",
+      "type": "equipment_candidate",
       "bbox": [
-        415,
-        301,
-        41,
-        22
+        491,
+        239,
+        110,
+        91
       ],
       "parent_id": "grid_1",
-      "confidence": 0.934,
+      "confidence": 0.603,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          513,
+          335,
+          62,
+          15
+        ]
+      ],
+      "children": [
+        "text_32"
+      ]
+    },
+    {
+      "id": "controls_14",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        830,
+        244,
+        64,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.907,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
       "children": []
     },
     {
-      "id": "controls_14",
-      "layer": "controls",
-      "type": "equipment_candidate",
-      "bbox": [
-        91,
-        324,
-        31,
-        36
-      ],
-      "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          77,
-          271,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_3"
-      ]
-    },
-    {
       "id": "controls_15",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        441,
-        329,
-        31,
-        36
+        750,
+        253,
+        55,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          428,
-          276,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_4"
-      ]
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_16",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        552,
-        329,
-        31,
-        36
+        621,
+        255,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          539,
-          276,
-          31,
-          16
-        ]
-      ],
-      "children": [
-        "text_5"
-      ]
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_17",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "status",
       "bbox": [
-        665,
-        329,
-        31,
-        36
+        1425,
+        260,
+        65,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          651,
-          276,
-          32,
-          15
-        ]
-      ],
-      "children": [
-        "text_6"
-      ]
+      "confidence": 0.931,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_18",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "status",
       "bbox": [
-        782,
-        329,
-        30,
-        36
+        29,
+        264,
+        64,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          768,
-          276,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_7"
-      ]
+      "confidence": 0.933,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_19",
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        894,
-        329,
-        31,
-        36
+        851,
+        265,
+        21,
+        30
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
+      "confidence": 0.676,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          881,
-          276,
-          31,
-          16
+          834,
+          299,
+          62,
+          14
         ]
       ],
       "children": [
-        "text_8"
+        "text_21"
       ]
     },
     {
       "id": "controls_20",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "status",
       "bbox": [
-        1005,
-        329,
-        31,
-        36
+        436,
+        270,
+        65,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          991,
-          276,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_9"
-      ]
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_21",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        1117,
-        329,
-        30,
-        36
+        749,
+        280,
+        56,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          1103,
-          276,
-          32,
-          15
-        ]
-      ],
-      "children": [
-        "text_10"
-      ]
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_22",
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        1227,
-        329,
-        31,
-        36
+        1407,
+        280,
+        99,
+        92
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
+      "confidence": 0.614,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          1214,
-          276,
-          31,
-          16
+          1432,
+          375,
+          62,
+          15
         ]
       ],
       "children": [
-        "text_11"
+        "text_42"
       ]
     },
     {
       "id": "controls_23",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        1340,
-        329,
-        31,
-        36
+        288,
+        281,
+        42,
+        20
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          1327,
-          276,
-          31,
-          16
-        ]
-      ],
-      "children": [
-        "text_12"
-      ]
+      "confidence": 0.93,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_24",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        1451,
-        329,
-        30,
-        36
+        621,
+        282,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          1437,
-          276,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_13"
-      ]
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_25",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "status",
       "bbox": [
-        1559,
-        329,
-        31,
-        36
+        1085,
+        297,
+        65,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          1546,
-          276,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_14"
-      ]
+      "confidence": 0.918,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_26",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        1827,
-        329,
-        30,
-        36
+        1358,
+        297,
+        42,
+        20
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          1813,
-          276,
-          32,
-          15
-        ]
-      ],
-      "children": [
-        "text_15"
-      ]
+      "confidence": 0.931,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_27",
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        234,
-        427,
-        52,
-        21
+        974,
+        301,
+        54,
+        20
       ],
       "parent_id": "grid_1",
-      "confidence": 0.949,
+      "confidence": 0.93,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -756,82 +824,21 @@
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        259,
-        456,
-        31,
-        36
+        300,
+        307,
+        22,
+        30
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
+      "confidence": 0.676,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          245,
-          403,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_29"
-      ]
-    },
-    {
-      "id": "controls_29",
-      "layer": "controls",
-      "type": "equipment_candidate",
-      "bbox": [
-        1627,
-        490,
-        31,
-        36
-      ],
-      "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          1700,
-          497,
-          32,
+          280,
+          340,
+          64,
           15
-        ]
-      ],
-      "children": [
-        "text_32"
-      ]
-    },
-    {
-      "id": "controls_30",
-      "layer": "controls",
-      "type": "equipment_candidate",
-      "bbox": [
-        887,
-        494,
-        31,
-        36
-      ],
-      "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          952,
-          501,
-          32,
-          16
         ]
       ],
       "children": [
@@ -839,17 +846,60 @@
       ]
     },
     {
+      "id": "controls_29",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1164,
+        309,
+        53,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.943,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_30",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1105,
+        319,
+        20,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.684,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1085,
+          350,
+          61,
+          15
+        ]
+      ],
+      "children": [
+        "text_36"
+      ]
+    },
+    {
       "id": "controls_31",
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        1688,
-        521,
-        38,
-        20
+        1358,
+        321,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.934,
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -860,13 +910,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        940,
-        526,
-        38,
-        21
+        974,
+        325,
+        55,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.941,
+      "confidence": 0.943,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -877,13 +927,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        234,
-        561,
-        52,
-        21
+        1162,
+        335,
+        54,
+        20
       ],
       "parent_id": "grid_1",
-      "confidence": 0.942,
+      "confidence": 0.931,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -894,28 +944,39 @@
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        259,
-        590,
-        31,
-        36
+        1725,
+        346,
+        91,
+        70
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
+      "confidence": 0.695,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          245,
-          537,
-          32,
-          16
+          1717,
+          328,
+          52,
+          15
+        ],
+        [
+          1782,
+          328,
+          35,
+          14
+        ],
+        [
+          1733,
+          418,
+          62,
+          15
         ]
       ],
       "children": [
-        "text_38"
+        "text_29",
+        "text_30",
+        "text_51"
       ]
     },
     {
@@ -923,13 +984,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        595,
-        688,
-        38,
-        21
+        974,
+        348,
+        55,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.948,
+      "confidence": 0.943,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -940,13 +1001,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        755,
-        688,
-        39,
-        21
+        1629,
+        368,
+        52,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.939,
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -955,32 +1016,41 @@
     {
       "id": "controls_37",
       "layer": "controls",
-      "type": "value_field",
+      "type": "equipment_candidate",
       "bbox": [
-        234,
-        695,
-        52,
-        21
+        97,
+        372,
+        114,
+        119
       ],
       "parent_id": "grid_1",
-      "confidence": 0.947,
+      "confidence": 0.645,
       "confidence_source": "heuristic",
       "text": null,
-      "label_bboxes": [],
-      "children": []
+      "label_bboxes": [
+        [
+          123,
+          492,
+          64,
+          15
+        ]
+      ],
+      "children": [
+        "text_65"
+      ]
     },
     {
       "id": "controls_38",
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        1384,
-        695,
-        38,
-        21
+        212,
+        375,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.948,
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -991,13 +1061,13 @@
       "layer": "controls",
       "type": "value_field",
       "bbox": [
-        1527,
-        695,
-        38,
-        21
+        973,
+        375,
+        55,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": 0.946,
+      "confidence": 0.942,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1006,88 +1076,61 @@
     {
       "id": "controls_40",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        620,
-        718,
-        30,
-        35
+        621,
+        380,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          606,
-          664,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_41"
-      ]
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_41",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        782,
-        718,
-        30,
-        35
+        1831,
+        385,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
-      "label_bboxes": [
-        [
-          768,
-          664,
-          32,
-          16
-        ]
-      ],
-      "children": [
-        "text_42"
-      ]
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_42",
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        259,
-        724,
-        31,
-        35
+        491,
+        395,
+        99,
+        91
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
+      "confidence": 0.614,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          245,
-          670,
-          32,
-          16
+          513,
+          493,
+          64,
+          15
         ]
       ],
       "children": [
-        "text_43"
+        "text_66"
       ]
     },
     {
@@ -1095,28 +1138,25 @@
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        1410,
-        724,
-        30,
-        35
+        1648,
+        396,
+        20,
+        30
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
+      "confidence": 0.666,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          1396,
-          670,
-          32,
-          16
+          1628,
+          428,
+          62,
+          15
         ]
       ],
       "children": [
-        "text_44"
+        "text_53"
       ]
     },
     {
@@ -1124,71 +1164,56 @@
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        1553,
-        724,
-        31,
-        35
+        222,
+        397,
+        20,
+        29
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "氧气探头",
-      "semantic_labels": [
-        "氧气"
-      ],
+      "confidence": 0.685,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          1540,
-          670,
-          31,
-          16
+          204,
+          427,
+          64,
+          15
         ]
       ],
       "children": [
-        "text_45"
+        "text_52"
       ]
     },
     {
       "id": "controls_45",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        1417,
-        815,
-        37,
-        41
+        620,
+        405,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "送风机",
-      "semantic_labels": [
-        "风机 AP12P"
-      ],
-      "label_bboxes": [
-        [
-          1370,
-          802,
-          42,
-          48
-        ]
-      ],
-      "children": [
-        "text_51"
-      ]
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_46",
       "layer": "controls",
-      "type": "indicator",
+      "type": "value_field",
       "bbox": [
-        1466,
-        819,
-        60,
-        34
+        759,
+        408,
+        62,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.934,
+      "confidence": 0.931,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1197,73 +1222,58 @@
     {
       "id": "controls_47",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "status",
       "bbox": [
-        1220,
-        821,
-        37,
-        41
+        1420,
+        411,
+        65,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "送风机",
-      "semantic_labels": [
-        "风机 AP12SG#1"
-      ],
-      "label_bboxes": [
-        [
-          1170,
-          808,
-          50,
-          48
-        ]
-      ],
-      "children": [
-        "text_52"
-      ]
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_48",
       "layer": "controls",
       "type": "equipment_candidate",
       "bbox": [
-        956,
-        823,
-        37,
-        41
+        1397,
+        430,
+        103,
+        95
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "送风机",
-      "semantic_labels": [
-        "风机 AP21S"
-      ],
+      "confidence": 0.633,
+      "confidence_source": "heuristic",
+      "text": null,
       "label_bboxes": [
         [
-          909,
-          810,
-          43,
-          48
+          1424,
+          528,
+          64,
+          15
         ]
       ],
       "children": [
-        "text_53"
+        "text_70"
       ]
     },
     {
       "id": "controls_49",
       "layer": "controls",
-      "type": "indicator",
+      "type": "status",
       "bbox": [
-        1266,
-        825,
-        60,
-        35
+        434,
+        432,
+        65,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": 0.935,
+      "confidence": 0.942,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1272,15 +1282,15 @@
     {
       "id": "controls_50",
       "layer": "controls",
-      "type": "indicator",
+      "type": "value_field",
       "bbox": [
-        1005,
-        827,
-        60,
-        34
+        620,
+        432,
+        42,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.938,
+      "confidence": 0.949,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1289,44 +1299,32 @@
     {
       "id": "controls_51",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        759,
-        828,
-        37,
-        41
+        760,
+        435,
+        62,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "送风机",
-      "semantic_labels": [
-        "风机 AP11P"
-      ],
-      "label_bboxes": [
-        [
-          715,
-          815,
-          43,
-          48
-        ]
-      ],
-      "children": [
-        "text_54"
-      ]
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_52",
       "layer": "controls",
-      "type": "indicator",
+      "type": "status",
       "bbox": [
-        805,
-        832,
-        60,
-        35
+        975,
+        435,
+        64,
+        18
       ],
       "parent_id": "grid_1",
-      "confidence": 0.932,
+      "confidence": 0.943,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1335,44 +1333,32 @@
     {
       "id": "controls_53",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        1221,
-        894,
-        37,
-        41
+        1358,
+        444,
+        42,
+        20
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "送风机",
-      "semantic_labels": [
-        "风机\nAP12SG#2"
-      ],
-      "label_bboxes": [
-        [
-          1148,
-          899,
-          61,
-          34
-        ]
-      ],
-      "children": [
-        "text_56"
-      ]
+      "confidence": 0.93,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_54",
       "layer": "controls",
-      "type": "indicator",
+      "type": "value_field",
       "bbox": [
-        1266,
-        898,
-        60,
-        34
+        1819,
+        446,
+        54,
+        22
       ],
       "parent_id": "grid_1",
-      "confidence": 0.937,
+      "confidence": 0.949,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1381,44 +1367,32 @@
     {
       "id": "controls_55",
       "layer": "controls",
-      "type": "equipment_candidate",
+      "type": "value_field",
       "bbox": [
-        760,
-        901,
-        37,
-        41
+        1141,
+        451,
+        67,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": null,
-      "confidence_source": "vision",
-      "semantic_name": "送风机",
-      "semantic_labels": [
-        "风机 AP11SG"
-      ],
-      "label_bboxes": [
-        [
-          715,
-          890,
-          43,
-          48
-        ]
-      ],
-      "children": [
-        "text_55"
-      ]
+      "confidence": 0.94,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
     },
     {
       "id": "controls_56",
       "layer": "controls",
-      "type": "indicator",
+      "type": "value_field",
       "bbox": [
-        805,
-        905,
-        60,
-        34
+        287,
+        453,
+        43,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.934,
+      "confidence": 0.949,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1427,12 +1401,12 @@
     {
       "id": "controls_57",
       "layer": "controls",
-      "type": "button",
+      "type": "status",
       "bbox": [
-        1393,
-        919,
-        164,
-        51
+        33,
+        456,
+        64,
+        18
       ],
       "parent_id": "grid_1",
       "confidence": 0.945,
@@ -1444,29 +1418,595 @@
     {
       "id": "controls_58",
       "layer": "controls",
-      "type": "button",
+      "type": "equipment_candidate",
       "bbox": [
-        1738,
-        919,
-        147,
-        51
+        908,
+        456,
+        178,
+        139
       ],
       "parent_id": "grid_1",
-      "confidence": 0.816,
+      "confidence": 0.662,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          960,
+          569,
+          80,
+          15
+        ]
+      ],
+      "children": [
+        "text_77"
+      ]
+    },
+    {
+      "id": "controls_59",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1574,
+        457,
+        43,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
       "children": []
     },
     {
-      "id": "controls_59",
+      "id": "controls_60",
       "layer": "controls",
-      "type": "button",
+      "type": "value_field",
       "bbox": [
-        1606,
-        920,
-        124,
-        49
+        1358,
+        468,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_61",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1141,
+        477,
+        68,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.941,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_62",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        300,
+        478,
+        20,
+        31
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.679,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          278,
+          511,
+          64,
+          14
+        ]
+      ],
+      "children": [
+        "text_67"
+      ]
+    },
+    {
+      "id": "controls_63",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1579,
+        480,
+        37,
+        38
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.673,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1569,
+          523,
+          64,
+          15
+        ]
+      ],
+      "children": [
+        "text_68"
+      ]
+    },
+    {
+      "id": "controls_64",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        830,
+        504,
+        64,
+        17
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.93,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_65",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        625,
+        527,
+        42,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.932,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_66",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        753,
+        527,
+        53,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.936,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_67",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        851,
+        528,
+        21,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.671,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          813,
+          560,
+          86,
+          15
+        ]
+      ],
+      "children": [
+        "text_76"
+      ]
+    },
+    {
+      "id": "controls_68",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        212,
+        539,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_69",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        489,
+        542,
+        98,
+        91
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.616,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          519,
+          638,
+          65,
+          15
+        ]
+      ],
+      "children": [
+        "text_90"
+      ]
+    },
+    {
+      "id": "controls_70",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        1601,
+        550,
+        65,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.944,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_71",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        624,
+        553,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_72",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        753,
+        554,
+        53,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_73",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        224,
+        564,
+        21,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.675,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          206,
+          596,
+          65,
+          15
+        ]
+      ],
+      "children": [
+        "text_81"
+      ]
+    },
+    {
+      "id": "controls_74",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        1423,
+        567,
+        65,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.935,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_75",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1597,
+        570,
+        68,
+        85
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.625,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1602,
+          640,
+          62,
+          15
+        ]
+      ],
+      "children": [
+        "text_91"
+      ]
+    },
+    {
+      "id": "controls_76",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        1098,
+        574,
+        65,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.917,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_77",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        436,
+        580,
+        65,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.942,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_78",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        624,
+        580,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_79",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        101,
+        584,
+        113,
+        119
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.646,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          130,
+          704,
+          64,
+          15
+        ]
+      ],
+      "children": [
+        "text_102"
+      ]
+    },
+    {
+      "id": "controls_80",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1403,
+        586,
+        99,
+        91
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.614,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1425,
+          681,
+          64,
+          15
+        ]
+      ],
+      "children": [
+        "text_98"
+      ]
+    },
+    {
+      "id": "controls_81",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1357,
+        588,
+        42,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_82",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        974,
+        594,
+        58,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_83",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1120,
+        594,
+        20,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.681,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1099,
+          625,
+          63,
+          15
+        ]
+      ],
+      "children": [
+        "text_86"
+      ]
+    },
+    {
+      "id": "controls_84",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1192,
+        600,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_85",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1357,
+        612,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.935,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_86",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        974,
+        624,
+        58,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.937,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_87",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1176,
+        626,
+        53,
+        20
       ],
       "parent_id": "grid_1",
       "confidence": 0.948,
@@ -1476,51 +2016,1006 @@
       "children": []
     },
     {
-      "id": "controls_60",
+      "id": "controls_88",
       "layer": "controls",
-      "type": "indicator",
+      "type": "value_field",
       "bbox": [
-        138,
-        929,
-        81,
-        32
+        285,
+        644,
+        43,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.874,
+      "confidence": 0.947,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
       "children": []
     },
     {
-      "id": "controls_61",
+      "id": "controls_89",
       "layer": "controls",
-      "type": "indicator",
+      "type": "value_field",
       "bbox": [
-        303,
-        931,
-        81,
-        32
+        974,
+        648,
+        57,
+        19
       ],
       "parent_id": "grid_1",
-      "confidence": 0.865,
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
       "children": []
     },
     {
-      "id": "controls_62",
+      "id": "controls_90",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        40,
+        658,
+        64,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.911,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_91",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        302,
+        669,
+        20,
+        31
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.679,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          281,
+          702,
+          64,
+          15
+        ]
+      ],
+      "children": [
+        "text_101"
+      ]
+    },
+    {
+      "id": "controls_92",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        974,
+        673,
+        56,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_93",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        759,
+        678,
+        64,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_94",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        628,
+        679,
+        42,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.933,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_95",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        1607,
+        683,
+        64,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.918,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_96",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        488,
+        691,
+        98,
+        91
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.616,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          519,
+          790,
+          65,
+          15
+        ]
+      ],
+      "children": [
+        "text_118"
+      ]
+    },
+    {
+      "id": "controls_97",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1605,
+        704,
+        68,
+        70
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.624,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1607,
+          779,
+          65,
+          14
+        ]
+      ],
+      "children": [
+        "text_116"
+      ]
+    },
+    {
+      "id": "controls_98",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        627,
+        705,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.933,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_99",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        759,
+        705,
+        64,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.938,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_100",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        975,
+        716,
+        64,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.945,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_101",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        1425,
+        720,
+        63,
+        16
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.944,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_102",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        436,
+        724,
+        65,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.945,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_103",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1355,
+        726,
+        42,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.93,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_104",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1148,
+        728,
+        68,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_105",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        627,
+        732,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_106",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        903,
+        737,
+        179,
+        139
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.646,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          960,
+          856,
+          80,
+          15
+        ]
+      ],
+      "children": [
+        "text_130"
+      ]
+    },
+    {
+      "id": "controls_107",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1401,
+        737,
+        99,
+        91
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.615,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1424,
+          838,
+          64,
+          14
+        ]
+      ],
+      "children": [
+        "text_127"
+      ]
+    },
+    {
+      "id": "controls_108",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1722,
+        737,
+        99,
+        70
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.714,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1718,
+          715,
+          52,
+          15
+        ],
+        [
+          1731,
+          811,
+          64,
+          15
+        ]
+      ],
+      "children": [
+        "text_106",
+        "text_122"
+      ]
+    },
+    {
+      "id": "controls_109",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1355,
+        750,
+        42,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.93,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_110",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1148,
+        755,
+        68,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_111",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        97,
+        773,
+        35,
+        36
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.685,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          84,
+          822,
+          63,
+          15
+        ]
+      ],
+      "children": [
+        "text_123"
+      ]
+    },
+    {
+      "id": "controls_112",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1844,
+        780,
+        42,
+        17
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_113",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        821,
+        788,
+        64,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.889,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_114",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        222,
+        795,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_115",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        749,
+        801,
+        59,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_116",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        842,
+        808,
+        20,
+        29
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.682,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          815,
+          835,
+          73,
+          25
+        ]
+      ],
+      "children": [
+        "text_126"
+      ]
+    },
+    {
+      "id": "controls_117",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        222,
+        824,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_118",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        749,
+        828,
+        59,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.937,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_119",
+      "layer": "controls",
+      "type": "status",
+      "bbox": [
+        1142,
+        830,
+        65,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.888,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_120",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        222,
+        851,
+        42,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_121",
+      "layer": "controls",
+      "type": "equipment_candidate",
+      "bbox": [
+        1164,
+        853,
+        20,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.683,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [
+        [
+          1142,
+          885,
+          63,
+          15
+        ]
+      ],
+      "children": [
+        "text_133"
+      ]
+    },
+    {
+      "id": "controls_122",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1213,
+        853,
+        64,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.937,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_123",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        1213,
+        880,
+        66,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_124",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        979,
+        882,
+        54,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.949,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_125",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1424,
+        893,
+        108,
+        36
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.946,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_126",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1550,
+        893,
+        108,
+        35
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.947,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_127",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1670,
+        893,
+        108,
+        36
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.946,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_128",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1792,
+        893,
+        108,
+        35
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.941,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_129",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1303,
+        894,
+        108,
+        35
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.947,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_130",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        978,
+        908,
+        52,
+        20
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.917,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_131",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        979,
+        936,
+        53,
+        19
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.943,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_132",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1424,
+        936,
+        108,
+        37
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.947,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_133",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1670,
+        936,
+        108,
+        37
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.947,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_134",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1792,
+        936,
+        108,
+        37
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.947,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_135",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1304,
+        937,
+        108,
+        35
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.947,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_136",
+      "layer": "controls",
+      "type": "button",
+      "bbox": [
+        1550,
+        937,
+        108,
+        35
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.946,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_137",
       "layer": "controls",
       "type": "indicator",
       "bbox": [
-        482,
-        931,
-        81,
-        32
+        190,
+        940,
+        69,
+        30
       ],
       "parent_id": "grid_1",
-      "confidence": 0.865,
+      "confidence": 0.831,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_138",
+      "layer": "controls",
+      "type": "indicator",
+      "bbox": [
+        319,
+        940,
+        69,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.906,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_139",
+      "layer": "controls",
+      "type": "indicator",
+      "bbox": [
+        447,
+        940,
+        68,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.822,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_140",
+      "layer": "controls",
+      "type": "indicator",
+      "bbox": [
+        577,
+        940,
+        68,
+        30
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.835,
+      "confidence_source": "heuristic",
+      "text": null,
+      "label_bboxes": [],
+      "children": []
+    },
+    {
+      "id": "controls_141",
+      "layer": "controls",
+      "type": "value_field",
+      "bbox": [
+        978,
+        961,
+        54,
+        18
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.95,
       "confidence_source": "heuristic",
       "text": null,
       "label_bboxes": [],
@@ -1531,10 +3026,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        88,
-        154,
-        217,
-        19
+        818,
+        116,
+        8,
+        8
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -1553,10 +3048,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1126,
-        154,
-        80,
-        19
+        820,
+        144,
+        19,
+        8
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -1575,21 +3070,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        77,
-        271,
-        32,
-        16
+        413,
+        153,
+        8,
+        8
       ],
-      "text": "氧气",
-      "source_control_id": "controls_14",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_14",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1598,21 +3092,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        428,
-        276,
-        32,
-        16
+        830,
+        172,
+        78,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_15",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_15",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1621,21 +3114,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        539,
-        276,
-        31,
-        16
+        1221,
+        178,
+        9,
+        9
       ],
-      "text": "氧气",
-      "source_control_id": "controls_16",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_16",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1644,21 +3136,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        651,
-        276,
-        32,
-        15
+        265,
+        189,
+        8,
+        7
       ],
-      "text": "氧气",
-      "source_control_id": "controls_17",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_17",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1667,21 +3158,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        768,
-        276,
-        32,
-        16
+        1221,
+        207,
+        20,
+        9
       ],
-      "text": "氧气",
-      "source_control_id": "controls_18",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_18",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1690,21 +3180,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        881,
-        276,
-        31,
-        16
+        358,
+        214,
+        61,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_19",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_6",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_19",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.75
       },
       "children": []
     },
@@ -1713,21 +3202,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        991,
-        276,
-        32,
-        16
+        832,
+        216,
+        79,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_20",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_20",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1736,21 +3224,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1103,
-        276,
-        32,
+        577,
+        231,
+        25,
         15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_21",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_21",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1759,21 +3246,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1214,
-        276,
-        31,
-        16
+        1223,
+        231,
+        78,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_22",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_22",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1782,21 +3268,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1327,
-        276,
-        31,
-        16
+        670,
+        236,
+        6,
+        7
       ],
-      "text": "氧气",
-      "source_control_id": "controls_23",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_23",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1805,21 +3290,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1437,
-        276,
-        32,
-        16
+        210,
+        242,
+        62,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_24",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_11",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_24",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.75
       },
       "children": []
     },
@@ -1828,21 +3312,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1546,
-        276,
-        32,
-        16
+        964,
+        248,
+        78,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_25",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_3",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_25",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.897
       },
       "children": []
     },
@@ -1851,21 +3334,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1813,
-        276,
-        32,
-        15
+        812,
+        258,
+        8,
+        9
       ],
-      "text": "氧气",
-      "source_control_id": "controls_26",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_26",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -1874,10 +3356,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        123,
-        298,
-        15,
-        15
+        669,
+        261,
+        6,
+        7
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -1896,10 +3378,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        459,
-        307,
-        12,
-        11
+        1255,
+        270,
+        78,
+        15
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -1918,10 +3400,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        569,
-        307,
-        12,
-        11
+        811,
+        286,
+        19,
+        9
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -1940,10 +3422,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        682,
-        307,
-        12,
-        11
+        336,
+        288,
+        9,
+        7
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -1962,10 +3444,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        799,
-        307,
-        12,
-        11
+        669,
+        288,
+        6,
+        7
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -1984,20 +3466,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        911,
-        307,
-        13,
-        11
+        834,
+        299,
+        62,
+        14
       ],
-      "parent_id": "grid_1",
+      "parent_id": "controls_19",
       "confidence": 0.6,
       "confidence_source": "heuristic",
       "text": null,
       "recognition_status": "not_requested",
       "detection_method": "aligned_glyphs",
       "association": {
-        "method": "page",
-        "confidence": 1.0
+        "method": "aligned_label",
+        "confidence": 0.62
       },
       "children": []
     },
@@ -2006,10 +3488,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1022,
-        307,
-        12,
-        11
+        1320,
+        300,
+        31,
+        15
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2028,10 +3510,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1134,
-        307,
-        12,
-        11
+        934,
+        303,
+        26,
+        15
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2050,10 +3532,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1245,
+        1034,
         307,
-        12,
-        11
+        7,
+        7
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2072,10 +3554,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1357,
-        307,
-        12,
-        11
+        1222,
+        314,
+        9,
+        9
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2094,20 +3576,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1468,
-        307,
-        12,
-        11
+        119,
+        320,
+        62,
+        14
       ],
-      "parent_id": "grid_1",
+      "parent_id": "controls_9",
       "confidence": 0.6,
       "confidence_source": "heuristic",
       "text": null,
       "recognition_status": "not_requested",
       "detection_method": "aligned_glyphs",
       "association": {
-        "method": "page",
-        "confidence": 1.0
+        "method": "aligned_label",
+        "confidence": 0.837
       },
       "children": []
     },
@@ -2116,10 +3598,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1577,
-        307,
-        12,
-        11
+        1321,
+        324,
+        30,
+        14
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2138,10 +3620,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1844,
-        307,
-        12,
-        11
+        934,
+        328,
+        25,
+        15
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2160,21 +3642,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        245,
-        403,
-        32,
-        16
+        1717,
+        328,
+        52,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_28",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_34",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_28",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.599
       },
       "children": []
     },
@@ -2183,20 +3664,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        291,
-        430,
-        15,
-        15
+        1782,
+        328,
+        35,
+        14
       ],
-      "parent_id": "grid_1",
+      "parent_id": "controls_34",
       "confidence": 0.6,
       "confidence_source": "heuristic",
       "text": null,
       "recognition_status": "not_requested",
       "detection_method": "aligned_glyphs",
       "association": {
-        "method": "page",
-        "confidence": 1.0
+        "method": "aligned_label",
+        "confidence": 0.561
       },
       "children": []
     },
@@ -2205,10 +3686,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        851,
-        477,
-        21,
-        22
+        1034,
+        331,
+        7,
+        7
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2227,21 +3708,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1700,
-        497,
-        32,
+        513,
+        335,
+        62,
         15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_29",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_13",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_29",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.666
       },
       "children": []
     },
@@ -2250,21 +3730,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        952,
-        501,
-        32,
-        16
+        280,
+        340,
+        64,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_30",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_28",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_30",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.723
       },
       "children": []
     },
@@ -2273,10 +3752,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        851,
-        505,
-        21,
-        22
+        1222,
+        342,
+        19,
+        9
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2295,10 +3774,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1732,
-        527,
-        12,
-        11
+        931,
+        350,
+        29,
+        15
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2317,20 +3796,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        984,
-        533,
-        12,
-        10
+        1085,
+        350,
+        61,
+        15
       ],
-      "parent_id": "grid_1",
+      "parent_id": "controls_30",
       "confidence": 0.6,
       "confidence_source": "heuristic",
       "text": null,
       "recognition_status": "not_requested",
       "detection_method": "aligned_glyphs",
       "association": {
-        "method": "page",
-        "confidence": 1.0
+        "method": "aligned_label",
+        "confidence": 0.824
       },
       "children": []
     },
@@ -2339,10 +3818,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        851,
-        534,
-        21,
-        20
+        1034,
+        354,
+        7,
+        7
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2361,21 +3840,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        245,
-        537,
-        32,
-        16
+        1840,
+        359,
+        31,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_34",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_34",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2384,10 +3862,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        851,
-        560,
-        21,
-        22
+        1540,
+        371,
+        78,
+        15
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2406,10 +3884,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        291,
-        564,
-        15,
-        15
+        1687,
+        372,
+        23,
+        9
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2428,21 +3906,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        606,
-        664,
-        32,
-        16
+        919,
+        375,
+        52,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_40",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_40",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2451,21 +3928,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        768,
-        664,
-        32,
-        16
+        1432,
+        375,
+        62,
+        15
       ],
-      "text": "氧气",
-      "source_control_id": "controls_41",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_22",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_41",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.711
       },
       "children": []
     },
@@ -2474,21 +3950,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        245,
-        670,
-        32,
-        16
+        576,
+        380,
+        25,
+        14
       ],
-      "text": "氧气",
-      "source_control_id": "controls_42",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_42",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2497,21 +3972,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1396,
-        670,
-        32,
-        16
+        260,
+        381,
+        8,
+        7
       ],
-      "text": "氧气",
-      "source_control_id": "controls_43",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_43",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2520,21 +3994,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1540,
-        670,
-        31,
-        16
+        1034,
+        381,
+        8,
+        7
       ],
-      "text": "氧气",
-      "source_control_id": "controls_44",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_44",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2543,10 +4016,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        638,
-        695,
-        12,
-        11
+        669,
+        386,
+        6,
+        7
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2565,10 +4038,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        799,
-        695,
-        12,
-        11
+        1878,
+        392,
+        8,
+        6
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2587,9 +4060,9 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        291,
-        697,
-        15,
+        576,
+        405,
+        24,
         15
       ],
       "parent_id": "grid_1",
@@ -2609,10 +4082,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1427,
-        701,
-        12,
-        11
+        668,
+        411,
+        6,
+        8
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2631,10 +4104,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1570,
-        702,
-        12,
-        10
+        827,
+        413,
+        9,
+        8
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2653,21 +4126,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1370,
-        802,
-        42,
-        48
+        1733,
+        418,
+        62,
+        15
       ],
-      "text": "风机 AP12P",
-      "source_control_id": "controls_45",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_34",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_45",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.747
       },
       "children": []
     },
@@ -2676,21 +4148,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1170,
-        808,
-        50,
-        48
+        204,
+        427,
+        64,
+        15
       ],
-      "text": "风机 AP12SG#1",
-      "source_control_id": "controls_47",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_44",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_47",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.711
       },
       "children": []
     },
@@ -2699,21 +4170,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        909,
-        810,
-        43,
-        48
+        1628,
+        428,
+        62,
+        15
       ],
-      "text": "风机 AP21S",
-      "source_control_id": "controls_48",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "controls_43",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_48",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "aligned_label",
+        "confidence": 0.761
       },
       "children": []
     },
@@ -2722,21 +4192,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        715,
-        815,
-        43,
-        48
+        576,
+        433,
+        24,
+        15
       ],
-      "text": "风机 AP11P",
-      "source_control_id": "controls_51",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_51",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2745,21 +4214,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        715,
-        890,
-        43,
-        48
+        668,
+        438,
+        6,
+        7
       ],
-      "text": "风机 AP11SG",
-      "source_control_id": "controls_55",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_55",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2768,21 +4236,20 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        1148,
-        899,
-        61,
-        34
+        829,
+        441,
+        19,
+        9
       ],
-      "text": "风机\nAP12SG#2",
-      "source_control_id": "controls_53",
-      "confidence": null,
-      "confidence_source": "vision",
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
       "recognition_status": "not_requested",
-      "detection_method": "semantic",
-      "parent_id": "controls_53",
+      "detection_method": "aligned_glyphs",
       "association": {
-        "method": "containment",
-        "confidence": 0.9
+        "method": "page",
+        "confidence": 1.0
       },
       "children": []
     },
@@ -2791,10 +4258,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        44,
-        938,
-        79,
-        17
+        1320,
+        447,
+        31,
+        15
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2813,10 +4280,10 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        241,
-        939,
-        41,
-        18
+        1879,
+        453,
+        19,
+        9
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2835,10 +4302,1968 @@
       "layer": "text",
       "type": "text_region",
       "bbox": [
-        420,
-        939,
-        42,
-        17
+        1215,
+        456,
+        8,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_60",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        335,
+        459,
+        9,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_61",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1622,
+        463,
+        9,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_62",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1321,
+        471,
+        30,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_63",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1811,
+        479,
+        78,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_64",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1216,
+        483,
+        19,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_65",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        123,
+        492,
+        64,
+        15
+      ],
+      "parent_id": "controls_37",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.837
+      },
+      "children": []
+    },
+    {
+      "id": "text_66",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        513,
+        493,
+        64,
+        15
+      ],
+      "parent_id": "controls_42",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.595
+      },
+      "children": []
+    },
+    {
+      "id": "text_67",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        278,
+        511,
+        64,
+        14
+      ],
+      "parent_id": "controls_62",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.788
+      },
+      "children": []
+    },
+    {
+      "id": "text_68",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1569,
+        523,
+        64,
+        15
+      ],
+      "parent_id": "controls_63",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.63
+      },
+      "children": []
+    },
+    {
+      "id": "text_69",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        580,
+        528,
+        25,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_70",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1424,
+        528,
+        64,
+        15
+      ],
+      "parent_id": "controls_48",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.707
+      },
+      "children": []
+    },
+    {
+      "id": "text_71",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        812,
+        533,
+        8,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_72",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        673,
+        534,
+        6,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_73",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        260,
+        545,
+        8,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_74",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        580,
+        554,
+        24,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_75",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        672,
+        559,
+        6,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_76",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        813,
+        560,
+        86,
+        15
+      ],
+      "parent_id": "controls_67",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.645
+      },
+      "children": []
+    },
+    {
+      "id": "text_77",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        960,
+        569,
+        80,
+        15
+      ],
+      "parent_id": "controls_58",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "containment",
+        "confidence": 0.9
+      },
+      "children": []
+    },
+    {
+      "id": "text_78",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        580,
+        581,
+        24,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_79",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        672,
+        586,
+        6,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_80",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1319,
+        591,
+        31,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_81",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        206,
+        596,
+        65,
+        15
+      ],
+      "parent_id": "controls_73",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.68
+      },
+      "children": []
+    },
+    {
+      "id": "text_82",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        940,
+        597,
+        25,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_83",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1038,
+        600,
+        6,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_84",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1240,
+        605,
+        8,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_85",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1320,
+        615,
+        30,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_86",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1099,
+        625,
+        63,
+        15
+      ],
+      "parent_id": "controls_83",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.824
+      },
+      "children": []
+    },
+    {
+      "id": "text_87",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        937,
+        627,
+        25,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_88",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1038,
+        630,
+        6,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_89",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1235,
+        632,
+        19,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_90",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        519,
+        638,
+        65,
+        15
+      ],
+      "parent_id": "controls_69",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.612
+      },
+      "children": []
+    },
+    {
+      "id": "text_91",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1602,
+        640,
+        62,
+        15
+      ],
+      "parent_id": "controls_75",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "containment",
+        "confidence": 0.9
+      },
+      "children": []
+    },
+    {
+      "id": "text_92",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        333,
+        650,
+        9,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_93",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        935,
+        651,
+        29,
+        14
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_94",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1037,
+        654,
+        7,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_95",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        920,
+        673,
+        46,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_96",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1037,
+        678,
+        9,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_97",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        582,
+        681,
+        26,
+        14
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_98",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1425,
+        681,
+        64,
+        15
+      ],
+      "parent_id": "controls_80",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.686
+      },
+      "children": []
+    },
+    {
+      "id": "text_99",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        830,
+        683,
+        8,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_100",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        675,
+        685,
+        7,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_101",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        281,
+        702,
+        64,
+        15
+      ],
+      "parent_id": "controls_91",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.761
+      },
+      "children": []
+    },
+    {
+      "id": "text_102",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        130,
+        704,
+        64,
+        15
+      ],
+      "parent_id": "controls_79",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.813
+      },
+      "children": []
+    },
+    {
+      "id": "text_103",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        583,
+        707,
+        24,
+        14
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_104",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        674,
+        711,
+        7,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_105",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        830,
+        711,
+        19,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_106",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1718,
+        715,
+        52,
+        15
+      ],
+      "parent_id": "controls_108",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.516
+      },
+      "children": []
+    },
+    {
+      "id": "text_107",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1782,
+        715,
+        36,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_108",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1317,
+        729,
+        31,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_109",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        583,
+        733,
+        24,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_110",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1223,
+        733,
+        9,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_111",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1403,
+        733,
+        11,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_112",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        675,
+        738,
+        6,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_113",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1319,
+        753,
+        29,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_114",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1849,
+        755,
+        31,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_115",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1224,
+        761,
+        19,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_116",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1607,
+        779,
+        65,
+        14
+      ],
+      "parent_id": "controls_97",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.66
+      },
+      "children": []
+    },
+    {
+      "id": "text_117",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1891,
+        786,
+        8,
+        6
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_118",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        519,
+        790,
+        65,
+        15
+      ],
+      "parent_id": "controls_96",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.535
+      },
+      "children": []
+    },
+    {
+      "id": "text_119",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        175,
+        797,
+        36,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_120",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        270,
+        800,
+        8,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_121",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        815,
+        806,
+        8,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_122",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1731,
+        811,
+        64,
+        15
+      ],
+      "parent_id": "controls_108",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.665
+      },
+      "children": []
+    },
+    {
+      "id": "text_123",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        84,
+        822,
+        63,
+        15
+      ],
+      "parent_id": "controls_111",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.475
+      },
+      "children": []
+    },
+    {
+      "id": "text_124",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        175,
+        826,
+        36,
+        14
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_125",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        270,
+        830,
+        9,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_126",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        815,
+        835,
+        73,
+        25
+      ],
+      "parent_id": "controls_116",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.882
+      },
+      "children": []
+    },
+    {
+      "id": "text_127",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1424,
+        838,
+        64,
+        14
+      ],
+      "parent_id": "controls_107",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.509
+      },
+      "children": []
+    },
+    {
+      "id": "text_128",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        175,
+        854,
+        36,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_129",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        269,
+        856,
+        9,
+        9
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_130",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        960,
+        856,
+        80,
+        15
+      ],
+      "parent_id": "controls_106",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "containment",
+        "confidence": 0.9
+      },
+      "children": []
+    },
+    {
+      "id": "text_131",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1283,
+        858,
+        9,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_132",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        943,
+        884,
+        25,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_133",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1142,
+        885,
+        63,
+        15
+      ],
+      "parent_id": "controls_121",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "aligned_label",
+        "confidence": 0.777
+      },
+      "children": []
+    },
+    {
+      "id": "text_134",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1286,
+        886,
+        19,
+        8
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_135",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1038,
+        888,
+        7,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_136",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        942,
+        911,
+        25,
+        14
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_137",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1036,
+        914,
+        7,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_138",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        142,
+        929,
+        30,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_139",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        46,
+        937,
+        69,
+        26
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_140",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        938,
+        937,
+        30,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_141",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1038,
+        942,
+        6,
+        7
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_142",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        273,
+        948,
+        36,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_143",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        401,
+        948,
+        36,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_144",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        672,
+        948,
+        52,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_145",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        531,
+        949,
+        36,
+        14
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_146",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        142,
+        952,
+        36,
+        14
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_147",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        928,
+        965,
+        46,
+        15
+      ],
+      "parent_id": "grid_1",
+      "confidence": 0.6,
+      "confidence_source": "heuristic",
+      "text": null,
+      "recognition_status": "not_requested",
+      "detection_method": "aligned_glyphs",
+      "association": {
+        "method": "page",
+        "confidence": 1.0
+      },
+      "children": []
+    },
+    {
+      "id": "text_148",
+      "layer": "text",
+      "type": "text_region",
+      "bbox": [
+        1038,
+        966,
+        9,
+        8
       ],
       "parent_id": "grid_1",
       "confidence": 0.6,
@@ -2854,16 +6279,10 @@
     }
   ],
   "semantic": {
-    "status": "applied",
+    "status": "not_needed",
     "mode": "auto",
     "connection_processing": false,
-    "independent_text_regions": 32,
-    "reasons": [
-      "多数设备候选没有关联名称"
-    ],
-    "refinement_failed": [],
-    "uncovered_instance_labels": 0,
-    "devices": 28,
-    "labels": 28
+    "independent_text_regions": 63,
+    "reasons": []
   }
 }

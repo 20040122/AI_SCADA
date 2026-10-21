@@ -18,6 +18,15 @@ function resetStore() {
   });
 }
 
+test("image workflow uses detection steps and text workflow restores the original steps", () => {
+  useLayoutStore.getState().resetWorkflow("image");
+  assert.equal(useLayoutStore.getState().workflow[1].name, "检测设备与文字位置");
+  assert.equal(useLayoutStore.getState().workflow[3].detail, "保留设备和文字位置，不重建管线");
+  useLayoutStore.getState().resetWorkflow();
+  assert.equal(useLayoutStore.getState().workflow[1].name, "并行生成背景画布与布局意图 IR");
+  assert.equal(useLayoutStore.getState().workflow[3].name, "生成管线连接");
+});
+
 function makeJson(controlW: number, controlH: number): LayoutJsonData {
   return {
     v: "1",

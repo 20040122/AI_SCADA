@@ -25,7 +25,7 @@ export function generateLayoutFromImage(
   form.append("canvas_width", String(req.canvasWidth));
   form.append("canvas_height", String(req.canvasHeight));
   return postForm<LayoutGenerateResponse>("/api/canvas/layout/image", form, {
-    timeoutMs: 120000,
+    timeoutMs: 600000,
   });
 }
 

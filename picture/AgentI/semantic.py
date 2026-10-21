@@ -13,10 +13,10 @@ import numpy as np
 import cv2
 
 if __package__:
-    from .name import call_llm, default_client, default_model, encode_image, load_whitelist
+    from .name import call_llm, create_vision_client, default_model, encode_image, load_whitelist
     from .opencv import annotate, assign_parents, ocr_detection, write_image
 else:
-    from name import call_llm, default_client, default_model, encode_image, load_whitelist
+    from name import call_llm, create_vision_client, default_model, encode_image, load_whitelist
     from opencv import annotate, assign_parents, ocr_detection, write_image
 
 
@@ -136,27 +136,40 @@ async def locate_devices(image: np.ndarray, categories: List[str], model: Option
         {"role": "system", "content": PROMPT.format(categories="、".join(name for name in categories if name not in UI_NAMES))},
         {"role": "user", "content": [{"type": "text", "text": "定位完整设备与名称标签。图片尺寸为{}×{}，坐标仍使用0到1000。".format(image.shape[1], image.shape[0])}, {"type": "image_url", "image_url": {"url": url}}]},
     ]
-    response = await call_llm(default_client, model or default_model, messages, temperature=0.0)
+    async with create_vision_client() as client:
+        response = await call_llm(client, model or default_model, messages, temperature=0.0)
     return response.choices[0].message.content or ""
 
 
 def anchor_devices(devices: List[Dict[str, Any]], detection: Dict[str, Any]) -> List[Dict[str, Any]]:
     ui_boxes = [node["bbox"] for node in detection["nodes"] if node["layer"] == "controls" and node["type"] != "equipment_candidate"]
     candidates = [node["bbox"] for node in detection["nodes"] if node["type"] == "equipment_candidate" and not any(overlap(node["bbox"], box) / max(1, node["bbox"][2] * node["bbox"][3]) > 0.5 for box in ui_boxes)]
-    if not candidates or len(candidates) != len(devices):
+    if not candidates or not devices:
         return devices
     from scipy.optimize import linear_sum_assignment
 
     centers = np.array([[box[0] + box[2] / 2, box[1] + box[3] / 2] for box in candidates])
     proposed = np.array([[device["bbox"][0] + device["bbox"][2] / 2, device["bbox"][1] + device["bbox"][3] / 2] for device in devices])
     distances = np.linalg.norm(proposed[:, None] - centers[None, :], axis=2)
+    valid = np.zeros(distances.shape, dtype=bool)
+    for row, device in enumerate(devices):
+        box = device["bbox"]
+        for column, target in enumerate(candidates):
+            valid[row, column] = 0.5 <= target[2] / box[2] <= 2 and 0.5 <= target[3] / box[3] <= 2 and distances[row, column] <= max(box[2], box[3]) * 4
     rows, columns = linear_sum_assignment(distances)
-    for row, column in zip(rows, columns):
-        box, target = devices[row]["bbox"], candidates[column]
-        if not (0.5 <= target[2] / box[2] <= 2 and 0.5 <= target[3] / box[3] <= 2) or distances[row, column] > max(box[2], box[3]) * 4:
-            return devices
+    if len(candidates) != len(devices) or not all(valid[row, column] for row, column in zip(rows, columns)):
+        for row, device in enumerate(devices):
+            eligible = np.sort(distances[row, valid[row]])
+            if len(eligible) > 1 and eligible[1] - eligible[0] < max(device["bbox"][2:]) * 0.25:
+                valid[row] = False
+        penalty = float(detection["image_size"]["width"] + detection["image_size"]["height"]) * 10
+        costs = np.full((len(devices), len(candidates) + len(devices)), penalty)
+        costs[:, :len(candidates)] = np.where(valid, distances, penalty * 2)
+        rows, columns = linear_sum_assignment(costs)
     updated = deepcopy(devices)
     for row, column in zip(rows, columns):
+        if column >= len(candidates) or not valid[row, column]:
+            continue
         device, target = updated[row], candidates[column]
         box = device["bbox"]
         dx, dy = target[0] + target[2] / 2 - box[0] - box[2] / 2, target[1] + target[3] / 2 - box[1] - box[3] / 2

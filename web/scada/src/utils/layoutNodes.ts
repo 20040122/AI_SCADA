@@ -52,7 +52,7 @@ function parseFontStyle(font?: string): { fontSize?: string; fontWeight?: string
   for (const p of parts) {
     if (p === "bold" || p === "normal" || p === "bolder" || p === "lighter") {
       fontWeight = p;
-    } else if (/^\d+px$/.test(p) || /^\d+pt$/.test(p)) {
+    } else if (/^\d+(?:\.\d+)?(?:px|pt)$/.test(p)) {
       fontSize = p;
     }
   }

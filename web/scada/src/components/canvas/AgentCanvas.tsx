@@ -743,7 +743,7 @@ export interface AgentCanvasProps {
 
 export default function AgentCanvas(props: AgentCanvasProps) {
   const { nodes, decorations = [], canvasWidth, canvasHeight, title, emptyText, emptyIcon, selectedNodeIds, onSelectNode, onMoveNodes, onResizeNode, defaultReadableZoom, pipes, interactionLocked } = props;
-  const hasResult = nodes.length > 0;
+  const hasResult = nodes.length > 0 || decorations.length > 0;
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">

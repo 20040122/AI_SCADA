@@ -226,7 +226,8 @@ def fill_text_values(
     if type(workers) is not int or workers <= 0:
         raise ValueError("并行工作线程数必须是正整数。")
     texts = [item for item in items if item.get("type") == "text"]
-    executable = check_engine(language, timeout) if texts else ""
+    pending = [item for item in texts if not isinstance(item.get("vision_value"), str) or not item["vision_value"].strip()]
+    executable = check_engine(language, timeout) if pending else ""
 
     def process(item: Dict[str, Any]) -> Recognition:
         x, y, w, h = item["bbox"]
@@ -238,35 +239,36 @@ def fill_text_values(
         except (RuntimeError, ValueError, csv.Error) as error:
             raise RuntimeError("{}: {}".format(item["id"], error)) from error
 
-    if workers == 1 or len(texts) <= 1:
-        results = [process(item) for item in texts]
+    if workers == 1 or len(pending) <= 1:
+        results = [process(item) for item in pending]
     else:
-        with ThreadPoolExecutor(max_workers=min(workers, len(texts))) as pool:
-            futures = [pool.submit(process, item) for item in texts]
+        with ThreadPoolExecutor(max_workers=min(workers, len(pending))) as pool:
+            futures = [pool.submit(process, item) for item in pending]
             results = [future.result() for future in futures]
     unrecognized = []
     low_confidence = []
     calls = 0
-    for item, result in zip(texts, results):
+    for item, result in zip(pending, results):
         item["value"] = result.value or None
         if diagnostics:
             item["recognition_confidence"] = round(result.confidence, 2)
             item["ocr_candidates"] = list(result.candidates)
             uncertain = not result.value or result.confidence < min_confidence or len(result.candidates) > 1
             item["recognition_status"] = "needs_review" if uncertain else "recognized"
-        if item.get("vision_value"):
-            item["ocr_value"] = item["value"]
-            item["value"] = item["vision_value"]
-            item["recognition_status"] = "vision_transcribed"
         calls += result.passes
         if not result.value:
             unrecognized.append(item["id"])
         elif result.confidence < min_confidence:
             low_confidence.append({"id": item["id"], "confidence": round(result.confidence, 2)})
+    for item in texts:
+        if isinstance(item.get("vision_value"), str) and item["vision_value"].strip():
+            item["value"] = item["vision_value"]
+            item["recognition_status"] = "vision_transcribed"
     return {
         "element_count": len(items), "text_count": len(texts),
         "recognized": len(texts) - len(unrecognized), "unrecognized": unrecognized,
         "low_confidence": low_confidence, "tesseract_calls": calls,
+        "skipped_vision": len(texts) - len(pending),
     }
 
 

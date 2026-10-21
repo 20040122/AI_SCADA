@@ -17,10 +17,16 @@ PROJECT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from name import DEFAULT_CONCURRENCY, DEFAULT_CONTEXT, fill_control_names, refine_label_values
-from ocr import fill_text_values, infer_text_style, write_atomic
-from opencv import run_detection
-from semantic import review_detection
+if __package__:
+    from .name import DEFAULT_CONCURRENCY, DEFAULT_CONTEXT, fill_control_names, refine_label_values
+    from .ocr import fill_text_values, infer_text_style, write_atomic
+    from .opencv import run_detection
+    from .semantic import review_detection
+else:
+    from name import DEFAULT_CONCURRENCY, DEFAULT_CONTEXT, fill_control_names, refine_label_values
+    from ocr import fill_text_values, infer_text_style, write_atomic
+    from opencv import run_detection
+    from semantic import review_detection
 
 
 def run_pipeline(

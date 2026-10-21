@@ -2,6 +2,7 @@ import argparse
 import csv
 import io
 import json
+import math
 import shutil
 import subprocess
 import tempfile
@@ -325,12 +326,43 @@ def apply_ocr(texts: List[Dict[str, Any]], recognized: List[Dict[str, Any]]) -> 
             region["recognition_confidence"] = round(sum(word["confidence"] for word in words) / len(words), 3)
 
 
+def value_field_labels(controls: List[Dict[str, Any]], texts: List[Dict[str, Any]], scale: float) -> Dict[str, Dict[str, Any]]:
+    equipment = [control for control in controls if control["type"] == "equipment_candidate" and max(control["bbox"][2:]) <= 80 * scale]
+    fields = [control for control in controls if control["type"] == "value_field"]
+    associations = {}
+    for field in fields:
+        fx, fy, fw, fh = field["bbox"]
+        ranked = []
+        for control in equipment:
+            cx, cy, cw, ch = control["bbox"]
+            gap_x = max(cx - fx - fw, fx - cx - cw, 0)
+            gap_y = max(cy - fy - fh, fy - cy - ch, 0)
+            distance = math.hypot(cx + cw / 2 - fx - fw / 2, cy + ch / 2 - fy - fh / 2)
+            if math.hypot(gap_x, gap_y) <= max(cw, ch, fh) * 1.5:
+                ranked.append((distance / max(cw, ch), control))
+        ranked.sort(key=lambda pair: pair[0])
+        if not ranked or (len(ranked) > 1 and ranked[1][0] - ranked[0][0] < 0.5):
+            continue
+        labels = []
+        for item in texts:
+            x, y, w, h = item["bbox"]
+            offset = abs(x + w / 2 - fx - fw / 2)
+            gap = fy - y - h
+            if 1.4 * h <= w <= 4 * h and 0 <= gap <= h * 1.5 and offset <= max(w, fw) * 0.6:
+                labels.append(item)
+        if len(labels) == 1:
+            associations.setdefault(labels[0]["id"], []).append(ranked[0][1])
+    return {identifier: candidates[0] for identifier, candidates in associations.items() if len(candidates) == 1}
+
+
 def assign_parents(controls: List[Dict[str, Any]], texts: List[Dict[str, Any]], scale: float) -> None:
     for control in controls:
         control["parent_id"] = "grid_1"
         control["label_bboxes"] = []
+        control.pop("label_association", None)
     controls_by_id = {control["id"]: control for control in controls}
     equipment = [control for control in controls if control["type"] == "equipment_candidate"]
+    field_labels = value_field_labels(controls, texts, scale)
     for item in texts:
         source = controls_by_id.get(item.get("source_control_id"))
         possible = [source] if source else [c for c in controls if contains(c["bbox"], item["bbox"])]
@@ -356,6 +388,12 @@ def assign_parents(controls: List[Dict[str, Any]], texts: List[Dict[str, Any]], 
             item["parent_id"] = parent["id"]
             item["association"] = {"method": "aligned_label", "confidence": round(0.9 / (1 + ranked[0][0]), 3)}
             parent["label_bboxes"].append(item["bbox"])
+        elif not ranked and item["id"] in field_labels:
+            parent = field_labels[item["id"]]
+            item["parent_id"] = parent["id"]
+            item["association"] = {"method": "value_field_label", "confidence": 0.8}
+            parent["label_bboxes"].append(item["bbox"])
+            parent["label_association"] = "value_field_label"
         else:
             item["parent_id"] = "grid_1"
             item["association"] = {"method": "page", "confidence": 1.0}
@@ -428,6 +466,8 @@ def run_detection(
         if item["layer"] == "controls":
             entry["label_bboxes"] = item["label_bboxes"]
             entry["control_kind"] = item["type"]
+            if item.get("label_association"):
+                entry["label_association"] = item["label_association"]
         else:
             entry["parent_id"] = item["parent_id"] if item["parent_id"] != "grid_1" else None
         exported.append(entry)

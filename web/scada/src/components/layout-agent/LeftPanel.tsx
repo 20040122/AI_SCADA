@@ -107,7 +107,7 @@ export default function LeftPanel() {
 
   const handlePickImage = async (file: File | null) => {
     if (!file) return;
-    resetWorkflow();
+    resetWorkflow("image");
     setQuery(`图片：${file.name}`);
     setIsLoading(true);
     setError(null);
@@ -202,6 +202,7 @@ export default function LeftPanel() {
           >
             🖼️ {isGenerating ? "生成中..." : "上传图片生成布局"}
           </button>
+          <p className="text-[10px] text-[var(--text3)] mt-1">按原图位置识别设备和文字，不重建管线</p>
         </div>
 
         <div className="mb-3">

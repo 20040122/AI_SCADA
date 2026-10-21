@@ -1,9 +1,12 @@
 import json
 import re
+import logging
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from starlette.concurrency import run_in_threadpool
 
 from app.deps import get_layout_agent, get_material_db, get_refine_agent
 from app.schemas import (
@@ -22,11 +25,12 @@ from app.services.canvas_upload_service import (
     UploadTimeoutError,
     UploadUpstreamError,
 )
+from app.services.image_layout_service import generate_image_layout
 from data.sqlite.material_db import MaterialDB
 from model.layout_agent import LayoutAgent
 from model.layout_agent import LayoutOutputError
 from model.layout_tools.compute_position import MissingMaterialError
-from model.layout_tools.get_intent import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError, image_to_structured_prompt
+from model.layout_tools.get_intent import IntentModelOutputError, IntentModelTimeoutError, IntentModelUnavailableError, StructuredPromptError
 from model.layout_tools.get_connection import ConnectionModelError as PipingModelError
 from model.layout_tools.get_connection import ConnectionModelTimeoutError as PipingModelTimeoutError
 from model.layout_tools.get_connection import ConnectionModelUnavailableError as PipingModelUnavailableError
@@ -107,9 +111,9 @@ def _persist_and_respond(result, title: str) -> ApiResponse:
     resp = CanvasLayoutResponse(
         json_data=result.json_data,
         content_rect=result.content_rect,
-        quality_issues=[],
+        quality_issues=getattr(result, "quality_issues", []),
         zones=[],
-        missing_controls=[],
+        missing_controls=getattr(result, "missing_controls", []),
         file_name=file_name,
         pipe_data=result.pipe_data,
     )
@@ -135,9 +139,8 @@ async def canvas_layout(
 async def canvas_layout_image(
     file: UploadFile = File(...),
     title: str = Form(""),
-    canvas_width: int = Form(1920),
-    canvas_height: int = Form(1080),
-    agent: LayoutAgent = Depends(get_layout_agent),
+    canvas_width: int = Form(1920, gt=0),
+    canvas_height: int = Form(1080, gt=0),
     db: MaterialDB = Depends(get_material_db),
 ):
     materials = await db.list_query_results("")
@@ -146,33 +149,16 @@ async def canvas_layout_image(
 
     image = await file.read()
     try:
-        prompt = await image_to_structured_prompt(image, materials)
-    except StructuredPromptError as exc:
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "errors": [
-                    {"path": item.path, "message": item.message}
-                    for item in exc.errors
-                ]
-            },
-        ) from exc
-    except IntentModelOutputError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
-    except IntentModelUnavailableError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
+        result = await run_in_threadpool(generate_image_layout, image, materials, canvas_width, canvas_height, title.strip())
+    except subprocess.TimeoutExpired as exc:
+        raise HTTPException(status_code=504, detail="图片文字识别超时") from exc
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=503, detail="图片识别依赖不可用，请检查 Tesseract 配置") from exc
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-
-    result = await _generate_layout(
-        agent,
-        query=prompt,
-        width=canvas_width,
-        height=canvas_height,
-        title=title.strip(),
-        skip_structure_count=True,
-        materials=materials,
-    )
+    except Exception as exc:
+        logging.getLogger(__name__).exception("图片布局生成失败")
+        raise HTTPException(status_code=502, detail="图片布局识别失败，请检查识别服务") from exc
     return _persist_and_respond(result, title)
 
 

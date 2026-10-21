@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import cv2
+import httpx
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -32,6 +33,11 @@ UNKNOWN_SUFFIX = "unknow"
 DEFAULT_CONCURRENCY = 32
 DEFAULT_CONTEXT = 0.5
 TEMPERATURE = 0.0
+
+
+def create_vision_client():
+    return default_client.copy(max_retries=0, http_client=httpx.AsyncClient(timeout=default_client.timeout))
+
 
 PROMPT_TEMPLATE = """\
 你是工业 SCADA 图纸控件识别器。输入是一张从图纸上裁剪出来的控件图，请判断它属于白名单中的哪一类控件，并且只输出一个合法 JSON 对象。
@@ -215,6 +221,80 @@ def normalize(name: str, whitelist: List[str]) -> str:
     return "{}({})".format(name, UNKNOWN_SUFFIX)
 
 
+def _direct_category(item: Dict[str, Any], whitelist: List[str]) -> Optional[str]:
+    category = item.get("semantic_name")
+    if category in whitelist:
+        return category
+    category = {"value_field": "数值显示", "button": "按钮", "status": "绿色状态", "indicator": "状态显示"}.get(item.get("control_kind"))
+    return category if category in whitelist else None
+
+
+def _appearance(crop: np.ndarray) -> np.ndarray:
+    return cv2.resize(crop, (64, 64), interpolation=cv2.INTER_AREA).astype(np.float32)
+
+
+def _same_appearance(first: np.ndarray, second: np.ndarray) -> bool:
+    difference = np.abs(first - second)
+    return bool(np.mean(difference) <= 3 and np.percentile(difference, 99) <= 25)
+
+
+def _glyph_appearance(crop: np.ndarray) -> np.ndarray:
+    gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+    mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+    x, y, w, h = cv2.boundingRect(mask)
+    if not w or not h:
+        return np.zeros((64, 64), np.uint8)
+    return cv2.resize(mask[y:y + h, x:x + w], (64, 64), interpolation=cv2.INTER_NEAREST)
+
+
+def _same_glyphs(first: np.ndarray, second: np.ndarray) -> bool:
+    if not np.any(first) or not np.any(second):
+        return False
+    distances = np.concatenate((cv2.distanceTransform(255 - first, cv2.DIST_L2, 3)[second > 0], cv2.distanceTransform(255 - second, cv2.DIST_L2, 3)[first > 0]))
+    return bool(np.mean(distances) <= 0.25 and np.percentile(distances, 95) <= 2)
+
+
+def _repeated_body(crop: np.ndarray) -> np.ndarray:
+    background = np.median(np.concatenate((crop[0], crop[-1], crop[:, 0], crop[:, -1])), axis=0)
+    mask = np.max(np.abs(crop.astype(np.float32) - background), axis=2) > 35
+    if np.any(mask):
+        x, y, w, h = cv2.boundingRect(mask.astype(np.uint8))
+        crop = crop[y:y + h, x:x + w]
+    return cv2.GaussianBlur(_appearance(crop), (5, 5), 0)
+
+
+def group_control_candidates(image: np.ndarray, targets: List[Dict[str, Any]], context: float) -> List[List[int]]:
+    groups = []
+    for index, item in enumerate(targets):
+        x, y, w, h = item["bbox"]
+        body = _appearance(image[y:y + h, x:x + w])
+        surrounding = _appearance(crop_named_control(image, item, context))
+        labels = [_appearance(crop_control(image, box)) for box in item.get("label_bboxes", [])]
+        repeated = item.get("label_association") == "value_field_label" and len(labels) == 1
+        repeat_body = _repeated_body(image[y:y + h, x:x + w]) if repeated else None
+        glyphs = _glyph_appearance(crop_control(image, item["label_bboxes"][0])) if repeated else None
+        key = (item.get("semantic_name"), tuple(item.get("semantic_labels", [])), item.get("control_kind"), repeated)
+        for group in groups:
+            if group["key"] != key or len(group["labels"]) != len(labels):
+                continue
+            if abs(w / group["width"] - 1) > 0.08 or abs(h / group["height"] - 1) > 0.08:
+                continue
+            if repeated:
+                difference = np.abs(repeat_body - group["repeat_body"])
+                if np.mean(difference) > 7 or np.percentile(difference, 99) > 60 or not _same_glyphs(glyphs, group["glyphs"]):
+                    continue
+            else:
+                if not _same_appearance(body, group["body"]) or not _same_appearance(surrounding, group["surrounding"]):
+                    continue
+                if not all(_same_appearance(first, second) for first, second in zip(labels, group["labels"])):
+                    continue
+            group["indices"].append(index)
+            break
+        else:
+            groups.append({"key": key, "width": w, "height": h, "body": body, "surrounding": surrounding, "labels": labels, "repeat_body": repeat_body, "glyphs": glyphs, "indices": [index]})
+    return [group["indices"] for group in groups]
+
+
 async def recognize_control(
     client: Any,
     model: str,
@@ -269,39 +349,37 @@ async def recognize_all(
     targets = [item for item in items if item.get("type") == "controls"]
     durations: List[float] = []
 
-    async def classify(item):
-        category = item.get("semantic_name")
-        if category in whitelist:
-            return category, True
-        category = {"value_field": "数值显示", "button": "按钮", "status": "绿色状态", "indicator": "状态显示"}.get(item.get("control_kind"))
-        if category in whitelist:
-            return category, True
-        return await recognize_control(client, model, semaphore, item, image, whitelist, prompt, context, durations)
-
-    results = await asyncio.gather(*[
-        classify(item) for item in targets
-    ], return_exceptions=True)
-    groups = []
+    results = [None] * len(targets)
+    pending = []
     for index, item in enumerate(targets):
-        if not item.get("semantic_name") or not item.get("semantic_labels"):
-            continue
-        x, y, w, h = item["bbox"]
-        crop = cv2.resize(image[y:y + h, x:x + w], (32, 32), interpolation=cv2.INTER_AREA).astype(np.float32)
-        key = (item["semantic_name"], tuple(item["semantic_labels"]))
-        for group in groups:
-            if group["key"] == key and abs(w / h - group["ratio"]) < 0.15 and np.mean(np.abs(crop - group["crop"])) < 15:
-                group["indices"].append(index)
-                break
+        category = _direct_category(item, whitelist)
+        if category:
+            results[index] = (category, True)
         else:
-            groups.append({"key": key, "ratio": w / h, "crop": crop, "indices": [index]})
-    for group in groups:
-        votes = Counter(results[index][0] for index in group["indices"] if not isinstance(results[index], BaseException) and results[index][1])
-        if votes:
-            category, count = votes.most_common(1)[0]
-            if count >= 2 and count > len(group["indices"]) / 2:
-                for index in group["indices"]:
-                    if not isinstance(results[index], BaseException):
-                        results[index] = category, True
+            pending.append(index)
+    candidate_groups = group_control_candidates(image, [targets[index] for index in pending], context)
+    reused = []
+
+    async def classify(index):
+        try:
+            return await recognize_control(client, model, semaphore, targets[index], image, whitelist, prompt, context, durations)
+        except Exception as error:
+            return error
+
+    async def classify_group(group):
+        indices = [pending[index] for index in group]
+        result = await classify(indices[0])
+        results[indices[0]] = result
+        if not isinstance(result, BaseException) and result[1]:
+            for index in indices[1:]:
+                results[index] = result
+                reused.append(targets[index]["id"])
+        else:
+            remaining = await asyncio.gather(*(classify(index) for index in indices[1:]))
+            for index, value in zip(indices[1:], remaining):
+                results[index] = value
+
+    await asyncio.gather(*(classify_group(group) for group in candidate_groups))
     matched = []
     unknown = []
     failed = []
@@ -315,7 +393,7 @@ async def recognize_all(
             matched.append(item["id"])
         else:
             unknown.append(item["id"])
-    summary = {"controls": len(targets), "matched": matched, "unknown": unknown, "failed": failed}
+    summary = {"controls": len(targets), "matched": matched, "unknown": unknown, "failed": failed, "model_calls": len(durations), "reused": sorted(reused)}
     if durations:
         ordered = sorted(durations)
         summary["llm_seconds"] = {
@@ -364,7 +442,11 @@ def fill_control_names(
     whitelist = load_whitelist(db_path)
     prompt = build_prompt(whitelist)
     dumped = write_crops(image, items, dump_crops, context) if dump_crops is not None else 0
-    summary = asyncio.run(recognize_all(image, items, whitelist, prompt, default_client, resolved_model, concurrency, context))
+    async def run():
+        async with create_vision_client() as client:
+            return await recognize_all(image, items, whitelist, prompt, client, resolved_model, concurrency, context)
+
+    summary = asyncio.run(run())
     return {
         "model": resolved_model,
         "whitelist": whitelist,
@@ -375,6 +457,49 @@ def fill_control_names(
     }
 
 
+def needs_text_review(item: Dict[str, Any]) -> bool:
+    if item.get("vision_value") or item.get("recognition_status") in ("vision_transcribed", "ocr_consensus"):
+        return False
+    value = item.get("value")
+    if not isinstance(value, str) or not value.strip():
+        return True
+    if item.get("recognition_status") == "needs_review":
+        return True
+    confidence = item.get("recognition_confidence")
+    if not isinstance(confidence, (int, float)) or not math.isfinite(confidence) or confidence < 60:
+        return True
+    candidates = item.get("ocr_candidates", [])
+    return not candidates or any(not isinstance(candidate, str) or candidate.strip() != value.strip() for candidate in candidates)
+
+
+def group_repeated_labels(image: np.ndarray, texts: List[Dict[str, Any]], controls: Dict[str, Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
+    groups = []
+    for item in texts:
+        parent = controls.get(item.get("parent_id"), {})
+        if parent.get("label_association") != "value_field_label" or parent.get("label_bboxes") != [item["bbox"]]:
+            continue
+        glyphs = _glyph_appearance(crop_control(image, item["bbox"]))
+        key = (parent.get("control_kind"), tuple(parent.get("semantic_labels", [])))
+        w, h = item["bbox"][2:]
+        for group in groups:
+            if group["key"] == key and abs(w / group["width"] - 1) <= 0.08 and abs(h / group["height"] - 1) <= 0.08 and _same_glyphs(glyphs, group["glyphs"]):
+                group["items"].append(item)
+                break
+        else:
+            groups.append({"key": key, "width": w, "height": h, "glyphs": glyphs, "items": [item]})
+    return [group["items"] for group in groups]
+
+
+def repeated_label_consensus(group: List[Dict[str, Any]]) -> Optional[str]:
+    reliable = [item for item in group if item.get("recognition_status") == "recognized" and not needs_text_review(item)]
+    votes = Counter(item["value"] for item in reliable).most_common()
+    if len(group) < 3 or not votes or votes[0][1] < max(2, math.ceil(len(reliable) * 2 / 3)):
+        return None
+    value = votes[0][0]
+    support = sum(value in item.get("ocr_candidates", []) for item in group)
+    return value if support >= math.ceil(len(group) * 0.6) else None
+
+
 def refine_label_values(
     image: np.ndarray,
     items: List[Dict[str, Any]],
@@ -383,14 +508,43 @@ def refine_label_values(
 ) -> Dict[str, Any]:
     label_boxes = {tuple(box) for item in items if item.get("type") == "controls" for box in item.get("label_bboxes", [])}
     controls = {item["id"]: item for item in items if item.get("type") == "controls"}
-    targets = [item for item in items if item.get("type") == "text" and not item.get("vision_value") and (tuple(item["bbox"]) in label_boxes or item.get("recognition_status") == "needs_review")]
+    texts = [item for item in items if item.get("type") == "text"]
+    repeated_groups = group_repeated_labels(image, texts, controls)
+    consensus_refined = []
+    for group in repeated_groups:
+        value = repeated_label_consensus(group)
+        if value is None:
+            continue
+        for item in group:
+            if item.get("vision_value") or item.get("recognition_status") == "vision_transcribed" or (item.get("value") == value and not needs_text_review(item)):
+                continue
+            item["ocr_value"] = item.get("value")
+            item["value"] = value
+            item["recognition_status"] = "ocr_consensus"
+            consensus_refined.append(item["id"])
+    targets = [item for item in texts if (tuple(item["bbox"]) in label_boxes or item.get("recognition_status") == "needs_review") and needs_text_review(item)]
+    skipped = len(texts) - len(targets) - len(consensus_refined)
     if not targets:
-        return {"labels": 0, "refined": [], "failed": []}
+        return {"labels": len(consensus_refined), "refined": consensus_refined, "failed": [], "skipped": skipped, "model_calls": 0, "reused": [], "ocr_consensus": consensus_refined}
+
+    parent_ids = {item.get("parent_id") for item in targets}
+    repeated_controls = [control for identifier, control in controls.items() if identifier in parent_ids and control.get("label_association") == "value_field_label" and len(control.get("label_bboxes", [])) == 1]
+    control_groups = group_control_candidates(image, repeated_controls, DEFAULT_CONTEXT)
+    by_parent = {repeated_controls[index]["id"]: group_index for group_index, group in enumerate(control_groups) for index in group}
+    grouped: Dict[Tuple[str, int], List[int]] = {}
+    for index, item in enumerate(targets):
+        parent = controls.get(item.get("parent_id"), {})
+        group = by_parent.get(item.get("parent_id"))
+        key = ("control", group) if group is not None and item["bbox"] == parent["label_bboxes"][0] else ("text", index)
+        grouped.setdefault(key, []).append(index)
+    model_calls = 0
+    reused = []
 
     async def run_all():
         semaphore = asyncio.Semaphore(concurrency)
 
         async def transcribe(item):
+            nonlocal model_calls
             x, y, w, h = item["bbox"]
             crop = image[max(0, y - 2):min(image.shape[0], y + h + 2), max(0, x - 2):min(image.shape[1], x + w + 2)]
             factor = max(1.0, min(4.0, 64 / crop.shape[0]))
@@ -403,7 +557,8 @@ def refine_label_values(
                 {"role": "user", "content": [{"type": "text", "text": hint}, {"type": "image_url", "image_url": {"url": url}}]},
             ]
             async with semaphore:
-                response = await call_llm(default_client, model or default_model, messages, temperature=TEMPERATURE)
+                model_calls += 1
+                response = await call_llm(client, model or default_model, messages, temperature=TEMPERATURE)
             content = response.choices[0].message.content or ""
             start, end = content.find("{"), content.rfind("}")
             if start < 0 or end <= start:
@@ -413,10 +568,32 @@ def refine_label_values(
                 raise ValueError("标签复核未能确定文字")
             return value.strip()
 
-        return await asyncio.gather(*(transcribe(item) for item in targets), return_exceptions=True)
+        results = [None] * len(targets)
+
+        async def attempt(index):
+            try:
+                return await transcribe(targets[index])
+            except Exception as error:
+                return error
+
+        async def transcribe_group(indices):
+            result = await attempt(indices[0])
+            results[indices[0]] = result
+            if isinstance(result, BaseException):
+                remaining = await asyncio.gather(*(attempt(index) for index in indices[1:]))
+                for index, value in zip(indices[1:], remaining):
+                    results[index] = value
+            else:
+                for index in indices[1:]:
+                    results[index] = result
+                    reused.append(targets[index]["id"])
+
+        async with create_vision_client() as client:
+            await asyncio.gather(*(transcribe_group(indices) for indices in grouped.values()))
+        return results
 
     results = asyncio.run(run_all())
-    refined, failed = [], []
+    refined, failed = list(consensus_refined), []
     for item, result in zip(targets, results):
         if isinstance(result, BaseException):
             item["recognition_status"] = "needs_review"
@@ -426,7 +603,7 @@ def refine_label_values(
             item["value"] = result
             item["recognition_status"] = "vision_transcribed"
             refined.append(item["id"])
-    return {"labels": len(targets), "refined": refined, "failed": failed}
+    return {"labels": len(targets) + len(consensus_refined), "refined": refined, "failed": failed, "skipped": skipped, "model_calls": model_calls, "reused": sorted(reused), "ocr_consensus": consensus_refined}
 
 
 def run(

@@ -3,23 +3,23 @@
     "id": "controls_1",
     "type": "controls",
     "bbox": [
-      66,
-      295,
-      52,
-      21
+      981,
+      94,
+      65,
+      19
     ],
-    "value": "数值显示",
+    "value": "绿色状态",
     "label_bboxes": [],
-    "control_kind": "value_field"
+    "control_kind": "status"
   },
   {
     "id": "controls_2",
     "type": "controls",
     "bbox": [
-      526,
-      300,
-      38,
-      21
+      746,
+      111,
+      65,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -29,23 +29,30 @@
     "id": "controls_3",
     "type": "controls",
     "bbox": [
-      639,
-      300,
-      38,
-      21
+      914,
+      117,
+      179,
+      139
     ],
-    "value": "数值显示",
-    "label_bboxes": [],
-    "control_kind": "value_field"
+    "value": "冷水机",
+    "label_bboxes": [
+      [
+        964,
+        248,
+        78,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_4",
     "type": "controls",
     "bbox": [
-      755,
-      300,
-      39,
-      21
+      747,
+      138,
+      66,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -55,10 +62,10 @@
     "id": "controls_5",
     "type": "controls",
     "bbox": [
-      868,
-      300,
-      39,
-      21
+      365,
+      147,
+      42,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -68,23 +75,30 @@
     "id": "controls_6",
     "type": "controls",
     "bbox": [
-      979,
-      300,
-      38,
-      21
+      370,
+      173,
+      37,
+      38
     ],
-    "value": "数值显示",
-    "label_bboxes": [],
-    "control_kind": "value_field"
+    "value": "旁通阀",
+    "label_bboxes": [
+      [
+        358,
+        214,
+        61,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_7",
     "type": "controls",
     "bbox": [
-      1091,
-      300,
-      38,
-      21
+      1142,
+      173,
+      72,
+      20
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -94,10 +108,10 @@
     "id": "controls_8",
     "type": "controls",
     "bbox": [
-      1201,
-      300,
-      39,
-      21
+      217,
+      183,
+      42,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -107,23 +121,30 @@
     "id": "controls_9",
     "type": "controls",
     "bbox": [
-      1314,
-      300,
-      38,
-      21
+      94,
+      200,
+      113,
+      119
     ],
-    "value": "数值显示",
-    "label_bboxes": [],
-    "control_kind": "value_field"
+    "value": "冷却塔",
+    "label_bboxes": [
+      [
+        119,
+        320,
+        62,
+        14
+      ]
+    ],
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_10",
     "type": "controls",
     "bbox": [
-      1424,
-      300,
-      39,
-      21
+      1142,
+      200,
+      72,
+      20
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -133,23 +154,30 @@
     "id": "controls_11",
     "type": "controls",
     "bbox": [
-      1533,
-      300,
-      39,
-      21
+      231,
+      209,
+      20,
+      30
     ],
-    "value": "数值显示",
-    "label_bboxes": [],
-    "control_kind": "value_field"
+    "value": "调节阀",
+    "label_bboxes": [
+      [
+        210,
+        242,
+        62,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_12",
     "type": "controls",
     "bbox": [
-      1801,
-      300,
-      38,
-      21
+      622,
+      229,
+      42,
+      20
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -159,335 +187,213 @@
     "id": "controls_13",
     "type": "controls",
     "bbox": [
-      415,
-      301,
-      41,
-      22
+      491,
+      239,
+      110,
+      91
+    ],
+    "value": "冷却泵",
+    "label_bboxes": [
+      [
+        513,
+        335,
+        62,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_14",
+    "type": "controls",
+    "bbox": [
+      830,
+      244,
+      64,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_15",
+    "type": "controls",
+    "bbox": [
+      750,
+      253,
+      55,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
     "control_kind": "value_field"
   },
   {
-    "id": "controls_14",
-    "type": "controls",
-    "bbox": [
-      91,
-      324,
-      31,
-      36
-    ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        77,
-        271,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
-  },
-  {
-    "id": "controls_15",
-    "type": "controls",
-    "bbox": [
-      441,
-      329,
-      31,
-      36
-    ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        428,
-        276,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
-  },
-  {
     "id": "controls_16",
     "type": "controls",
     "bbox": [
-      552,
-      329,
-      31,
-      36
+      621,
+      255,
+      42,
+      19
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        539,
-        276,
-        31,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_17",
     "type": "controls",
     "bbox": [
-      665,
-      329,
-      31,
-      36
+      1425,
+      260,
+      65,
+      18
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        651,
-        276,
-        32,
-        15
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
   },
   {
     "id": "controls_18",
     "type": "controls",
     "bbox": [
-      782,
-      329,
-      30,
-      36
+      29,
+      264,
+      64,
+      18
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        768,
-        276,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
   },
   {
     "id": "controls_19",
     "type": "controls",
     "bbox": [
-      894,
-      329,
-      31,
-      36
+      851,
+      265,
+      21,
+      30
     ],
-    "value": "PN探头",
+    "value": "电动阀",
     "label_bboxes": [
       [
-        881,
-        276,
-        31,
-        16
+        834,
+        299,
+        62,
+        14
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_20",
     "type": "controls",
     "bbox": [
-      1005,
-      329,
-      31,
-      36
+      436,
+      270,
+      65,
+      18
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        991,
-        276,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
   },
   {
     "id": "controls_21",
     "type": "controls",
     "bbox": [
-      1117,
-      329,
-      30,
-      36
+      749,
+      280,
+      56,
+      19
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        1103,
-        276,
-        32,
-        15
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_22",
     "type": "controls",
     "bbox": [
-      1227,
-      329,
-      31,
-      36
+      1407,
+      280,
+      99,
+      92
     ],
-    "value": "PN探头",
+    "value": "冷冻泵",
     "label_bboxes": [
       [
-        1214,
-        276,
-        31,
-        16
+        1432,
+        375,
+        62,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_23",
     "type": "controls",
     "bbox": [
-      1340,
-      329,
-      31,
-      36
+      288,
+      281,
+      42,
+      20
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        1327,
-        276,
-        31,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_24",
     "type": "controls",
     "bbox": [
-      1451,
-      329,
-      30,
-      36
+      621,
+      282,
+      42,
+      19
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        1437,
-        276,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_25",
     "type": "controls",
     "bbox": [
-      1559,
-      329,
-      31,
-      36
+      1085,
+      297,
+      65,
+      18
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        1546,
-        276,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
   },
   {
     "id": "controls_26",
     "type": "controls",
     "bbox": [
-      1827,
-      329,
-      30,
-      36
+      1358,
+      297,
+      42,
+      20
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        1813,
-        276,
-        32,
-        15
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_27",
     "type": "controls",
     "bbox": [
-      234,
-      427,
-      52,
-      21
+      974,
+      301,
+      54,
+      20
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -497,82 +403,63 @@
     "id": "controls_28",
     "type": "controls",
     "bbox": [
-      259,
-      456,
-      31,
-      36
+      300,
+      307,
+      22,
+      30
     ],
-    "value": "PN探头",
+    "value": "调节阀",
     "label_bboxes": [
       [
-        245,
-        403,
-        32,
-        16
+        280,
+        340,
+        64,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_29",
     "type": "controls",
     "bbox": [
-      1627,
-      490,
-      31,
-      36
+      1164,
+      309,
+      53,
+      19
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        1700,
-        497,
-        32,
-        15
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_30",
     "type": "controls",
     "bbox": [
-      887,
-      494,
-      31,
-      36
+      1105,
+      319,
+      20,
+      30
     ],
-    "value": "PN探头",
+    "value": "电动阀",
     "label_bboxes": [
       [
-        952,
-        501,
-        32,
-        16
+        1085,
+        350,
+        61,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_31",
     "type": "controls",
     "bbox": [
-      1688,
-      521,
-      38,
-      20
+      1358,
+      321,
+      42,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -582,10 +469,10 @@
     "id": "controls_32",
     "type": "controls",
     "bbox": [
-      940,
-      526,
-      38,
-      21
+      974,
+      325,
+      55,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -595,10 +482,10 @@
     "id": "controls_33",
     "type": "controls",
     "bbox": [
-      234,
-      561,
-      52,
-      21
+      1162,
+      335,
+      54,
+      20
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -608,34 +495,42 @@
     "id": "controls_34",
     "type": "controls",
     "bbox": [
-      259,
-      590,
-      31,
-      36
+      1725,
+      346,
+      91,
+      70
     ],
-    "value": "PN探头",
+    "value": "补水箱",
     "label_bboxes": [
       [
-        245,
-        537,
-        32,
-        16
+        1717,
+        328,
+        52,
+        15
+      ],
+      [
+        1782,
+        328,
+        35,
+        14
+      ],
+      [
+        1733,
+        418,
+        62,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_35",
     "type": "controls",
     "bbox": [
-      595,
-      688,
-      38,
-      21
+      974,
+      348,
+      55,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -645,10 +540,10 @@
     "id": "controls_36",
     "type": "controls",
     "bbox": [
-      755,
-      688,
-      39,
-      21
+      1629,
+      368,
+      52,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -658,23 +553,30 @@
     "id": "controls_37",
     "type": "controls",
     "bbox": [
-      234,
-      695,
-      52,
-      21
+      97,
+      372,
+      114,
+      119
     ],
-    "value": "数值显示",
-    "label_bboxes": [],
-    "control_kind": "value_field"
+    "value": "冷却塔",
+    "label_bboxes": [
+      [
+        123,
+        492,
+        64,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_38",
     "type": "controls",
     "bbox": [
-      1384,
-      695,
-      38,
-      21
+      212,
+      375,
+      42,
+      19
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -684,10 +586,10 @@
     "id": "controls_39",
     "type": "controls",
     "bbox": [
-      1527,
-      695,
-      38,
-      21
+      973,
+      375,
+      55,
+      18
     ],
     "value": "数值显示",
     "label_bboxes": [],
@@ -697,441 +599,1516 @@
     "id": "controls_40",
     "type": "controls",
     "bbox": [
-      620,
-      718,
-      30,
-      35
+      621,
+      380,
+      42,
+      19
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        606,
-        664,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_41",
     "type": "controls",
     "bbox": [
-      782,
-      718,
-      30,
-      35
+      1831,
+      385,
+      42,
+      19
     ],
-    "value": "PN探头",
-    "label_bboxes": [
-      [
-        768,
-        664,
-        32,
-        16
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_42",
     "type": "controls",
     "bbox": [
-      259,
-      724,
-      31,
-      35
+      491,
+      395,
+      99,
+      91
     ],
-    "value": "PN探头",
+    "value": "冷却泵",
     "label_bboxes": [
       [
-        245,
-        670,
-        32,
-        16
+        513,
+        493,
+        64,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_43",
     "type": "controls",
     "bbox": [
-      1410,
-      724,
-      30,
-      35
+      1648,
+      396,
+      20,
+      30
     ],
-    "value": "PN探头",
+    "value": "流量计",
     "label_bboxes": [
       [
-        1396,
-        670,
-        32,
-        16
+        1628,
+        428,
+        62,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_44",
     "type": "controls",
     "bbox": [
-      1553,
-      724,
-      31,
-      35
+      222,
+      397,
+      20,
+      29
     ],
-    "value": "PN探头",
+    "value": "调节阀",
     "label_bboxes": [
       [
-        1540,
-        670,
-        31,
-        16
+        204,
+        427,
+        64,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "氧气探头",
-    "semantic_labels": [
-      "氧气"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_45",
     "type": "controls",
     "bbox": [
-      1417,
-      815,
-      37,
-      41
+      620,
+      405,
+      42,
+      19
     ],
-    "value": "送风机",
-    "label_bboxes": [
-      [
-        1370,
-        802,
-        42,
-        48
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "送风机",
-    "semantic_labels": [
-      "风机 AP12P"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_46",
     "type": "controls",
     "bbox": [
-      1466,
-      819,
-      60,
-      34
+      759,
+      408,
+      62,
+      19
     ],
-    "value": "状态显示",
+    "value": "数值显示",
     "label_bboxes": [],
-    "control_kind": "indicator"
+    "control_kind": "value_field"
   },
   {
     "id": "controls_47",
     "type": "controls",
     "bbox": [
-      1220,
-      821,
-      37,
-      41
+      1420,
+      411,
+      65,
+      18
     ],
-    "value": "送风机",
-    "label_bboxes": [
-      [
-        1170,
-        808,
-        50,
-        48
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "送风机",
-    "semantic_labels": [
-      "风机 AP12SG#1"
-    ]
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
   },
   {
     "id": "controls_48",
     "type": "controls",
     "bbox": [
-      956,
-      823,
-      37,
-      41
+      1397,
+      430,
+      103,
+      95
     ],
-    "value": "送风机",
+    "value": "冷冻泵",
     "label_bboxes": [
       [
-        909,
-        810,
-        43,
-        48
+        1424,
+        528,
+        64,
+        15
       ]
     ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "送风机",
-    "semantic_labels": [
-      "风机 AP21S"
-    ]
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_49",
     "type": "controls",
     "bbox": [
-      1266,
-      825,
-      60,
-      35
+      434,
+      432,
+      65,
+      18
     ],
-    "value": "状态显示",
+    "value": "绿色状态",
     "label_bboxes": [],
-    "control_kind": "indicator"
+    "control_kind": "status"
   },
   {
     "id": "controls_50",
     "type": "controls",
     "bbox": [
-      1005,
-      827,
-      60,
-      34
+      620,
+      432,
+      42,
+      19
     ],
-    "value": "状态显示",
+    "value": "数值显示",
     "label_bboxes": [],
-    "control_kind": "indicator"
+    "control_kind": "value_field"
   },
   {
     "id": "controls_51",
     "type": "controls",
     "bbox": [
-      759,
-      828,
-      37,
-      41
+      760,
+      435,
+      62,
+      19
     ],
-    "value": "送风机",
-    "label_bboxes": [
-      [
-        715,
-        815,
-        43,
-        48
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "送风机",
-    "semantic_labels": [
-      "风机 AP11P"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_52",
     "type": "controls",
     "bbox": [
-      805,
-      832,
-      60,
-      35
+      975,
+      435,
+      64,
+      18
     ],
-    "value": "状态显示",
+    "value": "绿色状态",
     "label_bboxes": [],
-    "control_kind": "indicator"
+    "control_kind": "status"
   },
   {
     "id": "controls_53",
     "type": "controls",
     "bbox": [
-      1221,
-      894,
-      37,
-      41
+      1358,
+      444,
+      42,
+      20
     ],
-    "value": "送风机",
-    "label_bboxes": [
-      [
-        1148,
-        899,
-        61,
-        34
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "送风机",
-    "semantic_labels": [
-      "风机\nAP12SG#2"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_54",
     "type": "controls",
     "bbox": [
-      1266,
-      898,
-      60,
-      34
+      1819,
+      446,
+      54,
+      22
     ],
-    "value": "状态显示",
+    "value": "数值显示",
     "label_bboxes": [],
-    "control_kind": "indicator"
+    "control_kind": "value_field"
   },
   {
     "id": "controls_55",
     "type": "controls",
     "bbox": [
-      760,
-      901,
-      37,
-      41
+      1141,
+      451,
+      67,
+      19
     ],
-    "value": "送风机",
-    "label_bboxes": [
-      [
-        715,
-        890,
-        43,
-        48
-      ]
-    ],
-    "control_kind": "equipment_candidate",
-    "semantic_name": "送风机",
-    "semantic_labels": [
-      "风机 AP11SG"
-    ]
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "controls_56",
     "type": "controls",
     "bbox": [
-      805,
-      905,
-      60,
-      34
+      287,
+      453,
+      43,
+      19
     ],
-    "value": "状态显示",
+    "value": "数值显示",
     "label_bboxes": [],
-    "control_kind": "indicator"
+    "control_kind": "value_field"
   },
   {
     "id": "controls_57",
     "type": "controls",
     "bbox": [
-      1393,
-      919,
-      164,
-      51
+      33,
+      456,
+      64,
+      18
     ],
-    "value": "按钮",
+    "value": "绿色状态",
     "label_bboxes": [],
-    "control_kind": "button"
+    "control_kind": "status"
   },
   {
     "id": "controls_58",
     "type": "controls",
     "bbox": [
-      1738,
-      919,
-      147,
-      51
+      908,
+      456,
+      178,
+      139
     ],
-    "value": "按钮",
-    "label_bboxes": [],
-    "control_kind": "button"
+    "value": "冷水机",
+    "label_bboxes": [
+      [
+        960,
+        569,
+        80,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
   },
   {
     "id": "controls_59",
     "type": "controls",
     "bbox": [
-      1606,
-      920,
-      124,
-      49
+      1574,
+      457,
+      43,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_60",
+    "type": "controls",
+    "bbox": [
+      1358,
+      468,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_61",
+    "type": "controls",
+    "bbox": [
+      1141,
+      477,
+      68,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_62",
+    "type": "controls",
+    "bbox": [
+      300,
+      478,
+      20,
+      31
+    ],
+    "value": "调节阀",
+    "label_bboxes": [
+      [
+        278,
+        511,
+        64,
+        14
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_63",
+    "type": "controls",
+    "bbox": [
+      1579,
+      480,
+      37,
+      38
+    ],
+    "value": "旁通阀",
+    "label_bboxes": [
+      [
+        1569,
+        523,
+        64,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_64",
+    "type": "controls",
+    "bbox": [
+      830,
+      504,
+      64,
+      17
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_65",
+    "type": "controls",
+    "bbox": [
+      625,
+      527,
+      42,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_66",
+    "type": "controls",
+    "bbox": [
+      753,
+      527,
+      53,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_67",
+    "type": "controls",
+    "bbox": [
+      851,
+      528,
+      21,
+      30
+    ],
+    "value": "电动阀",
+    "label_bboxes": [
+      [
+        813,
+        560,
+        86,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_68",
+    "type": "controls",
+    "bbox": [
+      212,
+      539,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_69",
+    "type": "controls",
+    "bbox": [
+      489,
+      542,
+      98,
+      91
+    ],
+    "value": "冷却泵",
+    "label_bboxes": [
+      [
+        519,
+        638,
+        65,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_70",
+    "type": "controls",
+    "bbox": [
+      1601,
+      550,
+      65,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_71",
+    "type": "controls",
+    "bbox": [
+      624,
+      553,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_72",
+    "type": "controls",
+    "bbox": [
+      753,
+      554,
+      53,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_73",
+    "type": "controls",
+    "bbox": [
+      224,
+      564,
+      21,
+      30
+    ],
+    "value": "调节阀",
+    "label_bboxes": [
+      [
+        206,
+        596,
+        65,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_74",
+    "type": "controls",
+    "bbox": [
+      1423,
+      567,
+      65,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_75",
+    "type": "controls",
+    "bbox": [
+      1597,
+      570,
+      68,
+      85
+    ],
+    "value": "补水泵",
+    "label_bboxes": [
+      [
+        1602,
+        640,
+        62,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_76",
+    "type": "controls",
+    "bbox": [
+      1098,
+      574,
+      65,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_77",
+    "type": "controls",
+    "bbox": [
+      436,
+      580,
+      65,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_78",
+    "type": "controls",
+    "bbox": [
+      624,
+      580,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_79",
+    "type": "controls",
+    "bbox": [
+      101,
+      584,
+      113,
+      119
+    ],
+    "value": "冷却塔",
+    "label_bboxes": [
+      [
+        130,
+        704,
+        64,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_80",
+    "type": "controls",
+    "bbox": [
+      1403,
+      586,
+      99,
+      91
+    ],
+    "value": "冷冻泵",
+    "label_bboxes": [
+      [
+        1425,
+        681,
+        64,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_81",
+    "type": "controls",
+    "bbox": [
+      1357,
+      588,
+      42,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_82",
+    "type": "controls",
+    "bbox": [
+      974,
+      594,
+      58,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_83",
+    "type": "controls",
+    "bbox": [
+      1120,
+      594,
+      20,
+      30
+    ],
+    "value": "电动阀",
+    "label_bboxes": [
+      [
+        1099,
+        625,
+        63,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_84",
+    "type": "controls",
+    "bbox": [
+      1192,
+      600,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_85",
+    "type": "controls",
+    "bbox": [
+      1357,
+      612,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_86",
+    "type": "controls",
+    "bbox": [
+      974,
+      624,
+      58,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_87",
+    "type": "controls",
+    "bbox": [
+      1176,
+      626,
+      53,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_88",
+    "type": "controls",
+    "bbox": [
+      285,
+      644,
+      43,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_89",
+    "type": "controls",
+    "bbox": [
+      974,
+      648,
+      57,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_90",
+    "type": "controls",
+    "bbox": [
+      40,
+      658,
+      64,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_91",
+    "type": "controls",
+    "bbox": [
+      302,
+      669,
+      20,
+      31
+    ],
+    "value": "调节阀",
+    "label_bboxes": [
+      [
+        281,
+        702,
+        64,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_92",
+    "type": "controls",
+    "bbox": [
+      974,
+      673,
+      56,
+      18
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_93",
+    "type": "controls",
+    "bbox": [
+      759,
+      678,
+      64,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_94",
+    "type": "controls",
+    "bbox": [
+      628,
+      679,
+      42,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_95",
+    "type": "controls",
+    "bbox": [
+      1607,
+      683,
+      64,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_96",
+    "type": "controls",
+    "bbox": [
+      488,
+      691,
+      98,
+      91
+    ],
+    "value": "冷却泵",
+    "label_bboxes": [
+      [
+        519,
+        790,
+        65,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_97",
+    "type": "controls",
+    "bbox": [
+      1605,
+      704,
+      68,
+      70
+    ],
+    "value": "补水泵",
+    "label_bboxes": [
+      [
+        1607,
+        779,
+        65,
+        14
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_98",
+    "type": "controls",
+    "bbox": [
+      627,
+      705,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_99",
+    "type": "controls",
+    "bbox": [
+      759,
+      705,
+      64,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_100",
+    "type": "controls",
+    "bbox": [
+      975,
+      716,
+      64,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_101",
+    "type": "controls",
+    "bbox": [
+      1425,
+      720,
+      63,
+      16
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_102",
+    "type": "controls",
+    "bbox": [
+      436,
+      724,
+      65,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_103",
+    "type": "controls",
+    "bbox": [
+      1355,
+      726,
+      42,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_104",
+    "type": "controls",
+    "bbox": [
+      1148,
+      728,
+      68,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_105",
+    "type": "controls",
+    "bbox": [
+      627,
+      732,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_106",
+    "type": "controls",
+    "bbox": [
+      903,
+      737,
+      179,
+      139
+    ],
+    "value": "冷水机",
+    "label_bboxes": [
+      [
+        960,
+        856,
+        80,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_107",
+    "type": "controls",
+    "bbox": [
+      1401,
+      737,
+      99,
+      91
+    ],
+    "value": "冷冻泵",
+    "label_bboxes": [
+      [
+        1424,
+        838,
+        64,
+        14
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_108",
+    "type": "controls",
+    "bbox": [
+      1722,
+      737,
+      99,
+      70
+    ],
+    "value": "补水箱",
+    "label_bboxes": [
+      [
+        1718,
+        715,
+        52,
+        15
+      ],
+      [
+        1731,
+        811,
+        64,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_109",
+    "type": "controls",
+    "bbox": [
+      1355,
+      750,
+      42,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_110",
+    "type": "controls",
+    "bbox": [
+      1148,
+      755,
+      68,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_111",
+    "type": "controls",
+    "bbox": [
+      97,
+      773,
+      35,
+      36
+    ],
+    "value": "室外环境图标",
+    "label_bboxes": [
+      [
+        84,
+        822,
+        63,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_112",
+    "type": "controls",
+    "bbox": [
+      1844,
+      780,
+      42,
+      17
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_113",
+    "type": "controls",
+    "bbox": [
+      821,
+      788,
+      64,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_114",
+    "type": "controls",
+    "bbox": [
+      222,
+      795,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_115",
+    "type": "controls",
+    "bbox": [
+      749,
+      801,
+      59,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_116",
+    "type": "controls",
+    "bbox": [
+      842,
+      808,
+      20,
+      29
+    ],
+    "value": "电动阀",
+    "label_bboxes": [
+      [
+        815,
+        835,
+        73,
+        25
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_117",
+    "type": "controls",
+    "bbox": [
+      222,
+      824,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_118",
+    "type": "controls",
+    "bbox": [
+      749,
+      828,
+      59,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_119",
+    "type": "controls",
+    "bbox": [
+      1142,
+      830,
+      65,
+      18
+    ],
+    "value": "绿色状态",
+    "label_bboxes": [],
+    "control_kind": "status"
+  },
+  {
+    "id": "controls_120",
+    "type": "controls",
+    "bbox": [
+      222,
+      851,
+      42,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_121",
+    "type": "controls",
+    "bbox": [
+      1164,
+      853,
+      20,
+      30
+    ],
+    "value": "电动阀",
+    "label_bboxes": [
+      [
+        1142,
+        885,
+        63,
+        15
+      ]
+    ],
+    "control_kind": "equipment_candidate"
+  },
+  {
+    "id": "controls_122",
+    "type": "controls",
+    "bbox": [
+      1213,
+      853,
+      64,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_123",
+    "type": "controls",
+    "bbox": [
+      1213,
+      880,
+      66,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_124",
+    "type": "controls",
+    "bbox": [
+      979,
+      882,
+      54,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_125",
+    "type": "controls",
+    "bbox": [
+      1424,
+      893,
+      108,
+      36
     ],
     "value": "按钮",
     "label_bboxes": [],
     "control_kind": "button"
   },
   {
-    "id": "controls_60",
+    "id": "controls_126",
     "type": "controls",
     "bbox": [
-      138,
-      929,
-      81,
-      32
+      1550,
+      893,
+      108,
+      35
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_127",
+    "type": "controls",
+    "bbox": [
+      1670,
+      893,
+      108,
+      36
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_128",
+    "type": "controls",
+    "bbox": [
+      1792,
+      893,
+      108,
+      35
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_129",
+    "type": "controls",
+    "bbox": [
+      1303,
+      894,
+      108,
+      35
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_130",
+    "type": "controls",
+    "bbox": [
+      978,
+      908,
+      52,
+      20
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_131",
+    "type": "controls",
+    "bbox": [
+      979,
+      936,
+      53,
+      19
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
+  },
+  {
+    "id": "controls_132",
+    "type": "controls",
+    "bbox": [
+      1424,
+      936,
+      108,
+      37
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_133",
+    "type": "controls",
+    "bbox": [
+      1670,
+      936,
+      108,
+      37
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_134",
+    "type": "controls",
+    "bbox": [
+      1792,
+      936,
+      108,
+      37
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_135",
+    "type": "controls",
+    "bbox": [
+      1304,
+      937,
+      108,
+      35
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_136",
+    "type": "controls",
+    "bbox": [
+      1550,
+      937,
+      108,
+      35
+    ],
+    "value": "按钮",
+    "label_bboxes": [],
+    "control_kind": "button"
+  },
+  {
+    "id": "controls_137",
+    "type": "controls",
+    "bbox": [
+      190,
+      940,
+      69,
+      30
     ],
     "value": "状态显示",
     "label_bboxes": [],
     "control_kind": "indicator"
   },
   {
-    "id": "controls_61",
+    "id": "controls_138",
     "type": "controls",
     "bbox": [
-      303,
-      931,
-      81,
-      32
+      319,
+      940,
+      69,
+      30
     ],
     "value": "状态显示",
     "label_bboxes": [],
     "control_kind": "indicator"
   },
   {
-    "id": "controls_62",
+    "id": "controls_139",
     "type": "controls",
     "bbox": [
-      482,
-      931,
-      81,
-      32
+      447,
+      940,
+      68,
+      30
     ],
     "value": "状态显示",
     "label_bboxes": [],
     "control_kind": "indicator"
+  },
+  {
+    "id": "controls_140",
+    "type": "controls",
+    "bbox": [
+      577,
+      940,
+      68,
+      30
+    ],
+    "value": "状态显示",
+    "label_bboxes": [],
+    "control_kind": "indicator"
+  },
+  {
+    "id": "controls_141",
+    "type": "controls",
+    "bbox": [
+      978,
+      961,
+      54,
+      18
+    ],
+    "value": "数值显示",
+    "label_bboxes": [],
+    "control_kind": "value_field"
   },
   {
     "id": "text_1",
     "type": "text",
     "bbox": [
-      88,
-      154,
-      217,
-      19
+      818,
+      116,
+      8,
+      8
     ],
-    "value": "522-B106供气及阀门间",
+    "value": "©",
     "parent_id": null,
-    "recognition_confidence": 90.06,
+    "recognition_confidence": 49.3,
     "ocr_candidates": [
-      "522-B106供气及阀门间"
+      "G",
+      "Cc"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "G",
     "text_style": {
-      "text.color": "rgb(50,50,50)",
-      "text.font": "21px arial, sans-serif",
+      "text.color": "rgb(74,74,74)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1139,24 +2116,21 @@
     "id": "text_2",
     "type": "text",
     "bbox": [
-      1126,
-      154,
-      80,
-      19
+      820,
+      144,
+      19,
+      8
     ],
-    "value": "地下管廊",
+    "value": "Mpa",
     "parent_id": null,
-    "recognition_confidence": 85.77,
+    "recognition_confidence": 94.44,
     "ocr_candidates": [
-      "地下管底",
-      "地下管匈",
-      "地下管廊"
+      "Mpa"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "地下管底",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(47,47,47)",
-      "text.font": "20px arial, sans-serif",
+      "text.color": "rgb(77,77,77)",
+      "text.font": "9px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1164,24 +2138,21 @@
     "id": "text_3",
     "type": "text",
     "bbox": [
-      77,
-      271,
-      32,
-      16
+      413,
+      153,
+      8,
+      8
     ],
-    "value": "氧气",
-    "parent_id": "controls_14",
-    "vision_value": "氧气",
-    "recognition_confidence": 70.04,
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 92.24,
     "ocr_candidates": [
-      "AA",
-      "氧气"
+      "%"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "AA",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(73,73,73)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(105,105,105)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1189,23 +2160,20 @@
     "id": "text_4",
     "type": "text",
     "bbox": [
-      428,
-      276,
-      32,
-      16
+      830,
+      172,
+      78,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_15",
-    "vision_value": "氧气",
-    "recognition_confidence": 74.22,
+    "value": "冷却水回水",
+    "parent_id": null,
+    "recognition_confidence": 94.86,
     "ocr_candidates": [
-      "氯气",
-      "氧气"
+      "冷却水回水"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
+      "text.color": "rgb(44,44,44)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -1214,24 +2182,21 @@
     "id": "text_5",
     "type": "text",
     "bbox": [
-      539,
-      276,
-      31,
-      16
+      1221,
+      178,
+      9,
+      9
     ],
-    "value": "氧气",
-    "parent_id": "controls_16",
-    "vision_value": "氧气",
-    "recognition_confidence": 75.32,
+    "value": "c",
+    "parent_id": null,
+    "recognition_confidence": 74.41,
     "ocr_candidates": [
-      "氧气",
-      "£5"
+      "c"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(101,101,101)",
+      "text.font": "9px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1239,24 +2204,23 @@
     "id": "text_6",
     "type": "text",
     "bbox": [
-      651,
-      276,
-      32,
-      15
+      265,
+      189,
+      8,
+      7
     ],
-    "value": "氧气",
-    "parent_id": "controls_17",
-    "vision_value": "氧气",
-    "recognition_confidence": 56.83,
+    "value": "%%",
+    "parent_id": null,
+    "recognition_confidence": 85.82,
     "ocr_candidates": [
-      "氮气",
-      "£5"
+      "%",
+      "yo"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "£5",
+    "ocr_value": "%",
     "text_style": {
-      "text.color": "rgb(80,80,80)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(98,98,98)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1264,25 +2228,21 @@
     "id": "text_7",
     "type": "text",
     "bbox": [
-      768,
-      276,
-      32,
-      16
+      1221,
+      207,
+      20,
+      9
     ],
-    "value": "氧气",
-    "parent_id": "controls_18",
-    "vision_value": "氧气",
-    "recognition_confidence": 63.67,
+    "value": "Mpa",
+    "parent_id": null,
+    "recognition_confidence": 96.34,
     "ocr_candidates": [
-      "氯气",
-      "氧气",
-      "AS"
+      "Mpa"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "AS",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(80,80,80)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(76,76,76)",
+      "text.font": "11px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1290,24 +2250,23 @@
     "id": "text_8",
     "type": "text",
     "bbox": [
-      881,
-      276,
-      31,
-      16
+      358,
+      214,
+      61,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_19",
-    "vision_value": "氧气",
-    "recognition_confidence": 77.4,
+    "value": "旁通阀#1",
+    "parent_id": "controls_6",
+    "recognition_confidence": 61.25,
     "ocr_candidates": [
-      "A",
-      "氧气"
+      "SH",
+      "旁通阀 #1"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "ocr_value": "旁通阀 #1",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(46,46,46)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1315,24 +2274,20 @@
     "id": "text_9",
     "type": "text",
     "bbox": [
-      991,
-      276,
-      32,
-      16
+      832,
+      216,
+      79,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_20",
-    "vision_value": "氧气",
-    "recognition_confidence": 55.43,
+    "value": "冷却水供水",
+    "parent_id": null,
+    "recognition_confidence": 96.54,
     "ocr_candidates": [
-      "AA",
-      "AS",
-      "aa"
+      "冷却水供水"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "AS",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(80,80,80)",
+      "text.color": "rgb(44,44,44)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -1341,24 +2296,20 @@
     "id": "text_10",
     "type": "text",
     "bbox": [
-      1103,
-      276,
-      32,
+      577,
+      231,
+      25,
       15
     ],
-    "value": "氧气",
-    "parent_id": "controls_21",
-    "vision_value": "氧气",
-    "recognition_confidence": 74.35,
+    "value": "R相",
+    "parent_id": null,
+    "recognition_confidence": 90.07,
     "ocr_candidates": [
-      "AS",
-      "氮气",
-      "复气"
+      "R相"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "复气",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
+      "text.color": "rgb(44,44,44)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -1367,24 +2318,20 @@
     "id": "text_11",
     "type": "text",
     "bbox": [
-      1214,
-      276,
-      31,
-      16
+      1223,
+      231,
+      78,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_22",
-    "vision_value": "氧气",
-    "recognition_confidence": 78.22,
+    "value": "冷冻水供水",
+    "parent_id": null,
+    "recognition_confidence": 95.83,
     "ocr_candidates": [
-      "A",
-      "氧气",
-      "AS"
+      "冷冻水供水"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
+      "text.color": "rgb(51,51,51)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -1393,23 +2340,21 @@
     "id": "text_12",
     "type": "text",
     "bbox": [
-      1327,
-      276,
-      31,
-      16
+      670,
+      236,
+      6,
+      7
     ],
-    "value": "氧气",
-    "parent_id": "controls_23",
-    "vision_value": "氧气",
-    "recognition_confidence": 69.43,
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 95.98,
     "ocr_candidates": [
-      "氧气"
+      "A"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(89,89,89)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1417,25 +2362,23 @@
     "id": "text_13",
     "type": "text",
     "bbox": [
-      1437,
-      276,
-      32,
-      16
+      210,
+      242,
+      62,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_24",
-    "vision_value": "氧气",
-    "recognition_confidence": 61.69,
+    "value": "调节阀#1",
+    "parent_id": "controls_11",
+    "recognition_confidence": 84.81,
     "ocr_candidates": [
-      "A",
-      "氮气",
-      "a5"
+      "Va 73 #1",
+      "调节阀#1"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "a5",
+    "ocr_value": "调节阀#1",
     "text_style": {
-      "text.color": "rgb(80,80,80)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(38,38,38)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1443,24 +2386,21 @@
     "id": "text_14",
     "type": "text",
     "bbox": [
-      1546,
-      276,
-      32,
-      16
+      964,
+      248,
+      78,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_25",
-    "vision_value": "氧气",
-    "recognition_confidence": 77.28,
+    "value": "冷水机组#1",
+    "parent_id": "controls_3",
+    "recognition_confidence": 92.05,
     "ocr_candidates": [
-      "毛气",
-      "氧气"
+      "冷水机组#1"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(48,48,48)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1468,25 +2408,23 @@
     "id": "text_15",
     "type": "text",
     "bbox": [
-      1813,
-      276,
-      32,
-      15
+      812,
+      258,
+      8,
+      9
     ],
-    "value": "氧气",
-    "parent_id": "controls_26",
-    "vision_value": "氧气",
-    "recognition_confidence": 77.82,
+    "value": "°C",
+    "parent_id": null,
+    "recognition_confidence": 71.45,
     "ocr_candidates": [
-      "A",
-      "氮气",
-      "和揽气"
+      "Cc",
+      "c"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "和揽气",
+    "ocr_value": "c",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(92,92,92)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1494,21 +2432,21 @@
     "id": "text_16",
     "type": "text",
     "bbox": [
-      123,
-      298,
-      15,
-      15
+      669,
+      261,
+      6,
+      7
     ],
-    "value": "%",
+    "value": "A",
     "parent_id": null,
-    "recognition_confidence": 92.7,
+    "recognition_confidence": 95.74,
     "ocr_candidates": [
-      "%"
+      "A"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(65,65,65)",
-      "text.font": "15px arial, sans-serif",
+      "text.color": "rgb(81,81,81)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1516,21 +2454,21 @@
     "id": "text_17",
     "type": "text",
     "bbox": [
-      459,
-      307,
-      12,
-      11
+      1255,
+      270,
+      78,
+      15
     ],
-    "value": "%",
+    "value": "冷冻水回水",
     "parent_id": null,
-    "recognition_confidence": 92.66,
+    "recognition_confidence": 94.53,
     "ocr_candidates": [
-      "%"
+      "冷冻水回水"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(80,80,80)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(59,59,59)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1538,21 +2476,21 @@
     "id": "text_18",
     "type": "text",
     "bbox": [
-      569,
-      307,
-      12,
-      11
+      811,
+      286,
+      19,
+      9
     ],
-    "value": "%",
+    "value": "Mpa",
     "parent_id": null,
-    "recognition_confidence": 90.91,
+    "recognition_confidence": 96.2,
     "ocr_candidates": [
-      "%"
+      "Mpa"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(83,83,83)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(86,86,86)",
+      "text.font": "11px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1560,21 +2498,21 @@
     "id": "text_19",
     "type": "text",
     "bbox": [
-      682,
-      307,
-      12,
-      11
+      336,
+      288,
+      9,
+      7
     ],
     "value": "%",
     "parent_id": null,
-    "recognition_confidence": 87.7,
+    "recognition_confidence": 89.22,
     "ocr_candidates": [
       "%"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(99,99,99)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(117,117,117)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1582,21 +2520,21 @@
     "id": "text_20",
     "type": "text",
     "bbox": [
-      799,
-      307,
-      12,
-      11
+      669,
+      288,
+      6,
+      7
     ],
-    "value": "%",
+    "value": "A",
     "parent_id": null,
-    "recognition_confidence": 88.41,
+    "recognition_confidence": 96.15,
     "ocr_candidates": [
-      "%"
+      "A"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(90,90,90)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(77,77,77)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1604,21 +2542,25 @@
     "id": "text_21",
     "type": "text",
     "bbox": [
-      911,
-      307,
-      13,
-      11
+      834,
+      299,
+      62,
+      14
     ],
-    "value": "%",
-    "parent_id": null,
-    "recognition_confidence": 92.12,
+    "value": "电动阀#2",
+    "parent_id": "controls_19",
+    "recognition_confidence": 58.38,
     "ocr_candidates": [
-      "%"
+      "Fah hH#2",
+      "电动阀#2",
+      "FB rN hH2",
+      "FR KHZ"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "电动阀#2",
     "text_style": {
-      "text.color": "rgb(84,84,84)",
-      "text.font": "13px arial, sans-serif",
+      "text.color": "rgb(41,41,41)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1626,21 +2568,21 @@
     "id": "text_22",
     "type": "text",
     "bbox": [
-      1022,
-      307,
-      12,
-      11
+      1320,
+      300,
+      31,
+      15
     ],
-    "value": "%",
+    "value": "频率",
     "parent_id": null,
-    "recognition_confidence": 88.78,
+    "recognition_confidence": 92.46,
     "ocr_candidates": [
-      "%"
+      "频率"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(87,87,87)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(34,34,34)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1648,21 +2590,23 @@
     "id": "text_23",
     "type": "text",
     "bbox": [
-      1134,
-      307,
-      12,
-      11
+      934,
+      303,
+      26,
+      15
     ],
-    "value": "%",
+    "value": "U相",
     "parent_id": null,
-    "recognition_confidence": 91.76,
+    "recognition_confidence": 92.04,
     "ocr_candidates": [
-      "%"
+      "U相",
+      "U 相"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "U相",
     "text_style": {
-      "text.color": "rgb(87,87,87)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(40,40,40)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1670,21 +2614,21 @@
     "id": "text_24",
     "type": "text",
     "bbox": [
-      1245,
+      1034,
       307,
-      12,
-      11
+      7,
+      7
     ],
-    "value": "%",
+    "value": "A",
     "parent_id": null,
-    "recognition_confidence": 92.92,
+    "recognition_confidence": 96.89,
     "ocr_candidates": [
-      "%"
+      "A"
     ],
     "recognition_status": "recognized",
     "text_style": {
       "text.color": "rgb(84,84,84)",
-      "text.font": "12px arial, sans-serif",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1692,21 +2636,23 @@
     "id": "text_25",
     "type": "text",
     "bbox": [
-      1357,
-      307,
-      12,
-      11
+      1222,
+      314,
+      9,
+      9
     ],
-    "value": "%",
+    "value": "°C",
     "parent_id": null,
-    "recognition_confidence": 89.68,
+    "recognition_confidence": 52.58,
     "ocr_candidates": [
-      "%"
+      "Cc",
+      "和"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "和",
     "text_style": {
-      "text.color": "rgb(82,82,82)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(107,107,107)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1714,21 +2660,21 @@
     "id": "text_26",
     "type": "text",
     "bbox": [
-      1468,
-      307,
-      12,
-      11
+      119,
+      320,
+      62,
+      14
     ],
-    "value": "%",
-    "parent_id": null,
-    "recognition_confidence": 87.05,
+    "value": "冷却塔#1",
+    "parent_id": "controls_9",
+    "recognition_confidence": 92.23,
     "ocr_candidates": [
-      "%"
+      "冷却塔#1"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(92,92,92)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(55,55,55)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1736,21 +2682,21 @@
     "id": "text_27",
     "type": "text",
     "bbox": [
-      1577,
-      307,
-      12,
-      11
+      1321,
+      324,
+      30,
+      14
     ],
-    "value": "%",
+    "value": "电流",
     "parent_id": null,
-    "recognition_confidence": 92.74,
+    "recognition_confidence": 95.82,
     "ocr_candidates": [
-      "%"
+      "电流"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(78,78,78)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(41,41,41)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1758,21 +2704,23 @@
     "id": "text_28",
     "type": "text",
     "bbox": [
-      1844,
-      307,
-      12,
-      11
+      934,
+      328,
+      25,
+      15
     ],
-    "value": "%",
+    "value": "V相",
     "parent_id": null,
-    "recognition_confidence": 90.74,
+    "recognition_confidence": 90.65,
     "ocr_candidates": [
-      "%"
+      "V相",
+      "Vig"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "V相",
     "text_style": {
-      "text.color": "rgb(91,91,91)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(56,56,56)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1780,23 +2728,23 @@
     "id": "text_29",
     "type": "text",
     "bbox": [
-      245,
-      403,
-      32,
-      16
+      1717,
+      328,
+      52,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_28",
-    "vision_value": "氧气",
-    "recognition_confidence": 75.68,
+    "value": "总高度：",
+    "parent_id": "controls_34",
+    "recognition_confidence": 91.65,
     "ocr_candidates": [
-      "氧气"
+      "总高度:",
+      "Ripe:"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "ocr_value": "总高度:",
     "text_style": {
-      "text.color": "rgb(67,67,67)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(53,53,53)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1804,21 +2752,21 @@
     "id": "text_30",
     "type": "text",
     "bbox": [
-      291,
-      430,
-      15,
-      15
+      1782,
+      328,
+      35,
+      14
     ],
-    "value": "%",
-    "parent_id": null,
-    "recognition_confidence": 92.96,
+    "value": "1.5米",
+    "parent_id": "controls_34",
+    "recognition_confidence": 91.59,
     "ocr_candidates": [
-      "%"
+      "1.5米"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(62,62,62)",
-      "text.font": "15px arial, sans-serif",
+      "text.color": "rgb(48,48,48)",
+      "text.font": "13px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1826,21 +2774,21 @@
     "id": "text_31",
     "type": "text",
     "bbox": [
-      851,
-      477,
-      21,
-      22
+      1034,
+      331,
+      7,
+      7
     ],
-    "value": "供",
+    "value": "A",
     "parent_id": null,
-    "recognition_confidence": 93.05,
+    "recognition_confidence": 96.76,
     "ocr_candidates": [
-      "供"
+      "A"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(16,13,83)",
-      "text.font": "21px arial, sans-serif",
+      "text.color": "rgb(88,88,88)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1848,25 +2796,23 @@
     "id": "text_32",
     "type": "text",
     "bbox": [
-      1700,
-      497,
-      32,
+      513,
+      335,
+      62,
       15
     ],
-    "value": "氧气",
-    "parent_id": "controls_29",
-    "vision_value": "氧气",
-    "recognition_confidence": 80.95,
+    "value": "冷却泵#1",
+    "parent_id": "controls_13",
+    "recognition_confidence": 69.54,
     "ocr_candidates": [
-      "氢气",
-      "氯气",
-      "氧气"
+      "冷却泵#1",
+      "RARH"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "ocr_value": "冷却泵#1",
     "text_style": {
-      "text.color": "rgb(62,62,62)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(45,45,45)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1874,24 +2820,23 @@
     "id": "text_33",
     "type": "text",
     "bbox": [
-      952,
-      501,
-      32,
-      16
+      280,
+      340,
+      64,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_30",
-    "vision_value": "氧气",
-    "recognition_confidence": 71.04,
+    "value": "调节阀#2",
+    "parent_id": "controls_28",
+    "recognition_confidence": 33.66,
     "ocr_candidates": [
-      "At",
-      "氧气",
-      "A"
+      "Va RH",
+      "WAP haH2",
+      "WP RaH2"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "ocr_value": "Va RH",
     "text_style": {
-      "text.color": "rgb(65,65,65)",
+      "text.color": "rgb(51,51,51)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -1900,21 +2845,21 @@
     "id": "text_34",
     "type": "text",
     "bbox": [
-      851,
-      505,
-      21,
-      22
+      1222,
+      342,
+      19,
+      9
     ],
-    "value": "气",
+    "value": "Mpa",
     "parent_id": null,
-    "recognition_confidence": 92.49,
+    "recognition_confidence": 96.22,
     "ocr_candidates": [
-      "气"
+      "Mpa"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(22,19,87)",
-      "text.font": "21px arial, sans-serif",
+      "text.color": "rgb(67,67,67)",
+      "text.font": "11px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1922,21 +2867,21 @@
     "id": "text_35",
     "type": "text",
     "bbox": [
-      1732,
-      527,
-      12,
-      11
+      931,
+      350,
+      29,
+      15
     ],
-    "value": "%",
+    "value": "W相",
     "parent_id": null,
-    "recognition_confidence": 92.0,
+    "recognition_confidence": 91.74,
     "ocr_candidates": [
-      "%"
+      "W相"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(90,90,90)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(36,36,36)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1944,21 +2889,23 @@
     "id": "text_36",
     "type": "text",
     "bbox": [
-      984,
-      533,
-      12,
-      10
+      1085,
+      350,
+      61,
+      15
     ],
-    "value": "%",
-    "parent_id": null,
-    "recognition_confidence": 92.07,
+    "value": "电动阀#1",
+    "parent_id": "controls_30",
+    "recognition_confidence": 73.86,
     "ocr_candidates": [
-      "%"
+      "FB aH RH1",
+      "电动阀#1"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "电动阀#1",
     "text_style": {
-      "text.color": "rgb(82,82,82)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(55,55,55)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1966,21 +2913,21 @@
     "id": "text_37",
     "type": "text",
     "bbox": [
-      851,
-      534,
-      21,
-      20
+      1034,
+      354,
+      7,
+      7
     ],
-    "value": "通",
+    "value": "A",
     "parent_id": null,
-    "recognition_confidence": 92.58,
+    "recognition_confidence": 96.81,
     "ocr_candidates": [
-      "通"
+      "A"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(21,18,87)",
-      "text.font": "21px arial, sans-serif",
+      "text.color": "rgb(82,82,82)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -1988,22 +2935,20 @@
     "id": "text_38",
     "type": "text",
     "bbox": [
-      245,
-      537,
-      32,
-      16
+      1840,
+      359,
+      31,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_34",
-    "vision_value": "氧气",
-    "recognition_confidence": 79.59,
+    "value": "液位",
+    "parent_id": null,
+    "recognition_confidence": 92.62,
     "ocr_candidates": [
-      "氧气"
+      "液位"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(61,61,61)",
+      "text.color": "rgb(38,38,38)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -2012,24 +2957,21 @@
     "id": "text_39",
     "type": "text",
     "bbox": [
-      851,
-      560,
-      21,
-      22
+      1540,
+      371,
+      78,
+      15
     ],
-    "value": "廊",
+    "value": "冷冻水供水",
     "parent_id": null,
-    "recognition_confidence": 75.61,
+    "recognition_confidence": 95.92,
     "ocr_candidates": [
-      "让",
-      "ig",
-      "Tg"
+      "冷冻水供水"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "让",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(21,18,86)",
-      "text.font": "21px arial, sans-serif",
+      "text.color": "rgb(39,39,39)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2037,21 +2979,23 @@
     "id": "text_40",
     "type": "text",
     "bbox": [
-      291,
-      564,
-      15,
-      15
+      1687,
+      372,
+      23,
+      9
     ],
-    "value": "%",
+    "value": "m³/h",
     "parent_id": null,
-    "recognition_confidence": 93.02,
+    "recognition_confidence": 60.79,
     "ocr_candidates": [
-      "%"
+      "m3/h",
+      "ms"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "m3/h",
     "text_style": {
-      "text.color": "rgb(68,68,68)",
-      "text.font": "15px arial, sans-serif",
+      "text.color": "rgb(96,96,96)",
+      "text.font": "10px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2059,25 +3003,22 @@
     "id": "text_41",
     "type": "text",
     "bbox": [
-      606,
-      664,
-      32,
-      16
+      919,
+      375,
+      52,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_40",
-    "vision_value": "氧气",
-    "recognition_confidence": 56.1,
+    "value": "负载率",
+    "parent_id": null,
+    "recognition_confidence": 77.39,
     "ocr_candidates": [
-      "氯气",
-      "A",
-      "氧气",
-      "AA"
+      "RR |",
+      "负载率-"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "A",
+    "ocr_value": "RR |",
     "text_style": {
-      "text.color": "rgb(79,79,79)",
+      "text.color": "rgb(48,48,48)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -2086,25 +3027,23 @@
     "id": "text_42",
     "type": "text",
     "bbox": [
-      768,
-      664,
-      32,
-      16
+      1432,
+      375,
+      62,
+      15
     ],
-    "value": "氧气",
-    "parent_id": "controls_41",
-    "vision_value": "氧气",
-    "recognition_confidence": 62.39,
+    "value": "冷冻泵#1",
+    "parent_id": "controls_22",
+    "recognition_confidence": 81.42,
     "ocr_candidates": [
-      "氯气",
-      "氧气",
-      "AS"
+      "QRRH",
+      "冷冻泵#1"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "AS",
+    "ocr_value": "冷冻泵#1",
     "text_style": {
-      "text.color": "rgb(78,78,78)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(47,47,47)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2112,24 +3051,22 @@
     "id": "text_43",
     "type": "text",
     "bbox": [
-      245,
-      670,
-      32,
-      16
+      576,
+      380,
+      25,
+      14
     ],
-    "value": "氧气",
-    "parent_id": "controls_42",
-    "vision_value": "氧气",
-    "recognition_confidence": 75.53,
+    "value": "R相",
+    "parent_id": null,
+    "recognition_confidence": 91.45,
     "ocr_candidates": [
-      "At",
-      "氧气",
-      "AS"
+      "R相",
+      "Rt"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "ocr_value": "R相",
     "text_style": {
-      "text.color": "rgb(65,65,65)",
+      "text.color": "rgb(52,52,52)",
       "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
@@ -2138,24 +3075,23 @@
     "id": "text_44",
     "type": "text",
     "bbox": [
-      1396,
-      670,
-      32,
-      16
+      260,
+      381,
+      8,
+      7
     ],
-    "value": "氧气",
-    "parent_id": "controls_43",
-    "vision_value": "氧气",
-    "recognition_confidence": 63.51,
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 88.63,
     "ocr_candidates": [
-      "A",
-      "氧气"
+      "%",
+      "v2"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "A",
+    "ocr_value": "%",
     "text_style": {
-      "text.color": "rgb(67,67,67)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(96,96,96)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2163,26 +3099,24 @@
     "id": "text_45",
     "type": "text",
     "bbox": [
-      1540,
-      670,
-      31,
-      16
+      1034,
+      381,
+      8,
+      7
     ],
-    "value": "氧气",
-    "parent_id": "controls_44",
-    "vision_value": "氧气",
-    "recognition_confidence": 44.67,
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 86.06,
     "ocr_candidates": [
-      "AS",
-      "氧气",
-      "£4",
-      "氮气"
+      "%o",
+      "%",
+      "va"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "氧气",
+    "ocr_value": "%",
     "text_style": {
-      "text.color": "rgb(65,65,65)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(106,106,106)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2190,21 +3124,21 @@
     "id": "text_46",
     "type": "text",
     "bbox": [
-      638,
-      695,
-      12,
-      11
+      669,
+      386,
+      6,
+      7
     ],
-    "value": "%",
+    "value": "A",
     "parent_id": null,
-    "recognition_confidence": 86.27,
+    "recognition_confidence": 95.41,
     "ocr_candidates": [
-      "%"
+      "A"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(96,96,96)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(75,75,75)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2212,21 +3146,21 @@
     "id": "text_47",
     "type": "text",
     "bbox": [
-      799,
-      695,
-      12,
-      11
+      1878,
+      392,
+      8,
+      6
     ],
-    "value": "%",
+    "value": "m",
     "parent_id": null,
-    "recognition_confidence": 91.38,
+    "recognition_confidence": 90.94,
     "ocr_candidates": [
-      "%"
+      "m"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(90,90,90)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(82,82,82)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2234,20 +3168,20 @@
     "id": "text_48",
     "type": "text",
     "bbox": [
-      291,
-      697,
-      15,
+      576,
+      405,
+      24,
       15
     ],
-    "value": "%",
+    "value": "S相",
     "parent_id": null,
-    "recognition_confidence": 92.12,
+    "recognition_confidence": 92.02,
     "ocr_candidates": [
-      "%"
+      "S相"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(62,62,62)",
+      "text.color": "rgb(37,37,37)",
       "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
@@ -2256,21 +3190,21 @@
     "id": "text_49",
     "type": "text",
     "bbox": [
-      1427,
-      701,
-      12,
-      11
+      668,
+      411,
+      6,
+      8
     ],
-    "value": "%",
+    "value": "A",
     "parent_id": null,
-    "recognition_confidence": 88.7,
+    "recognition_confidence": 96.68,
     "ocr_candidates": [
-      "%"
+      "A"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(90,90,90)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(85,85,85)",
+      "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2278,21 +3212,22 @@
     "id": "text_50",
     "type": "text",
     "bbox": [
-      1570,
-      702,
-      12,
-      10
+      827,
+      413,
+      9,
+      8
     ],
-    "value": "%",
+    "value": "c",
     "parent_id": null,
-    "recognition_confidence": 91.7,
+    "recognition_confidence": 76.9,
     "ocr_candidates": [
-      "%"
+      "Cc",
+      "c"
     ],
-    "recognition_status": "recognized",
+    "recognition_status": "needs_review",
     "text_style": {
-      "text.color": "rgb(74,74,74)",
-      "text.font": "12px arial, sans-serif",
+      "text.color": "rgb(90,90,90)",
+      "text.font": "9px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2300,23 +3235,21 @@
     "id": "text_51",
     "type": "text",
     "bbox": [
-      1370,
-      802,
-      42,
-      48
+      1733,
+      418,
+      62,
+      15
     ],
-    "value": "风机 AP12P",
-    "parent_id": "controls_45",
-    "vision_value": "风机 AP12P",
-    "recognition_confidence": 37.69,
+    "value": "补水箱#1",
+    "parent_id": "controls_34",
+    "recognition_confidence": 91.38,
     "ocr_candidates": [
-      "oe"
+      "补水箱#1"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "oe",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(66,68,132)",
-      "text.font": "8px arial, sans-serif",
+      "text.color": "rgb(40,40,40)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2324,24 +3257,24 @@
     "id": "text_52",
     "type": "text",
     "bbox": [
-      1170,
-      808,
-      50,
-      48
+      204,
+      427,
+      64,
+      15
     ],
-    "value": "风机 AP12SG#1",
-    "parent_id": "controls_47",
-    "vision_value": "风机 AP12SG#1",
-    "recognition_confidence": 29.57,
+    "value": "调节阀#3",
+    "parent_id": "controls_44",
+    "recognition_confidence": 39.33,
     "ocr_candidates": [
-      "won",
-      "nan"
+      "W473 DHS",
+      "W875 HS",
+      "WaT KH"
     ],
     "recognition_status": "vision_transcribed",
-    "ocr_value": "nan",
+    "ocr_value": "W473 DHS",
     "text_style": {
-      "text.color": "rgb(65,66,131)",
-      "text.font": "8px arial, sans-serif",
+      "text.color": "rgb(38,38,38)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2349,23 +3282,21 @@
     "id": "text_53",
     "type": "text",
     "bbox": [
-      909,
-      810,
-      43,
-      48
+      1628,
+      428,
+      62,
+      15
     ],
-    "value": "风机 AP21S",
-    "parent_id": "controls_48",
-    "vision_value": "风机 AP21S",
-    "recognition_confidence": 39.19,
+    "value": "流量计#1",
+    "parent_id": "controls_43",
+    "recognition_confidence": 91.75,
     "ocr_candidates": [
-      "pois"
+      "流量计#1"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "pois",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(53,55,124)",
-      "text.font": "8px arial, sans-serif",
+      "text.color": "rgb(65,65,65)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2373,21 +3304,21 @@
     "id": "text_54",
     "type": "text",
     "bbox": [
-      715,
-      815,
-      43,
-      48
+      576,
+      433,
+      24,
+      15
     ],
-    "value": "风机 AP11P",
-    "parent_id": "controls_51",
-    "vision_value": "风机 AP11P",
-    "recognition_confidence": 0.0,
-    "ocr_candidates": [],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": null,
+    "value": "T相",
+    "parent_id": null,
+    "recognition_confidence": 92.77,
+    "ocr_candidates": [
+      "T相"
+    ],
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(60,62,127)",
-      "text.font": "8px arial, sans-serif",
+      "text.color": "rgb(37,37,37)",
+      "text.font": "15px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2395,22 +3326,20 @@
     "id": "text_55",
     "type": "text",
     "bbox": [
-      715,
-      890,
-      43,
-      48
+      668,
+      438,
+      6,
+      7
     ],
-    "value": "风机 AP11SG",
-    "parent_id": "controls_55",
-    "vision_value": "风机 AP11SG",
-    "recognition_confidence": 24.95,
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.22,
     "ocr_candidates": [
-      "ne"
+      "A"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "ne",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(62,64,129)",
+      "text.color": "rgb(74,74,74)",
       "text.font": "8px arial, sans-serif",
       "text.align": "center"
     }
@@ -2419,26 +3348,21 @@
     "id": "text_56",
     "type": "text",
     "bbox": [
-      1148,
-      899,
-      61,
-      34
+      829,
+      441,
+      19,
+      9
     ],
-    "value": "风机\nAP12SG#2",
-    "parent_id": "controls_53",
-    "vision_value": "风机\nAP12SG#2",
-    "recognition_confidence": 0.0,
+    "value": "Mpa",
+    "parent_id": null,
+    "recognition_confidence": 93.46,
     "ocr_candidates": [
-      "Also",
-      "avrosone",
-      "ee",
-      "serscie"
+      "Mpa"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "Also",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(66,67,132)",
-      "text.font": "13px arial, sans-serif",
+      "text.color": "rgb(83,83,83)",
+      "text.font": "9px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2446,21 +3370,21 @@
     "id": "text_57",
     "type": "text",
     "bbox": [
-      44,
-      938,
-      79,
-      17
+      1320,
+      447,
+      31,
+      15
     ],
-    "value": "上电状态:",
+    "value": "频率",
     "parent_id": null,
-    "recognition_confidence": 91.28,
+    "recognition_confidence": 94.46,
     "ocr_candidates": [
-      "上电状态:"
+      "频率"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(49,49,49)",
-      "text.font": "17px arial, sans-serif",
+      "text.color": "rgb(46,46,46)",
+      "text.font": "16px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2468,25 +3392,21 @@
     "id": "text_58",
     "type": "text",
     "bbox": [
-      241,
-      939,
-      41,
-      18
+      1879,
+      453,
+      19,
+      9
     ],
-    "value": "台控：",
+    "value": "Mpa",
     "parent_id": null,
-    "recognition_confidence": 58.44,
+    "recognition_confidence": 96.57,
     "ocr_candidates": [
-      "Als:",
-      "Az:",
-      "OE:",
-      "ef:"
+      "Mpa"
     ],
-    "recognition_status": "vision_transcribed",
-    "ocr_value": "Als:",
+    "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(58,58,58)",
-      "text.font": "16px arial, sans-serif",
+      "text.color": "rgb(83,83,83)",
+      "text.font": "9px arial, sans-serif",
       "text.align": "center"
     }
   },
@@ -2494,21 +3414,2070 @@
     "id": "text_59",
     "type": "text",
     "bbox": [
-      420,
-      939,
-      42,
-      17
+      1215,
+      456,
+      8,
+      8
     ],
-    "value": "柜控:",
+    "value": "°C",
     "parent_id": null,
-    "recognition_confidence": 91.25,
+    "recognition_confidence": 77.37,
     "ocr_candidates": [
-      "柜控:"
+      "Cc",
+      "c"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "c",
+    "text_style": {
+      "text.color": "rgb(94,94,94)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_60",
+    "type": "text",
+    "bbox": [
+      335,
+      459,
+      9,
+      7
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 69.73,
+    "ocr_candidates": [
+      "%"
     ],
     "recognition_status": "recognized",
     "text_style": {
-      "text.color": "rgb(68,68,68)",
+      "text.color": "rgb(115,115,115)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_61",
+    "type": "text",
+    "bbox": [
+      1622,
+      463,
+      9,
+      7
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 80.58,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(119,119,119)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_62",
+    "type": "text",
+    "bbox": [
+      1321,
+      471,
+      30,
+      15
+    ],
+    "value": "电流",
+    "parent_id": null,
+    "recognition_confidence": 96.63,
+    "ocr_candidates": [
+      "电流",
+      "ht"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "电流",
+    "text_style": {
+      "text.color": "rgb(51,51,51)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_63",
+    "type": "text",
+    "bbox": [
+      1811,
+      479,
+      78,
+      15
+    ],
+    "value": "供回水压差",
+    "parent_id": null,
+    "recognition_confidence": 90.23,
+    "ocr_candidates": [
+      "EKER",
+      "供回水压差"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "供回水压差",
+    "text_style": {
+      "text.color": "rgb(44,44,44)",
       "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_64",
+    "type": "text",
+    "bbox": [
+      1216,
+      483,
+      19,
+      9
+    ],
+    "value": "Mpa",
+    "parent_id": null,
+    "recognition_confidence": 96.38,
+    "ocr_candidates": [
+      "Mpa"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(84,84,84)",
+      "text.font": "11px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_65",
+    "type": "text",
+    "bbox": [
+      123,
+      492,
+      64,
+      15
+    ],
+    "value": "冷却塔#2",
+    "parent_id": "controls_37",
+    "recognition_confidence": 88.88,
+    "ocr_candidates": [
+      "冷却塔妇",
+      "冷却塔#2",
+      "PHBH"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷却塔#2",
+    "text_style": {
+      "text.color": "rgb(58,58,58)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_66",
+    "type": "text",
+    "bbox": [
+      513,
+      493,
+      64,
+      15
+    ],
+    "value": "冷却泵#2",
+    "parent_id": "controls_42",
+    "recognition_confidence": 68.57,
+    "ocr_candidates": [
+      "RARH2",
+      "冷却泵起"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷却泵起",
+    "text_style": {
+      "text.color": "rgb(43,43,43)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_67",
+    "type": "text",
+    "bbox": [
+      278,
+      511,
+      64,
+      14
+    ],
+    "value": "调节阀#4",
+    "parent_id": "controls_62",
+    "recognition_confidence": 57.33,
+    "ocr_candidates": [
+      "Wa hH#4",
+      "调节阀类",
+      "调节阀权",
+      "VAT RES"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "调节阀类",
+    "text_style": {
+      "text.color": "rgb(60,60,60)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_68",
+    "type": "text",
+    "bbox": [
+      1569,
+      523,
+      64,
+      15
+    ],
+    "value": "旁通阀#2",
+    "parent_id": "controls_63",
+    "recognition_confidence": 71.31,
+    "ocr_candidates": [
+      "iH hWH2",
+      "旁通阀#2"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "旁通阀#2",
+    "text_style": {
+      "text.color": "rgb(54,54,54)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_69",
+    "type": "text",
+    "bbox": [
+      580,
+      528,
+      25,
+      15
+    ],
+    "value": "R相",
+    "parent_id": null,
+    "recognition_confidence": 91.07,
+    "ocr_candidates": [
+      "R相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(38,38,38)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_70",
+    "type": "text",
+    "bbox": [
+      1424,
+      528,
+      64,
+      15
+    ],
+    "value": "冷冻泵#2",
+    "parent_id": "controls_48",
+    "recognition_confidence": 75.36,
+    "ocr_candidates": [
+      "冷冻泵加2",
+      "冷冻泵#2",
+      "RRH2"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷冻泵#2",
+    "text_style": {
+      "text.color": "rgb(54,54,54)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_71",
+    "type": "text",
+    "bbox": [
+      812,
+      533,
+      8,
+      8
+    ],
+    "value": "ċ",
+    "parent_id": null,
+    "recognition_confidence": 71.16,
+    "ocr_candidates": [
+      "Cc",
+      "c"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "c",
+    "text_style": {
+      "text.color": "rgb(104,104,104)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_72",
+    "type": "text",
+    "bbox": [
+      673,
+      534,
+      6,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.18,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(78,78,78)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_73",
+    "type": "text",
+    "bbox": [
+      260,
+      545,
+      8,
+      7
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 79.72,
+    "ocr_candidates": [
+      "%",
+      "vA"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "%",
+    "text_style": {
+      "text.color": "rgb(91,91,91)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_74",
+    "type": "text",
+    "bbox": [
+      580,
+      554,
+      24,
+      15
+    ],
+    "value": "S相",
+    "parent_id": null,
+    "recognition_confidence": 91.58,
+    "ocr_candidates": [
+      "S相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(44,44,44)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_75",
+    "type": "text",
+    "bbox": [
+      672,
+      559,
+      6,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.43,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(74,74,74)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_76",
+    "type": "text",
+    "bbox": [
+      813,
+      560,
+      86,
+      15
+    ],
+    "value": "Mpa 电动阀#4",
+    "parent_id": "controls_67",
+    "recognition_confidence": 40.96,
+    "ocr_candidates": [
+      "Me FB ap HHS",
+      "Mp2 Fa a RS",
+      "Mpa 电动阀妈"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "Me FB ap HHS",
+    "text_style": {
+      "text.color": "rgb(48,48,48)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_77",
+    "type": "text",
+    "bbox": [
+      960,
+      569,
+      80,
+      15
+    ],
+    "value": "冷水机组#2",
+    "parent_id": "controls_58",
+    "recognition_confidence": 86.55,
+    "ocr_candidates": [
+      "冷水机组把",
+      "冷水机组#2"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷水机组#2",
+    "text_style": {
+      "text.color": "rgb(38,38,38)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_78",
+    "type": "text",
+    "bbox": [
+      580,
+      581,
+      24,
+      15
+    ],
+    "value": "T相",
+    "parent_id": null,
+    "recognition_confidence": 92.83,
+    "ocr_candidates": [
+      "T相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(42,42,42)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_79",
+    "type": "text",
+    "bbox": [
+      672,
+      586,
+      6,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 95.65,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(77,77,77)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_80",
+    "type": "text",
+    "bbox": [
+      1319,
+      591,
+      31,
+      15
+    ],
+    "value": "频率",
+    "parent_id": null,
+    "recognition_confidence": 90.54,
+    "ocr_candidates": [
+      "频率"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(44,44,44)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_81",
+    "type": "text",
+    "bbox": [
+      206,
+      596,
+      65,
+      15
+    ],
+    "value": "调节阀#5",
+    "parent_id": "controls_73",
+    "recognition_confidence": 75.08,
+    "ocr_candidates": [
+      "Va 75 HS",
+      "VA RS",
+      "调节阀#5"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "调节阀#5",
+    "text_style": {
+      "text.color": "rgb(46,46,46)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_82",
+    "type": "text",
+    "bbox": [
+      940,
+      597,
+      25,
+      15
+    ],
+    "value": "U相",
+    "parent_id": null,
+    "recognition_confidence": 92.38,
+    "ocr_candidates": [
+      "U相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(22,22,22)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_83",
+    "type": "text",
+    "bbox": [
+      1038,
+      600,
+      6,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.19,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(77,77,77)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_84",
+    "type": "text",
+    "bbox": [
+      1240,
+      605,
+      8,
+      8
+    ],
+    "value": "℃",
+    "parent_id": null,
+    "recognition_confidence": 68.54,
+    "ocr_candidates": [
+      "Cc",
+      "c"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "c",
+    "text_style": {
+      "text.color": "rgb(93,93,93)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_85",
+    "type": "text",
+    "bbox": [
+      1320,
+      615,
+      30,
+      15
+    ],
+    "value": "电流",
+    "parent_id": null,
+    "recognition_confidence": 96.45,
+    "ocr_candidates": [
+      "电流"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(52,52,52)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_86",
+    "type": "text",
+    "bbox": [
+      1099,
+      625,
+      63,
+      15
+    ],
+    "value": "电动阀#3",
+    "parent_id": "controls_83",
+    "recognition_confidence": 29.44,
+    "ocr_candidates": [
+      "FB op RH",
+      "FB TD RDHS",
+      "FB HHS"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "FB op RH",
+    "text_style": {
+      "text.color": "rgb(51,51,51)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_87",
+    "type": "text",
+    "bbox": [
+      937,
+      627,
+      25,
+      15
+    ],
+    "value": "V相",
+    "parent_id": null,
+    "recognition_confidence": 91.97,
+    "ocr_candidates": [
+      "V相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(60,60,60)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_88",
+    "type": "text",
+    "bbox": [
+      1038,
+      630,
+      6,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.27,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(76,76,76)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_89",
+    "type": "text",
+    "bbox": [
+      1235,
+      632,
+      19,
+      9
+    ],
+    "value": "Mpa",
+    "parent_id": null,
+    "recognition_confidence": 96.44,
+    "ocr_candidates": [
+      "Mpa"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(94,94,94)",
+      "text.font": "11px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_90",
+    "type": "text",
+    "bbox": [
+      519,
+      638,
+      65,
+      15
+    ],
+    "value": "冷却泵#3",
+    "parent_id": "controls_69",
+    "recognition_confidence": 69.53,
+    "ocr_candidates": [
+      "冷却和泵抬",
+      "冷却泵把",
+      "冷却泵1"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷却泵把",
+    "text_style": {
+      "text.color": "rgb(38,38,38)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_91",
+    "type": "text",
+    "bbox": [
+      1602,
+      640,
+      62,
+      15
+    ],
+    "value": "补水泵#1",
+    "parent_id": "controls_75",
+    "recognition_confidence": 73.1,
+    "ocr_candidates": [
+      "hak RH",
+      "补水泵#1"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "补水泵#1",
+    "text_style": {
+      "text.color": "rgb(60,60,60)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_92",
+    "type": "text",
+    "bbox": [
+      333,
+      650,
+      9,
+      7
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 90.38,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(116,116,116)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_93",
+    "type": "text",
+    "bbox": [
+      935,
+      651,
+      29,
+      14
+    ],
+    "value": "W相",
+    "parent_id": null,
+    "recognition_confidence": 89.49,
+    "ocr_candidates": [
+      "Wwe",
+      "W相"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "W相",
+    "text_style": {
+      "text.color": "rgb(50,50,50)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_94",
+    "type": "text",
+    "bbox": [
+      1037,
+      654,
+      7,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.72,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(83,83,83)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_95",
+    "type": "text",
+    "bbox": [
+      920,
+      673,
+      46,
+      15
+    ],
+    "value": "负载率",
+    "parent_id": null,
+    "recognition_confidence": 92.43,
+    "ocr_candidates": [
+      "负载率"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(50,50,50)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_96",
+    "type": "text",
+    "bbox": [
+      1037,
+      678,
+      9,
+      8
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 86.72,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(126,126,126)",
+      "text.font": "9px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_97",
+    "type": "text",
+    "bbox": [
+      582,
+      681,
+      26,
+      14
+    ],
+    "value": "R相",
+    "parent_id": null,
+    "recognition_confidence": 89.36,
+    "ocr_candidates": [
+      "R相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(49,49,49)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_98",
+    "type": "text",
+    "bbox": [
+      1425,
+      681,
+      64,
+      15
+    ],
+    "value": "冷冻泵#3",
+    "parent_id": "controls_80",
+    "recognition_confidence": 48.28,
+    "ocr_candidates": [
+      "RRB",
+      "冷冻泵妈",
+      "SRR",
+      "RRS"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷冻泵妈",
+    "text_style": {
+      "text.color": "rgb(54,54,54)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_99",
+    "type": "text",
+    "bbox": [
+      830,
+      683,
+      8,
+      9
+    ],
+    "value": "c",
+    "parent_id": null,
+    "recognition_confidence": 80.23,
+    "ocr_candidates": [
+      "c"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(87,87,87)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_100",
+    "type": "text",
+    "bbox": [
+      675,
+      685,
+      7,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.86,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(76,76,76)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_101",
+    "type": "text",
+    "bbox": [
+      281,
+      702,
+      64,
+      15
+    ],
+    "value": "调节阀#6",
+    "parent_id": "controls_91",
+    "recognition_confidence": 52.09,
+    "ocr_candidates": [
+      "Wa RHE",
+      "aD RaH6"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "Wa RHE",
+    "text_style": {
+      "text.color": "rgb(56,56,56)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_102",
+    "type": "text",
+    "bbox": [
+      130,
+      704,
+      64,
+      15
+    ],
+    "value": "冷却塔#3",
+    "parent_id": "controls_79",
+    "recognition_confidence": 91.44,
+    "ocr_candidates": [
+      "PEEKS",
+      "冷却塔#3"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷却塔#3",
+    "text_style": {
+      "text.color": "rgb(56,56,56)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_103",
+    "type": "text",
+    "bbox": [
+      583,
+      707,
+      24,
+      14
+    ],
+    "value": "S相",
+    "parent_id": null,
+    "recognition_confidence": 91.22,
+    "ocr_candidates": [
+      "S相",
+      "S 相"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "S相",
+    "text_style": {
+      "text.color": "rgb(46,46,46)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_104",
+    "type": "text",
+    "bbox": [
+      674,
+      711,
+      7,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.87,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(80,80,80)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_105",
+    "type": "text",
+    "bbox": [
+      830,
+      711,
+      19,
+      9
+    ],
+    "value": "Mpa",
+    "parent_id": null,
+    "recognition_confidence": 94.76,
+    "ocr_candidates": [
+      "Mpa"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(85,85,85)",
+      "text.font": "9px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_106",
+    "type": "text",
+    "bbox": [
+      1718,
+      715,
+      52,
+      15
+    ],
+    "value": "总高度:",
+    "parent_id": "controls_108",
+    "recognition_confidence": 93.21,
+    "ocr_candidates": [
+      "总高度:"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(44,44,44)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_107",
+    "type": "text",
+    "bbox": [
+      1782,
+      715,
+      36,
+      15
+    ],
+    "value": "1.5米",
+    "parent_id": null,
+    "recognition_confidence": 92.25,
+    "ocr_candidates": [
+      "1.5米"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(61,61,61)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_108",
+    "type": "text",
+    "bbox": [
+      1317,
+      729,
+      31,
+      15
+    ],
+    "value": "频率",
+    "parent_id": null,
+    "recognition_confidence": 91.06,
+    "ocr_candidates": [
+      "频率"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(60,60,60)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_109",
+    "type": "text",
+    "bbox": [
+      583,
+      733,
+      24,
+      15
+    ],
+    "value": "T相",
+    "parent_id": null,
+    "recognition_confidence": 92.18,
+    "ocr_candidates": [
+      "T相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(45,45,45)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_110",
+    "type": "text",
+    "bbox": [
+      1223,
+      733,
+      9,
+      9
+    ],
+    "value": "c",
+    "parent_id": null,
+    "recognition_confidence": 73.18,
+    "ocr_candidates": [
+      "c"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(98,98,98)",
+      "text.font": "9px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_111",
+    "type": "text",
+    "bbox": [
+      1403,
+      733,
+      11,
+      7
+    ],
+    "value": "Hz",
+    "parent_id": null,
+    "recognition_confidence": 95.43,
+    "ocr_candidates": [
+      "Hz",
+      "Md 77"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "Hz",
+    "text_style": {
+      "text.color": "rgb(90,90,90)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_112",
+    "type": "text",
+    "bbox": [
+      675,
+      738,
+      6,
+      8
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.19,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(56,56,56)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_113",
+    "type": "text",
+    "bbox": [
+      1319,
+      753,
+      29,
+      15
+    ],
+    "value": "电流",
+    "parent_id": null,
+    "recognition_confidence": 96.78,
+    "ocr_candidates": [
+      "电流"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(38,38,38)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_114",
+    "type": "text",
+    "bbox": [
+      1849,
+      755,
+      31,
+      15
+    ],
+    "value": "液位",
+    "parent_id": null,
+    "recognition_confidence": 93.92,
+    "ocr_candidates": [
+      "液位"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(47,47,47)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_115",
+    "type": "text",
+    "bbox": [
+      1224,
+      761,
+      19,
+      9
+    ],
+    "value": "Mpa",
+    "parent_id": null,
+    "recognition_confidence": 96.19,
+    "ocr_candidates": [
+      "Mpa"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(86,86,86)",
+      "text.font": "11px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_116",
+    "type": "text",
+    "bbox": [
+      1607,
+      779,
+      65,
+      14
+    ],
+    "value": "补水泵#2",
+    "parent_id": "controls_97",
+    "recognition_confidence": 70.02,
+    "ocr_candidates": [
+      "thakKR#2",
+      "补水泵#2",
+      "补水泵四"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "补水泵#2",
+    "text_style": {
+      "text.color": "rgb(52,52,52)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_117",
+    "type": "text",
+    "bbox": [
+      1891,
+      786,
+      8,
+      6
+    ],
+    "value": "m",
+    "parent_id": null,
+    "recognition_confidence": 91.34,
+    "ocr_candidates": [
+      "m",
+      "aT)"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "m",
+    "text_style": {
+      "text.color": "rgb(98,98,98)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_118",
+    "type": "text",
+    "bbox": [
+      519,
+      790,
+      65,
+      15
+    ],
+    "value": "冷却泵#4",
+    "parent_id": "controls_96",
+    "recognition_confidence": 64.91,
+    "ocr_candidates": [
+      "ARH",
+      "冷却泵约"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷却泵约",
+    "text_style": {
+      "text.color": "rgb(36,36,36)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_119",
+    "type": "text",
+    "bbox": [
+      175,
+      797,
+      36,
+      15
+    ],
+    "value": "温度:",
+    "parent_id": null,
+    "recognition_confidence": 90.34,
+    "ocr_candidates": [
+      "温度:"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(48,48,48)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_120",
+    "type": "text",
+    "bbox": [
+      270,
+      800,
+      8,
+      8
+    ],
+    "value": "c",
+    "parent_id": null,
+    "recognition_confidence": 65.0,
+    "ocr_candidates": [
+      "Cc",
+      "c"
+    ],
+    "recognition_status": "needs_review",
+    "text_style": {
+      "text.color": "rgb(101,101,101)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_121",
+    "type": "text",
+    "bbox": [
+      815,
+      806,
+      8,
+      9
+    ],
+    "value": "Cc",
+    "parent_id": null,
+    "recognition_confidence": 62.38,
+    "ocr_candidates": [
+      "k @",
+      "Cc"
+    ],
+    "recognition_status": "needs_review",
+    "text_style": {
+      "text.color": "rgb(83,83,83)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_122",
+    "type": "text",
+    "bbox": [
+      1731,
+      811,
+      64,
+      15
+    ],
+    "value": "补水箱#2",
+    "parent_id": "controls_108",
+    "recognition_confidence": 90.1,
+    "ocr_candidates": [
+      "补水箱#2"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(35,35,35)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_123",
+    "type": "text",
+    "bbox": [
+      84,
+      822,
+      63,
+      15
+    ],
+    "value": "室外环境",
+    "parent_id": "controls_111",
+    "recognition_confidence": 96.64,
+    "ocr_candidates": [
+      "室外环境"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(40,40,40)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_124",
+    "type": "text",
+    "bbox": [
+      175,
+      826,
+      36,
+      14
+    ],
+    "value": "湿度:",
+    "parent_id": null,
+    "recognition_confidence": 69.13,
+    "ocr_candidates": [
+      "湿度:"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(52,52,52)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_125",
+    "type": "text",
+    "bbox": [
+      270,
+      830,
+      9,
+      7
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 91.31,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(110,110,110)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_126",
+    "type": "text",
+    "bbox": [
+      815,
+      835,
+      73,
+      25
+    ],
+    "value": "Mpa\n电动阀#6",
+    "parent_id": "controls_116",
+    "recognition_confidence": 43.08,
+    "ocr_candidates": [
+      "“PB EHH",
+      "\"生动闸46",
+      "\"生动四4",
+      "\"生动珊46"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "\"生动四4",
+    "text_style": {
+      "text.color": "rgb(50,50,50)",
+      "text.font": "18px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_127",
+    "type": "text",
+    "bbox": [
+      1424,
+      838,
+      64,
+      14
+    ],
+    "value": "冷冻泵#4",
+    "parent_id": "controls_107",
+    "recognition_confidence": 62.47,
+    "ocr_candidates": [
+      "冷冻泵才",
+      "冷冻泵的"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷冻泵的",
+    "text_style": {
+      "text.color": "rgb(54,54,54)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_128",
+    "type": "text",
+    "bbox": [
+      175,
+      854,
+      36,
+      15
+    ],
+    "value": "露点:",
+    "parent_id": null,
+    "recognition_confidence": 90.2,
+    "ocr_candidates": [
+      "SERA:",
+      "露点:"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "露点:",
+    "text_style": {
+      "text.color": "rgb(74,74,74)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_129",
+    "type": "text",
+    "bbox": [
+      269,
+      856,
+      9,
+      9
+    ],
+    "value": "°C",
+    "parent_id": null,
+    "recognition_confidence": 84.48,
+    "ocr_candidates": [
+      "Cc",
+      "c"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "c",
+    "text_style": {
+      "text.color": "rgb(112,112,112)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_130",
+    "type": "text",
+    "bbox": [
+      960,
+      856,
+      80,
+      15
+    ],
+    "value": "冷水机组#3",
+    "parent_id": "controls_106",
+    "recognition_confidence": 79.14,
+    "ocr_candidates": [
+      "冷水机组扑",
+      "冷水机组把"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "冷水机组把",
+    "text_style": {
+      "text.color": "rgb(39,39,39)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_131",
+    "type": "text",
+    "bbox": [
+      1283,
+      858,
+      9,
+      8
+    ],
+    "value": "c",
+    "parent_id": null,
+    "recognition_confidence": 74.18,
+    "ocr_candidates": [
+      "Cc",
+      "c"
+    ],
+    "recognition_status": "needs_review",
+    "text_style": {
+      "text.color": "rgb(88,88,88)",
+      "text.font": "9px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_132",
+    "type": "text",
+    "bbox": [
+      943,
+      884,
+      25,
+      15
+    ],
+    "value": "U相",
+    "parent_id": null,
+    "recognition_confidence": 92.14,
+    "ocr_candidates": [
+      "U相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(32,32,32)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_133",
+    "type": "text",
+    "bbox": [
+      1142,
+      885,
+      63,
+      15
+    ],
+    "value": "电动阀#5",
+    "parent_id": "controls_121",
+    "recognition_confidence": 46.3,
+    "ocr_candidates": [
+      "电动阀抱",
+      "FB AD RHS",
+      "FB ADRS",
+      "FB HHS"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "FB HHS",
+    "text_style": {
+      "text.color": "rgb(39,39,39)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_134",
+    "type": "text",
+    "bbox": [
+      1286,
+      886,
+      19,
+      8
+    ],
+    "value": "Mpa",
+    "parent_id": null,
+    "recognition_confidence": 95.56,
+    "ocr_candidates": [
+      "Mpa"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(81,81,81)",
+      "text.font": "9px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_135",
+    "type": "text",
+    "bbox": [
+      1038,
+      888,
+      7,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.76,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(78,78,78)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_136",
+    "type": "text",
+    "bbox": [
+      942,
+      911,
+      25,
+      14
+    ],
+    "value": "V相",
+    "parent_id": null,
+    "recognition_confidence": 89.82,
+    "ocr_candidates": [
+      "V相"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(64,64,64)",
+      "text.font": "16px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_137",
+    "type": "text",
+    "bbox": [
+      1036,
+      914,
+      7,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.79,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(80,80,80)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_138",
+    "type": "text",
+    "bbox": [
+      142,
+      929,
+      30,
+      15
+    ],
+    "value": "上电",
+    "parent_id": null,
+    "recognition_confidence": 92.17,
+    "ocr_candidates": [
+      "上电"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(25,25,25)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_139",
+    "type": "text",
+    "bbox": [
+      46,
+      937,
+      69,
+      26
+    ],
+    "value": "AC6",
+    "parent_id": null,
+    "recognition_confidence": 91.45,
+    "ocr_candidates": [
+      "AC6"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(6,52,255)",
+      "text.font": "31px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_140",
+    "type": "text",
+    "bbox": [
+      938,
+      937,
+      30,
+      15
+    ],
+    "value": "W相",
+    "parent_id": null,
+    "recognition_confidence": 91.51,
+    "ocr_candidates": [
+      "wig",
+      "W相"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "W相",
+    "text_style": {
+      "text.color": "rgb(44,44,44)",
+      "text.font": "18px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_141",
+    "type": "text",
+    "bbox": [
+      1038,
+      942,
+      6,
+      7
+    ],
+    "value": "A",
+    "parent_id": null,
+    "recognition_confidence": 96.04,
+    "ocr_candidates": [
+      "A"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(73,73,73)",
+      "text.font": "8px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_142",
+    "type": "text",
+    "bbox": [
+      273,
+      948,
+      36,
+      15
+    ],
+    "value": "近控:",
+    "parent_id": null,
+    "recognition_confidence": 91.36,
+    "ocr_candidates": [
+      "近控:"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(44,44,44)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_143",
+    "type": "text",
+    "bbox": [
+      401,
+      948,
+      36,
+      15
+    ],
+    "value": "遥控：",
+    "parent_id": null,
+    "recognition_confidence": 91.72,
+    "ocr_candidates": [
+      "ini:",
+      "远控;",
+      "远控:"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "远控:",
+    "text_style": {
+      "text.color": "rgb(47,47,47)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_144",
+    "type": "text",
+    "bbox": [
+      672,
+      948,
+      52,
+      15
+    ],
+    "value": "手自动:",
+    "parent_id": null,
+    "recognition_confidence": 88.62,
+    "ocr_candidates": [
+      "手自动:",
+      "手自动;"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "手自动:",
+    "text_style": {
+      "text.color": "rgb(46,46,46)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_145",
+    "type": "text",
+    "bbox": [
+      531,
+      949,
+      36,
+      14
+    ],
+    "value": "运行：",
+    "parent_id": null,
+    "recognition_confidence": 90.16,
+    "ocr_candidates": [
+      "运行;",
+      "运行:"
+    ],
+    "recognition_status": "vision_transcribed",
+    "ocr_value": "运行:",
+    "text_style": {
+      "text.color": "rgb(61,61,61)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_146",
+    "type": "text",
+    "bbox": [
+      142,
+      952,
+      36,
+      14
+    ],
+    "value": "状态:",
+    "parent_id": null,
+    "recognition_confidence": 91.55,
+    "ocr_candidates": [
+      "状态:"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(57,57,57)",
+      "text.font": "14px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_147",
+    "type": "text",
+    "bbox": [
+      928,
+      965,
+      46,
+      15
+    ],
+    "value": "负载率",
+    "parent_id": null,
+    "recognition_confidence": 92.56,
+    "ocr_candidates": [
+      "负载率"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(46,46,46)",
+      "text.font": "15px arial, sans-serif",
+      "text.align": "center"
+    }
+  },
+  {
+    "id": "text_148",
+    "type": "text",
+    "bbox": [
+      1038,
+      966,
+      9,
+      8
+    ],
+    "value": "%",
+    "parent_id": null,
+    "recognition_confidence": 91.5,
+    "ocr_candidates": [
+      "%"
+    ],
+    "recognition_status": "recognized",
+    "text_style": {
+      "text.color": "rgb(116,116,116)",
+      "text.font": "9px arial, sans-serif",
       "text.align": "center"
     }
   }

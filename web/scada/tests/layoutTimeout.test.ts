@@ -86,7 +86,7 @@ test("post accepts an explicit timeoutMs option", async () => {
   }
 });
 
-test("generateLayoutFromImage posts multipart with a 120000ms timeout", async () => {
+test("generateLayoutFromImage posts multipart with a 600000ms timeout", async () => {
   const fetchMock = captureFetch();
   const timeoutMock = captureTimeouts();
   try {
@@ -96,7 +96,7 @@ test("generateLayoutFromImage posts multipart with a 120000ms timeout", async ()
       canvasWidth: 1920,
       canvasHeight: 1080,
     });
-    assert.equal(timeoutMock.delays[0], 120000);
+    assert.equal(timeoutMock.delays[0], 600000);
     assert.equal(fetchMock.calls.length, 1);
     assert.equal(fetchMock.calls[0].url, "/api/canvas/layout/image");
     const headers = new Headers(fetchMock.calls[0].init?.headers);

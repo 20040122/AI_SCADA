@@ -82,10 +82,13 @@ def test_ocr_conflicts_are_reviewed_and_existing_vision_text_survives(monkeypatc
     ]
     monkeypatch.setattr(ocr, "check_engine", lambda *args: "tesseract")
     monkeypatch.setattr(ocr, "recognize_crop", lambda *args: ocr.Recognition("AA", 90, 3, ("AA", "氧气")))
-    ocr.fill_text_values(image, items, workers=1, diagnostics=True)
+    summary = ocr.fill_text_values(image, items, workers=1, diagnostics=True)
     assert items[0]["recognition_status"] == "needs_review"
     assert items[1]["value"] == "氧气"
-    assert items[1]["ocr_value"] == "AA"
+    assert items[1]["recognition_status"] == "vision_transcribed"
+    assert "ocr_value" not in items[1]
+    assert summary["tesseract_calls"] == 3
+    assert summary["skipped_vision"] == 1
 
 
 @pytest.mark.parametrize("content,expected,status", [
