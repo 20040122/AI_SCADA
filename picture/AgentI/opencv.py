@@ -291,6 +291,7 @@ def ocr_detection(image: np.ndarray, language: str, scale: float) -> List[Dict[s
         box = tuple(round(int(row[key]) / 2) for key in ("left", "top", "width", "height"))
         item = node("text", len(results) + 1, "text_region", box, score / 100)
         item.update(text=value, recognition_status="recognized", confidence_source="tesseract")
+        item["line_key"] = [int(row[key]) for key in ("page_num", "block_num", "par_num", "line_num")]
         results.append(item)
     return results
 

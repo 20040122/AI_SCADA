@@ -3,405 +3,462 @@
     "id": "controls_1",
     "type": "controls",
     "bbox": [
-      638,
-      334,
-      27,
-      28
+      131,
+      286,
+      111,
+      84
     ],
-    "value": "冷冻泵",
-    "label_bboxes": []
+    "value": "溢流阀",
+    "label_bboxes": [
+      [
+        141,
+        378,
+        63,
+        16
+      ]
+    ]
   },
   {
     "id": "controls_2",
     "type": "controls",
     "bbox": [
-      667,
-      334,
-      26,
-      28
+      375,
+      292,
+      155,
+      71
     ],
-    "value": "冷却泵",
-    "label_bboxes": []
+    "value": "液压泵",
+    "label_bboxes": [
+      [
+        448,
+        371,
+        63,
+        16
+      ]
+    ]
   },
   {
     "id": "controls_3",
     "type": "controls",
     "bbox": [
-      1104,
-      334,
-      27,
-      28
+      667,
+      369,
+      156,
+      81
     ],
-    "value": "冷冻泵",
-    "label_bboxes": []
+    "value": "电机",
+    "label_bboxes": [
+      [
+        722,
+        457,
+        46,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_4",
     "type": "controls",
     "bbox": [
-      1133,
-      334,
-      57,
-      28
+      1097,
+      369,
+      31,
+      71
     ],
-    "value": "冷水机",
-    "label_bboxes": []
+    "value": "吸油过滤器",
+    "label_bboxes": [
+      [
+        1065,
+        448,
+        94,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_5",
     "type": "controls",
     "bbox": [
-      696,
-      335,
-      26,
-      27
+      1511,
+      395,
+      67,
+      35
     ],
-    "value": "冷却泵",
-    "label_bboxes": []
+    "value": "回油单向阀",
+    "label_bboxes": [
+      [
+        1491,
+        443,
+        94,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_6",
     "type": "controls",
     "bbox": [
-      726,
-      337,
-      13,
-      23
+      131,
+      452,
+      111,
+      84
     ],
-    "value": "数值显示",
-    "label_bboxes": []
+    "value": "溢流阀",
+    "label_bboxes": [
+      [
+        141,
+        544,
+        65,
+        16
+      ]
+    ]
   },
   {
     "id": "controls_7",
     "type": "controls",
     "bbox": [
-      302,
-      345,
-      27,
-      29
+      375,
+      459,
+      155,
+      71
     ],
-    "value": "冷却塔",
-    "label_bboxes": []
+    "value": "液压泵",
+    "label_bboxes": [
+      [
+        448,
+        544,
+        65,
+        16
+      ]
+    ]
   },
   {
     "id": "controls_8",
     "type": "controls",
     "bbox": [
-      244,
-      346,
-      56,
-      27
+      131,
+      619,
+      111,
+      83
     ],
-    "value": "冷却塔",
-    "label_bboxes": []
+    "value": "溢流阀",
+    "label_bboxes": [
+      [
+        141,
+        711,
+        65,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_9",
     "type": "controls",
     "bbox": [
-      332,
-      348,
-      13,
-      23
+      375,
+      625,
+      155,
+      71
     ],
-    "value": "数值显示",
-    "label_bboxes": []
+    "value": "液压泵",
+    "label_bboxes": [
+      [
+        448,
+        704,
+        65,
+        16
+      ]
+    ]
   },
   {
     "id": "controls_10",
     "type": "controls",
     "bbox": [
-      1650,
-      500,
-      16,
-      23
+      1284,
+      654,
+      587,
+      345
     ],
-    "value": "数值显示",
-    "label_bboxes": []
+    "value": "油箱",
+    "label_bboxes": [
+      [
+        1542,
+        1012,
+        46,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_11",
     "type": "controls",
     "bbox": [
-      1104,
-      575,
-      27,
-      28
+      667,
+      701,
+      156,
+      82
     ],
-    "value": "冷冻泵",
-    "label_bboxes": []
+    "value": "电机",
+    "label_bboxes": [
+      [
+        722,
+        789,
+        48,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_12",
     "type": "controls",
     "bbox": [
-      1133,
-      575,
-      73,
-      28
+      1097,
+      707,
+      31,
+      71
     ],
-    "value": "冷水机",
-    "label_bboxes": []
+    "value": "吸油过滤器",
+    "label_bboxes": [
+      [
+        1065,
+        783,
+        96,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_13",
     "type": "controls",
     "bbox": [
-      638,
-      577,
-      55,
-      28
+      131,
+      785,
+      111,
+      83
     ],
-    "value": "冷却泵",
-    "label_bboxes": []
+    "value": "溢流阀",
+    "label_bboxes": [
+      [
+        141,
+        877,
+        65,
+        15
+      ]
+    ]
   },
   {
     "id": "controls_14",
     "type": "controls",
     "bbox": [
-      695,
-      579,
-      44,
-      26
+      375,
+      791,
+      155,
+      71
     ],
-    "value": "冷却泵",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_15",
-    "type": "controls",
-    "bbox": [
-      244,
-      615,
-      56,
-      28
-    ],
-    "value": "冷却塔",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_16",
-    "type": "controls",
-    "bbox": [
-      302,
-      615,
-      27,
-      28
-    ],
-    "value": "冷却塔",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_17",
-    "type": "controls",
-    "bbox": [
-      1651,
-      733,
-      14,
-      23
-    ],
-    "value": "数值显示",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_18",
-    "type": "controls",
-    "bbox": [
-      1530,
-      819,
-      175,
-      126
-    ],
-    "value": "冷冻泵",
+    "value": "液压泵",
     "label_bboxes": [
       [
-        1565,
-        960,
-        83,
-        26
+        448,
+        877,
+        65,
+        15
       ]
     ]
-  },
-  {
-    "id": "controls_19",
-    "type": "controls",
-    "bbox": [
-      1191,
-      826,
-      15,
-      23
-    ],
-    "value": "数值显示",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_20",
-    "type": "controls",
-    "bbox": [
-      638,
-      838,
-      55,
-      28
-    ],
-    "value": "冷却泵",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_21",
-    "type": "controls",
-    "bbox": [
-      695,
-      839,
-      44,
-      27
-    ],
-    "value": "冷却泵",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_22",
-    "type": "controls",
-    "bbox": [
-      330,
-      894,
-      15,
-      24
-    ],
-    "value": "冷冻泵",
-    "label_bboxes": []
-  },
-  {
-    "id": "controls_23",
-    "type": "controls",
-    "bbox": [
-      1650,
-      962,
-      16,
-      23
-    ],
-    "value": "数值显示",
-    "label_bboxes": []
   },
   {
     "id": "text_1",
     "type": "text",
     "bbox": [
-      1566,
-      277,
-      99,
-      26
+      448,
+      371,
+      63,
+      16
     ],
-    "value": "冷冻泵1",
-    "parent_id": null
+    "value": "液压泵#1",
+    "parent_id": "controls_2",
+    "ocr_value": "液压泵#1",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_2",
     "type": "text",
     "bbox": [
-      1193,
-      337,
-      13,
-      22
+      141,
+      378,
+      63,
+      16
     ],
-    "value": "1",
-    "parent_id": null
+    "value": "溢流阀#1",
+    "parent_id": "controls_1",
+    "ocr_value": "溢流阀#1",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_3",
     "type": "text",
     "bbox": [
-      1565,
-      498,
-      84,
-      27
+      1491,
+      443,
+      94,
+      15
     ],
-    "value": "冷冻泵",
-    "parent_id": null
+    "value": "回油单向阀#1",
+    "parent_id": "controls_5",
+    "ocr_value": "回油单向阀#1",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_4",
     "type": "text",
     "bbox": [
-      1537,
-      592,
-      14,
-      10
+      1065,
+      448,
+      94,
+      15
     ],
-    "value": "—",
-    "parent_id": null
+    "value": "吸油过滤器#1",
+    "parent_id": "controls_4",
+    "ocr_value": "吸油过滤器#1",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_5",
     "type": "text",
     "bbox": [
-      331,
-      618,
-      14,
-      22
+      722,
+      457,
+      46,
+      15
     ],
-    "value": "2",
-    "parent_id": null
+    "value": "电机#1",
+    "parent_id": "controls_3",
+    "ocr_value": "电机#1",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_6",
     "type": "text",
     "bbox": [
-      1565,
-      730,
-      84,
-      27
+      141,
+      544,
+      65,
+      16
     ],
-    "value": "冷冻泵",
-    "parent_id": null
+    "value": "溢流阀#2",
+    "parent_id": "controls_6",
+    "ocr_value": "Ma RHQ",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_7",
     "type": "text",
     "bbox": [
-      1104,
-      824,
-      40,
-      26
+      448,
+      544,
+      65,
+      16
     ],
-    "value": "冷7",
-    "parent_id": null
+    "value": "液压泵#2",
+    "parent_id": "controls_7",
+    "ocr_value": "液压泵殷",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_8",
     "type": "text",
     "bbox": [
-      1171,
-      825,
-      18,
-      25
+      448,
+      704,
+      65,
+      16
     ],
-    "value": "IL",
-    "parent_id": null
+    "value": "液压泵#3",
+    "parent_id": "controls_9",
+    "ocr_value": "液压泵怒",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_9",
     "type": "text",
     "bbox": [
-      245,
-      892,
-      83,
-      27
+      141,
+      711,
+      65,
+      15
     ],
-    "value": "冷却塔",
-    "parent_id": null
+    "value": "溢流阀#3",
+    "parent_id": "controls_8",
+    "ocr_value": "Yar LHS",
+    "recognition_status": "vision_transcribed"
   },
   {
     "id": "text_10",
     "type": "text",
     "bbox": [
-      1565,
-      960,
-      83,
-      26
+      1065,
+      783,
+      96,
+      15
     ],
-    "value": "冷冻泵",
-    "parent_id": "controls_18",
-    "ocr_value": "冷冻泵",
+    "value": "吸油过滤器#2",
+    "parent_id": "controls_12",
+    "ocr_value": "吸油过滤器加",
+    "recognition_status": "vision_transcribed"
+  },
+  {
+    "id": "text_11",
+    "type": "text",
+    "bbox": [
+      722,
+      789,
+      48,
+      15
+    ],
+    "value": "电机#2",
+    "parent_id": "controls_11",
+    "ocr_value": "电机#2",
+    "recognition_status": "vision_transcribed"
+  },
+  {
+    "id": "text_12",
+    "type": "text",
+    "bbox": [
+      141,
+      877,
+      65,
+      15
+    ],
+    "value": "溢流阀#4",
+    "parent_id": "controls_13",
+    "ocr_value": "溢流阀状",
+    "recognition_status": "vision_transcribed"
+  },
+  {
+    "id": "text_13",
+    "type": "text",
+    "bbox": [
+      448,
+      877,
+      65,
+      15
+    ],
+    "value": "液压泵#4",
+    "parent_id": "controls_14",
+    "ocr_value": "WE RHA",
+    "recognition_status": "vision_transcribed"
+  },
+  {
+    "id": "text_14",
+    "type": "text",
+    "bbox": [
+      1542,
+      1012,
+      46,
+      15
+    ],
+    "value": "油箱#1",
+    "parent_id": "controls_10",
+    "ocr_value": "油箱#1",
     "recognition_status": "vision_transcribed"
   }
 ]

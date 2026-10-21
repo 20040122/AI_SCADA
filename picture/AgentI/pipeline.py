@@ -20,6 +20,7 @@ if str(ROOT) not in sys.path:
 from name import DEFAULT_CONCURRENCY, DEFAULT_CONTEXT, fill_control_names, refine_label_values
 from ocr import fill_text_values, write_atomic
 from opencv import run_detection
+from semantic import review_detection
 
 
 def run_pipeline(
@@ -39,6 +40,7 @@ def run_pipeline(
     ocr_workers: int = 6,
     remove_grid: bool = True,
     refine_labels: bool = True,
+    semantic_mode: str = "auto",
 ) -> Dict[str, Any]:
     if output_path.resolve() == image_path.resolve():
         raise ValueError("输出路径不能覆盖输入图片。")
@@ -54,6 +56,11 @@ def run_pipeline(
             return func()
         finally:
             timing[label] = round(time.perf_counter() - stage, 3)
+
+    items, detection, semantic_summary = timed(
+        "layout_review_seconds",
+        lambda: review_detection(image, items, detection, output_dir, db_path, model, ocr_lang, semantic_mode),
+    )
 
     def run_ocr():
         return fill_text_values(image, items, ocr_lang, psm, target_height, min_confidence, timeout, ocr_workers)
@@ -71,12 +78,13 @@ def run_pipeline(
     label_summary = timed("label_refinement_seconds", lambda: refine_label_values(image, items, model, concurrency)) if refine_labels else {"enabled": False}
     stage = time.perf_counter()
     write_atomic(output_path, items)
+    (output_dir / "detection_details.json").write_text(json.dumps(detection, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     timing["write_seconds"] = round(time.perf_counter() - stage, 3)
     timing["total_seconds"] = round(time.perf_counter() - started, 3)
     return {
         "output": str(output_path.resolve()),
         "image": str(image_path.resolve()),
-        "detection": {"counts": detection["counts"]},
+        "detection": {"counts": detection["counts"], "semantic": semantic_summary},
         "ocr": ocr_summary,
         "naming": naming_summary,
         "label_refinement": label_summary,
@@ -102,6 +110,7 @@ def main() -> None:
     parser.add_argument("--dump-crops", type=Path, default=None, help="导出全部控件裁剪图到该目录，用于人工核对")
     parser.add_argument("--ocr-workers", type=int, default=6, help="Tesseract 文本识别的并行工作线程数")
     parser.add_argument("--no-refine-labels", action="store_true", help="关闭设备标签的视觉转写复核")
+    parser.add_argument("--semantic-mode", choices=("auto", "off", "always"), default="auto", help="设备语义定位模式，auto在检测异常时补检，off使用原有路径")
     args = parser.parse_args()
     try:
         result = run_pipeline(
@@ -110,6 +119,7 @@ def main() -> None:
             args.model, args.concurrency, args.context, args.dump_crops, args.ocr_workers,
             remove_grid=args.remove_grid,
             refine_labels=not args.no_refine_labels,
+            semantic_mode=args.semantic_mode,
         )
     except (OSError, ValueError, RuntimeError, json.JSONDecodeError, sqlite3.Error, cv2.error, subprocess.TimeoutExpired) as error:
         parser.exit(1, "流程失败: {}\n".format(error))

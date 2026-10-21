@@ -35,11 +35,15 @@ def run_all(
     model: Optional[str] = None,
     clean_image: Optional[Path] = None,
     refine_labels: bool = True,
+    semantic_mode: str = "auto",
 ) -> Tuple[Dict[str, Any], List[str]]:
     clean_image = clean_image or grid_image.with_name("{}_clean.png".format(grid_image.stem))
     resize_image(input_image, grid_image, background, grid_step=grid_step, clean_output_path=clean_image)
     print("[1/4] 识别图已生成：{}，坐标参考图：{}".format(clean_image, grid_image))
-    run_pipeline(clean_image, opencv_dir, detections_path, db_path, model=model, remove_grid=False, refine_labels=refine_labels)
+    summary = run_pipeline(clean_image, opencv_dir, detections_path, db_path, model=model, remove_grid=False, refine_labels=refine_labels, semantic_mode=semantic_mode)
+    semantic = summary.get("detection", {}).get("semantic", {})
+    if semantic.get("status") == "failed":
+        print("设备语义补检失败，已保留原有检测结果，需要核验：{}".format(semantic.get("error", "")))
     print("[2/4] 检测、文字识别与控件命名完成：{}".format(detections_path))
     detections = convert_detections(json.loads(detections_path.read_text(encoding="utf-8")))
     print("[3/4] 已转换 {} 条检测结果".format(len(detections)))
@@ -71,6 +75,7 @@ def main() -> None:
     parser.add_argument("--grid-step", type=int, default=20, help="网格图小网格间距（像素，默认 20）")
     parser.add_argument("--model", default=None, help="DeepSeek 模型，默认取 DEEPSEEK_MODEL")
     parser.add_argument("--no-refine-labels", action="store_true", help="关闭设备标签的视觉转写复核")
+    parser.add_argument("--semantic-mode", choices=("auto", "off", "always"), default="auto", help="设备语义定位模式")
     args = parser.parse_args()
     canvas_output = args.canvas_output or PROJECT / "output" / "canvas_{}.json".format(
         datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -80,6 +85,7 @@ def main() -> None:
             args.input, args.grid_image, args.opencv_dir, args.detections,
             args.db, canvas_output, args.background, args.grid_step, args.model, args.clean_image,
             not args.no_refine_labels,
+            args.semantic_mode,
         )
     except (OSError, ValueError, RuntimeError, json.JSONDecodeError, sqlite3.Error, cv2.error, subprocess.TimeoutExpired) as error:
         parser.exit(1, "流程失败：{}\n".format(error))
